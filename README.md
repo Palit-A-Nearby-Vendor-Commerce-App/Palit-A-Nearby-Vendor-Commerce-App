@@ -236,6 +236,7 @@ class Report {
    - int reportId
    - int senderId
    - Timestamp timestamp
+   - boolean isResolved
    + int getReportId()
    + void setReportId(int reportId)
    + int getSenderId()
@@ -244,6 +245,8 @@ class Report {
    + void setMessageContent(String messageContent)
    + Timestamp getTimestamp()
    + void setTimestamp(Timestamp timestamp)
+   + boolean getIsResolved()
+   + void setIsResolved(boolean isResolved)
 }
 
 Account "1" -- "*" Report : sends
@@ -363,9 +366,11 @@ Account.accountId }|..|| Transaction.accountVendorId
 entity Report {
     * reportId : INT
     --
-    senderId : INT
+    -- Foreign key referencing Account entity
+    senderId_FK : INT
     messageContent : VARCHAR(255)
     timestamp : TIMESTAMP
+    isResolved : BOOLEAN
 }
 
 Account ||--o{ Report

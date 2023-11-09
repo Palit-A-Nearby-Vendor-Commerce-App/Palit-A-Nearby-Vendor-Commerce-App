@@ -366,7 +366,8 @@ Account.accountId }|..|| Transaction.accountVendorId
 entity Report {
     * reportId : INT
     --
-    senderId : INT
+    -- Foreign key referencing Account entity
+    senderId_FK : INT
     messageContent : VARCHAR(255)
     timestamp : TIMESTAMP
     isResolved : BOOLEAN

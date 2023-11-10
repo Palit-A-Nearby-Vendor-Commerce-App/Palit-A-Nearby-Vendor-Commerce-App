@@ -1,0 +1,40 @@
+{
+  "users": [
+    {
+      "id": 34834838483,
+      "fullname": "John Doe",
+      "email": "johndoe@example.com",
+      "password": "12345678",
+      "birthdate": "01/03/2000",
+      "userType": "Vendor",
+      "image": ""
+    },
+    {
+      "id": 49349349394,
+      "fullname": "Jane Smith",
+      "email": "user2@example.com",
+      "password": "232132387",
+      "birthdate": "02/01/2001",
+      "userType": "Customer",
+      "image": ""
+    },
+    {
+      "fullname": "Joshua Briones",
+      "email": "joshua@gmail.com",
+      "birthdate": "2023-11-08",
+      "password": "123123123",
+      "userType": "vendor",
+      "image": "blob:http://localhost:3000/0e285cbd-58b8-4f4c-8f17-77491d26d528",
+      "id": 49349349395
+    },
+    {
+      "fullname": "Eren Kuno",
+      "email": "eren@gmail.com",
+      "birthdate": "2023-11-07",
+      "password": "123123123",
+      "userType": "customer",
+      "image": "blob:http://localhost:3000/cb1c3314-deb5-4d36-9daa-d4d04e97f424",
+      "id": 49349349396
+    }
+  ]
+}

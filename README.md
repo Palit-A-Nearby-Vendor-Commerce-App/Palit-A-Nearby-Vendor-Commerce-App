@@ -76,12 +76,15 @@ We plan to make a mobile only site for the main app features and a separate resp
 ```
 @startuml
 class User {
+    - int userId
     - String name
     - Date birthDate
     - String email
     - String username
     - String password
     - Image image
+    + int getUserId()
+    + void setUserId(int userId)
     + String getName()
     + void setName(String name)
     + Date getBirthDate()
@@ -260,7 +263,7 @@ Account "1" -- "*" Report : sends
 ```
 @startuml
 entity User {
-    * username : VARCHAR(255)
+    * userId : INT
     --
     name : VARCHAR(255)
     birthDate : DATE

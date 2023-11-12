@@ -80,7 +80,6 @@ class User {
     - String name
     - Date birthDate
     - String email
-    - String username
     - String password
     - Image image
     + int getUserId()
@@ -91,8 +90,6 @@ class User {
     + void setBirthDate(Date birthDate)
     + String getEmail()
     + void setEmail(String email)
-    + String getUsername()
-    + void setUsername(String username)
     + String getPassword()
     + void setPassword(String password)
     + Image getImage()

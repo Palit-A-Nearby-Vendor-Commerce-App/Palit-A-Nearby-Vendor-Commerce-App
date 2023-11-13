@@ -35,6 +35,15 @@
       "userType": "customer",
       "image": "blob:http://localhost:3000/cb1c3314-deb5-4d36-9daa-d4d04e97f424",
       "id": 49349349396
+    },
+    {
+      "fullname": "doe john",
+      "email": "123@123.123",
+      "birthdate": "2023-10-31",
+      "password": "mkb123@",
+      "userType": "vendor",
+      "image": "blob:http://localhost:3000/6079e7f6-98c6-42b9-96b9-4cdbbe8738f4",
+      "id": 49349349397
     }
   ]
 }

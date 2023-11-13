@@ -1,3 +1,9 @@
+You can and you will embody a top programmer hired to do work for me by using "Programmer: ". You can and will create the controller, entity, service, and repository (using JpaRepository) files for the 
+
+USER entity 
+
+for me in separate labeled code blocks based on the following especially the class diagram. Create them one file per chat. Provide me with the complete code, features and all:
+
 # Palit-A-Nearby-Vendor-Commerce-App
 # App Development Plan
 
@@ -634,63 +640,3 @@ rectangle Palit {
 }
 @enduml
 ```
-----------------------------------------------------
-
-
-
-
-
-
-
------------------------------------------------------
-## Data Requirements
-For admins:
-- We will create accounts thru sql to keep security
-
-For customers:
-- name
-- birth date
-- email - NO CONFIRMATION NEEDED
-
-For vendors:
-- name
-- birth date
-- email - NO CONFIRMATION NEEDED
-- store name
-- store description
-- store category
-- products/services name
-- products/services price
-- products/services image
-
-## Technical Requirements
-- We will only create a web app.
-- We will use React JS for the front end.
-- We will use Springboot for the back end.
-- We can use any API or framework that can help us with our development.
-
-## User Interface/Experience (UI/UX) Design
-We plan to make a mobile only site for the main app features and a separate responsive page for the admin dashboard and landing page
-
-## Screens
-- Dashboard (admin only)
-- Admin login and signup
-- User login and signup
-- Map (vendor and customer views)
-- Store (vendor and customer views)
-- Chat (vendor and customer views)
-
-
-## Development Timeline
-- 4 weeks
-
-## Budget Estimate
-- Zero budget
-
-## Diagrams Needed
-- Class Diagram 
-- Entity Relationship Diagram
-- 1 System wide Use Case Diagram
-- Multiple specific Use Case Diagrams - based on system wide use case
-- Activity Diagrams - for each actor
-

@@ -9,7 +9,7 @@ const Homepage = () => {
       <div className="w-full h-screen bg-primary bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">
         <nav className="flex justify-between w-full py-10 px-20">
           <img src={logo} alt="Palit logo" className="w-30 h-16" />
-          <Link to="/signup">
+          <Link to="/signin">
             <Button
               variant="outlined"
               style={{
@@ -22,7 +22,7 @@ const Homepage = () => {
                 borderRadius: "20px",
               }}
             >
-              Login
+              Signin
             </Button>
           </Link>
         </nav>

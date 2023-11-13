@@ -39,6 +39,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start-users-api": "json-server --watch src/data/users.json --port 3002"
+    
   },
   "eslintConfig": {
     "extends": [

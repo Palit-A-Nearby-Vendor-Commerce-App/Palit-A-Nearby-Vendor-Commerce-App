@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Typography, Container } from "@material-ui/core";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import { Circle } from "@react-google-maps/api";
+import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import React, { useEffect, useState } from "react";
 import marker from "../assets/images/vendor-self-pin.png";
+import Header from "../layouts/Header";
 
 const mapContainerStyle = {
   width: "100%",
@@ -51,11 +50,7 @@ function GoogleMapComponent() {
 
   return (
     <div className="GoogleMapComponent">
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6">Sample React Website</Typography>
-        </Toolbar>
-      </AppBar>
+      <Header></Header>
       <LoadScript googleMapsApiKey="AIzaSyBNM-CYx7dA0gckgBmybtovang7Bvp8lK0">
         <div>
           <GoogleMap

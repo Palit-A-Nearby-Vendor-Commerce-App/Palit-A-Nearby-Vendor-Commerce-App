@@ -12,10 +12,10 @@ function App() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/homepage" exact component={Landing} />
+        <Route path="/landing" exact component={Landing} />
         <Route path="/signup" exact component={Signup} />
         <Route path="/signin" exact component={Signin} />
-        <Route path="/googlemapcomponent" exact component={Home} />
+        <Route path="/home" exact component={Home} />
 
         <Route component={Landing} />
       </Switch>

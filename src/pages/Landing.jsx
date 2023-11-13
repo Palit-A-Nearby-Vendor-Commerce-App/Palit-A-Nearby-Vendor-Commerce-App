@@ -3,7 +3,7 @@ import logo from "../assets/images/logo-white.png";
 import { Button } from "@material-ui/core";
 import { BrowserRouter, Link } from "react-router-dom";
 
-const Homepage = () => {
+const Landing = () => {
   return (
     <BrowserRouter>
       <div className="w-full h-screen bg-primary bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">
@@ -58,4 +58,4 @@ const Homepage = () => {
   );
 };
 
-export default Homepage;
+export default Landing;

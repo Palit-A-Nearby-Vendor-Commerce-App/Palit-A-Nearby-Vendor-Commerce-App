@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Typography, Container } from "@material-ui/core";
+import { AppBar, Toolbar, Typography } from "@material-ui/core";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Circle } from "@react-google-maps/api";
 import marker from "../assets/images/vendor-self-pin.png";
@@ -30,9 +30,8 @@ const defaultCenter = {
   lng: -38.523,
 };
 
-function GoogleMapComponent() {
+function Home() {
   const [currentPosition, setCurrentPosition] = useState(defaultCenter);
-  const [map, setMap] = useState(null);
 
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
@@ -50,7 +49,7 @@ function GoogleMapComponent() {
   }, []);
 
   return (
-    <div className="GoogleMapComponent">
+    <div className="Home">
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6">Sample React Website</Typography>
@@ -95,4 +94,4 @@ function GoogleMapComponent() {
   );
 }
 
-export default GoogleMapComponent;
+export default Home;

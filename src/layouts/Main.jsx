@@ -1,7 +1,7 @@
 import React from "react";
 
-const Header = () => {
-  return <div>Header</div>;
-};
+const Main = ({ children }) => {
+  return <div className="w-full h-screen pt-16 font-custom">{children}</div>;
+}; 
 
-export default Header;
+export default Main;

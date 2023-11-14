@@ -8,6 +8,7 @@ import CustomButton from "../components/CustomButton";
 import axios from "axios";
 
 import logo from "../assets/images/logo.png";
+import Main from "../layouts/Main";
 
 const Signup = () => {
   const history = useHistory();
@@ -96,122 +97,126 @@ const Signup = () => {
     }
   };
   return (
-    <div className="w-full h-screen p-8 font-custom">
-      <div className="w-[500px] m-auto">
-        <div className="w-full flex items-center justify-center">
-          <img src={logo} alt="Palit logo" className="w-[250px] h-[102px]" />
-        </div>
+      <div className="w-full h-screen p-8 font-custom">
+        <div className="w-[500px] m-auto">
+          <div className="w-full flex items-center justify-center">
+            <img src={logo} alt="Palit logo" className="w-[250px] h-[102px]" />
+          </div>
 
-        <div className="w-full flex items-center justify-center flex-col mt-8">
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            style={{ display: "none" }}
-            id="image-upload-input"
-          />
-          <label htmlFor="image-upload-input">
-            {selectedImage ? (
-              <img
-                src={selectedImage}
-                alt="Selected"
-                style={{ width: "90px", height: "90px", borderRadius: "20px" }}
+          <div className="w-full flex items-center justify-center flex-col mt-8">
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: "none" }}
+              id="image-upload-input"
+            />
+            <label htmlFor="image-upload-input">
+              {selectedImage ? (
+                <img
+                  src={selectedImage}
+                  alt="Selected"
+                  style={{
+                    width: "90px",
+                    height: "90px",
+                    borderRadius: "20px",
+                  }}
+                />
+              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component="span"
+                  style={{
+                    width: "90px",
+                    height: "90px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: "20px",
+                    backgroundColor: "#0071B3",
+                    fontSize: "45px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  +
+                </Button>
+              )}
+            </label>
+
+            <p className="mt-2">User/Store Picture</p>
+          </div>
+
+          <form>
+            <div>
+              <label>Full name</label>
+              <CustomInput
+                type="text"
+                placeholder="John Doe"
+                value={formData["fullname"]}
+                onChange={handleNameChange}
               />
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                component="span"
-                style={{
-                  width: "90px",
-                  height: "90px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderRadius: "20px",
-                  backgroundColor: "#0071B3",
-                  fontSize: "45px",
-                  fontWeight: "bold",
-                }}
+            </div>
+            <div className="mt-4">
+              <label>Email address</label>
+              <CustomInput
+                type="email"
+                placeholder="yourname@gmail.com"
+                value={formData["email"]}
+                onChange={handleEmailChange}
+              />
+            </div>
+            <div className="mt-4">
+              <label>Birth date</label>
+              <CustomInput
+                type="date"
+                value={formData["birthdate"]}
+                onChange={handleBirthdateChange}
+              />
+            </div>
+            <div className="mt-4">
+              <label>Create password</label>
+              <CustomInput
+                type="password"
+                value={formData["password"]}
+                onChange={handlePasswordChange}
+              />
+              <p className="text-red-500">
+                Password must contain a minimum of 8 characters
+              </p>
+              <p className="text-red-500">
+                Password must contain at least one symbol e.g. @, !
+              </p>
+            </div>
+            <div className="mt-4">
+              <label>Choose how you want to use Palit</label>
+              <select
+                value={formData["userType"]}
+                onChange={handleUserTypeChange}
+                className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
               >
-                +
-              </Button>
-            )}
-          </label>
-
-          <p className="mt-2">User/Store Picture</p>
+                <option value="customer">Customer</option>
+                <option value="vendor">Vendor</option>
+              </select>
+            </div>
+            <CustomButton
+              btnStyle="w-full bg-primary p-3 text-white rounded-[20px] mt-10"
+              label="Sign Up"
+              onClick={handleSignup}
+              type="submit"
+            />
+          </form>
+          <Link to="signin">
+            <div className="text-center mt-4 pb-6">
+              Already a user?
+              <span className="text-primary underline cursor-pointer">
+                {" "}
+                Login
+              </span>
+            </div>
+          </Link>
         </div>
-
-        <form>
-          <div>
-            <label>Full name</label>
-            <CustomInput
-              type="text"
-              placeholder="John Doe"
-              value={formData["fullname"]}
-              onChange={handleNameChange}
-            />
-          </div>
-          <div className="mt-4">
-            <label>Email address</label>
-            <CustomInput
-              type="email"
-              placeholder="yourname@gmail.com"
-              value={formData["email"]}
-              onChange={handleEmailChange}
-            />
-          </div>
-          <div className="mt-4">
-            <label>Birth date</label>
-            <CustomInput
-              type="date"
-              value={formData["birthdate"]}
-              onChange={handleBirthdateChange}
-            />
-          </div>
-          <div className="mt-4">
-            <label>Create password</label>
-            <CustomInput
-              type="password"
-              value={formData["password"]}
-              onChange={handlePasswordChange}
-            />
-            <p className="text-red-500">
-              Password must contain a minimum of 8 characters
-            </p>
-            <p className="text-red-500">
-              Password must contain at least one symbol e.g. @, !
-            </p>
-          </div>
-          <div className="mt-4">
-            <label>Choose how you want to use Palit</label>
-            <select
-              value={formData["userType"]}
-              onChange={handleUserTypeChange}
-              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
-            >
-              <option value="customer">Customer</option>
-              <option value="vendor">Vendor</option>
-            </select>
-          </div>
-          <CustomButton
-            btnStyle="w-full bg-primary p-3 text-white rounded-[20px] mt-10"
-            label="Sign Up"
-            onClick={handleSignup}
-            type="submit"
-          />
-        </form>
-        <Link to="signin">
-          <div className="text-center mt-4 pb-6">
-            Already a user?
-            <span className="text-primary underline cursor-pointer">
-              {" "}
-              Login
-            </span>
-          </div>
-        </Link>
       </div>
-    </div>
   );
 };
 

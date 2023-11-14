@@ -59,52 +59,52 @@ const Signin = () => {
   }
 
   return (
-    <div className="w-full h-screen p-8 font-custom">
-      <div className="w-[500px] m-auto">
-        <div className="w-full flex items-center justify-center">
-          <img src={logo} alt="Palit logo" className="w-[250px] h-[102px]" />
-        </div>
-        <h2 className="text-2xl font-bold text-grayy mt-8">Welcome!</h2>
-        <p className="text-slate-500 mb-10">Log in to continue</p>
+      <div className="w-full h-screen p-8 font-custom">
+        <div className="w-[500px] m-auto">
+          <div className="w-full flex items-center justify-center">
+            <img src={logo} alt="Palit logo" className="w-[250px] h-[102px]" />
+          </div>
+          <h2 className="text-2xl font-bold text-grayy mt-8">Welcome!</h2>
+          <p className="text-slate-500 mb-10">Log in to continue</p>
 
-        <form onSubmit={handleLogin}>
-          <div className="mt-4">
-            <label>Email address</label>
-            <CustomInput
-              type="email"
-              name="email"
-              placeholder="yourname@gmail.com"
-              value={email}
-              onChange={handleEmailChange}
+          <form onSubmit={handleLogin}>
+            <div className="mt-4">
+              <label>Email address</label>
+              <CustomInput
+                type="email"
+                name="email"
+                placeholder="yourname@gmail.com"
+                value={email}
+                onChange={handleEmailChange}
+              />
+            </div>
+            <div className="mt-4">
+              <label>Password</label>
+              <CustomInput
+                type="password"
+                name="password"
+                value={password}
+                onChange={handlePasswordChange}
+              />
+            </div>
+            <CustomButton
+              btnStyle="w-full bg-primary p-3 text-white rounded-[20px] mt-10"
+              label="Log In"
+              type="submit"
             />
-          </div>
-          <div className="mt-4">
-            <label>Password</label>
-            <CustomInput
-              type="password"
-              name="password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
-          </div>
-          <CustomButton
-            btnStyle="w-full bg-primary p-3 text-white rounded-[20px] mt-10"
-            label="Log In"
-            type="submit"
-          />
-          {error && <div className="text-red-500 mt-2">{error}</div>}
-        </form>
-        <Link to="signup">
-          <div className="text-center mt-4 pb-6">
-            Don't have an account?
-            <span className="text-primary underline cursor-pointer">
-              {" "}
-              Sign up
-            </span>
-          </div>
-        </Link>
+            {error && <div className="text-red-500 mt-2">{error}</div>}
+          </form>
+          <Link to="signup">
+            <div className="text-center mt-4 pb-6">
+              Don't have an account?
+              <span className="text-primary underline cursor-pointer">
+                {" "}
+                Sign up
+              </span>
+            </div>
+          </Link>
+        </div>
       </div>
-    </div>
   );
 };
 

@@ -2,23 +2,22 @@ import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import "./App.css";
-import Homepage from "./pages/Homepage";
+import Landing from "./pages/Landing";
 import Signup from "./pages/Signup"
 import Signin from "./pages/Signin";
-import GoogleMapComponent from "./pages/GoogleMapComponent";
+import Home from "./pages/Home";
 
 
 function App() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path="/homepage" exact component={Homepage} />
+        <Route path="/landing" exact component={Landing} />
         <Route path="/signup" exact component={Signup} />
         <Route path="/signin" exact component={Signin} />
-        <Route path="/googlemapcomponent" exact component={GoogleMapComponent} />
+        <Route path="/home" exact component={Home} />
 
-        // other routes...
-        <Route component={Homepage} />
+        <Route component={Landing} />
       </Switch>
     </BrowserRouter>
   );

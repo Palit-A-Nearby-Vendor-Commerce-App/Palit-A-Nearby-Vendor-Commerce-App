@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Typography } from "@material-ui/core";
+import Header from "../layouts/Header";
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Circle } from "@react-google-maps/api";
 import marker from "../assets/images/vendor-self-pin.png";
@@ -50,11 +50,7 @@ function Home() {
 
   return (
     <div className="Home">
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6">Sample React Website</Typography>
-        </Toolbar>
-      </AppBar>
+      <Header/>
       <LoadScript googleMapsApiKey="AIzaSyBNM-CYx7dA0gckgBmybtovang7Bvp8lK0">
         <div>
           <GoogleMap

@@ -50,7 +50,7 @@ function GoogleMapComponent() {
 
   return (
     <div className="GoogleMapComponent">
-      <Header></Header>
+      <Header />
       <LoadScript googleMapsApiKey="AIzaSyBNM-CYx7dA0gckgBmybtovang7Bvp8lK0">
         <div>
           <GoogleMap

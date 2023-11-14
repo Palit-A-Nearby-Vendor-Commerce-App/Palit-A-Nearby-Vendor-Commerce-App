@@ -4,7 +4,7 @@ import storesample from "../assets/images/storesample.png";
 
 const Header = () => {
   return (
-    <header className="bg-toolbarcustom">
+    <header className="bg-toolbarcustom ">
       <div className="flex items-center justify-between px-6">
         <img src={logo} alt="Palit logo" className="w-30 h-16" />
         <div className="flex items-center m-left-auto">

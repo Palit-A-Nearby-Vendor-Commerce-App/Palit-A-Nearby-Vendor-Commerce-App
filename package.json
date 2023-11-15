@@ -40,7 +40,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start-users-api": "json-server --watch src/data/users.json --port 3002",
-    "start-products-api": "json-server --watch src/data/store.json --port 3003"
+    "start-products-api": "json-server --watch src/data/store.json --port 3003",
+    "start-nearbyUsers-api": "json-server --watch src/data/nearbyUsers.json --port 3004"
   },
   "eslintConfig": {
     "extends": [

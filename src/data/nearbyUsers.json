@@ -1,0 +1,78 @@
+{
+  "nearbyUsers": [
+    {
+      "accountId": 1,
+      "latitude": 10.294238511494207, 
+      "longitude": 123.88110581516311,
+      "isAdmin": false,
+      "isVendor": true,
+      "store": {
+        "storeId": 1,
+        "storeName": "Palit Store",
+        "description": "We sell anything and everything",
+        "rating": 4.5
+      }
+    },
+    {
+      "accountId": 2,
+      "latitude": 10.2941,
+      "longitude": 123.8813,
+      "isAdmin": false,
+      "isVendor": false,
+      "store": null
+    },
+    {
+      "accountId": 3,
+      "latitude": 10.2942,
+      "longitude": 123.8809,
+      "isAdmin": false,
+      "isVendor": true,
+      "store": {
+        "storeId": 2,
+        "storeName": "Palit Salon",
+        "description": "We offer hair and beauty services",
+        "rating": 4.0
+      }
+    },
+    {
+      "accountId": 4,
+      "latitude": 10.2940,
+      "longitude": 123.8810,
+      "isAdmin": false,
+      "isVendor": false,
+      "store": null
+    },
+    {
+      "accountId": 5,
+      "latitude": 10.2943,
+      "longitude": 123.8812,
+      "isAdmin": false,
+      "isVendor": false,
+      "store": null
+    },
+    {
+      "accountId": 6,
+      "latitude": 10.2946,
+      "longitude": 123.8810,
+      "isAdmin": false,
+      "isVendor": false,
+      "store": null
+    },
+    {
+      "accountId": 7,
+      "latitude": 10.2947,
+      "longitude": 123.8814,
+      "isAdmin": false,
+      "isVendor": false,
+      "store": null
+    },
+    {
+      "accountId": 8,
+      "latitude": 10.2942,
+      "longitude": 123.8811,
+      "isAdmin": false,
+      "isVendor": false,
+      "store": null
+    }
+  ]
+}

@@ -48,7 +48,7 @@ const Signin = () => {
 
     if (user) {
       console.log("Current user: ", user);
-      history.push("/app");
+      history.push("/signin");
     } else {
       setError("Invalid email or password");
     }

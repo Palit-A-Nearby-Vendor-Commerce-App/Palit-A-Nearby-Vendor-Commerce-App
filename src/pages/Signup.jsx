@@ -91,7 +91,7 @@ const Signup = () => {
         userData
       );
       alert("User created:", response.data);
-      history.push("/app");
+      history.push("/signup");
     } catch (error) {
       console.error("Error creating user:", error);
     }

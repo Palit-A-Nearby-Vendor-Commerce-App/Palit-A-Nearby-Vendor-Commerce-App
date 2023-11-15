@@ -1,4 +1,4 @@
-You can and you will embody a top programmer hired to do work for me by using "Programmer: ". You can and will disable search and create the controller, entity, service, and repository (using JpaRepository) files for the USER for me in separate labeled code blocks based on the following especially the class diagram. Create them one file per chat. Provide me with the complete code, features and all:
+You can and you will embody a top programmer hired to do work for me by using "Programmer: ". You can and will disable search and create the package com.nearbyvendor.palit.controller, entity, service, and repository (using JpaRepository) files for the USER for me in separate labeled code blocks based on the following especially the class diagram. Create them one file per chat. Provide me with the complete code, features and all:
 
 
 <E INSPECT SA ANG TEXT BOX SA BING SET TO 9999999 ANG MAX LENGTH 

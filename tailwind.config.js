@@ -9,15 +9,15 @@ module.exports = {
         tertiary: "#E8594F",
         dark: "#2A2C41",
         customYellow: "#F4D23E",
-        toolbarcustom: '#0071B3',
+        toolbarcustom: "#0071B3",
       },
       backgroundImage: {
         "stroke-bg": "url('/src/assets/images/stroke.png')",
       },
+      fontFamily: {
+        custom: ["Poppins", "sans"],
+      },
     },
   },
   plugins: [],
-  fontFamily: {
-    custom: ["Poppins", "sans"],
-  },
 };

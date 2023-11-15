@@ -8,7 +8,6 @@ import CustomButton from "../components/CustomButton";
 import axios from "axios";
 
 import logo from "../assets/images/logo.png";
-import Main from "../layouts/Main";
 
 const Signup = () => {
   const history = useHistory();

@@ -1,6 +1,4 @@
 import React from "react";
-import vendorBg from "../assets/images/vendorbg.jpg";
-import Header from "../layouts/Header";
 import { Link } from "react-router-dom";
 
 import NavigationBar from "../components/NavigationBar";

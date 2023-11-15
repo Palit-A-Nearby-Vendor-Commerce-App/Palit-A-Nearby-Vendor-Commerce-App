@@ -8,6 +8,7 @@ public class PalitApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(PalitApplication.class, args);
+		System.out.println("Ok");
 	}
 
 }

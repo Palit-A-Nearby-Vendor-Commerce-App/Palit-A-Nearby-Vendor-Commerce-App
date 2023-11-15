@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PalitApplication<palit>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.nearbyvendor.palit.PalitApplication",
+            "projectName": "palit",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

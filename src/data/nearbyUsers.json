@@ -2,7 +2,7 @@
   "nearbyUsers": [
     {
       "accountId": 1,
-      "latitude": 10.294238511494207, 
+      "latitude": 10.294238511494207,
       "longitude": 123.88110581516311,
       "isAdmin": false,
       "isVendor": true,
@@ -31,13 +31,13 @@
         "storeId": 2,
         "storeName": "Palit Salon",
         "description": "We offer hair and beauty services",
-        "rating": 4.0
+        "rating": 4
       }
     },
     {
       "accountId": 4,
-      "latitude": 10.2940,
-      "longitude": 123.8810,
+      "latitude": 10.294,
+      "longitude": 123.881,
       "isAdmin": false,
       "isVendor": false,
       "store": null
@@ -53,7 +53,7 @@
     {
       "accountId": 6,
       "latitude": 10.2946,
-      "longitude": 123.8810,
+      "longitude": 123.881,
       "isAdmin": false,
       "isVendor": false,
       "store": null
@@ -70,6 +70,14 @@
       "accountId": 8,
       "latitude": 10.2942,
       "longitude": 123.8811,
+      "isAdmin": false,
+      "isVendor": false,
+      "store": null
+    },
+    {
+      "id": 2,
+      "latitude": 10.316612749999999,
+      "longitude": 123.8782875,
       "isAdmin": false,
       "isVendor": false,
       "store": null

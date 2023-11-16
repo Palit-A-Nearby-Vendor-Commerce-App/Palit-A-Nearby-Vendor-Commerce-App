@@ -1,0 +1,46 @@
+[
+  {
+    "accountId": 1,
+    "latitude": 10.3157,
+    "longitude": 123.8854,
+    "isAdmin": false,
+    "isVendor": true,
+    "store": {
+      "storeId": 1,
+      "storeName": "Palit Store",
+      "description": "We sell anything and everything",
+      "category": "https://i.imgur.com/9Zs0W8t.png",
+      "rating": 4.5
+    }
+  },
+  {
+    "accountId": 2,
+    "latitude": 10.3161,
+    "longitude": 123.8856,
+    "isAdmin": false,
+    "isVendor": false,
+    "store": null
+  },
+  {
+    "accountId": 3,
+    "latitude": 10.3155,
+    "longitude": 123.8852,
+    "isAdmin": false,
+    "isVendor": true,
+    "store": {
+      "storeId": 2,
+      "storeName": "Palit Salon",
+      "description": "We offer hair and beauty services",
+      "category": "https://i.imgur.com/9Zs0W8t.png",
+      "rating": 4.0
+    }
+  },
+  {
+    "accountId": 4,
+    "latitude": 10.3159,
+    "longitude": 123.8858,
+    "isAdmin": true,
+    "isVendor": false,
+    "store": null
+  }
+]

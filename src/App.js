@@ -5,9 +5,10 @@ import "./App.css";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
-import Home from "./pages/Home";
 import Aboutus from "./pages/Aboutus";
 import Services from "./pages/Services";
+import Admin from "./pages/Admin";
+import Home from "./pages/Home";
 import Contact from "./pages/Contact";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -33,6 +34,7 @@ function App() {
           component={AdminDashboard}
         />
         <Route path="/home" exact component={Home} />
+        <Route path="/admin" exact component={Admin} />
 
         <Route component={Landing} />
       </Switch>

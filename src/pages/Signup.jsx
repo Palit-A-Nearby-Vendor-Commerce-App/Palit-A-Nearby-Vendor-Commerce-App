@@ -8,7 +8,6 @@ import CustomButton from "../components/CustomButton";
 import axios from "axios";
 
 import logo from "../assets/images/logo.png";
-import Main from "../layouts/Main";
 
 const Signup = () => {
   const history = useHistory();
@@ -91,16 +90,16 @@ const Signup = () => {
         userData
       );
       alert("User created:", response.data);
-      history.push("/app");
+      history.push("/signup");
     } catch (error) {
       console.error("Error creating user:", error);
     }
   };
   return (
-      <div className="w-full h-screen p-8 font-custom">
+      <div className="w-full h-screen bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom ">
         <div className="w-[500px] m-auto">
           <div className="w-full flex items-center justify-center">
-            <img src={logo} alt="Palit logo" className="w-[250px] h-[102px]" />
+            <img src={logo} alt="Palit logo" className="w-[250px] h-[102px] mt-5" />
           </div>
 
           <div className="w-full flex items-center justify-center flex-col mt-8">

@@ -1,7 +1,7 @@
-package com.nearbyvendor.palit.Controller;
+package com.nearbyvendor.palit.controller;
 
-import com.nearbyvendor.palit.Entity.AccountEntity;
-import com.nearbyvendor.palit.Service.AccountService;
+import com.nearbyvendor.palit.entity.AccountEntity;
+import com.nearbyvendor.palit.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

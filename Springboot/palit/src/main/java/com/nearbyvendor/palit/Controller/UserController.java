@@ -1,7 +1,7 @@
-package com.nearbyvendor.palit.Controller;
+package com.nearbyvendor.palit.controller;
 
-import com.nearbyvendor.palit.Entity.UserEntity;
-import com.nearbyvendor.palit.Service.UserService;
+import com.nearbyvendor.palit.entity.UserEntity;
+import com.nearbyvendor.palit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

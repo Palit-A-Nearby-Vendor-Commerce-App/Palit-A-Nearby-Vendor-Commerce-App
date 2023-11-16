@@ -1,7 +1,7 @@
-package com.nearbyvendor.palit.Service;
+package com.nearbyvendor.palit.service;
 
-import com.nearbyvendor.palit.Entity.AccountEntity;
-import com.nearbyvendor.palit.Repository.AccountRepository;
+import com.nearbyvendor.palit.entity.AccountEntity;
+import com.nearbyvendor.palit.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

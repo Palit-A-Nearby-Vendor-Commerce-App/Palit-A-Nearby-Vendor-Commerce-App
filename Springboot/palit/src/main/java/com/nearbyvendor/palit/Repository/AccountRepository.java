@@ -1,6 +1,6 @@
-package com.nearbyvendor.palit.Repository;
+package com.nearbyvendor.palit.repository;
 
-import com.nearbyvendor.palit.Entity.AccountEntity;
+import com.nearbyvendor.palit.entity.AccountEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -5,7 +5,11 @@ import java.util.Objects;
 
 public class TransactionId implements Serializable {
 
-    private int accountCustomerId;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int accountCustomerId;
     private int accountVendorId;
 
     public TransactionId() {

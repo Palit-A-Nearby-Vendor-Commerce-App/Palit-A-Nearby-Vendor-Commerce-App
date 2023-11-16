@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import marker from "../assets/images/vendor-self-pin.png";
 import axios from "axios"; // import axios library
-import NavigationBar from "../components/NavigationBar";
 
 const mapContainerStyle = {
   width: "100%",
@@ -111,7 +110,6 @@ function Home() {
 
   return (
     <>
-      <NavigationBar />
       <div className="w-full font-custom">
         <LoadScript googleMapsApiKey="AIzaSyBNM-CYx7dA0gckgBmybtovang7Bvp8lK0">
           <div>

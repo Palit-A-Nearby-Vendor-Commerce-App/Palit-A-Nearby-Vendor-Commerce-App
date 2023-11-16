@@ -1,4 +1,5 @@
 package com.nearbyvendor.palit.entity;
+
 import javax.persistence.*;
 
 @Entity

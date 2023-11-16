@@ -2,13 +2,15 @@ import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import "./App.css";
-import Landing from "./pages/Landing";
-import Signup from "./pages/Signup";
-import Signin from "./pages/Signin";
-import Home from "./pages/Home";
 import Aboutus from "./pages/Aboutus";
-import Services from "./pages/Services";
+import Admin from "./pages/Admin";
+import AdminDashboard from "./pages/AdminDashboard";
 import Contact from "./pages/Contact";
+import Home from "./pages/Home";
+import Landing from "./pages/Landing";
+import Services from "./pages/Services";
+import Signin from "./pages/Signin";
+import Signup from "./pages/Signup";
 
 function App() {
   return (
@@ -20,7 +22,18 @@ function App() {
         <Route path="/aboutus" exact component={Aboutus} />
         <Route path="/contactus" exact component={Contact} />
         <Route path="/services" exact component={Services} />
+        <Route
+          path="/adminlogin122124962942022996"
+          exact
+          component={Admin}
+        />
+        <Route
+          path="/admindashboardFMfcgzGwHfsnGkqTNMbzNZVStPCPDCxD"
+          exact
+          component={AdminDashboard}
+        />
         <Route path="/home" exact component={Home} />
+        <Route path="/admin" exact component={Admin} />
 
         <Route component={Landing} />
       </Switch>

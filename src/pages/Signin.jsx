@@ -59,10 +59,10 @@ const Signin = () => {
   }
 
   return (
-      <div className="w-full h-screen p-8 font-custom">
+      <div className="w-full h-screen bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom ">
         <div className="w-[500px] m-auto">
           <div className="w-full flex items-center justify-center">
-            <img src={logo} alt="Palit logo" className="w-[250px] h-[102px]" />
+            <img src={logo} alt="Palit logo" className="w-[250px] h-[102px] mt-40" />
           </div>
           <h2 className="text-2xl font-bold text-grayy mt-8">Welcome!</h2>
           <p className="text-slate-500 mb-10">Log in to continue</p>

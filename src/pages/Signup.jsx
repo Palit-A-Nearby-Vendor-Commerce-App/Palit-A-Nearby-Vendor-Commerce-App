@@ -96,10 +96,10 @@ const Signup = () => {
     }
   };
   return (
-      <div className="w-full h-screen p-8 font-custom">
+      <div className="w-full h-screen bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom ">
         <div className="w-[500px] m-auto">
           <div className="w-full flex items-center justify-center">
-            <img src={logo} alt="Palit logo" className="w-[250px] h-[102px]" />
+            <img src={logo} alt="Palit logo" className="w-[250px] h-[102px] mt-5" />
           </div>
 
           <div className="w-full flex items-center justify-center flex-col mt-8">

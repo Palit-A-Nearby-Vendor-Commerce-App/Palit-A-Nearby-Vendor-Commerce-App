@@ -45,7 +45,8 @@
     "start-nearbyUsers-api": "json-server --watch src/data/nearbyUsers.json --port 3004",
     "start-admins-api": "json-server --watch src/data/admin.json --port 3005",
     "start-store-api": "json-server --watch src/data/store.json --port 3006",
-    "start-transaction-api": "json-server --watch src/data/transaction.json --port 3007"
+    "start-transaction-api": "json-server --watch src/data/transaction.json --port 3007",
+    "start-reports-api": "json-server --watch src/data/reports.json --port 3008"
   },
   "eslintConfig": {
     "extends": [

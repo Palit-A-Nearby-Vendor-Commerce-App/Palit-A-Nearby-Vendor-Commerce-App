@@ -1,18 +1,20 @@
-[
-    {
-        "customer": "Shoe, Curt",
-        "vendor": "Bike World"
-    }, 
-    {
-        "customer": "Shoe, Curt",
-        "vendor": "Bike World"
-    },
-    {
-        "customer": "Shoe, Curt",
-        "vendor": "Bike World"
-    },
-    {
-        "customer": "Shoe, Curt",
-        "vendor": "Bike World"
-    }
-]
+{
+    "transactions": [
+        {
+            "customer": "Shoe, Curt",
+            "vendor": "Bike World"
+        }, 
+        {
+            "customer": "Shoe, Curt",
+            "vendor": "Bike World"
+        },
+        {
+            "customer": "Shoe, Curt",
+            "vendor": "Bike World"
+        },
+        {
+            "customer": "Shoe, Curt",
+            "vendor": "Bike World"
+        }
+    ]
+}

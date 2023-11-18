@@ -23,6 +23,7 @@ import logo from "../assets/images/logo.png";
 import CustomInput from "../components/CustomInput";
 import UserData from "../components/admin/UserData";
 import StoreData from "../components/admin/StoreData";
+import ReportsData from "../components/admin/ReportsData";
 
 const drawerWidth = 240;
 
@@ -169,6 +170,7 @@ export default function AdminDashboard() {
           eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
           posuere sollicitudin aliquam ultrices sagittis orci a.
         </Typography>
+        <ReportsData />
         <UserData />
         <StoreData />
       </Box>

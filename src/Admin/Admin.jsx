@@ -5,8 +5,7 @@ import axios from "axios";
 import logo from "../assets/images/logo.png";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
-import NavigationBar from "../components/NavigationBar";
-import { Navigation } from "@material-ui/icons";
+
 
 const Admin = () => {
   const history = useHistory();

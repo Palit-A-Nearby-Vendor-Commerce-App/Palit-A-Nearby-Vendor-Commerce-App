@@ -21,9 +21,9 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import LogoutIcon from "@mui/icons-material/Logout";
 import logo from "../assets/images/logo.png";
 import CustomInput from "../components/CustomInput";
-import UserData from "../components/admin/UserData";
-import StoreData from "../components/admin/StoreData";
-import ReportsData from "../components/admin/ReportsData";
+import UserData from "./UserData";
+import StoreData from "./StoreData";
+import ReportsData from "./ReportsData";
 
 const drawerWidth = 240;
 

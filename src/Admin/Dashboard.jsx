@@ -4,6 +4,7 @@ import NavigationBarAdmin from "../components/NavigationBarAdmin";
 import ReportsData from "./ReportsData";
 import StoreData from "./StoreData";
 import UserData from "./UserData";
+import ProductData from "./ProductData";
 
 const Dashboard = () => {
     return (
@@ -29,6 +30,7 @@ const Dashboard = () => {
                 <ReportsData />
                 <UserData />
                 <StoreData />
+                <ProductData />
             </div>
         </div>
     );

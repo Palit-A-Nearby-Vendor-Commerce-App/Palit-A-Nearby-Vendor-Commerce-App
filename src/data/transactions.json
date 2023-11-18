@@ -1,0 +1,34 @@
+{
+"transactions": [
+    {
+        "accountCustomerId": 1,
+        "accountVendorId": 2,
+        "status": "Completed",
+        "rating": 5
+    },
+    {
+        "accountCustomerId": 2,
+        "accountVendorId": 3,
+        "status": "Pending",
+        "rating": 4
+    },
+    {
+        "accountCustomerId": 3,
+        "accountVendorId": 4,
+        "status": "Cancelled",
+        "rating": 3
+    },
+    {
+        "accountCustomerId": 4,
+        "accountVendorId": 5,
+        "status": "Completed",
+        "rating": 5
+    },
+    {
+        "accountCustomerId": 5,
+        "accountVendorId": 6,
+        "status": "Pending",
+        "rating": 4
+    }
+]
+}

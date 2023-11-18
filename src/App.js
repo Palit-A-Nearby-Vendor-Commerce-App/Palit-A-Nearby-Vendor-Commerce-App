@@ -3,8 +3,8 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import "./App.css";
 import Aboutus from "./pages/Aboutus";
-import Admin from "./pages/Admin";
-import AdminDashboard from "./pages/AdminDashboard";
+import Admin from "./Admin/Admin";
+import AdminDashboard from "./Admin/AdminDashboard";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import Landing from "./pages/Landing";

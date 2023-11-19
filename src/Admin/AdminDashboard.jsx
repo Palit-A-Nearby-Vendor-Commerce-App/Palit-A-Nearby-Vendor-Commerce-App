@@ -170,10 +170,8 @@ export default function AdminDashboard() {
           eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
           posuere sollicitudin aliquam ultrices sagittis orci a.
         </Typography>
-        <ReportsData />
-        <UserData />
-        <StoreData />
       </Box>
+      <ReportsData />
     </Box>
   );
 }

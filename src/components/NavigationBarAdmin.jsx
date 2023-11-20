@@ -42,7 +42,7 @@ export default function NavigationBarAdmin() {
   const formattedDate = currentDate.toDateString();
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex ", bgcolor: "#D6F3F9"}}>
       <CssBaseline />
 
       <Drawer
@@ -138,7 +138,7 @@ export default function NavigationBarAdmin() {
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
+        sx={{ flexGrow: 1, p: 3 }} 
       >
         {/* <Toolbar /> */}
         <section id="dashboard" className="font-custom">

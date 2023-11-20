@@ -1,36 +1,28 @@
 {
-  "store": [
-    {
-      "userId": 123123112,
-      "storeDetails": "BainaBai",
-      "products": [
+    "products": [
         {
-          "productId": "1",
-          "productName": "Banana",
-          "productImg": ""
+            "productId": 1,
+            "name": "Apple iPhone 13",
+            "description": "This is a description for Apple iPhone 13.",
+            "price": 999.99,
+            "storeId": 2,
+            "imagePath": "path/to/image1.jpg"
         },
         {
-          "productId": "2",
-          "productName": "Orange",
-          "productImg": ""
-        }
-      ]
-    },
-    {
-      "userId": 123123123123112,
-      "storeDetails": "Boinaboi",
-      "products": [
-        {
-          "productId": "1",
-          "productName": "Banona",
-          "productImg": ""
+            "productId": 2,
+            "name": "Samsung Galaxy S21",
+            "description": "This is a description for Samsung Galaxy S21.",
+            "price": 899.99,
+            "storeId": 2,
+            "imagePath": "path/to/image2.jpg"
         },
         {
-          "productId": "2",
-          "productName": "Oradee",
-          "productImg": ""
+            "productId": 3,
+            "name": "Google Pixel 6",
+            "description": "This is a description for Google Pixel 6.",
+            "price": 799.99,
+            "storeId": 3,
+            "imagePath": "path/to/image3.jpg"
         }
-      ]
-    }
-  ]
+    ]
 }

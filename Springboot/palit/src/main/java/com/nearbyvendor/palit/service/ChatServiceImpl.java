@@ -1,12 +1,13 @@
 package com.nearbyvendor.palit.service;
 
-import com.nearbyvendor.palit.entity.Chat;
-import com.nearbyvendor.palit.repository.ChatRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.nearbyvendor.palit.entity.Chat;
+import com.nearbyvendor.palit.repository.ChatRepository;
 
 @Service
 public class ChatServiceImpl implements ChatService {

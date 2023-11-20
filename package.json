@@ -41,9 +41,13 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start-users-api": "json-server --watch src/data/users.json --port 3002",
-    "start-products-api": "json-server --watch src/data/store.json --port 3003",
+    "start-products-api": "json-server --watch src/data/products.json --port 3003",
     "start-nearbyUsers-api": "json-server --watch src/data/nearbyUsers.json --port 3004",
-    "start-admins-api": "json-server --watch src/data/admin.json --port 3005"
+    "start-admins-api": "json-server --watch src/data/admin.json --port 3005",
+    "start-store-api": "json-server --watch src/data/store.json --port 3006",
+    "start-transactions-api": "json-server --watch src/data/transactions.json --port 3007",
+    "start-reports-api": "json-server --watch src/data/reports.json --port 3008",
+    "start-account-api": "json-server --watch src/data/account.json --port 3009"
   },
   "eslintConfig": {
     "extends": [

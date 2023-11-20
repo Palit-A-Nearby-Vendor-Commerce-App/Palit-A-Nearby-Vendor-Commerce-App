@@ -3,8 +3,6 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -21,14 +19,22 @@ import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import LogoutIcon from "@mui/icons-material/Logout";
-
 import logo from "../assets/images/logo.png";
 import CustomInput from "../components/CustomInput";
+import UserData from "./UserData";
+import StoreData from "./StoreData";
+import ReportsData from "./ReportsData";
 
 const drawerWidth = 240;
 
 export default function AdminDashboard() {
   const [searchInput, setSearchInput] = useState("");
+  const currentDate = new Date();
+
+  const formattedDate = currentDate.toDateString();
+
+
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -137,7 +143,10 @@ export default function AdminDashboard() {
         {/* <Toolbar /> */}
         <section id="dashboard" className="font-custom">
           <div className="flex justify-between items-center ">
-            <h1 className="text-4xl font-bold ">Dashboard</h1>
+            <di>
+              <h1 className="text-4xl font-bold ">Dashboard</h1>
+              <p class="text-sm text-slate-400">{formattedDate}</p>
+            </di>
             <div className="w-[250px]">
               <CustomInput
                 type="text"
@@ -162,6 +171,7 @@ export default function AdminDashboard() {
           posuere sollicitudin aliquam ultrices sagittis orci a.
         </Typography>
       </Box>
+      <ReportsData />
     </Box>
   );
 }

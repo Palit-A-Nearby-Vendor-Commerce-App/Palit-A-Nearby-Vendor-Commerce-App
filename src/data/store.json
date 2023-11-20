@@ -2,7 +2,10 @@
     "store": [
         {
             "userId": 123123112,
-            "storeDetails": "BainaBai",
+            "storeName": "BainaBai",
+            "storeDescription": "This is a store description",
+            "category": "Fruit",
+            "imagePath": "http://www.bainabai.com/images/logo.png",
             "products": [
                 {
                     "productId": "1",
@@ -18,7 +21,10 @@
         },
         {
             "userId": 123123123123112,
-            "storeDetails": "Boinaboi",
+            "storeName": "Boinaboi",
+            "storeDescription": "This is a store description",
+            "category": "Fruit",
+            "imagePath": "http://www.bainabai.com/images/logo.png",
             "products": [
                 {
                     "productId": "1",

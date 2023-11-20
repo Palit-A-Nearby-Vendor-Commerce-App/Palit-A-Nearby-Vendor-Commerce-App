@@ -1,10 +1,12 @@
 import React from "react";
-import NavigationBarAdmin from "../components/NavigationBarAdmin";
 
 const Statistics = () => {
-    return <div>
-        <NavigationBarAdmin />
-</div>;
-}
+  return (
+    <div className="w-full bg-black">
+      Statistics niiii!!!
+      {/* <NavigationBarAdmin /> */}
+    </div>
+  );
+};
 
 export default Statistics;

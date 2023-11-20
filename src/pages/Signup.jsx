@@ -107,7 +107,11 @@ const Signup = () => {
     <div className="w-full h-screen bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom ">
       <div className="w-[500px] m-auto">
         <div className="w-full flex items-center justify-center">
-          <img src={logo} alt="Palit logo" className="w-[250px] h-[102px] mt-5" />
+          <img
+            src={logo}
+            alt="Palit logo"
+            className="w-[250px] h-[102px] mt-5"
+          />
         </div>
 
         <div className="w-full flex items-center justify-center flex-col mt-8">
@@ -202,11 +206,12 @@ const Signup = () => {
               onChange={handleUserTypeChange}
               className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
             >
-              <option value="" disabled>Select user type</option>
+              <option value="" disabled>
+                Select user type
+              </option>
               <option value="customer">Customer</option>
               <option value="vendor">Vendor</option>
             </select>
-
           </div>
           <CustomButton
             btnStyle="w-full bg-primary p-3 text-white rounded-[20px] mt-10"

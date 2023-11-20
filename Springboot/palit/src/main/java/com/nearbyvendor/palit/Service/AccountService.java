@@ -34,4 +34,16 @@ public class AccountService {
     public void deleteAccountById(int id) {
         accountRepository.deleteById(id);
     }
+
+    public int getNextAccountId() {
+        AccountEntity latestAccount = accountRepository.findTopByOrderByIdDesc();
+        if (latestAccount != null) {
+            return latestAccount.getId() + 1;
+        } else {
+            // Handle the case when there are no accounts in the repository
+            // You can return 1 as the next ID or handle it in a different way based on your requirements
+            return 0;
+        }
+    }
+    
 }

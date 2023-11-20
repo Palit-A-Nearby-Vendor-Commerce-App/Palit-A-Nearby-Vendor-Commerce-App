@@ -50,4 +50,8 @@ public class AccountEntity {
     public void setUser(UserEntity user) {
         this.user = user;
     }
+    
+    public int getId() {
+        return accountId;
+    }
 }

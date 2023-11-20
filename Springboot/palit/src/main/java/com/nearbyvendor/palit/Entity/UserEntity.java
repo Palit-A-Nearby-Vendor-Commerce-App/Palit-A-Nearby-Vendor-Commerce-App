@@ -70,4 +70,8 @@ public class UserEntity {
     public void setImage(String image) {
         this.image = image;
     }
+    
+    public int getId() {
+        return userId;
+    }
 }

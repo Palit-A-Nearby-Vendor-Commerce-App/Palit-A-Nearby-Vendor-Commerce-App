@@ -28,4 +28,15 @@ public class UserService {
     public void deleteUserById(int id) {
         userRepository.deleteById(id);
     }
+
+    public int getNextUsertId() {
+        UserEntity latestUser = userRepository.findTopByOrderByIdDesc();
+        if (latestUser != null) {
+            return latestUser.getId() + 1;
+        } else {
+            // Handle the case when there are no accounts in the repository
+            // You can return 1 as the next ID or handle it in a different way based on your requirements
+            return 0;
+        }
+    }
 }

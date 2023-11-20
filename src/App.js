@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { UserProvider, UserContext } from "./UserContext";
+import { UserProvider } from "./UserContext";
 
 import Admin from "./Admin/Admin";
 import "./App.css";
@@ -12,15 +12,8 @@ import Services from "./pages/Services";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 
-import Accounts from "./Admin/Accounts";
 import NavigationBarAdmin from "./components/NavigationBarAdmin";
 // import Dashboard from "./Admin/Dashboard";
-import Products from "./Admin/Products";
-import Reports from "./Admin/Reports";
-import Statistics from "./Admin/Statistics";
-import Stores from "./Admin/Stores";
-import Transactions from "./Admin/Transactions";
-import Users from "./Admin/Users";
 
 function App() {
   return (
@@ -44,24 +37,15 @@ function App() {
           <Route
             path="/admindashboard/statistics"
             exact
-            component={Statistics}
+            component={NavigationBarAdmin}
           />
 
-          <Route path="/admindashboard/reports" exact component={Reports} />
-
-          <Route path="/admindashboard/users" exact component={Users} />
-
-          <Route path="/admindashboard/accounts" exact component={Accounts} />
-
-          <Route path="/admindashboard/stores" exact component={Stores} />
-
-          <Route
-            path="/admindashboard/transactions"
-            exact
-            component={Transactions}
-          />
-
-          <Route path="/admindashboard/products" exact component={Products} />
+          <Route path="/admindashboard/reports" exact component={NavigationBarAdmin} />
+          <Route path="/admindashboard/users" exact component={NavigationBarAdmin} />
+          <Route path="/admindashboard/accounts" exact component={NavigationBarAdmin} />
+          <Route path="/admindashboard/stores" exact component={NavigationBarAdmin} />
+          <Route path="/admindashboard/transactions" exact component={NavigationBarAdmin} />
+          <Route path="/admindashboard/products" exact component={NavigationBarAdmin} />
 
           <Route path="/home" exact component={Home} />
           <Route path="/admin" exact component={Admin} />

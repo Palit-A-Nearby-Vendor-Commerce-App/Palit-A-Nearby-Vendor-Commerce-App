@@ -82,6 +82,7 @@ const Signup = () => {
       userType: formData.userType,
       image: selectedImage || "",
     };
+      
 
     try {
       const userExists = await axios.get(
@@ -92,6 +93,7 @@ const Signup = () => {
         alert("User already exists");
         return;
       }
+      
       const response = await axios.post(
         "http://localhost:3002/users",
         userData

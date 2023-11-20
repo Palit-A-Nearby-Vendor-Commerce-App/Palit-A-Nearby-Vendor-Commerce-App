@@ -26,6 +26,11 @@ import CustomInput from "../components/CustomInput";
 import Dashboard from "../Admin/Dashboard";
 import Statistics from "../Admin/Statistics";
 import Reports from "../Admin/Reports";
+import Users from "../Admin/Users";
+import Accounts from "../Admin/Accounts";
+import Stores from "../Admin/Stores";
+import Transactions from "../Admin/Transactions";
+import Products from "../Admin/Products";
 
 const drawerWidth = 240;
 
@@ -150,9 +155,14 @@ export default function NavigationBarAdmin() {
               />
             </div>
           </div>
-          {location === "/admindashboard/statistics" && <Statistics />}
           {location === "/admindashboard/dashboard" && <Dashboard />}
+          {location === "/admindashboard/statistics" && <Statistics />}
           {location === "/admindashboard/reports" && <Reports />}
+          {location === "/admindashboard/users" && <Users />}
+          {location === "/admindashboard/accounts" && <Accounts />}
+          {location === "/admindashboard/stores" && <Stores />}
+          {location === "/admindashboard/transactions" && <Transactions />}
+          {location === "/admindashboard/products" && <Products />}
           {/* {(() => {
             switch (location) {
               case "/admindashboard/dashboard":

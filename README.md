@@ -1,6 +1,12 @@
 # Palit-A-Nearby-Vendor-Commerce-App
 # App Development Plan
 
+## Developers:
+Badilla, Mark Kenneth
+Briones, Joshua
+Coyoca, Alestair Cyril
+Selma, Kheisa
+
 ## Overview
 Palit is a web app that connects nearby vendors and customers who want to buy or sell goods or services in a convenient and cash-based way. The app uses realtime geolocation to show the users' locations on a map and allows them to chat and transact with each other.
 

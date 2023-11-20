@@ -21,8 +21,14 @@ public class AccountService {
         return accountRepository.findById(id).orElse(null);
     }
 
-    public AccountEntity saveAccount(AccountEntity account) {
-        return accountRepository.save(account);
+    public AccountEntity saveAccount(int id, AccountEntity account) {
+        if (accountRepository.findById(id) != null) {
+            return accountRepository.save(account);
+        } else {
+            // Handle the case when the account ID is null or does not exist
+            // You can throw an exception or handle it in a different way based on your requirements
+            throw new IllegalArgumentException("Invalid account ID");
+        }
     }
 
     public void deleteAccountById(int id) {

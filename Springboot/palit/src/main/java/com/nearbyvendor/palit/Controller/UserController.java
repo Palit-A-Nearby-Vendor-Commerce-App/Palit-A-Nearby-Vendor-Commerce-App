@@ -32,9 +32,4 @@ public class UserController {
     public void deleteUserById(@PathVariable int id) {
         userService.deleteUserById(id);
     }
-
-    @GetMapping("/users/nextId")
-    public int getNextUserId() {
-        return getNextUserId();
-    }
 }

@@ -26,4 +26,14 @@ public class StoreService {
         return storeRepository.save(store);
     }
     
+    public Store saveStore(int id, Store store) {
+        if (storeRepository.findById(id) != null) {
+            return storeRepository.save(store);
+        } else {
+            // Handle the case when the store ID is null or does not exist
+            // You can throw an exception or handle it in a different way based on your requirements
+            throw new IllegalArgumentException("Invalid store ID");
+        }
+    }
+    
 }

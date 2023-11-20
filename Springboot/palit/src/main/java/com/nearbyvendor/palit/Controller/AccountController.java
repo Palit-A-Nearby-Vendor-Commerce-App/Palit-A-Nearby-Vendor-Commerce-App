@@ -23,9 +23,9 @@ public class AccountController {
         return accountService.getAccountById(id);
     }
 
-    @PostMapping("/accounts")
-    public AccountEntity saveAccount(@RequestBody AccountEntity account) {
-        return accountService.saveAccount(account);
+    @PutMapping("/accounts/{id}")
+    public AccountEntity saveAccount(@PathVariable int id, @RequestBody AccountEntity account) {
+        return accountService.saveAccount(id, account);
     }
 
     @DeleteMapping("/accounts/{id}")

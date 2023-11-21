@@ -31,6 +31,7 @@ import Accounts from "../Admin/Accounts";
 import Stores from "../Admin/Stores";
 import Transactions from "../Admin/Transactions";
 import Products from "../Admin/Products";
+import { useHistory } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -38,11 +39,15 @@ export default function NavigationBarAdmin() {
   const [searchInput, setSearchInput] = useState("");
   const currentDate = new Date();
   const location = useLocation().pathname;
-
+  const history = useHistory();
   const formattedDate = currentDate.toDateString();
 
+  const handleLogout = () => {
+    history.push("/adminlogin");
+  };
+
   return (
-    <Box sx={{ display: "flex ", bgcolor: "#D6F3F9"}}>
+    <Box sx={{ display: "flex "}}>
       <CssBaseline />
 
       <Drawer
@@ -128,7 +133,7 @@ export default function NavigationBarAdmin() {
             },
           }}
         >
-          <ListItemButton>
+          <ListItemButton onClick = {handleLogout}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
@@ -138,7 +143,7 @@ export default function NavigationBarAdmin() {
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3 }} 
+        sx={{ flexGrow: 1, p: 3, backgroundColor: "#D6F3F9",height: "100vh",overflow: "auto" }} 
       >
         {/* <Toolbar /> */}
         <section id="dashboard" className="font-custom">

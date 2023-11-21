@@ -27,7 +27,7 @@ function App() {
           <Route path="/contactus" exact component={Contact} />
           <Route path="/services" exact component={Services} />
 
-          <Route path="/adminlogin122124962942022996" exact component={Admin} />
+          <Route path="/adminlogin3x8Yz7!qA" exact component={Admin} />
           <Route
             path="/admindashboard/dashboard"
             exact

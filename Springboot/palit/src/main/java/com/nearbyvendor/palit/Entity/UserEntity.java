@@ -1,6 +1,7 @@
 package com.nearbyvendor.palit.entity;
 
 import javax.persistence.*;
+
 import java.util.Date;
 
 @Entity
@@ -23,7 +24,7 @@ public class UserEntity {
     
     private boolean isDeleted;
 
-    private String image; // assuming the image is stored as a URL or file path
+    private String imageLocation;
 
     // getters and setters
     public int getUserId() {
@@ -66,12 +67,12 @@ public class UserEntity {
         this.password = password;
     }
 
-    public String getImage() {
-        return image;
+    public String getimageLocation() {
+        return imageLocation;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setimageLocation(String imageLocation) {
+        this.imageLocation = imageLocation;
     }
     
     public boolean getIsDeleted() {

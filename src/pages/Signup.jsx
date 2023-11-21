@@ -1,91 +1,113 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-function SignupPage() {
-  // Define the state variables for the user input fields
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+function Signup() {
+  const [userData, setUserData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    userType: "",
+    storeName: "",
+    description: "",
+    category: "",
+  });
 
-  // Define a function to handle the form submission
-  const handleSubmit = (e) => {
-    e.preventDefault(); // Prevent the default browser behavior
-    // Validate the user input
-    if (name === "" || email === "" || password === "" || confirmPassword === "") {
-      alert("Please fill in all the fields");
-      return;
-    }
-    if (password !== confirmPassword) {
-      alert("Passwords do not match");
-      return;
-    }
-    // Create a user object to send to the backend
-    const user = {
-      name: name,
-      email: email,
-      password: password,
-    };
-    // Use axios to make a POST request to the backend API
-    axios
-      .post("/api/createUser", user)
-      .then((response) => {
-        // Handle the response from the backend
-        console.log(response.data);
-        alert("User created successfully");
-      })
-      .catch((error) => {
-        // Handle the error from the backend
-        console.log(error);
-        alert("User creation failed");
-      });
+  const handleChange = (e) => {
+    setUserData({
+      ...userData,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  // Return the JSX code for the signup page
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    let user = null;
+    while (!user) {
+      try {
+        // Create user
+        const userResponse = await axios.post(
+          "http://localhost:8080/api/createUser",
+          {
+            name: userData.name,
+            email: userData.email,
+            password: userData.password,
+          }
+        );
+        user = userResponse.data;
+
+        // Create account
+        const accountData = {
+          isVendor: userData.userType === "vendor",
+          isAdmin: false,
+          userId: user.userId,
+        };
+        await axios.post(
+          "http://localhost:8080/api/createAccount",
+          accountData
+        );
+
+        // If user is a vendor, create store
+        if (userData.userType === "vendor") {
+          const storeData = {
+            storeName: userData.storeName,
+            description: userData.description,
+            category: userData.category,
+            vendorAccountId: user.userId,
+          };
+          await axios.post("http://localhost:8080/api/createStore", storeData);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   return (
-    <div className="signup-page">
-      <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Name</label>
+    <form onSubmit={handleSubmit}>
+      <input name="name" onChange={handleChange} placeholder="Name" required />
+      <input
+        name="email"
+        onChange={handleChange}
+        placeholder="Email"
+        required
+      />
+      <input
+        name="password"
+        onChange={handleChange}
+        placeholder="Password"
+        required
+      />
+      <select name="userType" onChange={handleChange} required>
+        <option value="">Select user type</option>
+        <option value="customer">Customer</option>
+        <option value="vendor">Vendor</option>
+      </select>
+      {userData.userType === "vendor" && (
+        <>
           <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name="storeName"
+            onChange={handleChange}
+            placeholder="Store Name"
+            required
           />
-        </div>
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
           <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            name="description"
+            onChange={handleChange}
+            placeholder="Description"
+            required
           />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
           <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            name="category"
+            onChange={handleChange}
+            placeholder="Category"
+            required
           />
-        </div>
-        <div className="form-group">
-          <label htmlFor="confirm-password">Confirm Password</label>
-          <input
-            type="password"
-            id="confirm-password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
-    </div>
+        </>
+      )}
+      <button type="submit">Sign Up</button>
+    </form>
   );
 }
 
-export default SignupPage;
+export default Signup;

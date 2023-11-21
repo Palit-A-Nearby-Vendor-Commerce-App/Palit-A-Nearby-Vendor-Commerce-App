@@ -15,11 +15,11 @@ public class UserService {
     private UserRepository userRepository;
 
     public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findByIsDeletedFalse();
     }
 
     public UserEntity getUserById(int id) {
-        return userRepository.findById(id).orElse(null);
+        return userRepository.findByIdAndIsDeletedFalse(id);
     }
 
     public UserEntity createUser(UserEntity user) {
@@ -27,16 +27,22 @@ public class UserService {
     }
 
     public UserEntity updateUserById(int id, UserEntity user) {
-        if (userRepository.findById(id) != null) {
+        UserEntity existingUser = userRepository.findByIdAndIsDeletedFalse(id);
+        if (existingUser != null) {
+            user.setUserId(existingUser.getUserId());
             return userRepository.save(user);
         } else {
-            // Handle the case when the user ID is null or does not exist
-            // You can throw an exception or handle it in a different way based on your requirements
             throw new IllegalArgumentException("Invalid user ID");
         }
     }
 
     public void deleteUserById(int id) {
-        userRepository.deleteById(id);
+        UserEntity user = userRepository.findByIdAndIsDeletedFalse(id);
+        if (user != null) {
+            user.setIsDeleted(true);
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("Invalid user ID");
+        }
     }
 }

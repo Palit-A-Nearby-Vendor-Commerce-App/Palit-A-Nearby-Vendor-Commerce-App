@@ -16,7 +16,7 @@ public class ChatService {
     private ChatRepository chatRepository;
 
     public List<ChatEntity> getChatsByConversationId(int conversationId) {
-        return chatRepository.findByConversationId(conversationId);
+        return chatRepository.findByConversationIdAndIsDeletedFalse(conversationId);
     }
 
     public ChatEntity createChat(ChatEntity chat) {
@@ -24,7 +24,7 @@ public class ChatService {
     }
 
     public ChatEntity updateChatById(int chatId, ChatEntity chat) {
-        Optional<ChatEntity> chatOptional = chatRepository.findById(chatId);
+        Optional<ChatEntity> chatOptional = chatRepository.findByChatIdAndIsDeletedFalse(chatId);
         if (chatOptional.isPresent()) {
             ChatEntity existingChat = chatOptional.get();
             existingChat.setSenderId(chat.getSenderId());
@@ -39,6 +39,13 @@ public class ChatService {
     }
 
     public void deleteChatById(int chatId) {
-        chatRepository.deleteById(chatId);
+        Optional<ChatEntity> chatOptional = chatRepository.findByChatIdAndIsDeletedFalse(chatId);
+        if (chatOptional.isPresent()) {
+            ChatEntity chat = chatOptional.get();
+            chat.setIsDeleted(true);
+            chatRepository.save(chat);
+        } else {
+            throw new RuntimeException("ChatEntity not found with id: " + chatId);
+        }
     }
 }

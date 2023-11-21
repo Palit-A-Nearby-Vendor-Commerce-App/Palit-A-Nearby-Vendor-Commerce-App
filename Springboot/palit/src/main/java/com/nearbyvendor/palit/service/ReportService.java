@@ -14,11 +14,11 @@ public class ReportService {
     private ReportRepository reportRepository;
 
     public List<ReportEntity> getAllReports() {
-        return reportRepository.findAll();
+        return reportRepository.findAllByIsDeletedFalse();
     }
 
     public ReportEntity getReportById(int id) {
-        return reportRepository.findById(id).orElse(null);
+        return reportRepository.findByReportIdAndIsDeletedFalse(id);
     }
 
     public ReportEntity createReport(ReportEntity report) {
@@ -26,7 +26,9 @@ public class ReportService {
     }
 
     public ReportEntity updateReportById(int id, ReportEntity report) {
-        if (reportRepository.findById(id) != null) {
+        ReportEntity existingReport = reportRepository.findByReportIdAndIsDeletedFalse(id);
+        if (existingReport != null) {
+            report.setReportId(id);
             return reportRepository.save(report);
         } else {
             // Handle the case when the report ID is null or does not exist
@@ -36,6 +38,14 @@ public class ReportService {
     }
 
     public void deleteReportById(int id) {
-        reportRepository.deleteById(id);
+        ReportEntity existingReport = reportRepository.findByReportIdAndIsDeletedFalse(id);
+        if (existingReport != null) {
+            existingReport.setIsDeleted(true);
+            reportRepository.save(existingReport);
+        } else {
+            // Handle the case when the report ID is null or does not exist
+            // You can throw an exception or handle it in a different way based on your requirements
+            throw new IllegalArgumentException("Invalid report ID");
+        }
     }
 }

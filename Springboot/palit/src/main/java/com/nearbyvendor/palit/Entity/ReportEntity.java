@@ -21,6 +21,8 @@ public class ReportEntity {
 
     @Column(nullable = false)
     private boolean isResolved;
+    
+    private boolean isDeleted;
 
     public ReportEntity() {
     }
@@ -70,5 +72,13 @@ public class ReportEntity {
 
     public void setIsResolved(boolean isResolved) {
         this.isResolved = isResolved;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

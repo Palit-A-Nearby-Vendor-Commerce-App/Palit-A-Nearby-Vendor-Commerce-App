@@ -14,6 +14,8 @@ public class AccountEntity {
 
     private boolean isAdmin;
 
+    private boolean isDeleted;
+
     @OneToOne
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private UserEntity user;
@@ -49,5 +51,13 @@ public class AccountEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

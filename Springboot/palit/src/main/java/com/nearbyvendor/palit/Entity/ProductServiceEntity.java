@@ -25,6 +25,8 @@ public class ProductServiceEntity {
 
     @Column(name = "image_path")
     private String imagePath;
+    
+    private boolean isDeleted;
 
     public ProductServiceEntity() {
     }
@@ -83,5 +85,13 @@ public class ProductServiceEntity {
 
     public void setStoreId(int storeId) {
         this.storeId = storeId;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

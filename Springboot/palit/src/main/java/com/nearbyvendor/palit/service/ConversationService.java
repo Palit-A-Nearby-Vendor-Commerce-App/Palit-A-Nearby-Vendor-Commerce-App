@@ -14,14 +14,14 @@ public class ConversationService {
     @Autowired
     private ConversationRepository conversationRepository;
 
-    // Get all conversations
+    // Get all conversations where isDeleted is false
     public List<ConversationEntity> getAllConversations() {
-        return conversationRepository.findAll();
+        return conversationRepository.findByIsDeletedFalse();
     }
 
-    // Get a conversation by id
+    // Get a conversation by id where isDeleted is false
     public ConversationEntity getConversationById(int id) {
-        Optional<ConversationEntity> conversation = conversationRepository.findById(id);
+        Optional<ConversationEntity> conversation = conversationRepository.findByIdAndIsDeletedFalse(id);
         if (conversation.isPresent()) {
             return conversation.get();
         } else {
@@ -34,9 +34,9 @@ public class ConversationService {
         return conversationRepository.save(conversation);
     }
 
-    // Update an existing conversation
+    // Update an existing conversation by id where isDeleted is false
     public ConversationEntity updateConversationById(int id, ConversationEntity conversation) {
-        Optional<ConversationEntity> existingConversation = conversationRepository.findById(id);
+        Optional<ConversationEntity> existingConversation = conversationRepository.findByIdAndIsDeletedFalse(id);
         if (existingConversation.isPresent()) {
             existingConversation.get().setSenderId(conversation.getSenderId());
             existingConversation.get().setReceiverId(conversation.getReceiverId());
@@ -46,11 +46,12 @@ public class ConversationService {
         }
     }
 
-    // Delete a conversation by id
+    // Delete a conversation by id by setting isDeleted to true
     public void deleteConversationById(int id) {
-        Optional<ConversationEntity> conversation = conversationRepository.findById(id);
+        Optional<ConversationEntity> conversation = conversationRepository.findByIdAndIsDeletedFalse(id);
         if (conversation.isPresent()) {
-            conversationRepository.delete(conversation.get());
+            conversation.get().setIsDeleted(true);
+            conversationRepository.save(conversation.get());
         } else {
             throw new RuntimeException("ConversationEntity not found with id: " + id);
         }

@@ -14,6 +14,7 @@ public class LocationEntity {
     private double latitude;
     private double longitude;
     private int accountId;
+    private boolean isDeleted;
 
     public LocationEntity() {
     }
@@ -55,5 +56,13 @@ public class LocationEntity {
 
     public void setAccountId(int accountId) {
         this.accountId = accountId;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

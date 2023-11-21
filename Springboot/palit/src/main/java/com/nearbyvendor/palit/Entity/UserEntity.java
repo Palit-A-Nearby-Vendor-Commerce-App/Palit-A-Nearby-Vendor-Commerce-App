@@ -19,6 +19,8 @@ public class UserEntity {
     private String email;
 
     private String password;
+    
+    private boolean isDeleted;
 
     private String image; // assuming the image is stored as a URL or file path
 
@@ -71,7 +73,11 @@ public class UserEntity {
         this.image = image;
     }
     
-    public int getId() {
-        return userId;
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

@@ -12,5 +12,5 @@ public interface LocationRepository extends JpaRepository<LocationEntity, Intege
 
   List<LocationEntity> findByIsDeletedFalse();
 
-  LocationEntity findByLocationIdAndIsDeletedFalse(int id);
+  LocationEntity findByLocationIdAndIsDeletedFalse(int locationId);
 }

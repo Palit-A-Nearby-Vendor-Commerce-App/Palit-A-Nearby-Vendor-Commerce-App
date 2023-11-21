@@ -19,7 +19,7 @@ public class UserService {
     }
 
     public UserEntity getUserById(int id) {
-        return userRepository.findByIdAndIsDeletedFalse(id);
+        return userRepository.findByUserIdAndIsDeletedFalse(id);
     }
 
     public UserEntity createUser(UserEntity user) {
@@ -27,9 +27,9 @@ public class UserService {
     }
 
     public UserEntity updateUserById(int id, UserEntity user) {
-        UserEntity existingUser = userRepository.findByIdAndIsDeletedFalse(id);
+        UserEntity existingUser = userRepository.findByUserIdAndIsDeletedFalse(id);
         if (existingUser != null) {
-            user.setUserId(existingUser.getUserId());
+            user.setId(existingUser.getId());
             return userRepository.save(user);
         } else {
             throw new IllegalArgumentException("Invalid user ID");
@@ -37,7 +37,7 @@ public class UserService {
     }
 
     public void deleteUserById(int id) {
-        UserEntity user = userRepository.findByIdAndIsDeletedFalse(id);
+        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
         if (user != null) {
             user.setIsDeleted(true);
             userRepository.save(user);

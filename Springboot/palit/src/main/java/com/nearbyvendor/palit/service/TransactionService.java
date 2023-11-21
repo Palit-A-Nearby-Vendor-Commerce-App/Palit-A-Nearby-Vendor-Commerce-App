@@ -18,7 +18,7 @@ public class TransactionService {
     }
 
     public TransactionEntity getTransactionById(int id) {
-        return transactionRepository.findByIdAndIsDeletedFalse(id);
+        return transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
     }
 
     public TransactionEntity createTransaction(TransactionEntity transaction) {
@@ -27,9 +27,9 @@ public class TransactionService {
     }
 
     public TransactionEntity updateTransactionById(int id, TransactionEntity transaction) {
-        TransactionEntity existingTransaction = transactionRepository.findByIdAndIsDeletedFalse(id);
+        TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
         if (existingTransaction != null) {
-            transaction.setTransactionId(existingTransaction.getTransactionId());
+            transaction.setId(existingTransaction.getId());
             transaction.setIsDeleted(false);
             return transactionRepository.save(transaction);
         } else {
@@ -40,7 +40,7 @@ public class TransactionService {
     }
 
     public void deleteTransactionById(int id) {
-        TransactionEntity existingTransaction = transactionRepository.findByIdAndIsDeletedFalse(id);
+        TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
         if (existingTransaction != null) {
             existingTransaction.setIsDeleted(true);
             transactionRepository.save(existingTransaction);

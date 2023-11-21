@@ -83,57 +83,25 @@ const Signup = () => {
       image: selectedImage || "",
     };
       
+
     try {
-      // Create a user entity using the localhost:8080/api/createUser API
-      const userResponse = await axios.post("localhost:8080/api/createUser", userData);
-      const user = userResponse.data;
+      const userExists = await axios.get(
+        `http://localhost:3002/users?email=${formData.email}`
+      );
 
-      while (!user) {
-        // User response is null, wait for a short delay before checking again
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+      if (userExists.data.length > 0) {
+        alert("User already exists");
+        return;
       }
-
-      // Create an account entity using the localhost:8080/api/createAccount API
-      const accountData = {
-        isVendor: userData.userType === "vendor",
-        isAdmin: false,
-        userId: user?.userId,
-      };
-      const accountResponse = await axios.post("localhost:8080/api/createAccount", accountData);
-      const account = accountResponse.data;
-
-      // Create a location entity using the localhost:8080/api/createLocation API
-      // For simplicity, we assume the user provides their latitude and longitude
-      // You can use other methods to get the user's location such as geolocation API
-      const locationData = {
-        latitude: userData.latitude,
-        longitude: userData.longitude,
-        accountId: account.accountId,
-      };
-      const locationResponse = await axios.post("localhost:8080/api/createLocation", locationData);
-      const location = locationResponse.data;
-
-      // If the user is a vendor, create a store entity using the localhost:8080/api/createStore API
-      // For simplicity, we assume the user provides their store name, description, category and rating
-      // You can use other methods to get the user's store information such as a form
-      if (userData.userType === "vendor") {
-        const storeData = {
-          storeName: userData.storeName,
-          description: userData.description,
-          category: userData.category,
-          rating: userData.rating,
-          vendorAccountId: account.accountId,
-        };
-        const storeResponse = await axios.post("localhost:8080/api/createStore", storeData);
-        const store = storeResponse.data;
-      }
-
-      // Redirect the user to the home page or dashboard
-      history.push("/");
+      
+      const response = await axios.post(
+        "http://localhost:3002/users",
+        userData
+      );
+      alert("User created!", response.data);
+      history.push("/signin");
     } catch (error) {
-      // Handle any errors that may occur
-      console.error(error);
-      alert("Something went wrong. Please try again.");
+      console.error("Error creating user:", error);
     }
   };
 
@@ -208,7 +176,8 @@ const Signup = () => {
               type="email"
               placeholder="yourname@gmail.com"
               value={formData["email"]}
-              onChange={handleEmailChange}/>
+              onChange={handleEmailChange}
+            />
           </div>
           <div className="mt-4">
             <label>Birth date</label>

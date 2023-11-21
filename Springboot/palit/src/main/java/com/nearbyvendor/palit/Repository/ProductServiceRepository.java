@@ -13,7 +13,7 @@ public interface ProductServiceRepository extends JpaRepository<ProductServiceEn
     // Find product services by store id
     List<ProductServiceEntity> findByStoreId(int storeId);
 
-    Optional<ProductServiceEntity> findByProductServiceIdAndIsDeletedFalse(int id);
+    Optional<ProductServiceEntity> findByProductIdAndIsDeletedFalse(int productId);
 
     List<ProductServiceEntity> findByStoreIdAndIsDeletedFalse(int storeId);
 

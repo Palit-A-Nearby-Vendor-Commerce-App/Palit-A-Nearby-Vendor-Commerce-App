@@ -13,5 +13,5 @@ public interface ReportRepository extends JpaRepository<ReportEntity, Integer> {
   List<ReportEntity> findAllByIsDeletedFalse();
     // You can add custom methods here if needed
 
-  ReportEntity findByReportIdAndIsDeletedFalse(int id);
+  ReportEntity findByReportIdAndIsDeletedFalse(int reportId);
 }

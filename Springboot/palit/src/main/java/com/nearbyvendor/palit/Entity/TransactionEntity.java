@@ -33,11 +33,11 @@ public class TransactionEntity {
         this.rating = rating;
     }
 
-    public int getTransactionId() {
+    public int getId() {
         return transactionId;
     }
 
-    public void setTransactionId(int transactionId) {
+    public void setId(int transactionId) {
         this.transactionId = transactionId;
     }
 

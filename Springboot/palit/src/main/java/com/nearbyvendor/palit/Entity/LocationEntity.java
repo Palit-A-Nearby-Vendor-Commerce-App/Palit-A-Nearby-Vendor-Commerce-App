@@ -26,11 +26,11 @@ public class LocationEntity {
         this.accountId = accountId;
     }
 
-    public int getLocationId() {
+    public int getId() {
         return locationId;
     }
 
-    public void setLocationId(int locationId) {
+    public void setId(int locationId) {
         this.locationId = locationId;
     }
 

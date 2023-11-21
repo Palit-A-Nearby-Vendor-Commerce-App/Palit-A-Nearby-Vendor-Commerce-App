@@ -28,7 +28,7 @@ public class ReportService {
     public ReportEntity updateReportById(int id, ReportEntity report) {
         ReportEntity existingReport = reportRepository.findByReportIdAndIsDeletedFalse(id);
         if (existingReport != null) {
-            report.setReportId(id);
+            report.setId(id);
             return reportRepository.save(report);
         } else {
             // Handle the case when the report ID is null or does not exist

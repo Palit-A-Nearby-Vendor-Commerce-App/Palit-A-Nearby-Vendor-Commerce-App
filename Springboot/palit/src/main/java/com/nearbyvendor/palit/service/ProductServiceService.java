@@ -21,7 +21,7 @@ public class ProductServiceService {
 
     // Get product service by id where isDeleted is false
     public ProductServiceEntity getProductServiceById(int id) {
-        Optional<ProductServiceEntity> productService = productServiceRepository.findByProductServiceIdAndIsDeletedFalse(id);
+        Optional<ProductServiceEntity> productService = productServiceRepository.findByProductIdAndIsDeletedFalse(id);
         if (productService.isPresent()) {
             return productService.get();
         } else {
@@ -41,7 +41,7 @@ public class ProductServiceService {
 
     // Update product service
     public ProductServiceEntity updateProductServiceById(int id, ProductServiceEntity productService) {
-        Optional<ProductServiceEntity> existingProductService = productServiceRepository.findByProductServiceIdAndIsDeletedFalse(id);
+        Optional<ProductServiceEntity> existingProductService = productServiceRepository.findByProductIdAndIsDeletedFalse(id);
         if (existingProductService.isPresent()) {
             existingProductService.get().setName(productService.getName());
             existingProductService.get().setDescription(productService.getDescription());
@@ -56,7 +56,7 @@ public class ProductServiceService {
 
     // Delete product service by setting isDeleted to true
     public void deleteProductServiceById(int id) {
-        Optional<ProductServiceEntity> existingProductService = productServiceRepository.findByProductServiceIdAndIsDeletedFalse(id);
+        Optional<ProductServiceEntity> existingProductService = productServiceRepository.findByProductIdAndIsDeletedFalse(id);
         if (existingProductService.isPresent()) {
             existingProductService.get().setIsDeleted(true);
             productServiceRepository.save(existingProductService.get());

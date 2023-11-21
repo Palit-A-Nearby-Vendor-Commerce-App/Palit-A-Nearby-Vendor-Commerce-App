@@ -27,11 +27,11 @@ public class ConversationEntity {
         this.receiverId = receiverId;
     }
 
-    public int getConversationId() {
+    public int getId() {
         return conversationId;
     }
 
-    public void setConversationId(int conversationId) {
+    public void setId(int conversationId) {
         this.conversationId = conversationId;
     }
 

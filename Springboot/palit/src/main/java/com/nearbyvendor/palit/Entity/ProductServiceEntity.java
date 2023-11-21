@@ -39,11 +39,11 @@ public class ProductServiceEntity {
         this.imagePath = imagePath;
     }
 
-    public int getProductId() {
+    public int getId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setId(int productId) {
         this.productId = productId;
     }
 

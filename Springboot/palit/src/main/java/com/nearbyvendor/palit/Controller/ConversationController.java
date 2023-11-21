@@ -15,7 +15,7 @@ public class ConversationController {
     private ConversationService conversationService;
 
     // Get all conversations
-    @GetMapping
+    @GetMapping("/getAllConversations")
     public List<ConversationEntity> getAllConversations() {
         return conversationService.getAllConversations();
     }

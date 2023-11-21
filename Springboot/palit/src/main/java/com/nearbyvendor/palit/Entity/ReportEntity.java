@@ -34,11 +34,11 @@ public class ReportEntity {
         this.isResolved = isResolved;
     }
 
-    public int getReportId() {
+    public int getId() {
         return reportId;
     }
 
-    public void setReportId(int reportId) {
+    public void setId(int reportId) {
         this.reportId = reportId;
     }
 

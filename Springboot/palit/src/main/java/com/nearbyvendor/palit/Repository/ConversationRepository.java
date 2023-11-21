@@ -13,5 +13,5 @@ public interface ConversationRepository extends JpaRepository<ConversationEntity
 
   List<ConversationEntity> findByIsDeletedFalse();
 
-  Optional<ConversationEntity> findByIdAndIsDeletedFalse(int id);
+  Optional<ConversationEntity> findByConversationIdAndIsDeletedFalse(int conversationId);
 }

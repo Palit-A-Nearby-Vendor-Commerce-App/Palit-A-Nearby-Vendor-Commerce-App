@@ -9,6 +9,7 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private int userId;
 
     private String name;
@@ -25,11 +26,11 @@ public class UserEntity {
     private String image; // assuming the image is stored as a URL or file path
 
     // getters and setters
-    public int getUserId() {
+    public int getId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setId(int userId) {
         this.userId = userId;
     }
 

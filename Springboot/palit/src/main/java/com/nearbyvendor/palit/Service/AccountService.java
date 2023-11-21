@@ -28,7 +28,7 @@ public class AccountService {
     public AccountEntity editAccountById(int accountId, AccountEntity account) {
         AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
         if (existingAccount != null) {
-            account.setAccountId(accountId);
+            account.setId(accountId);
             return accountRepository.save(account);
         } else {
             // Handle the case when the account ID is null or does not exist

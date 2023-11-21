@@ -21,7 +21,7 @@ public class ConversationService {
 
     // Get a conversation by id where isDeleted is false
     public ConversationEntity getConversationById(int id) {
-        Optional<ConversationEntity> conversation = conversationRepository.findByIdAndIsDeletedFalse(id);
+        Optional<ConversationEntity> conversation = conversationRepository.findByConversationIdAndIsDeletedFalse(id);
         if (conversation.isPresent()) {
             return conversation.get();
         } else {
@@ -36,7 +36,7 @@ public class ConversationService {
 
     // Update an existing conversation by id where isDeleted is false
     public ConversationEntity updateConversationById(int id, ConversationEntity conversation) {
-        Optional<ConversationEntity> existingConversation = conversationRepository.findByIdAndIsDeletedFalse(id);
+        Optional<ConversationEntity> existingConversation = conversationRepository.findByConversationIdAndIsDeletedFalse(id);
         if (existingConversation.isPresent()) {
             existingConversation.get().setSenderId(conversation.getSenderId());
             existingConversation.get().setReceiverId(conversation.getReceiverId());
@@ -48,7 +48,7 @@ public class ConversationService {
 
     // Delete a conversation by id by setting isDeleted to true
     public void deleteConversationById(int id) {
-        Optional<ConversationEntity> conversation = conversationRepository.findByIdAndIsDeletedFalse(id);
+        Optional<ConversationEntity> conversation = conversationRepository.findByConversationIdAndIsDeletedFalse(id);
         if (conversation.isPresent()) {
             conversation.get().setIsDeleted(true);
             conversationRepository.save(conversation.get());

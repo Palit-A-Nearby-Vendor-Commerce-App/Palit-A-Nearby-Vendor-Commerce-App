@@ -13,5 +13,5 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
   List<TransactionEntity> findAllByIsDeletedFalse();
     // You can add custom methods here if needed
 
-  TransactionEntity findByIdAndIsDeletedFalse(int id);
+  TransactionEntity findByTransactionIdAndIsDeletedFalse(int transactionId);
 }

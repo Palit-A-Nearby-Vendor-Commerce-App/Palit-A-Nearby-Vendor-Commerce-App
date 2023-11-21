@@ -40,11 +40,11 @@ public class ChatEntity {
         this.conversationId = conversationId;
     }
 
-    public int getChatId() {
+    public int getId() {
         return chatId;
     }
 
-    public void setChatId(int chatId) {
+    public void setId(int chatId) {
         this.chatId = chatId;
     }
 

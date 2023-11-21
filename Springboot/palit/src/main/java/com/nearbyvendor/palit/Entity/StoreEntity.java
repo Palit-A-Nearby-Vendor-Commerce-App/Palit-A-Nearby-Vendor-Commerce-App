@@ -37,11 +37,11 @@ public class StoreEntity {
         this.vendorAccountId = vendorAccountId;
     }
     
-    public int getStoreId() {
+    public int getId() {
         return storeId;
     }
     
-    public void setStoreId(int storeId) {
+    public void setId(int storeId) {
         this.storeId = storeId;
     }
     

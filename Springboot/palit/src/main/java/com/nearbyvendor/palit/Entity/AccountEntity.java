@@ -8,6 +8,7 @@ public class AccountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_id")
     private int accountId;
 
     private boolean isVendor;
@@ -17,15 +18,15 @@ public class AccountEntity {
     private boolean isDeleted;
 
     @OneToOne
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private UserEntity user;
 
     // getters and setters
-    public int getAccountId() {
+    public int getId() {
         return accountId;
     }
 
-    public void setAccountId(int accountId) {
+    public void setId(int accountId) {
         this.accountId = accountId;
     }
 

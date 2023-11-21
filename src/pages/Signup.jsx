@@ -75,7 +75,7 @@ const Signup = () => {
     }
 
     const userData = {
-      fullname: formData.fullname,
+      name: formData.fullname,
       email: formData.email,
       birthdate: formData.birthdate,
       password: formData.password,
@@ -83,26 +83,51 @@ const Signup = () => {
       image: selectedImage || "",
     };
       
+    //here
     try {
-      // Create a user entity using the localhost:8080/api/createUser API
-      const userResponse = await axios.post("localhost:8080/api/createUser", userData);
+      // Create a user entity using the http://localhost:8080/api/createUser API
+      const userResponse = await axios.post("http://localhost:8080/api/createUser", userData);
       const user = userResponse.data;
 
-      while (!user) {
-        // User response is null, wait for a short delay before checking again
-        await new Promise((resolve) => setTimeout(resolve, 3000));
+      let account = null;
+
+      const createAccount = async (userData) => {
+        return new Promise(async (resolve, reject) => {
+          let attempts = 0;
+          const maxAttempts = 10;
+          const delay = 1000; // 1 second
+
+          while (account === null && attempts < maxAttempts) {
+            try {
+              const accountData = {
+                isVendor: userData.userType === "vendor",
+                isAdmin: false,
+                userId: user.userId,
+              };
+              const accountResponse = await axios.post("http://localhost:8080/api/createAccount", accountData);
+              account = accountResponse.data;
+              resolve(account);
+            } catch (error) {
+              attempts++;
+              if (attempts === maxAttempts) {
+                reject(new Error("Failed to create account"));
+              } else {
+                await new Promise((resolve) => setTimeout(resolve, delay));
+              }
+            }
+          }
+        });
+      };
+
+      try {
+        const account = await createAccount(userData);
+        // Continue with the rest of the code
+      } catch (error) {
+        console.error(error);
+        alert("Failed to create account. Please try again.");
       }
 
-      // Create an account entity using the localhost:8080/api/createAccount API
-      const accountData = {
-        isVendor: userData.userType === "vendor",
-        isAdmin: false,
-        userId: user?.userId,
-      };
-      const accountResponse = await axios.post("localhost:8080/api/createAccount", accountData);
-      const account = accountResponse.data;
-
-      // Create a location entity using the localhost:8080/api/createLocation API
+      // Create a location entity using the http://localhost:8080/api/createLocation API
       // For simplicity, we assume the user provides their latitude and longitude
       // You can use other methods to get the user's location such as geolocation API
       const locationData = {
@@ -110,10 +135,10 @@ const Signup = () => {
         longitude: userData.longitude,
         accountId: account.accountId,
       };
-      const locationResponse = await axios.post("localhost:8080/api/createLocation", locationData);
+      const locationResponse = await axios.post("http://localhost:8080/api/createLocation", locationData);
       const location = locationResponse.data;
 
-      // If the user is a vendor, create a store entity using the localhost:8080/api/createStore API
+      // If the user is a vendor, create a store entity using the http://localhost:8080/api/createStore API
       // For simplicity, we assume the user provides their store name, description, category and rating
       // You can use other methods to get the user's store information such as a form
       if (userData.userType === "vendor") {
@@ -124,7 +149,7 @@ const Signup = () => {
           rating: userData.rating,
           vendorAccountId: account.accountId,
         };
-        const storeResponse = await axios.post("localhost:8080/api/createStore", storeData);
+        const storeResponse = await axios.post("http://localhost:8080/api/createStore", storeData);
         const store = storeResponse.data;
       }
 
@@ -208,7 +233,8 @@ const Signup = () => {
               type="email"
               placeholder="yourname@gmail.com"
               value={formData["email"]}
-              onChange={handleEmailChange}/>
+              onChange={handleEmailChange}
+            />
           </div>
           <div className="mt-4">
             <label>Birth date</label>

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class UserController {
@@ -22,6 +23,11 @@ public class UserController {
     @GetMapping("/getUserById/{id}")
     public UserEntity getUserById(@PathVariable int id) {
         return userService.getUserById(id);
+    }
+
+    @PostMapping("/createUser")
+    public UserEntity createUser(@RequestBody UserEntity user) {
+        return userService.createUser(user);
     }
 
     @PutMapping("/updateUserById/{id}")

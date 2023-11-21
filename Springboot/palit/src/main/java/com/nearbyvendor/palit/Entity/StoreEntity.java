@@ -24,6 +24,8 @@ public class StoreEntity {
     
     private int rating;
     
+    private boolean isDeleted;
+    
     public StoreEntity() {
         // default constructor
     }
@@ -35,11 +37,11 @@ public class StoreEntity {
         this.vendorAccountId = vendorAccountId;
     }
     
-    public int getStoreId() {
+    public int getId() {
         return storeId;
     }
     
-    public void setStoreId(int storeId) {
+    public void setId(int storeId) {
         this.storeId = storeId;
     }
     
@@ -88,5 +90,12 @@ public class StoreEntity {
         return "StoreEntity [storeId=" + storeId + ", storeName=" + storeName + ", description=" + description
                 + ", category=" + category + ", vendorAccountId=" + vendorAccountId + ", rating=" + rating + "]";
     }
-    
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class ConversationController {
@@ -15,7 +16,7 @@ public class ConversationController {
     private ConversationService conversationService;
 
     // Get all conversations
-    @GetMapping
+    @GetMapping("/getAllConversations")
     public List<ConversationEntity> getAllConversations() {
         return conversationService.getAllConversations();
     }

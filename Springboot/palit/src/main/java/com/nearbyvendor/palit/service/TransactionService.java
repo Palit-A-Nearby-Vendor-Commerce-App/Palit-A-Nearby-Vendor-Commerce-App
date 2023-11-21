@@ -14,19 +14,23 @@ public class TransactionService {
     private TransactionRepository transactionRepository;
 
     public List<TransactionEntity> getAllTransactions() {
-        return transactionRepository.findAll();
+        return transactionRepository.findAllByIsDeletedFalse();
     }
 
     public TransactionEntity getTransactionById(int id) {
-        return transactionRepository.findById(id).orElse(null);
+        return transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
     }
 
     public TransactionEntity createTransaction(TransactionEntity transaction) {
+        transaction.setIsDeleted(false);
         return transactionRepository.save(transaction);
     }
 
     public TransactionEntity updateTransactionById(int id, TransactionEntity transaction) {
-        if (transactionRepository.findById(id) != null) {
+        TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
+        if (existingTransaction != null) {
+            transaction.setId(existingTransaction.getId());
+            transaction.setIsDeleted(false);
             return transactionRepository.save(transaction);
         } else {
             // Handle the case when the transaction ID is null or does not exist
@@ -36,6 +40,14 @@ public class TransactionService {
     }
 
     public void deleteTransactionById(int id) {
-        transactionRepository.deleteById(id);
+        TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
+        if (existingTransaction != null) {
+            existingTransaction.setIsDeleted(true);
+            transactionRepository.save(existingTransaction);
+        } else {
+            // Handle the case when the transaction ID is null or does not exist
+            // You can throw an exception or handle it in a different way based on your requirements
+            throw new IllegalArgumentException("Invalid transaction ID");
+        }
     }
 }

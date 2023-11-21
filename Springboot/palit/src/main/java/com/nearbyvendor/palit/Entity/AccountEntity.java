@@ -8,22 +8,25 @@ public class AccountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "account_id")
     private int accountId;
 
     private boolean isVendor;
 
     private boolean isAdmin;
 
+    private boolean isDeleted;
+
     @OneToOne
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private UserEntity user;
 
     // getters and setters
-    public int getAccountId() {
+    public int getId() {
         return accountId;
     }
 
-    public void setAccountId(int accountId) {
+    public void setId(int accountId) {
         this.accountId = accountId;
     }
 
@@ -49,5 +52,13 @@ public class AccountEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

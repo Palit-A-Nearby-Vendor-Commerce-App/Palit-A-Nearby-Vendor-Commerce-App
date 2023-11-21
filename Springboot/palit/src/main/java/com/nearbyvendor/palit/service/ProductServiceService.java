@@ -14,14 +14,14 @@ public class ProductServiceService {
     @Autowired
     private ProductServiceRepository productServiceRepository;
 
-    // Get all product services
+    // Get all product services where isDeleted is false
     public List<ProductServiceEntity> getAllProductServices() {
-        return productServiceRepository.findAll();
+        return productServiceRepository.findByIsDeletedFalse();
     }
 
-    // Get product service by id
+    // Get product service by id where isDeleted is false
     public ProductServiceEntity getProductServiceById(int id) {
-        Optional<ProductServiceEntity> productService = productServiceRepository.findById(id);
+        Optional<ProductServiceEntity> productService = productServiceRepository.findByProductIdAndIsDeletedFalse(id);
         if (productService.isPresent()) {
             return productService.get();
         } else {
@@ -29,9 +29,9 @@ public class ProductServiceService {
         }
     }
 
-    // Get product services by store id
+    // Get product services by store id where isDeleted is false
     public List<ProductServiceEntity> getProductServicesByStoreId(int storeId) {
-        return productServiceRepository.findByStoreId(storeId);
+        return productServiceRepository.findByStoreIdAndIsDeletedFalse(storeId);
     }
 
     // Create product service
@@ -41,7 +41,7 @@ public class ProductServiceService {
 
     // Update product service
     public ProductServiceEntity updateProductServiceById(int id, ProductServiceEntity productService) {
-        Optional<ProductServiceEntity> existingProductService = productServiceRepository.findById(id);
+        Optional<ProductServiceEntity> existingProductService = productServiceRepository.findByProductIdAndIsDeletedFalse(id);
         if (existingProductService.isPresent()) {
             existingProductService.get().setName(productService.getName());
             existingProductService.get().setDescription(productService.getDescription());
@@ -54,11 +54,12 @@ public class ProductServiceService {
         }
     }
 
-    // Delete product service
+    // Delete product service by setting isDeleted to true
     public void deleteProductServiceById(int id) {
-        Optional<ProductServiceEntity> existingProductService = productServiceRepository.findById(id);
+        Optional<ProductServiceEntity> existingProductService = productServiceRepository.findByProductIdAndIsDeletedFalse(id);
         if (existingProductService.isPresent()) {
-            productServiceRepository.delete(existingProductService.get());
+            existingProductService.get().setIsDeleted(true);
+            productServiceRepository.save(existingProductService.get());
         } else {
             throw new RuntimeException("Product service not found with id: " + id);
         }

@@ -15,19 +15,21 @@ public class StoreService {
     private StoreRepository storeRepository;
     
     public List<StoreEntity> getAllStores() {
-        return storeRepository.findAll();
+        return storeRepository.findAllByIsDeletedFalse();
     }
     
-    public StoreEntity getStoreById(int id) {
-        return storeRepository.findById(id).orElse(null);
+    public StoreEntity getStoreById(int storeId) {
+        return storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
     }
     
     public StoreEntity createStore(StoreEntity store) {
         return storeRepository.save(store);
     }
     
-    public StoreEntity updateStoreById(int id, StoreEntity store) {
-        if (storeRepository.findById(id) != null) {
+    public StoreEntity updateStoreById(int storeId, StoreEntity store) {
+        StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
+        if (existingStore != null) {
+            store.setId(storeId);
             return storeRepository.save(store);
         } else {
             // Handle the case when the store ID is null or does not exist
@@ -36,7 +38,15 @@ public class StoreService {
         }
     }
 
-    public void deleteStoreById(int id) {
-        storeRepository.deleteById(id);
+    public void deleteStoreById(int storeId) {
+        StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
+        if (existingStore != null) {
+            existingStore.setIsDeleted(true);
+            storeRepository.save(existingStore);
+        } else {
+            // Handle the case when the store ID is null or does not exist
+            // You can throw an exception or handle it in a different way based on your requirements
+            throw new IllegalArgumentException("Invalid store ID");
+        }
     }
 }

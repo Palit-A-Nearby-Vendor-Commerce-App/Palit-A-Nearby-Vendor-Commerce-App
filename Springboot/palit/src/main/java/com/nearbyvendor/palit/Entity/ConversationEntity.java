@@ -16,6 +16,8 @@ public class ConversationEntity {
 
     @Column(name = "receiver_id")
     private int receiverId;
+    
+    private boolean isDeleted;
 
     public ConversationEntity() {
     }
@@ -25,11 +27,11 @@ public class ConversationEntity {
         this.receiverId = receiverId;
     }
 
-    public int getConversationId() {
+    public int getId() {
         return conversationId;
     }
 
-    public void setConversationId(int conversationId) {
+    public void setId(int conversationId) {
         this.conversationId = conversationId;
     }
 
@@ -47,5 +49,13 @@ public class ConversationEntity {
 
     public void setReceiverId(int receiverId) {
         this.receiverId = receiverId;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

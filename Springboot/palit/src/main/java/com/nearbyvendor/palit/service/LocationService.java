@@ -13,14 +13,14 @@ public class LocationService {
     @Autowired
     private LocationRepository locationRepository;
 
-    // Get all locations
+    // Get all locations where isDeleted is false
     public List<LocationEntity> getAllLocations() {
-        return locationRepository.findAll();
+        return locationRepository.findByIsDeletedFalse();
     }
 
-    // Get location by id
+    // Get location by id where isDeleted is false
     public LocationEntity getLocationById(int id) {
-        return locationRepository.getReferenceById(id);
+        return locationRepository.findByLocationIdAndIsDeletedFalse(id);
     }
 
     // Create location
@@ -28,17 +28,19 @@ public class LocationService {
         return locationRepository.save(location);
     }
 
-    // Update location
+    // Update location by id where isDeleted is false
     public LocationEntity updateLocationById(int id, LocationEntity location) {
-        LocationEntity existingLocation = locationRepository.getReferenceById(id);
+        LocationEntity existingLocation = locationRepository.findByLocationIdAndIsDeletedFalse(id);
         existingLocation.setLatitude(location.getLatitude());
         existingLocation.setLongitude(location.getLongitude());
         existingLocation.setAccountId(location.getAccountId());
         return locationRepository.save(existingLocation);
     }
 
-    // Delete location
+    // Delete location by id
     public void deleteLocationById(int id) {
-        locationRepository.deleteById(id);
+        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+        location.setIsDeleted(true);
+        locationRepository.save(location);
     }
 }

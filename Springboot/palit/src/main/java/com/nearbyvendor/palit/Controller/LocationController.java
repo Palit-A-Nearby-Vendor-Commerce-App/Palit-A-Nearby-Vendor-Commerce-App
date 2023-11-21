@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class LocationController {
@@ -15,7 +16,7 @@ public class LocationController {
     private LocationService locationService;
 
     // Get all locations
-    @GetMapping
+    @GetMapping("/getAllLocations")
     public List<LocationEntity> getAllLocations() {
         return locationService.getAllLocations();
     }
@@ -27,7 +28,7 @@ public class LocationController {
     }
 
     // Create location
-    @PostMapping
+    @PostMapping("/createLocation")
     public LocationEntity createLocation(@RequestBody LocationEntity location) {
         return locationService.createLocation(location);
     }

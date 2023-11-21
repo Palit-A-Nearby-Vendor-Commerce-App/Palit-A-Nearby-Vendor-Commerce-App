@@ -27,6 +27,8 @@ public class ChatEntity {
     @Column(name = "conversation_id")
     private int conversationId;
 
+    private boolean isDeleted;
+
     public ChatEntity() {
     }
 
@@ -38,11 +40,11 @@ public class ChatEntity {
         this.conversationId = conversationId;
     }
 
-    public int getChatId() {
+    public int getId() {
         return chatId;
     }
 
-    public void setChatId(int chatId) {
+    public void setId(int chatId) {
         this.chatId = chatId;
     }
 
@@ -84,5 +86,13 @@ public class ChatEntity {
 
     public void setConversationId(int conversationId) {
         this.conversationId = conversationId;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

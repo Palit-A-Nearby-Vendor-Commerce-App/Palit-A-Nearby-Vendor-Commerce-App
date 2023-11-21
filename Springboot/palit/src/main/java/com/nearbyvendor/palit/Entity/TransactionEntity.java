@@ -20,6 +20,8 @@ public class TransactionEntity {
 
     @Column(nullable = false)
     private int rating;
+    
+    private boolean isDeleted;
 
     public TransactionEntity() {
     }
@@ -31,11 +33,11 @@ public class TransactionEntity {
         this.rating = rating;
     }
 
-    public int getTransactionId() {
+    public int getId() {
         return transactionId;
     }
 
-    public void setTransactionId(int transactionId) {
+    public void setId(int transactionId) {
         this.transactionId = transactionId;
     }
 
@@ -69,5 +71,13 @@ public class TransactionEntity {
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

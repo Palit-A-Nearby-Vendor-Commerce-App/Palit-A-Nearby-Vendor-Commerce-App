@@ -1,16 +1,14 @@
 package com.nearbyvendor.palit.controller;
 
-import com.nearbyvendor.palit.entity.Location;
+import com.nearbyvendor.palit.entity.LocationEntity;
 import com.nearbyvendor.palit.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/locations")
+@RequestMapping("/api")
 public class LocationController {
 
     @Autowired
@@ -18,36 +16,31 @@ public class LocationController {
 
     // Get all locations
     @GetMapping
-    public ResponseEntity<List<Location>> getAllLocations() {
-        List<Location> locations = locationService.getAllLocations();
-        return new ResponseEntity<>(locations, HttpStatus.OK);
+    public List<LocationEntity> getAllLocations() {
+        return locationService.getAllLocations();
     }
 
     // Get location by id
-    @GetMapping("/{id}")
-    public ResponseEntity<Location> getLocationById(@PathVariable("id") int id) {
-        Location location = locationService.getLocationById(id);
-        return new ResponseEntity<>(location, HttpStatus.OK);
+    @GetMapping("/getLocationById/{id}")
+    public LocationEntity getLocationById(@PathVariable("id") int id) {
+        return locationService.getLocationById(id);
     }
 
     // Create location
     @PostMapping
-    public ResponseEntity<Location> createLocation(@RequestBody Location location) {
-        Location newLocation = locationService.createLocation(location);
-        return new ResponseEntity<>(newLocation, HttpStatus.CREATED);
+    public LocationEntity createLocation(@RequestBody LocationEntity location) {
+        return locationService.createLocation(location);
     }
 
     // Update location
-    @PutMapping("/{id}")
-    public ResponseEntity<Location> updateLocation(@PathVariable("id") int id, @RequestBody Location location) {
-        Location updatedLocation = locationService.updateLocation(id, location);
-        return new ResponseEntity<>(updatedLocation, HttpStatus.OK);
+    @PutMapping("/updateLocationById/{id}")
+    public LocationEntity updateLocationById(@PathVariable("id") int id, @RequestBody LocationEntity location) {
+        return locationService.updateLocationById(id, location);
     }
 
     // Delete location
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLocation(@PathVariable("id") int id) {
-        locationService.deleteLocation(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("/deleteLocationById/{id}")
+    public void deleteLocationById(@PathVariable("id") int id) {
+        locationService.deleteLocationById(id);
     }
 }

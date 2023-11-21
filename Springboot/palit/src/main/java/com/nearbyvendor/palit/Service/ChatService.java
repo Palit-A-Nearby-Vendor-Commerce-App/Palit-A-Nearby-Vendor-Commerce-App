@@ -1,20 +1,44 @@
 package com.nearbyvendor.palit.service;
 
-import com.nearbyvendor.palit.entity.Chat;
-
 import java.util.List;
+import java.util.Optional;
 
-public interface ChatService {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-    // Get all chats by conversation id
-    List<Chat> getChatsByConversationId(int conversationId);
+import com.nearbyvendor.palit.entity.ChatEntity;
+import com.nearbyvendor.palit.repository.ChatRepository;
 
-    // Create a new chat
-    Chat createChat(Chat chat);
+@Service
+public class ChatService {
 
-    // Update an existing chat
-    Chat updateChat(int chatId, Chat chat);
+    @Autowired
+    private ChatRepository chatRepository;
 
-    // Delete an existing chat
-    void deleteChat(int chatId);
+    public List<ChatEntity> getChatsByConversationId(int conversationId) {
+        return chatRepository.findByConversationId(conversationId);
+    }
+
+    public ChatEntity createChat(ChatEntity chat) {
+        return chatRepository.save(chat);
+    }
+
+    public ChatEntity updateChatById(int chatId, ChatEntity chat) {
+        Optional<ChatEntity> chatOptional = chatRepository.findById(chatId);
+        if (chatOptional.isPresent()) {
+            ChatEntity existingChat = chatOptional.get();
+            existingChat.setSenderId(chat.getSenderId());
+            existingChat.setReceiverId(chat.getReceiverId());
+            existingChat.setMessageContent(chat.getMessageContent());
+            existingChat.setTimestamp(chat.getTimestamp());
+            existingChat.setConversationId(chat.getConversationId());
+            return chatRepository.save(existingChat);
+        } else {
+            throw new RuntimeException("ChatEntity not found with id: " + chatId);
+        }
+    }
+
+    public void deleteChatById(int chatId) {
+        chatRepository.deleteById(chatId);
+    }
 }

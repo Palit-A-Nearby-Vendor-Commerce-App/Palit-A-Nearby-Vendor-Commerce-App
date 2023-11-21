@@ -1,6 +1,6 @@
 package com.nearbyvendor.palit.service;
 
-import com.nearbyvendor.palit.entity.Location;
+import com.nearbyvendor.palit.entity.LocationEntity;
 import com.nearbyvendor.palit.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,23 +14,23 @@ public class LocationService {
     private LocationRepository locationRepository;
 
     // Get all locations
-    public List<Location> getAllLocations() {
+    public List<LocationEntity> getAllLocations() {
         return locationRepository.findAll();
     }
 
     // Get location by id
-    public Location getLocationById(int id) {
+    public LocationEntity getLocationById(int id) {
         return locationRepository.getReferenceById(id);
     }
 
     // Create location
-    public Location createLocation(Location location) {
+    public LocationEntity createLocation(LocationEntity location) {
         return locationRepository.save(location);
     }
 
     // Update location
-    public Location updateLocation(int id, Location location) {
-        Location existingLocation = locationRepository.getReferenceById(id);
+    public LocationEntity updateLocationById(int id, LocationEntity location) {
+        LocationEntity existingLocation = locationRepository.getReferenceById(id);
         existingLocation.setLatitude(location.getLatitude());
         existingLocation.setLongitude(location.getLongitude());
         existingLocation.setAccountId(location.getAccountId());
@@ -38,7 +38,7 @@ public class LocationService {
     }
 
     // Delete location
-    public void deleteLocation(int id) {
+    public void deleteLocationById(int id) {
         locationRepository.deleteById(id);
     }
 }

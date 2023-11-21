@@ -21,7 +21,11 @@ public class AccountService {
         return accountRepository.findById(id).orElse(null);
     }
 
-    public AccountEntity saveAccount(int id, AccountEntity account) {
+    public AccountEntity createAccount(AccountEntity account) {
+        return accountRepository.save(account);
+    }
+
+    public AccountEntity editAccountById(int id, AccountEntity account) {
         if (accountRepository.findById(id) != null) {
             return accountRepository.save(account);
         } else {

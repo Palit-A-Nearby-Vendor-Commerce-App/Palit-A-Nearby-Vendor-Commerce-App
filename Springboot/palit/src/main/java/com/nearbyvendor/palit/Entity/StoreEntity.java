@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "store")
-public class Store {
+public class StoreEntity {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,11 @@ public class Store {
     
     private int rating;
     
-    public Store() {
+    public StoreEntity() {
         // default constructor
     }
     
-    public Store(String storeName, String description, String category, int vendorAccountId) {
+    public StoreEntity(String storeName, String description, String category, int vendorAccountId) {
         this.storeName = storeName;
         this.description = description;
         this.category = category;
@@ -85,7 +85,7 @@ public class Store {
     
     @Override
     public String toString() {
-        return "Store [storeId=" + storeId + ", storeName=" + storeName + ", description=" + description
+        return "StoreEntity [storeId=" + storeId + ", storeName=" + storeName + ", description=" + description
                 + ", category=" + category + ", vendorAccountId=" + vendorAccountId + ", rating=" + rating + "]";
     }
     

@@ -1,6 +1,6 @@
 package com.nearbyvendor.palit.service;
 
-import com.nearbyvendor.palit.entity.ProductService;
+import com.nearbyvendor.palit.entity.ProductServiceEntity;
 import com.nearbyvendor.palit.repository.ProductServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,13 +15,13 @@ public class ProductServiceService {
     private ProductServiceRepository productServiceRepository;
 
     // Get all product services
-    public List<ProductService> getAllProductServices() {
+    public List<ProductServiceEntity> getAllProductServices() {
         return productServiceRepository.findAll();
     }
 
     // Get product service by id
-    public ProductService getProductServiceById(int id) {
-        Optional<ProductService> productService = productServiceRepository.findById(id);
+    public ProductServiceEntity getProductServiceById(int id) {
+        Optional<ProductServiceEntity> productService = productServiceRepository.findById(id);
         if (productService.isPresent()) {
             return productService.get();
         } else {
@@ -30,18 +30,18 @@ public class ProductServiceService {
     }
 
     // Get product services by store id
-    public List<ProductService> getProductServicesByStoreId(int storeId) {
+    public List<ProductServiceEntity> getProductServicesByStoreId(int storeId) {
         return productServiceRepository.findByStoreId(storeId);
     }
 
     // Create product service
-    public ProductService createProductService(ProductService productService) {
+    public ProductServiceEntity createProductService(ProductServiceEntity productService) {
         return productServiceRepository.save(productService);
     }
 
     // Update product service
-    public ProductService updateProductService(int id, ProductService productService) {
-        Optional<ProductService> existingProductService = productServiceRepository.findById(id);
+    public ProductServiceEntity updateProductServiceById(int id, ProductServiceEntity productService) {
+        Optional<ProductServiceEntity> existingProductService = productServiceRepository.findById(id);
         if (existingProductService.isPresent()) {
             existingProductService.get().setName(productService.getName());
             existingProductService.get().setDescription(productService.getDescription());
@@ -55,8 +55,8 @@ public class ProductServiceService {
     }
 
     // Delete product service
-    public void deleteProductService(int id) {
-        Optional<ProductService> existingProductService = productServiceRepository.findById(id);
+    public void deleteProductServiceById(int id) {
+        Optional<ProductServiceEntity> existingProductService = productServiceRepository.findById(id);
         if (existingProductService.isPresent()) {
             productServiceRepository.delete(existingProductService.get());
         } else {

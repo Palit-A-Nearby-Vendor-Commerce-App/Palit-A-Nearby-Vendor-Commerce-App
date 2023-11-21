@@ -16,6 +16,7 @@ const Signup = () => {
     email: "",
     birthdate: "",
     password: "",
+    confirmPassword: "",
     userType: "",
   });
   const [formErrors, setFormErrors] = useState({});
@@ -25,6 +26,10 @@ const Signup = () => {
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
     }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    setFormData({ ...formData, confirmPassword: e.target.value });
   };
 
   const handleNameChange = (e) => {
@@ -67,6 +72,11 @@ const Signup = () => {
     if (formData.userType.trim() === "") {
       errors.userType = "User type is required";
     }
+
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
     setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) {
@@ -75,88 +85,38 @@ const Signup = () => {
     }
 
     const userData = {
-      name: formData.fullname,
+      fullname: formData.fullname,
       email: formData.email,
       birthdate: formData.birthdate,
       password: formData.password,
       userType: formData.userType,
       image: selectedImage || "",
     };
-      
-    //here
+
+
     try {
-      // Create a user entity using the http://localhost:8080/api/createUser API
-      const userResponse = await axios.post("http://localhost:8080/api/createUser", userData);
-      const user = userResponse.data;
+      const userExists = await axios.get(
+        `http://localhost:3002/users?email=${formData.email}`
+      );
 
-      let account = null;
-
-      const createAccount = async (userData) => {
-        return new Promise(async (resolve, reject) => {
-          let attempts = 0;
-          const maxAttempts = 10;
-          const delay = 1000; // 1 second
-
-          while (account === null && attempts < maxAttempts) {
-            try {
-              const accountData = {
-                isVendor: userData.userType === "vendor",
-                isAdmin: false,
-                user_id: user.userId,
-              };
-              const accountResponse = await axios.post("http://localhost:8080/api/createAccount", accountData);
-              account = accountResponse.data;
-              resolve(account);
-            } catch (error) {
-              attempts++;
-              if (attempts === maxAttempts) {
-                axios.delete(`http://localhost:8080/api/deleteUser/${user.userId}`);
-                reject(new Error("Failed to create account"));
-              } else {
-                await new Promise((resolve) => setTimeout(resolve, delay));
-              }
-            }
-          }
-        });
-      };
-
-      // Create a location entity using the http://localhost:8080/api/createLocation API
-      // For simplicity, we assume the user provides their latitude and longitude
-      // You can use other methods to get the user's location such as geolocation API
-      const locationData = {
-        latitude: userData.latitude,
-        longitude: userData.longitude,
-        accountId: account.accountId,
-      };
-      const locationResponse = await axios.post("http://localhost:8080/api/createLocation", locationData);
-      const location = locationResponse.data;
-
-      // If the user is a vendor, create a store entity using the http://localhost:8080/api/createStore API
-      // For simplicity, we assume the user provides their store name, description, category and rating
-      // You can use other methods to get the user's store information such as a form
-      if (userData.userType === "vendor") {
-        const storeData = {
-          storeName: userData.storeName,
-          description: userData.description,
-          category: userData.category,
-          rating: userData.rating,
-          vendorAccountId: account.accountId,
-        };
-        const storeResponse = await axios.post("http://localhost:8080/api/createStore", storeData);
-        const store = storeResponse.data;
+      if (userExists.data.length > 0) {
+        alert("User already exists");
+        return;
       }
 
-      // Redirect the user to the home page or dashboard
-      history.push("/");
+      const response = await axios.post(
+        "http://localhost:3002/users",
+        userData
+      );
+      alert("User created!", response.data);
+      history.push("/signin");
     } catch (error) {
-      // Handle any errors that may occur
-      console.error(error);
-      alert("Something went wrong. Please try again.");
+      console.error("Error creating user:", error);
     }
   };
 
   return (
-    <div className="w-full h-screen bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom ">
+    <div className="w-full bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom ">
       <div className="w-[500px] m-auto">
         <div className="w-full flex items-center justify-center">
           <img
@@ -250,6 +210,17 @@ const Signup = () => {
             <p className="text-red-500">
               Password must contain at least one symbol e.g. @, !
             </p>
+          </div>
+          <div className="mt-4">
+            <label>Confirm password</label>
+            <CustomInput
+              type="password"
+              value={formData["confirmPassword"]}
+              onChange={handleConfirmPasswordChange}
+            />
+            {formErrors.confirmPassword && (
+              <p className="text-red-500">{formErrors.confirmPassword}</p>
+            )}
           </div>
           <div className="mt-4">
             <label>Choose how you want to use Palit</label>

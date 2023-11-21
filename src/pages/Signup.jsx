@@ -110,6 +110,7 @@ const Signup = () => {
             } catch (error) {
               attempts++;
               if (attempts === maxAttempts) {
+                axios.delete(`http://localhost:8080/api/deleteUser/${user.userId}`);
                 reject(new Error("Failed to create account"));
               } else {
                 await new Promise((resolve) => setTimeout(resolve, delay));
@@ -118,14 +119,6 @@ const Signup = () => {
           }
         });
       };
-
-      try {
-        const account = await createAccount(userData);
-        // Continue with the rest of the code
-      } catch (error) {
-        console.error(error);
-        alert("Failed to create account. Please try again.");
-      }
 
       // Create a location entity using the http://localhost:8080/api/createLocation API
       // For simplicity, we assume the user provides their latitude and longitude

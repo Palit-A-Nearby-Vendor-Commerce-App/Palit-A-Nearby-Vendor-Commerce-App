@@ -75,7 +75,7 @@ const Signup = () => {
     }
 
     const userData = {
-      name: formData.fullname,
+      fullname: formData.fullname,
       email: formData.email,
       birthdate: formData.birthdate,
       password: formData.password,
@@ -83,75 +83,25 @@ const Signup = () => {
       image: selectedImage || "",
     };
       
-    //here
+
     try {
-      // Create a user entity using the http://localhost:8080/api/createUser API
-      const userResponse = await axios.post("http://localhost:8080/api/createUser", userData);
-      const user = userResponse.data;
+      const userExists = await axios.get(
+        `http://localhost:3002/users?email=${formData.email}`
+      );
 
-      let account = null;
-
-      const createAccount = async (userData) => {
-        return new Promise(async (resolve, reject) => {
-          let attempts = 0;
-          const maxAttempts = 10;
-          const delay = 1000; // 1 second
-
-          while (account === null && attempts < maxAttempts) {
-            try {
-              const accountData = {
-                isVendor: userData.userType === "vendor",
-                isAdmin: false,
-                user_id: user.userId,
-              };
-              const accountResponse = await axios.post("http://localhost:8080/api/createAccount", accountData);
-              account = accountResponse.data;
-              resolve(account);
-            } catch (error) {
-              attempts++;
-              if (attempts === maxAttempts) {
-                axios.delete(`http://localhost:8080/api/deleteUser/${user.userId}`);
-                reject(new Error("Failed to create account"));
-              } else {
-                await new Promise((resolve) => setTimeout(resolve, delay));
-              }
-            }
-          }
-        });
-      };
-
-      // Create a location entity using the http://localhost:8080/api/createLocation API
-      // For simplicity, we assume the user provides their latitude and longitude
-      // You can use other methods to get the user's location such as geolocation API
-      const locationData = {
-        latitude: userData.latitude,
-        longitude: userData.longitude,
-        accountId: account.accountId,
-      };
-      const locationResponse = await axios.post("http://localhost:8080/api/createLocation", locationData);
-      const location = locationResponse.data;
-
-      // If the user is a vendor, create a store entity using the http://localhost:8080/api/createStore API
-      // For simplicity, we assume the user provides their store name, description, category and rating
-      // You can use other methods to get the user's store information such as a form
-      if (userData.userType === "vendor") {
-        const storeData = {
-          storeName: userData.storeName,
-          description: userData.description,
-          category: userData.category,
-          rating: userData.rating,
-          vendorAccountId: account.accountId,
-        };
-        const storeResponse = await axios.post("http://localhost:8080/api/createStore", storeData);
-        const store = storeResponse.data;
+      if (userExists.data.length > 0) {
+        alert("User already exists");
+        return;
       }
-
-      // Redirect the user to the home page or dashboard
-      history.push("/");
+      
+      const response = await axios.post(
+        "http://localhost:3002/users",
+        userData
+      );
+      alert("User created!", response.data);
+      history.push("/signin");
     } catch (error) {
-      // Handle any errors that may occur
-      console.error(error);
-      alert("Something went wrong. Please try again.");
+      console.error("Error creating user:", error);
     }
   };
 

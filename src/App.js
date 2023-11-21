@@ -12,7 +12,7 @@ import Services from "./pages/Services";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 
-import NavigationBarAdmin from "./components/NavigationBarAdmin";
+import AdminDashboard from "./components/AdminDashboard";
 // import Dashboard from "./Admin/Dashboard";
 
 function App() {
@@ -31,21 +31,21 @@ function App() {
           <Route
             path="/admindashboard/dashboard"
             exact
-            component={NavigationBarAdmin}
+            component={AdminDashboard}
           />
 
           <Route
             path="/admindashboard/statistics"
             exact
-            component={NavigationBarAdmin}
+            component={AdminDashboard}
           />
 
-          <Route path="/admindashboard/reports" exact component={NavigationBarAdmin} />
-          <Route path="/admindashboard/users" exact component={NavigationBarAdmin} />
-          <Route path="/admindashboard/accounts" exact component={NavigationBarAdmin} />
-          <Route path="/admindashboard/stores" exact component={NavigationBarAdmin} />
-          <Route path="/admindashboard/transactions" exact component={NavigationBarAdmin} />
-          <Route path="/admindashboard/products" exact component={NavigationBarAdmin} />
+          <Route path="/admindashboard/reports" exact component={AdminDashboard} />
+          <Route path="/admindashboard/users" exact component={AdminDashboard} />
+          <Route path="/admindashboard/accounts" exact component={AdminDashboard} />
+          <Route path="/admindashboard/stores" exact component={AdminDashboard} />
+          <Route path="/admindashboard/transactions" exact component={AdminDashboard} />
+          <Route path="/admindashboard/products" exact component={AdminDashboard} />
 
           <Route path="/home" exact component={Home} />
           <Route path="/admin" exact component={Admin} />

@@ -71,7 +71,15 @@
       "userType": "customer",
       "image": "blob:http://localhost:3000/9a438cb8-7b0b-4979-b752-1d49832c9729",
       "id": 49349349400
+    },
+    {
+      "fullname": "John Daisy",
+      "email": "daisy_gmail.com",
+      "birthdate": "2023-11-09",
+      "password": "12345678@",
+      "userType": "customer",
+      "image": "blob:http://localhost:3000/d1fcc9b2-f4f8-4220-9f56-173e7b387d43",
+      "id": 49349349401
     }
-    
   ]
 }

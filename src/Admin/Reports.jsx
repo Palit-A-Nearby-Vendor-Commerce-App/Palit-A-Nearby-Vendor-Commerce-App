@@ -1,7 +1,5 @@
-import NavigationBarAdmin from "../components/NavigationBarAdmin";
-import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Paper } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import ReportsData from "./ReportsData";
 
 const Reports = () => {
@@ -16,7 +14,7 @@ const Reports = () => {
 
   return (
     <div className="w-full">
-        <h1 className="text-3xl font-bold pb-6 mt-10">Reports</h1>
+      <h1 className="text-3xl font-bold pb-6 mt-10">Reports</h1>
       <ReportsData />
     </div>
   );

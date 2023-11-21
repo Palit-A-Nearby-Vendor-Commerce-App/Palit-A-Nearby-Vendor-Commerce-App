@@ -1,53 +1,54 @@
-import * as React from "react";
-import { useState } from "react";
+import FolderSharedIcon from "@mui/icons-material/FolderShared";
+import HomeIcon from "@mui/icons-material/Home";
+import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
+import LogoutIcon from "@mui/icons-material/Logout";
+import PaymentsIcon from "@mui/icons-material/Payments";
+import PeopleIcon from "@mui/icons-material/People";
+import ReportIcon from "@mui/icons-material/Report";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import StackedLineChartIcon from "@mui/icons-material/StackedLineChart";
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
 import CssBaseline from "@mui/material/CssBaseline";
-import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import HomeIcon from "@mui/icons-material/Home";
-import StackedLineChartIcon from "@mui/icons-material/StackedLineChart";
-import ReportIcon from "@mui/icons-material/Report";
-import PeopleIcon from "@mui/icons-material/People";
-import FolderSharedIcon from "@mui/icons-material/FolderShared";
-import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
-import PaymentsIcon from "@mui/icons-material/Payments";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
-import LogoutIcon from "@mui/icons-material/Logout";
+import * as React from "react";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo.png";
-import CustomInput from "../components/CustomInput";
-import UserData from "./UserData";
-import StoreData from "./StoreData";
-import ReportsData from "./ReportsData";
+import CustomInput from "./CustomInput";
+
+import { useHistory } from "react-router-dom";
+import Accounts from "../Admin/Accounts";
+import Dashboard from "../Admin/Dashboard";
+import Products from "../Admin/Products";
+import Reports from "../Admin/Reports";
+import Statistics from "../Admin/Statistics";
+import Stores from "../Admin/Stores";
+import Transactions from "../Admin/Transactions";
+import Users from "../Admin/Users";
 
 const drawerWidth = 240;
 
-export default function AdminDashboard() {
+export default function NavigationBarAdmin() {
   const [searchInput, setSearchInput] = useState("");
   const currentDate = new Date();
-
+  const location = useLocation().pathname;
+  const history = useHistory();
   const formattedDate = currentDate.toDateString();
 
-
+  const handleLogout = () => {
+    history.push("/adminlogin3x8Yz7!qA");
+  };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex " }}>
       <CssBaseline />
-      {/* <AppBar
-        position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-      >
-        <Toolbar>
-          <Typography variant="h6" noWrap component="div">
-            Permanent drawer
-          </Typography>
-        </Toolbar>
-      </AppBar> */}
+
       <Drawer
         sx={{
           width: drawerWidth,
@@ -86,7 +87,10 @@ export default function AdminDashboard() {
                 },
               }}
             >
-              <ListItemButton>
+              <ListItemButton
+                component={Link}
+                to={`/admindashboard/${text.toLowerCase()}`}
+              >
                 <ListItemIcon>
                   {(() => {
                     switch (text) {
@@ -128,7 +132,7 @@ export default function AdminDashboard() {
             },
           }}
         >
-          <ListItemButton>
+          <ListItemButton onClick={handleLogout}>
             <ListItemIcon>
               <LogoutIcon />
             </ListItemIcon>
@@ -138,7 +142,7 @@ export default function AdminDashboard() {
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: "background.default", p: 3 }}
+        sx={{ flexGrow: 1, p: 3, backgroundColor: "#D6F3F9", height: "100vh", overflow: "auto" }}
       >
         {/* <Toolbar /> */}
         <section id="dashboard" className="font-custom">
@@ -155,23 +159,28 @@ export default function AdminDashboard() {
               />
             </div>
           </div>
+          {location === "/admindashboard/dashboard" && <Dashboard />}
+          {location === "/admindashboard/statistics" && <Statistics />}
+          {location === "/admindashboard/reports" && <Reports />}
+          {location === "/admindashboard/users" && <Users />}
+          {location === "/admindashboard/accounts" && <Accounts />}
+          {location === "/admindashboard/stores" && <Stores />}
+          {location === "/admindashboard/transactions" && <Transactions />}
+          {location === "/admindashboard/products" && <Products />}
+          {/* {(() => {
+            switch (location) {
+              case "/admindashboard/dashboard":
+                return <Dashboard />;
+              case "/admindashboard/statistics":
+                return <Statistics />;
+              case "/admindashboard/reports":
+                return <Reports />;
+              default:
+                return null;
+            }
+          })()} */}
         </section>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est
-          ullamcorper eget nulla facilisi etiam dignissim diam. Pulvinar
-          elementum integer enim neque volutpat ac tincidunt. Ornare suspendisse
-          sed nisi lacus sed viverra tellus. Purus sit amet volutpat consequat
-          mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis
-          risus sed vulputate odio. Morbi tincidunt ornare massa eget egestas
-          purus viverra accumsan in. In hendrerit gravida rutrum quisque non
-          tellus orci ac. Pellentesque nec nam aliquam sem et tortor. Habitant
-          morbi tristique senectus et. Adipiscing elit duis tristique
-          sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
       </Box>
-      <ReportsData />
     </Box>
   );
 }

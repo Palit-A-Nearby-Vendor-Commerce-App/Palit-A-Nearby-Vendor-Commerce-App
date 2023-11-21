@@ -16,6 +16,7 @@ const Signup = () => {
     email: "",
     birthdate: "",
     password: "",
+    confirmPassword: "",
     userType: "",
   });
   const [formErrors, setFormErrors] = useState({});
@@ -25,6 +26,10 @@ const Signup = () => {
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
     }
+  };
+
+  const handleConfirmPasswordChange = (e) => {
+    setFormData({ ...formData, confirmPassword: e.target.value });
   };
 
   const handleNameChange = (e) => {
@@ -67,6 +72,11 @@ const Signup = () => {
     if (formData.userType.trim() === "") {
       errors.userType = "User type is required";
     }
+
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
     setFormErrors(errors);
 
     if (Object.keys(errors).length > 0) {
@@ -82,7 +92,7 @@ const Signup = () => {
       userType: formData.userType,
       image: selectedImage || "",
     };
-      
+
 
     try {
       const userExists = await axios.get(
@@ -93,7 +103,7 @@ const Signup = () => {
         alert("User already exists");
         return;
       }
-      
+
       const response = await axios.post(
         "http://localhost:3002/users",
         userData
@@ -106,7 +116,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom ">
+    <div className="w-full bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom ">
       <div className="w-[500px] m-auto">
         <div className="w-full flex items-center justify-center">
           <img
@@ -200,6 +210,17 @@ const Signup = () => {
             <p className="text-red-500">
               Password must contain at least one symbol e.g. @, !
             </p>
+          </div>
+          <div className="mt-4">
+            <label>Confirm password</label>
+            <CustomInput
+              type="password"
+              value={formData["confirmPassword"]}
+              onChange={handleConfirmPasswordChange}
+            />
+            {formErrors.confirmPassword && (
+              <p className="text-red-500">{formErrors.confirmPassword}</p>
+            )}
           </div>
           <div className="mt-4">
             <label>Choose how you want to use Palit</label>

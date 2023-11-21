@@ -3,7 +3,6 @@ package com.nearbyvendor.palit.service;
 import com.nearbyvendor.palit.entity.UserEntity;
 import com.nearbyvendor.palit.repository.UserRepository;
 
-import org.apache.tomcat.jni.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

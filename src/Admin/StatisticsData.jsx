@@ -79,7 +79,7 @@ const StatisticsData = () => {
 
     return (
         
-        <div className="container mx-auto p-4" style={{backgroundColor: "#D6F3F9"}}>
+        <div className="container mx-auto p-4" >
           <div className="flex flex-wrap -mx-2">
             <div className="w-full md:w-1/3 px-2 mb-4">
               <div className="border border-gray-300 p-4 bg-blue-400 rounded-lg shadow-md">

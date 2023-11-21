@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import logo from "../assets/images/logo.png";
-import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
+import CustomInput from "../components/CustomInput";
 
 
 const Admin = () => {
@@ -25,7 +25,7 @@ const Admin = () => {
 
   const fetchUserData = () => {
     axios
-      .get("http://localhost:3002/users")
+      .get("http://localhost:3005/admins")
       .then((response) => {
         setUserData(response.data);
         setLoading(false);
@@ -49,7 +49,7 @@ const Admin = () => {
 
     if (user) {
       console.log("Current user: ", user);
-      history.push("/signin");
+      history.push("/admindashboard/dashboard");
     } else {
       setError("Invalid email or password");
     }
@@ -95,7 +95,7 @@ const Admin = () => {
         </form>
       </div>
     </div>
-  );  
+  );
 };
 
 export default Admin;

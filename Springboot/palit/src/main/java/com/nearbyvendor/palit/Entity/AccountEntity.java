@@ -18,7 +18,7 @@ public class AccountEntity {
     private boolean isDeleted;
 
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
     private UserEntity user;
 
     // getters and setters

@@ -29,7 +29,7 @@ public class UserService {
     public UserEntity updateUserById(int id, UserEntity user) {
         UserEntity existingUser = userRepository.findByUserIdAndIsDeletedFalse(id);
         if (existingUser != null) {
-            user.setId(existingUser.getId());
+            user.setUserId(existingUser.getUserId());
             return userRepository.save(user);
         } else {
             throw new IllegalArgumentException("Invalid user ID");

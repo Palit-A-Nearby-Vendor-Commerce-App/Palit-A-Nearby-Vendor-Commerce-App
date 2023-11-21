@@ -102,7 +102,7 @@ const Signup = () => {
               const accountData = {
                 isVendor: userData.userType === "vendor",
                 isAdmin: false,
-                userId: user.userId,
+                user_id: user.userId,
               };
               const accountResponse = await axios.post("http://localhost:8080/api/createAccount", accountData);
               account = accountResponse.data;
@@ -119,15 +119,6 @@ const Signup = () => {
           }
         });
       };
-
-      try {
-        const account = await createAccount(userData);
-        // Continue with the rest of the code
-      } catch (error) {
-        console.error(error);
-        alert("Failed to create account. Please try again.");
-        axios.delete(`http://localhost:8080/api/deleteUser/${user.userId}`);
-      }
 
       // Create a location entity using the http://localhost:8080/api/createLocation API
       // For simplicity, we assume the user provides their latitude and longitude

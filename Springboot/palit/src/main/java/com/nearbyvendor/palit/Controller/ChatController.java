@@ -1,46 +1,40 @@
 package com.nearbyvendor.palit.controller;
 
-import com.nearbyvendor.palit.entity.Chat;
+import com.nearbyvendor.palit.entity.ChatEntity;
 import com.nearbyvendor.palit.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/api")
 public class ChatController {
 
     @Autowired
     private ChatService chatService;
 
     // Get all chats by conversation id
-    @GetMapping("/{conversationId}")
-    public ResponseEntity<List<Chat>> getChatsByConversationId(@PathVariable int conversationId) {
-        List<Chat> chats = chatService.getChatsByConversationId(conversationId);
-        return new ResponseEntity<>(chats, HttpStatus.OK);
+    @GetMapping("getChatsByConversationId/{conversationId}")
+    public List<ChatEntity> getChatsByConversationId(@PathVariable int conversationId) {
+        return chatService.getChatsByConversationId(conversationId);
     }
 
     // Create a new chat
-    @PostMapping
-    public ResponseEntity<Chat> createChat(@RequestBody Chat chat) {
-        Chat newChat = chatService.createChat(chat);
-        return new ResponseEntity<>(newChat, HttpStatus.CREATED);
+    @PostMapping("/createChat")
+    public ChatEntity createChat(@RequestBody ChatEntity chat) {
+        return chatService.createChat(chat);
     }
 
     // Update an existing chat
-    @PutMapping("/{chatId}")
-    public ResponseEntity<Chat> updateChat(@PathVariable int chatId, @RequestBody Chat chat) {
-        Chat updatedChat = chatService.updateChat(chatId, chat);
-        return new ResponseEntity<>(updatedChat, HttpStatus.OK);
+    @PutMapping("updateChatById/{chatId}")
+    public ChatEntity updateChatById(@PathVariable int chatId, @RequestBody ChatEntity chat) {
+        return chatService.updateChatById(chatId, chat);
     }
 
     // Delete an existing chat
-    @DeleteMapping("/{chatId}")
-    public ResponseEntity<Void> deleteChat(@PathVariable int chatId) {
-        chatService.deleteChat(chatId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("deleteChatById/{chatId}")
+    public void deleteChatById(int chatId) {
+        chatService.deleteChatById(chatId);
     }
 }

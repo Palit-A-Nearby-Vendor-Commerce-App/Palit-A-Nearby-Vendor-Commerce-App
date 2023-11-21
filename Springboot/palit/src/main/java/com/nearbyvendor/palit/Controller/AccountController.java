@@ -8,28 +8,36 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 public class AccountController {
 
     @Autowired
     private AccountService accountService;
 
-    @GetMapping("/accounts")
+    @GetMapping("/getAllAccounts")
     public List<AccountEntity> getAllAccounts() {
         return accountService.getAllAccounts();
     }
 
-    @GetMapping("/accounts/{id}")
+    @GetMapping("/getAccountById/{id}")
     public AccountEntity getAccountById(@PathVariable int id) {
         return accountService.getAccountById(id);
     }
 
-    @PutMapping("/accounts/{id}")
-    public AccountEntity saveAccount(@PathVariable int id, @RequestBody AccountEntity account) {
-        return accountService.saveAccount(id, account);
+    @PostMapping("/createAccount")
+    public AccountEntity createAccount(@RequestBody AccountEntity account) {
+        return accountService.createAccount(account);
     }
 
-    @DeleteMapping("/accounts/{id}")
+    @PutMapping("/editAccountById/{id}")
+    public AccountEntity editAccountById(@PathVariable int id, @RequestBody AccountEntity account) {
+        return accountService.editAccountById(id, account);
+    }
+
+    @DeleteMapping("/deleteAccountById/{id}")
     public void deleteAccountById(@PathVariable int id) {
         accountService.deleteAccountById(id);
     }
+
+    
 }

@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Location {
+public class LocationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,10 +15,10 @@ public class Location {
     private double longitude;
     private int accountId;
 
-    public Location() {
+    public LocationEntity() {
     }
 
-    public Location(int locationId, double latitude, double longitude, int accountId) {
+    public LocationEntity(int locationId, double latitude, double longitude, int accountId) {
         this.locationId = locationId;
         this.latitude = latitude;
         this.longitude = longitude;

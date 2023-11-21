@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.nearbyvendor.palit.entity.Store;
+import com.nearbyvendor.palit.entity.StoreEntity;
 import com.nearbyvendor.palit.repository.StoreRepository;
 
 @Service
@@ -14,19 +14,19 @@ public class StoreService {
     @Autowired
     private StoreRepository storeRepository;
     
-    public List<Store> getAllStores() {
+    public List<StoreEntity> getAllStores() {
         return storeRepository.findAll();
     }
     
-    public Store getStoreById(int id) {
+    public StoreEntity getStoreById(int id) {
         return storeRepository.findById(id).orElse(null);
     }
     
-    public Store createStore(Store store) {
+    public StoreEntity createStore(StoreEntity store) {
         return storeRepository.save(store);
     }
     
-    public Store saveStore(int id, Store store) {
+    public StoreEntity updateStoreById(int id, StoreEntity store) {
         if (storeRepository.findById(id) != null) {
             return storeRepository.save(store);
         } else {
@@ -35,5 +35,8 @@ public class StoreService {
             throw new IllegalArgumentException("Invalid store ID");
         }
     }
-    
+
+    public void deleteStoreById(int id) {
+        storeRepository.deleteById(id);
+    }
 }

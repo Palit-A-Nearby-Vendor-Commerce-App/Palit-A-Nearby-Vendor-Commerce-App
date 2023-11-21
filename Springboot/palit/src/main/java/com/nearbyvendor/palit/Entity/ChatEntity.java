@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "chat")
-public class Chat {
+public class ChatEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,10 +27,10 @@ public class Chat {
     @Column(name = "conversation_id")
     private int conversationId;
 
-    public Chat() {
+    public ChatEntity() {
     }
 
-    public Chat(int senderId, int receiverId, String messageContent, Timestamp timestamp, int conversationId) {
+    public ChatEntity(int senderId, int receiverId, String messageContent, Timestamp timestamp, int conversationId) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.messageContent = messageContent;

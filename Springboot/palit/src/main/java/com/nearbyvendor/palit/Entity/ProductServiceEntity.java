@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "product_service")
-public class ProductService {
+public class ProductServiceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,10 +26,10 @@ public class ProductService {
     @Column(name = "image_path")
     private String imagePath;
 
-    public ProductService() {
+    public ProductServiceEntity() {
     }
 
-    public ProductService(String name, String description, double price, int storeId, String imagePath) {
+    public ProductServiceEntity(String name, String description, double price, int storeId, String imagePath) {
         this.name = name;
         this.description = description;
         this.price = price;

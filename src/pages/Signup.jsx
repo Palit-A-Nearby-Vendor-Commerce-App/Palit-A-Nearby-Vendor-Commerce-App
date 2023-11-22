@@ -10,6 +10,8 @@ function Signup() {
     storeName: "",
     description: "",
     category: "",
+    birthdate: "",
+    image: "",
   });
 
   const handleChange = (e) => {
@@ -78,6 +80,13 @@ function Signup() {
         placeholder="Password"
         required
       />
+      <input
+        name="birthdate"
+        type="date"
+        onChange={handleChange}
+        placeholder="Birthdate"
+        required
+      />
       <select name="userType" onChange={handleChange} required>
         <option value="">Select user type</option>
         <option value="customer">Customer</option>
@@ -101,6 +110,13 @@ function Signup() {
             name="category"
             onChange={handleChange}
             placeholder="Category"
+            required
+          />
+          <input
+            name="image"
+            type="file"
+            accept="image/*"
+            onChange={handleChange}
             required
           />
         </>

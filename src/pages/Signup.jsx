@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import moment from "moment"; // Import moment library
 import logo from "../assets/images/logo.png";
+import { useHistory } from "react-router-dom";
 
 function Signup() {
+  const history = useHistory();
   const [userData, setUserData] = useState({
     name: "",
     email: "",
@@ -99,6 +101,7 @@ function Signup() {
 
         // Alert the user that the user creation is successful
         setAlert("User created successfully.");
+        history.push("/signin");
       }
     } catch (error) {
       console.error(error);

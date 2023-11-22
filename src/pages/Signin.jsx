@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 
 import logo from "../assets/images/logo.png";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
+import { UserContext } from "../UserContext";
 
 const Signin = () => {
   const history = useHistory();
+  const { setUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,7 +26,7 @@ const Signin = () => {
 
   const fetchUserData = () => {
     axios
-      .get("http://localhost:3002/users")
+      .get("http://localhost:8080/api/getAllUsers")
       .then((response) => {
         setUserData(response.data);
         setLoading(false);
@@ -48,6 +50,7 @@ const Signin = () => {
 
     if (user) {
       console.log("Current user: ", user);
+      setUser(user);
       history.push("/home");
     } else {
       setError("Invalid email or password");

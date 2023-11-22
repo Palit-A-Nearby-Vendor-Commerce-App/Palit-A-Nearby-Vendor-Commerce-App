@@ -12,6 +12,7 @@ import Services from "./pages/Services";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Chat from "./pages/Chat";
+import Store from "./pages/Store";
 
 import AdminDashboard from "./components/AdminDashboard";
 // import Dashboard from "./Admin/Dashboard";
@@ -27,6 +28,7 @@ function App() {
           <Route path="/aboutus" exact component={Aboutus} />
           <Route path="/contactus" exact component={Contact} />
           <Route path="/services" exact component={Services} />
+          <Route path="/store" exact component={Store} />
 
           <Route path="/adminlogin3x8Yz7!qA" exact component={Admin} />
           <Route

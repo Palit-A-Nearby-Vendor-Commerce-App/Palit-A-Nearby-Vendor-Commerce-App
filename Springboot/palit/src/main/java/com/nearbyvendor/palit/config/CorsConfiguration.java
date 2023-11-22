@@ -1,4 +1,4 @@
-package com.nearbyvendor.palit.controller;
+package com.nearbyvendor.palit.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

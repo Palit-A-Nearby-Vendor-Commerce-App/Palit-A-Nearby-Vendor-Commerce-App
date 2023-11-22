@@ -21,10 +21,29 @@ public class UserEntity {
     private String email;
 
     private String password;
-    
+
     private boolean isDeleted;
 
-    private String imageLocation;
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
+
+    public UserEntity() {
+        super();
+        this.isDeleted = false;
+    }
+
+    public UserEntity(int userId, String name, Date birthDate, String email, String password,
+            byte[] image) {
+        super();
+        this.userId = userId;
+        this.name = name;
+        this.birthDate = birthDate;
+        this.email = email;
+        this.password = password;
+        this.isDeleted = false;
+        this.image = image;
+    }
 
     // getters and setters
     public int getUserId() {
@@ -67,14 +86,14 @@ public class UserEntity {
         this.password = password;
     }
 
-    public String getimageLocation() {
-        return imageLocation;
+    public byte[] getImage() {
+        return image;
     }
 
-    public void setimageLocation(String imageLocation) {
-        this.imageLocation = imageLocation;
+    public void setImage(byte[] image) {
+        this.image = image;
     }
-    
+
     public boolean getIsDeleted() {
         return isDeleted;
     }

@@ -4,7 +4,9 @@ import com.nearbyvendor.palit.entity.UserEntity;
 import com.nearbyvendor.palit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,14 +26,19 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @PostMapping("/createUser")
-    public UserEntity createUser(@RequestBody UserEntity user) {
-        return userService.createUser(user);
+    @PostMapping("/createUserWOutImage")
+    public UserEntity createUserWOutImage(@RequestBody UserEntity user) throws IOException {
+        return userService.createUserWOutImage(user);
     }
 
-    @PutMapping("/updateUserById/{id}")
-    public UserEntity updateUserById(@PathVariable int id, @RequestBody UserEntity user) {
-        return userService.updateUserById(id, user);
+    @PutMapping("/updateUserByIdWOutImage/{id}")
+    public UserEntity updateUserByIdWOutImage(@PathVariable int id, @RequestBody UserEntity user) throws IOException {
+        return updateUserByIdWOutImage(id, user);
+    }
+
+    @PutMapping("/updateUserImage/{id}")
+    public UserEntity updateUserImage(@PathVariable int id, @RequestParam("image") MultipartFile image) throws IOException {
+        return userService.updateUserImage(id, image);
     }
 
     @DeleteMapping("/deleteUserById/{id}")

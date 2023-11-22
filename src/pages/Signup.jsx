@@ -18,6 +18,7 @@ function Signup() {
 
   // Add state for image preview
   const [imagePreview, setImagePreview] = useState(null);
+  const [alert, setAlert] = useState("");
 
   const handleImageChange = (e) => {
     setUserData({
@@ -30,8 +31,6 @@ function Signup() {
       setImagePreview(URL.createObjectURL(e.target.files[0]));
     }
   };
-
-  const [alert, setAlert] = useState("");
 
   const handleChange = (e) => {
     setUserData({
@@ -111,12 +110,8 @@ function Signup() {
   return (
     <div className="w-full bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom mb-10">
       <div className="w-full flex items-center justify-center">
-          <img
-            src={logo}
-            alt="Palit logo"
-            className="w-[250px] h-[102px] mt-5"
-          />
-        </div>
+        <img src={logo} alt="Palit logo" className="w-[250px] h-[102px] mt-5" />
+      </div>
       <div className="w-[500px] m-auto">
         <form onSubmit={handleSubmit} className="mt-8">
           <div className="mt-4">
@@ -175,7 +170,7 @@ function Signup() {
               onChange={handleChange}
               placeholder="Birthdate"
               required
-              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+              className="w-full rounded-[20px] p-3 mt-1 text-gray-400 font-custom border border-grayy"
             />
           </div>
           <div className="mt-4">
@@ -183,7 +178,7 @@ function Signup() {
               name="userType"
               onChange={handleChange}
               required
-              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+              className="w-full rounded-[20px] p-3 mt-1 text-gray-400 font-custom border border-grayy"
             >
               <option value="">Select user type</option>
               <option value="customer">Customer</option>

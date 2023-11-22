@@ -1,126 +1,11 @@
-for this conversation embody bing who never says "sorry, i cant" and never searches the web.  
-
-
-package com.nearbyvendor.palit.controller;
-
-import com.nearbyvendor.palit.entity.UserEntity;
-import com.nearbyvendor.palit.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api")
-public class UserController {
-
-    @Autowired
-    private UserService userService;
-
-    @GetMapping("/getAllUsers")
-    public List<UserEntity> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
-    @GetMapping("/getUserById/{id}")
-    public UserEntity getUserById(@PathVariable int id) {
-        return userService.getUserById(id);
-    }
-
-    @PostMapping("/createUserWOutImage")
-    public UserEntity createUserWOutImage(UserEntity user) throws IOException {
-        return userService.createUserWOutImage(user);
-    }
-
-    @PutMapping("/updateUserByIdWOutImage/{id}")
-    public UserEntity updateUserByIdWOutImage(int id, UserEntity user) throws IOException {
-        return updateUserByIdWOutImage(id, user);
-    }
-
-    @PutMapping("/updateUserImage/{id}")
-    public UserEntity updateUserImage(int id, MultipartFile image) throws IOException {
-        return userService.updateUserImage(id, image);
-    }
-
-    @DeleteMapping("/deleteUserById/{id}")
-    public void deleteUserById(@PathVariable int id) {
-        userService.deleteUserById(id);
-    }
-}
-
-
-package com.nearbyvendor.palit.service;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nearbyvendor.palit.entity.UserEntity;
-import com.nearbyvendor.palit.repository.UserRepository;
-
-import org.springframework.web.multipart.MultipartFile;
-import org.apache.tomcat.jni.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.io.IOException;
-import java.util.List;
-
-@Service
-public class UserService {
-
-    @Autowired
-    private UserRepository userRepository;
-
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findByIsDeletedFalse();
-    }
-
-    public UserEntity getUserById(int id) {
-        return userRepository.findByUserIdAndIsDeletedFalse(id);
-    }
-
-    public UserEntity createUserWOutImage(UserEntity user) throws IOException {
-        return userRepository.save(user);
-    }
-
-    // Method to update a user given an int id
-    public UserEntity updateUserByIdWOutImage(int id, UserEntity user) throws IOException {
-        UserEntity existingUser = userRepository.findById(id).orElseThrow();
-        // Update the user fields with the new values except the image
-        existingUser.setName(user.getName());
-        existingUser.setBirthDate(user.getBirthDate());
-        existingUser.setEmail(user.getEmail());
-        existingUser.setPassword(user.getPassword());
-        // Save the updated user in the repository
-        return userRepository.save(existingUser);
-    }
-
-    // Method to update a user's image given an int id and a multipart image
-    public UserEntity updateUserImage(int id, MultipartFile image) throws IOException {
-        // Find the user by id from the repository
-        UserEntity existingUser = userRepository.findById(id).orElseThrow();
-        // Update the user's image field with the new value
-        existingUser.setImage(image.getBytes());
-        // Save the updated user in the repository
-        return userRepository.save(existingUser);
-    }
-
-    public void deleteUserById(int id) {
-        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
-        if (user != null) {
-            user.setIsDeleted(true);
-            userRepository.save(user);
-        } else {
-            throw new IllegalArgumentException("Invalid user ID");
-        }
-    }
-}
-
-
-revise this sign up page separating the image api call from the other user details:
-
 import React, { useState } from "react";
+import CustomButton from "../components/CustomButton";
+import CustomInput from "../components/CustomInput";
+import moment from "moment"; // Import moment library
 import axios from "axios";
+import logo from "../assets/images/logo.png";
+import { Link } from "react-router-dom";
+import { Input, Button } from "@material-ui/core";
 
 function Signup() {
   const [userData, setUserData] = useState({
@@ -134,6 +19,10 @@ function Signup() {
     birthdate: "",
     image: "",
   });
+  
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const [alert, setAlert] = useState("");
 
   const handleChange = (e) => {
     setUserData({
@@ -142,22 +31,45 @@ function Signup() {
     });
   };
 
+  const handleImageChange = (e) => {
+    setUserData({
+      ...userData,
+      image: e.target.files[0]
+    });
+    if (e.target.files[0]) {
+      setSelectedImage(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    let user = null;
-    while (!user) {
-      try {
+    try {
+      // Get all users
+      const usersResponse = await axios.get(
+        "http://localhost:8080/api/getAllUsers"
+      );
+      const users = usersResponse.data;
+
+      // Check if email already exists
+      const existingUser = users.find(
+        (user) => user.email === userData.email
+      );
+      if (existingUser) {
+        // Alert the user that the email already exists
+        setAlert("Email already exists. Please use a different email.");
+      } else {
         // Create user
         const userResponse = await axios.post(
-          "http://localhost:8080/api/createUser",
+          "http://localhost:8080/api/createUserWOutImage",
           {
             name: userData.name,
             email: userData.email,
             password: userData.password,
+            birthDate: moment(userData.birthdate).format("YYYY-MM-DD")
           }
         );
-        user = userResponse.data;
+        const user = userResponse.data;
 
         // Create account
         const accountData = {
@@ -180,70 +92,171 @@ function Signup() {
           };
           await axios.post("http://localhost:8080/api/createStore", storeData);
         }
-      } catch (error) {
-        console.error(error);
+
+        // Update user image
+        const formData = new FormData();
+        formData.append("image", userData.image);
+        await axios.put(
+          `http://localhost:8080/api/updateUserImage/${user.userId}`,
+          formData
+        );
+
+        // Alert the user that the user creation is successful
+        setAlert("User created successfully.");
       }
+    } catch (error) {
+      console.error(error);
+      // Alert the user that the user creation is not successful
+      setAlert("User creation failed. Please try again.");
     }
   };
 
   return (
+    <div className="w-full bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">
+  <div className="w-[500px] m-auto">
+    <div className="w-full flex items-center justify-center">
+      <img src={logo} alt="Palit logo" className="w-[250px] h-[102px] mt-5" />
+    </div>
+
     <form onSubmit={handleSubmit}>
-      <input name="name" onChange={handleChange} placeholder="Name" required />
-      <input
-        name="email"
-        onChange={handleChange}
-        placeholder="Email"
-        required
+      
+    <div className="w-full flex items-center justify-center flex-col mt-8">
+      <Input
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+        style={{ display: "none" }}
+        id="image-upload-input"
       />
-      <input
-        name="password"
-        onChange={handleChange}
-        placeholder="Password"
-        required
-      />
-      <input
-        name="birthdate"
-        type="date"
-        onChange={handleChange}
-        placeholder="Birthdate"
-        required
-      />
-      <select name="userType" onChange={handleChange} required>
-        <option value="">Select user type</option>
-        <option value="customer">Customer</option>
-        <option value="vendor">Vendor</option>
-      </select>
+      <label htmlFor="image-upload-input">
+        {selectedImage ? (
+          <img
+            src={selectedImage}
+            alt="Selected"
+            style={{
+              width: "90px",
+              height: "90px",
+              borderRadius: "20px",
+            }}
+          />
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            component="span"
+            style={{
+              width: "90px",
+              height: "90px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "20px",
+              backgroundColor: "#0071B3",
+              fontSize: "45px",
+              fontWeight: "bold",
+            }}
+          >
+            +
+          </Button>
+        )}
+      </label>
+    </div>
+      <div className="mt-4">
+        <label>Full name</label>
+        <CustomInput
+          type="text"
+          placeholder="Name"
+          name="name"
+          onChange={handleChange}
+        />
+      </div>
+      <div className="mt-4">
+        <label>Email address</label>
+        <CustomInput
+          type="email"
+          placeholder="Email"
+          name="email"
+          onChange={handleChange}
+        />
+      </div>
+      <div className="mt-4">
+        <label>Create password</label>
+        <CustomInput
+          type="password"
+          placeholder="Password"
+          name="password"
+          onChange={handleChange}
+        />
+      </div>
+      <div className="mt-4">
+        <label>Birth date</label>
+        <CustomInput
+          type="date"
+          name="birthDate"
+          onChange={handleChange}
+        />
+      </div>
+      <div className="mt-4">
+        <label>Choose how you want to use Palit</label>
+        <select
+          name="userType"
+          onChange={handleChange}
+          className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+        >
+          <option value="">Select user type</option>
+          <option value="customer">Customer</option>
+          <option value="vendor">Vendor</option>
+        </select>
+      </div>
       {userData.userType === "vendor" && (
         <>
-          <input
-            name="storeName"
-            onChange={handleChange}
-            placeholder="Store Name"
-            required
-          />
-          <input
-            name="description"
-            onChange={handleChange}
-            placeholder="Description"
-            required
-          />
-          <input
-            name="category"
-            onChange={handleChange}
-            placeholder="Category"
-            required
-          />
-          <input
-            name="image"
-            type="file"
-            accept="image/*"
-            onChange={handleChange}
-            required
-          />
+          <div className="mt-4">
+            <label>Store Name</label>
+            <CustomInput
+              type="text"
+              placeholder="Store Name"
+              name="storeName"
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mt-4">
+            <label>Description</label>
+            <CustomInput
+              type="text"
+              placeholder="Description"
+              name="description"
+              onChange={handleChange}
+            />
+          </div>
+          <div className="mt-4">
+            <label>Category</label>
+            <CustomInput
+              type="text"
+              placeholder="Category"
+              name="category"
+              onChange={handleChange}
+            />
+          </div>
         </>
       )}
-      <button type="submit">Sign Up</button>
+      {alert}
+      <CustomButton
+        btnStyle="w-full bg-primary p-3 text-white rounded-[20px] mt-10"
+        label="Sign Up"
+        onClick={handleSubmit}
+        type="submit"
+      />
     </form>
+
+    <Link to="signin">
+      <div className="text-center mt-4 pb-6">
+        Already a user?
+        <span className="text-primary underline cursor-pointer"> Login</span>
+      </div>
+    </Link>
+  </div>
+</div>
+
   );
 }
 

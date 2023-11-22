@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import moment from "moment"; // Import moment library
+import logo from "../assets/images/logo.png";
 
 function Signup() {
   const [userData, setUserData] = useState({
@@ -15,19 +16,27 @@ function Signup() {
     image: "",
   });
 
+  // Add state for image preview
+  const [imagePreview, setImagePreview] = useState(null);
+
+  const handleImageChange = (e) => {
+    setUserData({
+      ...userData,
+      image: e.target.files[0],
+    });
+
+    // Set the image preview
+    if (e.target.files[0]) {
+      setImagePreview(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
   const [alert, setAlert] = useState("");
 
   const handleChange = (e) => {
     setUserData({
       ...userData,
       [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleImageChange = (e) => {
-    setUserData({
-      ...userData,
-      image: e.target.files[0],
     });
   };
 
@@ -42,9 +51,7 @@ function Signup() {
       const users = usersResponse.data;
 
       // Check if email already exists
-      const existingUser = users.find(
-        (user) => user.email === userData.email
-      );
+      const existingUser = users.find((user) => user.email === userData.email);
       if (existingUser) {
         // Alert the user that the email already exists
         setAlert("Email already exists. Please use a different email.");
@@ -56,7 +63,7 @@ function Signup() {
             name: userData.name,
             email: userData.email,
             password: userData.password,
-            birthDate: moment(userData.birthdate).format("YYYY-MM-DD")
+            birthDate: moment(userData.birthdate).format("YYYY-MM-DD"),
           }
         );
         const user = userResponse.data;
@@ -102,64 +109,129 @@ function Signup() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input name="name" onChange={handleChange} placeholder="Name" required />
-      <input
-        name="email"
-        onChange={handleChange}
-        placeholder="Email"
-        required
-      />
-      <input
-        name="password"
-        onChange={handleChange}
-        placeholder="Password"
-        required
-      />
-      <input
-        name="birthdate"
-        type="date"
-        onChange={handleChange}
-        placeholder="Birthdate"
-        required
-      />
-      <select name="userType" onChange={handleChange} required>
-        <option value="">Select user type</option>
-        <option value="customer">Customer</option>
-        <option value="vendor">Vendor</option>
-      </select>
-      <input
-        name="image"
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        required
-      />
-      {userData.userType === "vendor" && (
-        <>
-          <input
-            name="storeName"
-            onChange={handleChange}
-            placeholder="Store Name"
-            required
+    <div className="w-full bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">
+      <div className="w-full flex items-center justify-center">
+          <img
+            src={logo}
+            alt="Palit logo"
+            className="w-[250px] h-[102px] mt-5"
           />
-          <input
-            name="description"
-            onChange={handleChange}
-            placeholder="Description"
-            required
-          />
-          <input
-            name="category"
-            onChange={handleChange}
-            placeholder="Category"
-            required
-          />
-        </>
-      )}
-      <button type="submit">Sign Up</button>
-      {alert && <p>{alert}</p>}
-    </form>
+        </div>
+      <div className="w-[500px] m-auto">
+        <form onSubmit={handleSubmit} className="mt-8">
+          <div className="mt-4">
+            {imagePreview ? (
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-[90px] h-[90px] rounded-[20px] mx-auto"
+              />
+            ) : (
+              <label className="w-[90px] h-[90px] flex justify-center items-center bg-gray-300 rounded-[20px] cursor-pointer mx-auto">
+                <input
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  required
+                  className="hidden"
+                />
+                <span className="text-lg font-bold">+</span>
+              </label>
+            )}
+          </div>
+          <div className="mt-4">
+            <input
+              name="name"
+              onChange={handleChange}
+              placeholder="Name"
+              required
+              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+            />
+          </div>
+          <div className="mt-4">
+            <input
+              name="email"
+              onChange={handleChange}
+              placeholder="Email"
+              required
+              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+            />
+          </div>
+          <div className="mt-4">
+            <input
+              name="password"
+              onChange={handleChange}
+              placeholder="Password"
+              required
+              type="password"
+              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+            />
+          </div>
+          <div className="mt-4">
+            <input
+              name="birthdate"
+              type="date"
+              onChange={handleChange}
+              placeholder="Birthdate"
+              required
+              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+            />
+          </div>
+          <div className="mt-4">
+            <select
+              name="userType"
+              onChange={handleChange}
+              required
+              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+            >
+              <option value="">Select user type</option>
+              <option value="customer">Customer</option>
+              <option value="vendor">Vendor</option>
+            </select>
+          </div>
+
+          {userData.userType === "vendor" && (
+            <>
+              <div className="mt-4">
+                <input
+                  name="storeName"
+                  onChange={handleChange}
+                  placeholder="Store Name"
+                  required
+                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+                />
+              </div>
+              <div className="mt-4">
+                <input
+                  name="description"
+                  onChange={handleChange}
+                  placeholder="Description"
+                  required
+                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+                />
+              </div>
+              <div className="mt-4">
+                <input
+                  name="category"
+                  onChange={handleChange}
+                  placeholder="Category"
+                  required
+                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+                />
+              </div>
+            </>
+          )}
+          <button
+            type="submit"
+            className="w-full bg-primary p-3 text-white rounded-[20px] mt-10"
+          >
+            Sign Up
+          </button>
+          {alert && <p className="text-red-500 mt-4">{alert}</p>}
+        </form>
+      </div>
+    </div>
   );
 }
 

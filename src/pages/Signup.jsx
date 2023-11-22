@@ -109,7 +109,7 @@ function Signup() {
   };
 
   return (
-    <div className="w-full bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">
+    <div className="w-full bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom mb-10">
       <div className="w-full flex items-center justify-center">
           <img
             src={logo}

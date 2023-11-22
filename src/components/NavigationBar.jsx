@@ -1,17 +1,27 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { useState } from "react";
-
+import React, { useContext,useState } from "react";
+import { Link, useHistory } from "react-router-dom";
 import { Button } from "@material-ui/core";
 import logo from "../assets/images/logo-white.png";
 import { NAV_HOVER_STYLE } from "../assets/styles/styles.js";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min.js";
+import { UserContext } from "../UserContext"; // Update the path based on your file structure
+import sampleStore from "../assets/images/storesample.png";
 
 const NavigationBar = () => {
   const [isHovered, setIsHovered] = useState(false);
-
+  const { user, setUser } = useContext(UserContext);
   const loc = useLocation();
+  const history = useHistory();
   console.log(loc);
+
+  const handleLogout = () => {
+    // Perform logout actions (e.g., clear user data)
+    setUser(null);
+    // Additional logout actions can be added here
+
+    // Redirect to the default page ("/")
+    history.push("/");
+  };
 
   return (
     <nav className="flex justify-between w-full py-3 px-16 bg-primary">
@@ -32,26 +42,58 @@ const NavigationBar = () => {
           </li>
         </ul>
 
-        <Link to="/signin" style={{ textDecoration: "none" }}>
-          <Button
-            variant="outlined"
-            style={{
-              textTransform: "none",
-              borderColor: "white",
-              width: "120px",
-              fontSize: "18px",
-              color: isHovered ? "#F4D23E" : "white",
-              borderColor: isHovered ? "#F4D23E" : "white",
-              fontFamily: "Poppins",
-              borderRadius: "20px",
-              transition: "color 0.3s, border-color 0.3s",
-            }}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            Sign In
-          </Button>
-        </Link>
+        {user ? (
+          // If the user is logged in, display Logout button and user image
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outlined"
+              style={{
+                textTransform: "none",
+                borderColor: "white",
+                width: "120px",
+                fontSize: "22px",
+                border:"none",
+                color: isHovered ? "#F4D23E" : "white",
+                borderColor: isHovered ? "#F4D23E" : "white",
+                fontFamily: "Poppins",
+                transition: "color 0.3s, border-color 0.3s",
+              }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+            {/* Add the user image here */}
+            <img
+              src={sampleStore} // replace with the actual path to the user's image
+              alt="User"
+              className="w-12 h-12 rounded-full"
+            />
+          </div>
+        ) : (
+          // If the user is not logged in, display Sign In button
+          <Link to="/signin" style={{ textDecoration: "none" }}>
+            <Button
+              variant="outlined"
+              style={{
+                textTransform: "none",
+                borderColor: "white",
+                width: "120px",
+                fontSize: "18px",
+                color: isHovered ? "#F4D23E" : "white",
+                borderColor: isHovered ? "#F4D23E" : "white",
+                fontFamily: "Poppins",
+                borderRadius: "20px",
+                transition: "color 0.3s, border-color 0.3s",
+              }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              Sign In
+            </Button>
+          </Link>
+        )}
       </div>
     </nav>
   );

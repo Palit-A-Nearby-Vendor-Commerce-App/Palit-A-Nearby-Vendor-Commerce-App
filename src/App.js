@@ -11,6 +11,7 @@ import Landing from "./pages/Landing";
 import Services from "./pages/Services";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
+import Chat from "./pages/Chat";
 import Store from "./pages/Store";
 
 import AdminDashboard from "./components/AdminDashboard";
@@ -42,15 +43,40 @@ function App() {
             component={AdminDashboard}
           />
 
-          <Route path="/admindashboard/reports" exact component={AdminDashboard} />
-          <Route path="/admindashboard/users" exact component={AdminDashboard} />
-          <Route path="/admindashboard/accounts" exact component={AdminDashboard} />
-          <Route path="/admindashboard/stores" exact component={AdminDashboard} />
-          <Route path="/admindashboard/transactions" exact component={AdminDashboard} />
-          <Route path="/admindashboard/products" exact component={AdminDashboard} />
+          <Route
+            path="/admindashboard/reports"
+            exact
+            component={AdminDashboard}
+          />
+          <Route
+            path="/admindashboard/users"
+            exact
+            component={AdminDashboard}
+          />
+          <Route
+            path="/admindashboard/accounts"
+            exact
+            component={AdminDashboard}
+          />
+          <Route
+            path="/admindashboard/stores"
+            exact
+            component={AdminDashboard}
+          />
+          <Route
+            path="/admindashboard/transactions"
+            exact
+            component={AdminDashboard}
+          />
+          <Route
+            path="/admindashboard/products"
+            exact
+            component={AdminDashboard}
+          />
 
           <Route path="/home" exact component={Home} />
           <Route path="/admin" exact component={Admin} />
+          <Route path="/chat" exact component={Chat} />
 
           <Route component={Landing} />
         </Switch>

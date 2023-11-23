@@ -231,7 +231,7 @@ function Signup() {
           >
             Sign Up
           </button>
-          {alert && <p className="text-red-500 mt-4">{alert}</p>}
+          {alert}
         </form>
       </div>
     </div>

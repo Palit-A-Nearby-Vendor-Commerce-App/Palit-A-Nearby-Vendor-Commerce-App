@@ -45,16 +45,11 @@ function Signup() {
     e.preventDefault();
 
     try {
-      // Get all users
-      const usersResponse = await axios.get(
-        "http://localhost:8080/api/getAllUsers"
-      );
-      const users = usersResponse.data;
-
-      // Check if email already exists
-      const existingUser = users.find((user) => user.email === userData.email);
-      if (existingUser) {
-        // Alert the user that the email already exists
+      if (
+        !axios.post("http://localhost:8080/api/isEmailTaken", {
+          email: userData.email,
+        })
+      ) {
         setAlert("Email already exists. Please use a different email.");
       } else {
         // Create user

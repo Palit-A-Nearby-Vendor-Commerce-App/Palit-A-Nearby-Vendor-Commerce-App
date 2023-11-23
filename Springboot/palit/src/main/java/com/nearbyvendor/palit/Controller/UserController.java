@@ -45,4 +45,9 @@ public class UserController {
     public void deleteUserById(@PathVariable int id) {
         userService.deleteUserById(id);
     }
+
+    @PostMapping("/isEmailTaken")
+    public boolean checkEmail(@RequestBody UserEntity userData) {
+        return userService.checkEmail(userData);
+    }
 }

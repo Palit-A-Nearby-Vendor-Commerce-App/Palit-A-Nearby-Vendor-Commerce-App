@@ -60,4 +60,19 @@ public class UserService {
             throw new IllegalArgumentException("Invalid user ID");
         }
     }
+
+    // Create a method to check if an email already exists
+    public boolean checkEmail(UserEntity userData) {
+    // Get the list of users from the previous method
+    List<UserEntity> users = getAllUsers();
+    // Loop through the users and compare the email with the userData
+    for (UserEntity user : users) {
+      if (user.getEmail().equals(userData.getEmail())) {
+        // If the email already exists, return a message
+        return true;
+      }
+    }
+    // If the email does not exist, return a success message
+    return false;
+  }
 }

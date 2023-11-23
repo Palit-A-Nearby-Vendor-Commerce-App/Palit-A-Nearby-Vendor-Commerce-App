@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Service
@@ -25,28 +28,35 @@ public class UserService {
         return userRepository.findByUserIdAndIsDeletedFalse(id);
     }
 
-    public UserEntity createUserWOutImage(UserEntity user) throws IOException {
-        return userRepository.save(user);
-    }
-
-    // Method to update a user given an int id
-    public UserEntity updateUserByIdWOutImage(@PathVariable int id, UserEntity user) throws IOException {
-        UserEntity existingUser = userRepository.findById(id).orElseThrow();
-        // Update the user fields with the new values except the image
-        existingUser.setName(user.getName());
-        existingUser.setBirthDate(user.getBirthDate());
-        existingUser.setEmail(user.getEmail());
-        existingUser.setPassword(user.getPassword());
+    public UserEntity createUser(MultipartFile image, String name, String birthDate, String email, String password)
+            throws IOException, ParseException {
+        UserEntity newUserEntity = new UserEntity();
+        newUserEntity.setImage(image.getBytes());
+        newUserEntity.setName(name);
+        // Convert the birthDate string to java.sql.Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date parsedDate = dateFormat.parse(birthDate);
+        java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+        newUserEntity.setBirthDate(sqlDate);
+        newUserEntity.setEmail(email);
+        newUserEntity.setPassword(password);
         // Save the updated user in the repository
-        return userRepository.save(existingUser);
+        return userRepository.save(newUserEntity);
     }
 
-    // Method to update a user's image given an int id and a multipart image
-    public UserEntity updateUserImage(@PathVariable int id, MultipartFile image) throws IOException {
-        // Find the user by id from the repository
+    public UserEntity updateUserById(int id, MultipartFile image, String name, String birthDate, String email,
+            String password)
+            throws IOException, ParseException {
         UserEntity existingUser = userRepository.findById(id).orElseThrow();
-        // Update the user's image field with the new value
         existingUser.setImage(image.getBytes());
+        existingUser.setName(name);
+        // Convert the birthDate string to java.sql.Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date parsedDate = dateFormat.parse(birthDate);
+        java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+        existingUser.setBirthDate(sqlDate);
+        existingUser.setEmail(email);
+        existingUser.setPassword(password);
         // Save the updated user in the repository
         return userRepository.save(existingUser);
     }
@@ -63,16 +73,16 @@ public class UserService {
 
     // Create a method to check if an email already exists
     public boolean checkEmail(UserEntity userData) {
-    // Get the list of users from the previous method
-    List<UserEntity> users = getAllUsers();
-    // Loop through the users and compare the email with the userData
-    for (UserEntity user : users) {
-      if (user.getEmail().equals(userData.getEmail())) {
-        // If the email already exists, return a message
-        return true;
-      }
+        // Get the list of users from the previous method
+        List<UserEntity> users = getAllUsers();
+        // Loop through the users and compare the email with the userData
+        for (UserEntity user : users) {
+            if (user.getEmail().equals(userData.getEmail())) {
+                // If the email already exists, return a message
+                return true;
+            }
+        }
+        // If the email does not exist, return a success message
+        return false;
     }
-    // If the email does not exist, return a success message
-    return false;
-  }
 }

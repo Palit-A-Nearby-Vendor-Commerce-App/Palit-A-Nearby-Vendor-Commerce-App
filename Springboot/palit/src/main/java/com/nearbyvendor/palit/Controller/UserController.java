@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -26,19 +28,27 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @PostMapping("/createUserWOutImage")
-    public UserEntity createUserWOutImage(@RequestBody UserEntity user) throws IOException {
-        return userService.createUserWOutImage(user);
+    // Create a POST mapping for /users to create a new user
+    @PostMapping("/createUser")
+    public UserEntity createUser(@RequestParam("image") MultipartFile image,
+                                 @RequestParam("name") String name,
+                                 @RequestParam("birthDate") String birthDate,
+                                 @RequestParam("email") String email,
+                                 @RequestParam("password") String password) throws IOException, ParseException {
+        // Call the createUser method from the service class and return the result
+        return userService.createUser(image, name, birthDate, email, password);
     }
 
-    @PutMapping("/updateUserByIdWOutImage/{id}")
-    public UserEntity updateUserByIdWOutImage(@PathVariable int id, @RequestBody UserEntity user) throws IOException {
-        return updateUserByIdWOutImage(id, user);
-    }
-
-    @PutMapping("/updateUserImage/{id}")
-    public UserEntity updateUserImage(@PathVariable int id, @RequestParam("image") MultipartFile image) throws IOException {
-        return userService.updateUserImage(id, image);
+    // Create a PUT mapping for /users/{id} to update an existing user
+    @PutMapping("/updateUserById/{id}")
+    public UserEntity updateUser(@PathVariable("id") int id,
+                                 @RequestParam("image") MultipartFile image,
+                                 @RequestParam("name") String name,
+                                 @RequestParam("birthDate") String birthDate,
+                                 @RequestParam("email") String email,
+                                 @RequestParam("password") String password) throws IOException, ParseException {
+        // Call the updateUser method from the service class and return the result
+        return userService.updateUserById(id, image, name, birthDate, email, password);
     }
 
     @DeleteMapping("/deleteUserById/{id}")

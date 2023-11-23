@@ -53,14 +53,20 @@ function Signup() {
         setAlert("Email already exists. Please use a different email.");
       } else {
         // Create user
+        const formData = new FormData();
+        formData.append("image", userData.image);
+        formData.append("name", userData.name);
+        formData.append(
+          "birthDate",
+          moment(userData.birthDate).format("YYYY-MM-DD")
+        );
+        formData.append("email", userData.email);
+        formData.append("password", userData.password);
         const userResponse = await axios.post(
-          "http://localhost:8080/api/createUserWOutImage",
-          {
-            name: userData.name,
-            email: userData.email,
-            password: userData.password,
-            birthDate: moment(userData.birthdate).format("YYYY-MM-DD"),
-          }
+          // Use the URL for the POST mapping to create a new user
+          "http://localhost:8080/api/createUser",
+          formData
+          // Use the FormData object to append the required parameters
         );
         const user = userResponse.data;
 
@@ -85,14 +91,6 @@ function Signup() {
           };
           await axios.post("http://localhost:8080/api/createStore", storeData);
         }
-
-        // Update user image
-        const formData = new FormData();
-        formData.append("image", userData.image);
-        await axios.put(
-          `http://localhost:8080/api/updateUserImage/${user.userId}`,
-          formData
-        );
 
         // Alert the user that the user creation is successful
         setAlert("User created successfully.");
@@ -229,3 +227,4 @@ function Signup() {
 }
 
 export default Signup;
+

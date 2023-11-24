@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.text.ParseException;
 import java.util.List;
 
@@ -31,24 +30,26 @@ public class UserController {
     // Create a POST mapping for /users to create a new user
     @PostMapping("/createUser")
     public UserEntity createUser(@RequestParam("image") MultipartFile image,
-                                 @RequestParam("name") String name,
+                                 @RequestParam("firstName") String firstName,
+                                 @RequestParam("lastName") String lastName,
                                  @RequestParam("birthDate") String birthDate,
                                  @RequestParam("email") String email,
                                  @RequestParam("password") String password) throws IOException, ParseException {
         // Call the createUser method from the service class and return the result
-        return userService.createUser(image, name, birthDate, email, password);
+        return userService.createUser(image, firstName, lastName, birthDate, email, password);
     }
 
     // Create a PUT mapping for /users/{id} to update an existing user
     @PutMapping("/updateUserById/{id}")
     public UserEntity updateUser(@PathVariable("id") int id,
                                  @RequestParam("image") MultipartFile image,
-                                 @RequestParam("name") String name,
+                                 @RequestParam("firstName") String firstName,
+                                 @RequestParam("lastName") String lastName,
                                  @RequestParam("birthDate") String birthDate,
                                  @RequestParam("email") String email,
                                  @RequestParam("password") String password) throws IOException, ParseException {
         // Call the updateUser method from the service class and return the result
-        return userService.updateUserById(id, image, name, birthDate, email, password);
+        return userService.updateUserById(id, image, firstName, lastName, birthDate, email, password);
     }
 
     @DeleteMapping("/deleteUserById/{id}")

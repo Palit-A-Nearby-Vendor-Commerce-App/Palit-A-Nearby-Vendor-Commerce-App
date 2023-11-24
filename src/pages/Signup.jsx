@@ -6,8 +6,10 @@ import { useHistory } from "react-router-dom";
 
 function Signup() {
   const history = useHistory();
+  const [isImageEmpty, setIsImageEmpty] = useState(false);
   const [userData, setUserData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     userType: "",
@@ -21,6 +23,9 @@ function Signup() {
   // Add state for image preview
   const [imagePreview, setImagePreview] = useState(null);
   const [alert, setAlert] = useState("");
+
+  // Add state for confirmation popup
+  const [confirm, setConfirm] = useState(false);
 
   const handleImageChange = (e) => {
     setUserData({
@@ -44,6 +49,34 @@ function Signup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Check if the image field is empty
+    if (!userData.image) {
+      setIsImageEmpty(true);
+      return;
+    } else {
+      setIsImageEmpty(false);
+    }
+
+    // Check if the user is at least 13 years old
+    const today = moment();
+    const birthDate = moment(userData.birthdate);
+    const age = today.diff(birthDate, "years");
+    if (age < 13) {
+      setAlert("You must be at least 13 years old to sign up.");
+      return;
+    }
+
+    // Check if the image field is empty
+    if (!userData.image) {
+      setAlert("You must upload an image to sign up.");
+      return;
+    }
+
+    // Show the confirmation popup
+    setConfirm(true);
+  };
+
+  const handleConfirm = async () => {
     try {
       if (
         !axios.post("http://localhost:8080/api/isEmailTaken", {
@@ -55,7 +88,8 @@ function Signup() {
         // Create user
         const formData = new FormData();
         formData.append("image", userData.image);
-        formData.append("name", userData.name);
+        formData.append("firstName", userData.firstName);
+        formData.append("lastName", userData.lastName);
         formData.append(
           "birthDate",
           moment(userData.birthDate).format("YYYY-MM-DD")
@@ -103,6 +137,11 @@ function Signup() {
     }
   };
 
+  const handleCancel = () => {
+    // Hide the confirmation popup
+    setConfirm(false);
+  };
+
   return (
     <div className="w-full bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom mb-10">
       <div className="w-full flex items-center justify-center">
@@ -110,7 +149,7 @@ function Signup() {
       </div>
       <div className="w-[500px] m-auto">
         <form onSubmit={handleSubmit} className="mt-8">
-          <div className="mt-4">
+          <div className="mt-4 text-center">
             {imagePreview ? (
               <img
                 src={imagePreview}
@@ -124,24 +163,36 @@ function Signup() {
                   type="file"
                   accept="image/*"
                   onChange={handleImageChange}
-                  required
                   className="hidden"
                 />
                 <span className="text-lg font-bold">+</span>
               </label>
             )}
+            {isImageEmpty && <p className="text-red-500">Image is required</p>}
+          </div>
+          <div className="mt-4 flex">
+            <div className="mr-2 w-full">
+              <input
+                name="firstName"
+                onChange={handleChange}
+                placeholder="First Name"
+                required
+                className="rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy w-full"
+              />
+            </div>
+            <div className="w-full">
+              <input
+                name="lastName"
+                onChange={handleChange}
+                placeholder="Last Name"
+                required
+                className="rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy w-full"
+              />
+            </div>
           </div>
           <div className="mt-4">
             <input
-              name="name"
-              onChange={handleChange}
-              placeholder="Name"
-              required
-              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
-            />
-          </div>
-          <div className="mt-4">
-            <input
+              type="email"
               name="email"
               onChange={handleChange}
               placeholder="Email"
@@ -203,25 +254,57 @@ function Signup() {
                 />
               </div>
               <div className="mt-4">
-                <input
+                <select
                   name="category"
                   onChange={handleChange}
                   placeholder="Category"
                   required
                   className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
-                />
+                >
+                  <option value="">Select category</option>
+                  <option value="fish">Fish</option>
+                  <option value="fruits">Fruits</option>
+                  <option value="assorted">Assorted</option>
+                  <option value="manicure">Manicure</option>
+                </select>
               </div>
             </>
           )}
+          <p className="text-center mt-4 text-red-600">
+          {alert}
+          </p>
           <button
             type="submit"
             className="w-full bg-primary p-3 text-white rounded-[20px] mt-10"
           >
             Sign Up
           </button>
-          {alert}
         </form>
       </div>
+
+      {confirm && (
+        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-[20px] p-5">
+            <p className="text-lg font-bold">
+              Are you sure you want to sign up?
+            </p>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={handleCancel}
+                className="bg-gray-300 p-2 rounded-[10px] mr-2"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="bg-primary p-2 rounded-[10px] text-white"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

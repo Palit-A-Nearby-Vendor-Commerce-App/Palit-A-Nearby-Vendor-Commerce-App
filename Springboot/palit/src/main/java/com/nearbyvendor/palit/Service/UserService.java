@@ -3,13 +3,11 @@ package com.nearbyvendor.palit.service;
 import com.nearbyvendor.palit.entity.UserEntity;
 import com.nearbyvendor.palit.repository.UserRepository;
 
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -28,11 +26,12 @@ public class UserService {
         return userRepository.findByUserIdAndIsDeletedFalse(id);
     }
 
-    public UserEntity createUser(MultipartFile image, String name, String birthDate, String email, String password)
+    public UserEntity createUser(MultipartFile image, String firstName, String lastName, String birthDate, String email, String password)
             throws IOException, ParseException {
         UserEntity newUserEntity = new UserEntity();
         newUserEntity.setImage(image.getBytes());
-        newUserEntity.setName(name);
+        newUserEntity.setFirstName(firstName);
+        newUserEntity.setLastName(lastName);
         // Convert the birthDate string to java.sql.Date
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         java.util.Date parsedDate = dateFormat.parse(birthDate);
@@ -44,12 +43,13 @@ public class UserService {
         return userRepository.save(newUserEntity);
     }
 
-    public UserEntity updateUserById(int id, MultipartFile image, String name, String birthDate, String email,
+    public UserEntity updateUserById(int id, MultipartFile image, String firstName, String lastName, String birthDate, String email,
             String password)
             throws IOException, ParseException {
         UserEntity existingUser = userRepository.findById(id).orElseThrow();
         existingUser.setImage(image.getBytes());
-        existingUser.setName(name);
+        existingUser.setFirstName(firstName);
+        existingUser.setLastName(lastName);
         // Convert the birthDate string to java.sql.Date
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         java.util.Date parsedDate = dateFormat.parse(birthDate);

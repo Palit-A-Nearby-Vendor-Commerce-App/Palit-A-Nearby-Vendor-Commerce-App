@@ -13,7 +13,9 @@ public class UserEntity {
     @Column(name = "userId")
     private int userId;
 
-    private String name;
+    private String firstName;
+    
+    private String lastName;
 
     @Temporal(TemporalType.DATE)
     private Date birthDate;
@@ -33,11 +35,12 @@ public class UserEntity {
         this.isDeleted = false;
     }
 
-    public UserEntity(int userId, String name, Date birthDate, String email, String password,
+    public UserEntity(int userId, String firstName, String lastName, Date birthDate, String email, String password,
             byte[] image) {
         super();
         this.userId = userId;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.birthDate = birthDate;
         this.email = email;
         this.password = password;
@@ -54,12 +57,20 @@ public class UserEntity {
         this.userId = userId;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public Date getBirthDate() {

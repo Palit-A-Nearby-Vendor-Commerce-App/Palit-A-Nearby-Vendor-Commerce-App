@@ -3,6 +3,7 @@ import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import marker from "../assets/images/vendor-self-pin.png";
 import axios from "axios"; // import axios library
 import NavigationBar from "../components/NavigationBar";
+import MapSlidingBox from "./MapSlidingBox";
 
 const mapContainerStyle = {
   width: "100%",
@@ -32,6 +33,11 @@ const defaultCenter = {
 function Home() {
   const [currentPosition, setCurrentPosition] = useState(defaultCenter);
   const [nearbyUsers, setNearbyUsers] = useState([]); // state to store nearby users
+  const [showSlider, setShowSlider] = useState(false);
+
+  const handleSliderToggle = () => {
+    setShowSlider(!showSlider);
+  };
 
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
@@ -160,6 +166,7 @@ function Home() {
                   }}
                 />
               ))}
+              <MapSlidingBox showSlider={showSlider} handleSliderToggle={handleSliderToggle} />
             </GoogleMap>
           </div>
         </LoadScript>

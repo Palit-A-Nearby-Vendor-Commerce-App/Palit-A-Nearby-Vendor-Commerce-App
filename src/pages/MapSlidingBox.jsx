@@ -1,5 +1,6 @@
 import React from "react";
-import dragicon from "../assets/images/dragicon.png";
+import dragiconenter from "../assets/images/dragiconenter.png";
+import dragiconexit from "../assets/images/dragiconexit.png";
 
 const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
     const sliderBoxStyle = {
@@ -20,7 +21,8 @@ const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
         top: 400,
         right: showSlider ? "340px" : "0",
         zIndex: 1,
-        cursor: "pointer", // Add this line to make the cursor change on hover
+        cursor: "pointer",
+        transition: "right 0.3s ease", // Add this line to make the button transition smoothly
     };
 
     return (
@@ -33,9 +35,14 @@ const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
             </div>
             <button style={buttonStyle} onClick={handleSliderToggle}>
                 <img
-                    src={dragicon}
+                    src={showSlider ? dragiconexit : dragiconenter}
                     alt="Toggle Slider"
-                    style={{ width: "30px", height: "30px", border: "1px solid", backgroundColor: "white" }} // Adjust size as needed
+                    style={{
+                        width: "30px",
+                        height: "30px",
+                        border: "1px solid",
+                        backgroundColor: "white",
+                    }}
                 />
             </button>
         </div>

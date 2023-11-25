@@ -1,245 +1,125 @@
 @nosearch @youcan pls revise the code to have an are you sure popup when after pressing sign up. and validation for the user being at least 13 years old, when the image field is empty, and revise the store categories to have fixed choices dropdown like fish, fruits, assorted, manicure.
-
-import React, { useState } from "react";
-import axios from "axios";
-import moment from "moment"; // Import moment library
-import logo from "../assets/images/logo.png";
-import { useHistory } from "react-router-dom";
-
-function Signup() {
-  const history = useHistory();
-  const [userData, setUserData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-    userType: "",
-    storeName: "",
-    description: "",
-    category: "",
-    birthdate: "",
-    image: "",
-  });
-
-  // Add state for image preview
-  const [imagePreview, setImagePreview] = useState(null);
-  const [alert, setAlert] = useState("");
-
-  const handleImageChange = (e) => {
-    setUserData({
-      ...userData,
-      image: e.target.files[0],
-    });
-
-    // Set the image preview
-    if (e.target.files[0]) {
-      setImagePreview(URL.createObjectURL(e.target.files[0]));
-    }
+give me one method to implement this in the service class:
+const fetchUserData = () => {
+    axios
+      .get("http://localhost:8080/api/getAllUsers")
+      .then((response) => {
+        setUserData(response.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        alert("Error fetching data:", error);
+        setLoading(false);
+      });
   };
 
-  const handleChange = (e) => {
-    setUserData({
-      ...userData,
-      [e.target.name]: e.target.value,
-    });
-  };
+  useEffect(() => {
+    fetchUserData();
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
 
-    try {
-      if (
-        !axios.post("http://localhost:8080/api/isEmailTaken", {
-          email: userData.email,
-        })
-      ) {
-        setAlert("Email already exists. Please use a different email.");
-      } else {
-        // Create user
-        const formData = new FormData();
-        formData.append("image", userData.image);
-        formData.append("firstName", userData.firstName);
-        formData.append("lastName", userData.lastName);
-        formData.append(
-          "birthDate",
-          moment(userData.birthDate).format("YYYY-MM-DD")
-        );
-        formData.append("email", userData.email);
-        formData.append("password", userData.password);
-        const userResponse = await axios.post(
-          // Use the URL for the POST mapping to create a new user
-          "http://localhost:8080/api/createUser",
-          formData
-          // Use the FormData object to append the required parameters
-        );
-        const user = userResponse.data;
+    const user = userData.find(
+      (user) => user.email === email && user.password === password
+    );
 
-        // Create account
-        const accountData = {
-          isVendor: userData.userType === "vendor",
-          isAdmin: false,
-          userId: user.userId,
-        };
-        await axios.post(
-          "http://localhost:8080/api/createAccount",
-          accountData
-        );
-
-        // If user is a vendor, create store
-        if (userData.userType === "vendor") {
-          const storeData = {
-            storeName: userData.storeName,
-            description: userData.description,
-            category: userData.category,
-            vendorAccountId: user.userId,
-          };
-          await axios.post("http://localhost:8080/api/createStore", storeData);
-        }
-
-        // Alert the user that the user creation is successful
-        setAlert("User created successfully.");
-        history.push("/signin");
-      }
-    } catch (error) {
-      console.error(error);
-      // Alert the user that the user creation is not successful
-      setAlert("User creation failed. Please try again.");
+    if (user) {
+      console.log("Current user: ", user);
+      setUser(user);
+      history.push("/home");
+    } else {
+      setError("Invalid email or password");
     }
   };
 
-  return (
-    <div className="w-full bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom mb-10">
-      <div className="w-full flex items-center justify-center">
-        <img src={logo} alt="Palit logo" className="w-[250px] h-[102px] mt-5" />
-      </div>
-      <div className="w-[500px] m-auto">
-        <form onSubmit={handleSubmit} className="mt-8">
-          <div className="mt-4">
-            {imagePreview ? (
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="w-[90px] h-[90px] rounded-[20px] mx-auto"
-              />
-            ) : (
-              <label className="w-[90px] h-[90px] flex justify-center items-center bg-gray-300 rounded-[20px] cursor-pointer mx-auto">
-                <input
-                  name="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  required
-                  className="hidden"
-                />
-                <span className="text-lg font-bold">+</span>
-              </label>
-            )}
-          </div>
-          <div className="mt-4 flex">
-            <div className="mr-2">
-              <input
-                name="firstName"
-                onChange={handleChange}
-                placeholder="First Name"
-                required
-                className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
-              />
-            </div>
-            <div>
-              <input
-                name="lastName"
-                onChange={handleChange}
-                placeholder="Last Name"
-                required
-                className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
-              />
-            </div>
-          </div>
-          <div className="mt-4">
-            <input
-              type="email"
-              name="email"
-              onChange={handleChange}
-              placeholder="Email"
-              required
-              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
-            />
-          </div>
-          <div className="mt-4">
-            <input
-              name="password"
-              onChange={handleChange}
-              placeholder="Password"
-              required
-              type="password"
-              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
-            />
-          </div>
-          <div className="mt-4">
-            <input
-              name="birthdate"
-              type="date"
-              onChange={handleChange}
-              placeholder="Birthdate"
-              required
-              className="w-full rounded-[20px] p-3 mt-1 text-gray-400 font-custom border border-grayy"
-            />
-          </div>
-          <div className="mt-4">
-            <select
-              name="userType"
-              onChange={handleChange}
-              required
-              className="w-full rounded-[20px] p-3 mt-1 text-gray-400 font-custom border border-grayy"
-            >
-              <option value="">Select user type</option>
-              <option value="customer">Customer</option>
-              <option value="vendor">Vendor</option>
-            </select>
-          </div>
 
-          {userData.userType === "vendor" && (
-            <>
-              <div className="mt-4">
-                <input
-                  name="storeName"
-                  onChange={handleChange}
-                  placeholder="Store Name"
-                  required
-                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
-                />
-              </div>
-              <div className="mt-4">
-                <input
-                  name="description"
-                  onChange={handleChange}
-                  placeholder="Description"
-                  required
-                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
-                />
-              </div>
-              <div className="mt-4">
-                <input
-                  name="category"
-                  onChange={handleChange}
-                  placeholder="Category"
-                  required
-                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
-                />
-              </div>
-            </>
-          )}
-          <button
-            type="submit"
-            className="w-full bg-primary p-3 text-white rounded-[20px] mt-10"
-          >
-            Sign Up
-          </button>
-          {alert}
-        </form>
-      </div>
-    </div>
-  );
+
+package com.nearbyvendor.palit.service;
+
+import com.nearbyvendor.palit.entity.UserEntity;
+import com.nearbyvendor.palit.repository.UserRepository;
+
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findByIsDeletedFalse();
+    }
+
+    public UserEntity getUserById(int id) {
+        return userRepository.findByUserIdAndIsDeletedFalse(id);
+    }
+
+    public UserEntity createUser(MultipartFile image, String firstName, String lastName, String birthDate, String email, String password)
+            throws IOException, ParseException {
+        UserEntity newUserEntity = new UserEntity();
+        newUserEntity.setImage(image.getBytes());
+        newUserEntity.setFirstName(firstName);
+        newUserEntity.setLastName(lastName);
+        // Convert the birthDate string to java.sql.Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date parsedDate = dateFormat.parse(birthDate);
+        java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+        newUserEntity.setBirthDate(sqlDate);
+        newUserEntity.setEmail(email);
+        newUserEntity.setPassword(password);
+        // Save the updated user in the repository
+        return userRepository.save(newUserEntity);
+    }
+
+    public UserEntity updateUserById(int id, MultipartFile image, String firstName, String lastName, String birthDate, String email,
+            String password)
+            throws IOException, ParseException {
+        UserEntity existingUser = userRepository.findById(id).orElseThrow();
+        existingUser.setImage(image.getBytes());
+        existingUser.setFirstName(firstName);
+        existingUser.setLastName(lastName);
+        // Convert the birthDate string to java.sql.Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date parsedDate = dateFormat.parse(birthDate);
+        java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+        existingUser.setBirthDate(sqlDate);
+        existingUser.setEmail(email);
+        existingUser.setPassword(password);
+        // Save the updated user in the repository
+        return userRepository.save(existingUser);
+    }
+
+    public void deleteUserById(int id) {
+        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
+        if (user != null) {
+            user.setIsDeleted(true);
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("Invalid user ID");
+        }
+    }
+
+    // Create a method to check if an email already exists
+    public boolean checkEmail(UserEntity userData) {
+        // Get the list of users from the previous method
+        List<UserEntity> users = getAllUsers();
+        // Loop through the users and compare the email with the userData
+        for (UserEntity user : users) {
+            if (user.getEmail().equals(userData.getEmail())) {
+                // If the email already exists, return a message
+                return true;
+            }
+        }
+        // If the email does not exist, return a success message
+        return false;
+    }
 }
-
-export default Signup;

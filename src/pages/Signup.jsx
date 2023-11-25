@@ -6,7 +6,11 @@ import { useHistory } from "react-router-dom";
 
 function Signup() {
   const history = useHistory();
+  const [imagePreview, setImagePreview] = useState(null);
+  const [alert, setAlert] = useState("");
   const [isImageEmpty, setIsImageEmpty] = useState(false);
+  const [isPasswordValid, setIsPasswordValid] = useState(true);
+  const [confirm, setConfirm] = useState(false);
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
@@ -20,13 +24,6 @@ function Signup() {
     image: "",
   });
 
-  // Add state for image preview
-  const [imagePreview, setImagePreview] = useState(null);
-  const [alert, setAlert] = useState("");
-
-  // Add state for confirmation popup
-  const [confirm, setConfirm] = useState(false);
-
   const handleImageChange = (e) => {
     setUserData({
       ...userData,
@@ -39,11 +36,21 @@ function Signup() {
     }
   };
 
+  const validatePassword = (password) => {
+    // At least 8 characters, includes uppercase, lowercase, number, and special character
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
   const handleChange = (e) => {
     setUserData({
       ...userData,
       [e.target.name]: e.target.value,
     });
+    
+    if (e.target.name === 'password') {
+      setIsPasswordValid(validatePassword(e.target.value));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -209,6 +216,7 @@ function Signup() {
               type="password"
               className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
             />
+            {!isPasswordValid && <p className="text-red-500">Password must be at least 8 characters, include an uppercase and lowercase letter, a number, and a special character.</p>}
           </div>
           <div className="mt-4">
             <input

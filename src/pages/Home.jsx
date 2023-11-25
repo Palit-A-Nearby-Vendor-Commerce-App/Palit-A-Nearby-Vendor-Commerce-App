@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import marker from "../assets/images/vendor-self-pin.png";
 import axios from "axios"; // import axios library
 import NavigationBar from "../components/NavigationBar";
 import MapSlidingBox from "./MapSlidingBox";
+import { UserContext } from "../UserContext";
 
 const mapContainerStyle = {
   width: "100%",
@@ -34,10 +35,16 @@ function Home() {
   const [currentPosition, setCurrentPosition] = useState(defaultCenter);
   const [nearbyUsers, setNearbyUsers] = useState([]); // state to store nearby users
   const [showSlider, setShowSlider] = useState(false);
+  const { user } = useContext(UserContext);
+  const [userData, setUserData] = useState(null);
 
   const handleSliderToggle = () => {
     setShowSlider(!showSlider);
   };
+
+  useEffect(() => {
+    console.log("User Data:", user);
+  }, [user]);
 
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
@@ -166,7 +173,10 @@ function Home() {
                   }}
                 />
               ))}
-              <MapSlidingBox showSlider={showSlider} handleSliderToggle={handleSliderToggle} />
+              <MapSlidingBox
+                showSlider={showSlider}
+                handleSliderToggle={handleSliderToggle}
+              />
             </GoogleMap>
           </div>
         </LoadScript>

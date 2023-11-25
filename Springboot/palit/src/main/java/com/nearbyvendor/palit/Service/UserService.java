@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -23,7 +24,14 @@ public class UserService {
     }
 
     public UserEntity getUserById(int id) {
-        return userRepository.findByUserIdAndIsDeletedFalse(id);
+        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
+        if (user != null) {
+            return user;
+        } else {
+            // Log an error message for debugging
+            System.err.println("UserEntity not found with id: " + id);
+            throw new RuntimeException("UserEntity not found with id: " + id);
+        }
     }
 
     public UserEntity createUser(MultipartFile image, String firstName, String lastName, String birthDate, String email, String password)
@@ -46,27 +54,37 @@ public class UserService {
     public UserEntity updateUserById(int id, MultipartFile image, String firstName, String lastName, String birthDate, String email,
             String password)
             throws IOException, ParseException {
-        UserEntity existingUser = userRepository.findById(id).orElseThrow();
-        existingUser.setImage(image.getBytes());
-        existingUser.setFirstName(firstName);
-        existingUser.setLastName(lastName);
-        // Convert the birthDate string to java.sql.Date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        java.util.Date parsedDate = dateFormat.parse(birthDate);
-        java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
-        existingUser.setBirthDate(sqlDate);
-        existingUser.setEmail(email);
-        existingUser.setPassword(password);
-        // Save the updated user in the repository
-        return userRepository.save(existingUser);
+        Optional<UserEntity> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            UserEntity existingUser = user.get();
+            existingUser.setImage(image.getBytes());
+            existingUser.setFirstName(firstName);
+            existingUser.setLastName(lastName);
+            // Convert the birthDate string to java.sql.Date
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = dateFormat.parse(birthDate);
+            java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+            existingUser.setBirthDate(sqlDate);
+            existingUser.setEmail(email);
+            existingUser.setPassword(password);
+            // Save the updated user in the repository
+            return userRepository.save(existingUser);
+        } else {
+            // Log an error message for debugging
+            System.err.println("Invalid user ID for updating: " + id);
+            throw new IllegalArgumentException("Invalid user ID");
+        }
     }
 
-    public void deleteUserById(int id) {
+    public boolean deleteUserById(int id) {
         UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
         if (user != null) {
             user.setIsDeleted(true);
             userRepository.save(user);
+            return true; // Deletion was successful
         } else {
+            // Log an error message for debugging
+            System.err.println("Invalid user ID for deletion: " + id);
             throw new IllegalArgumentException("Invalid user ID");
         }
     }

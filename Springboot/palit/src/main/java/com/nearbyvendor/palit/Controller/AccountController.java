@@ -3,6 +3,8 @@ package com.nearbyvendor.palit.controller;
 import com.nearbyvendor.palit.entity.AccountEntity;
 import com.nearbyvendor.palit.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,29 +17,44 @@ public class AccountController {
     private AccountService accountService;
 
     @GetMapping("/getAllAccounts")
-    public List<AccountEntity> getAllAccounts() {
-        return accountService.getAllAccounts();
+    public ResponseEntity<List<AccountEntity>> getAllAccounts() {
+        List<AccountEntity> accounts = accountService.getAllAccounts();
+        return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
     @GetMapping("/getAccountById/{id}")
-    public AccountEntity getAccountById(@PathVariable int id) {
-        return accountService.getAccountById(id);
+    public ResponseEntity<AccountEntity> getAccountById(@PathVariable int id) {
+        AccountEntity account = accountService.getAccountById(id);
+        if (account != null) {
+            return new ResponseEntity<>(account, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/createAccount")
-    public AccountEntity createAccount(@RequestBody AccountEntity account) {
-        return accountService.createAccount(account);
+    public ResponseEntity<AccountEntity> createAccount(@RequestBody AccountEntity account) {
+        AccountEntity createdAccount = accountService.createAccount(account);
+        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
     }
 
     @PutMapping("/editAccountById/{id}")
-    public AccountEntity editAccountById(@PathVariable int id, @RequestBody AccountEntity account) {
-        return accountService.editAccountById(id, account);
+    public ResponseEntity<AccountEntity> editAccountById(@PathVariable int id, @RequestBody AccountEntity account) {
+        AccountEntity updatedAccount = accountService.editAccountById(id, account);
+        if (updatedAccount != null) {
+            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/deleteAccountById/{id}")
-    public void deleteAccountById(@PathVariable int id) {
-        accountService.deleteAccountById(id);
+    public ResponseEntity<Void> deleteAccountById(@PathVariable int id) {
+        boolean deleted = accountService.deleteAccountById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
-
-    
 }

@@ -1,11 +1,21 @@
 package com.nearbyvendor.palit.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.nearbyvendor.palit.entity.ConversationEntity;
 import com.nearbyvendor.palit.service.ConversationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -16,31 +26,48 @@ public class ConversationController {
 
     // Get all conversations
     @GetMapping("/getAllConversations")
-    public List<ConversationEntity> getAllConversations() {
-        return conversationService.getAllConversations();
+    public ResponseEntity<List<ConversationEntity>> getAllConversations() {
+        List<ConversationEntity> conversations = conversationService.getAllConversations();
+        return new ResponseEntity<>(conversations, HttpStatus.OK);
     }
 
     // Get a conversation by id
     @GetMapping("/getConversationById/{id}")
-    public ConversationEntity getConversationById(@PathVariable("id") int id) {
-        return conversationService.getConversationById(id);
+    public ResponseEntity<ConversationEntity> getConversationById(@PathVariable("id") int id) {
+        ConversationEntity conversation = conversationService.getConversationById(id);
+        if (conversation != null) {
+            return new ResponseEntity<>(conversation, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // Create a new conversation
     @PostMapping("/createConversation")
-    public ConversationEntity createConversation(@RequestBody ConversationEntity conversation) {
-        return conversationService.createConversation(conversation);
+    public ResponseEntity<ConversationEntity> createConversation(@RequestBody ConversationEntity conversation) {
+        ConversationEntity newConversation = conversationService.createConversation(conversation);
+        return new ResponseEntity<>(newConversation, HttpStatus.CREATED);
     }
 
     // Update an existing conversation
     @PutMapping("/updateConversationById/{id}")
-    public ConversationEntity updateConversationById(@PathVariable("id") int id, @RequestBody ConversationEntity conversation) {
-        return conversationService.updateConversationById(id, conversation);
+    public ResponseEntity<ConversationEntity> updateConversationById(@PathVariable("id") int id, @RequestBody ConversationEntity conversation) {
+        ConversationEntity updatedConversation = conversationService.updateConversationById(id, conversation);
+        if (updatedConversation != null) {
+            return new ResponseEntity<>(updatedConversation, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // Delete a conversation by id
     @DeleteMapping("/deleteConversationById/{id}")
-    public void deleteConversationById(@PathVariable("id") int id) {
-        conversationService.deleteConversationById(id);
+    public ResponseEntity<Void> deleteConversationById(@PathVariable("id") int id) {
+        boolean deleted = conversationService.deleteConversationById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

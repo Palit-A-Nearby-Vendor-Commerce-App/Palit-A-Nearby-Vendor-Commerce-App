@@ -20,7 +20,14 @@ public class LocationService {
 
     // Get location by id where isDeleted is false
     public LocationEntity getLocationById(int id) {
-        return locationRepository.findByLocationIdAndIsDeletedFalse(id);
+        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+        if (location != null) {
+            return location;
+        } else {
+            // Log an error message for debugging
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
+        }
     }
 
     // Create location
@@ -31,16 +38,29 @@ public class LocationService {
     // Update location by id where isDeleted is false
     public LocationEntity updateLocationById(int id, LocationEntity location) {
         LocationEntity existingLocation = locationRepository.findByLocationIdAndIsDeletedFalse(id);
-        existingLocation.setLatitude(location.getLatitude());
-        existingLocation.setLongitude(location.getLongitude());
-        existingLocation.setAccountId(location.getAccountId());
-        return locationRepository.save(existingLocation);
+        if (existingLocation != null) {
+            existingLocation.setLatitude(location.getLatitude());
+            existingLocation.setLongitude(location.getLongitude());
+            existingLocation.setAccountId(location.getAccountId());
+            return locationRepository.save(existingLocation);
+        } else {
+            // Log an error message for debugging
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
+        }
     }
 
     // Delete location by id
-    public void deleteLocationById(int id) {
+    public boolean deleteLocationById(int id) {
         LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
-        location.setIsDeleted(true);
-        locationRepository.save(location);
+        if (location != null) {
+            location.setIsDeleted(true);
+            locationRepository.save(location);
+            return true; // Deletion was successful
+        } else {
+            // Log an error message for debugging
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
+        }
     }
 }

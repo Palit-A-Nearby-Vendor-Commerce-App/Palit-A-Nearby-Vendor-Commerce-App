@@ -19,7 +19,14 @@ public class StoreService {
     }
     
     public StoreEntity getStoreById(int storeId) {
-        return storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
+        StoreEntity store = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
+        if (store != null) {
+            return store;
+        } else {
+            // Log an error message for debugging
+            System.err.println("StoreEntity not found with id: " + storeId);
+            throw new RuntimeException("StoreEntity not found with id: " + storeId);
+        }
     }
     
     public StoreEntity createStore(StoreEntity store) {
@@ -32,20 +39,21 @@ public class StoreService {
             store.setId(storeId);
             return storeRepository.save(store);
         } else {
-            // Handle the case when the store ID is null or does not exist
-            // You can throw an exception or handle it in a different way based on your requirements
+            // Log an error message for debugging
+            System.err.println("Invalid store ID for updating: " + storeId);
             throw new IllegalArgumentException("Invalid store ID");
         }
     }
 
-    public void deleteStoreById(int storeId) {
+    public boolean deleteStoreById(int storeId) {
         StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
         if (existingStore != null) {
             existingStore.setIsDeleted(true);
             storeRepository.save(existingStore);
+            return true; // Deletion was successful
         } else {
-            // Handle the case when the store ID is null or does not exist
-            // You can throw an exception or handle it in a different way based on your requirements
+            // Log an error message for debugging
+            System.err.println("Invalid store ID for deletion: " + storeId);
             throw new IllegalArgumentException("Invalid store ID");
         }
     }

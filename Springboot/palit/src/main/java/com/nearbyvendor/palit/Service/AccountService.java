@@ -18,7 +18,12 @@ public class AccountService {
     }
 
     public AccountEntity getAccountById(int accountId) {
-        return accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        AccountEntity account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        if (account == null) {
+            // Log an error message for debugging
+            System.err.println("Account not found with ID: " + accountId);
+        }
+        return account;
     }
 
     public AccountEntity createAccount(AccountEntity account) {
@@ -31,23 +36,22 @@ public class AccountService {
             account.setId(accountId);
             return accountRepository.save(account);
         } else {
-            // Handle the case when the account ID is null or does not exist
-            // You can throw an exception or handle it in a different way based on your
-            // requirements
+            // Log an error message for debugging
+            System.err.println("Invalid account ID for editing: " + accountId);
             throw new IllegalArgumentException("Invalid account ID");
         }
     }
 
-    public void deleteAccountById(int accountId) {
+    public boolean deleteAccountById(int accountId) {
         AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
         if (existingAccount != null) {
             existingAccount.setIsDeleted(true);
             accountRepository.save(existingAccount);
+            return true; // Deletion was successful
         } else {
-            // Handle the case when the account ID is null or does not exist
-            // You can throw an exception or handle it in a different way based on your
-            // requirements
-            throw new IllegalArgumentException("Invalid account ID");
+            // Log an error message for debugging
+            System.err.println("Invalid account ID for deletion: " + accountId);
+            return false; // Deletion was not successful
         }
     }
 }

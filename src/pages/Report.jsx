@@ -83,3 +83,24 @@
 // };
 
 // export default Report;
+import React, { useContext } from "react";
+import NavigationBar from "../components/NavigationBar"
+import { UserContext } from "../UserContext";
+import { Paper } from "@material-ui/core";
+
+const Report = () => {
+    const { user } = useContext(UserContext);
+
+  return (
+    <div>
+        <NavigationBar />
+        <h1>Report</h1>
+        <p>Hi {user.name}</p>
+        <Paper>
+            
+        </Paper>
+    </div>
+  )
+}
+
+export  default Report

@@ -41,7 +41,7 @@ public class LocationService {
         if (existingLocation != null) {
             existingLocation.setLatitude(location.getLatitude());
             existingLocation.setLongitude(location.getLongitude());
-            existingLocation.setAccountId(location.getAccountId());
+            existingLocation.setUser(location.getUser());
             return locationRepository.save(existingLocation);
         } else {
             // Log an error message for debugging

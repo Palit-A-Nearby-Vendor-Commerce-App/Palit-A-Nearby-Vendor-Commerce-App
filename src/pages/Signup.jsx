@@ -125,6 +125,17 @@ function Signup() {
         );
         const user = userResponse.data;
 
+        //create location
+        const locationData = {
+          lat: 0,
+          lng: 0,
+          userId: user.userId,
+        };
+        await axios.post(
+          "http://localhost:8080/api/createLocation",
+          locationData
+        );
+
         // Create account
         const accountData = {
           isVendor: userData.userType === "vendor",

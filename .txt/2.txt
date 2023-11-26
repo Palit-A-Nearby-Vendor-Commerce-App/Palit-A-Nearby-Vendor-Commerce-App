@@ -1,39 +1,268 @@
-@nosearch @youcan pls revise the code to have an are you sure popup when after pressing sign up. and validation for the user being at least 13 years old, when the image field is empty, and revise the store categories to have fixed choices dropdown like fish, fruits, assorted, manicure.
-give me one method to implement this in the service class:
-const fetchUserData = () => {
-    axios
-      .get("http://localhost:8080/api/getAllUsers")
-      .then((response) => {
-        setUserData(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        alert("Error fetching data:", error);
-        setLoading(false);
-      });
+@creative @youcan implement the commented axios parts based on the service classes given their apis are the same name as the function. 
+
+import React, { useState, useEffect, useContext } from "react";
+import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import marker from "../assets/images/vendor-self-pin.png";
+import axios from "axios"; // import axios library
+import NavigationBar from "../components/NavigationBar";
+import MapSlidingBox from "./MapSlidingBox";
+import { FaLocationArrow } from "react-icons/fa";
+import { UserContext } from "../UserContext";
+
+const mapContainerStyle = {
+  width: "100%",
+  height: "calc(100vh - 64px)",
+};
+
+const mapOptions = {
+  streetViewControl: false,
+  styles: [
+    {
+      featureType: "poi",
+      stylers: [{ visibility: "off" }],
+    },
+    {
+      featureType: "transit",
+      elementType: "labels.icon",
+      stylers: [{ visibility: "off" }],
+    },
+  ],
+};
+
+const defaultCenter = {
+  lat: -3.745,
+  lng: -38.523,
+};
+
+function Home() {
+  const { user } = useContext(UserContext);
+  const [currentPosition, setCurrentPosition] = useState(defaultCenter);
+  const [nearbyUsers, setNearbyUsers] = useState([]); // state to store nearby users
+  const [showSlider, setShowSlider] = useState(false);
+  const mapRef = React.useRef();
+  const onMapLoad = React.useCallback((map) => {
+    mapRef.current = map;
+  }, []);
+
+  const handleSliderToggle = () => {
+    setShowSlider(!showSlider);
   };
 
   useEffect(() => {
-    fetchUserData();
-  }, []);
+    console.log("User Data:", user);
+  }, [user]);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    const user = userData.find(
-      (user) => user.email === email && user.password === password
+  useEffect(() => {
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentPosition({ lat: latitude, lng: longitude });
+        if (mapRef.current) {
+          mapRef.current.panTo({ lat: latitude, lng: longitude });
+        }
+        // update the user's location in the database using axios
+      },
+      (error) => console.log(error),
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
     );
 
-    if (user) {
-      console.log("Current user: ", user);
-      setUser(user);
-      history.push("/home");
-    } else {
-      setError("Invalid email or password");
-    }
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
+
+  // fetch nearby users from the database using axios
+  useEffect(() => {
+    // then filter out the users who are admins or more than 200 meters away
+  }, [currentPosition]);
+
+  const getDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1); // deg2rad below
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
+    return d * 1000; // Distance in meters
   };
 
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+  };
 
+  return (
+    <>
+      <div className="w-full font-custom">
+        <NavigationBar />
+        <LoadScript googleMapsApiKey="AIzaSyBNM-CYx7dA0gckgBmybtovang7Bvp8lK0">
+          <div>
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={
+                showSlider
+                  ? {
+                      lat: currentPosition.lat,
+                      lng: currentPosition.lng + 0.0006,
+                    }
+                  : {
+                      lat: currentPosition.lat,
+                      lng: currentPosition.lng,
+                    }
+              }
+              zoom={19}
+              className="flex-1"
+              options={mapOptions}
+              onLoad={onMapLoad}
+            >
+              {window.google && (
+                <Marker
+                  position={currentPosition}
+                  icon={{
+                    url: marker,
+                    scaledSize: new window.google.maps.Size(30, 30),
+                  }}
+                />
+              )}
+              <Circle
+                center={currentPosition}
+                radius={100}
+                options={{
+                  strokeColor: "#0071B3",
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: "#0071B3",
+                  fillOpacity: 0.05,
+                }}
+              />
+              {nearbyUsers.map((user) => (
+                // render markers for nearby users
+                <Marker
+                  key={user.accountId}
+                  position={{ lat: user.latitude, lng: user.longitude }}
+                  onClick={() => {
+                    // open the store page of the user when clicked
+                    window.location.href = `/store/${user.accountId}`;
+                  }}
+                />
+              ))}
+              <MapSlidingBox
+                showSlider={showSlider}
+                handleSliderToggle={handleSliderToggle}
+              />
+              <MapSlidingBox
+                showSlider={showSlider}
+                handleSliderToggle={handleSliderToggle}
+              />
+            </GoogleMap>
+            <button
+              style={{
+                position: "absolute",
+                right: "80px",
+                bottom: "20px",
+                backgroundColor: "white",
+                padding: "10px",
+                borderRadius: "5px",
+                boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)"
+
+              }}
+              onClick={() => {
+                if (mapRef.current) {
+                  const newCenter = showSlider
+                    ? {
+                        lat: currentPosition.lat,
+                        lng: currentPosition.lng + 0.0006, // adjust this value as needed
+                      }
+                    : {
+                        lat: currentPosition.lat,
+                        lng: currentPosition.lng,
+                      };
+                  mapRef.current.panTo(newCenter);
+                  mapRef.current.setZoom(19); // adjust this value as needed
+                }
+              }}
+            >
+              <FaLocationArrow size={20} />
+            </button>
+          </div>
+        </LoadScript>
+      </div>
+    </>
+  );
+}
+
+export default Home;
+-------------------------------------------------------
+package com.nearbyvendor.palit.service;
+
+import com.nearbyvendor.palit.entity.LocationEntity;
+import com.nearbyvendor.palit.repository.LocationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class LocationService {
+
+    @Autowired
+    private LocationRepository locationRepository;
+
+    // Get all locations where isDeleted is false
+    public List<LocationEntity> getAllLocations() {
+        return locationRepository.findByIsDeletedFalse();
+    }
+
+    // Get location by id where isDeleted is false
+    public LocationEntity getLocationById(int id) {
+        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+        if (location != null) {
+            return location;
+        } else {
+            // Log an error message for debugging
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
+        }
+    }
+
+    // Create location
+    public LocationEntity createLocation(LocationEntity location) {
+        return locationRepository.save(location);
+    }
+
+    // Update location by id where isDeleted is false
+    public LocationEntity updateLocationById(int id, LocationEntity location) {
+        LocationEntity existingLocation = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+        if (existingLocation != null) {
+            existingLocation.setLatitude(location.getLatitude());
+            existingLocation.setLongitude(location.getLongitude());
+            existingLocation.setAccountId(location.getAccountId());
+            return locationRepository.save(existingLocation);
+        } else {
+            // Log an error message for debugging
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
+        }
+    }
+
+    // Delete location by id
+    public boolean deleteLocationById(int id) {
+        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+        if (location != null) {
+            location.setIsDeleted(true);
+            locationRepository.save(location);
+            return true; // Deletion was successful
+        } else {
+            // Log an error message for debugging
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
+        }
+    }
+}
 
 package com.nearbyvendor.palit.service;
 
@@ -48,6 +277,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -60,7 +290,14 @@ public class UserService {
     }
 
     public UserEntity getUserById(int id) {
-        return userRepository.findByUserIdAndIsDeletedFalse(id);
+        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
+        if (user != null) {
+            return user;
+        } else {
+            // Log an error message for debugging
+            System.err.println("UserEntity not found with id: " + id);
+            throw new RuntimeException("UserEntity not found with id: " + id);
+        }
     }
 
     public UserEntity createUser(MultipartFile image, String firstName, String lastName, String birthDate, String email, String password)
@@ -83,27 +320,37 @@ public class UserService {
     public UserEntity updateUserById(int id, MultipartFile image, String firstName, String lastName, String birthDate, String email,
             String password)
             throws IOException, ParseException {
-        UserEntity existingUser = userRepository.findById(id).orElseThrow();
-        existingUser.setImage(image.getBytes());
-        existingUser.setFirstName(firstName);
-        existingUser.setLastName(lastName);
-        // Convert the birthDate string to java.sql.Date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        java.util.Date parsedDate = dateFormat.parse(birthDate);
-        java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
-        existingUser.setBirthDate(sqlDate);
-        existingUser.setEmail(email);
-        existingUser.setPassword(password);
-        // Save the updated user in the repository
-        return userRepository.save(existingUser);
+        Optional<UserEntity> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            UserEntity existingUser = user.get();
+            existingUser.setImage(image.getBytes());
+            existingUser.setFirstName(firstName);
+            existingUser.setLastName(lastName);
+            // Convert the birthDate string to java.sql.Date
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = dateFormat.parse(birthDate);
+            java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+            existingUser.setBirthDate(sqlDate);
+            existingUser.setEmail(email);
+            existingUser.setPassword(password);
+            // Save the updated user in the repository
+            return userRepository.save(existingUser);
+        } else {
+            // Log an error message for debugging
+            System.err.println("Invalid user ID for updating: " + id);
+            throw new IllegalArgumentException("Invalid user ID");
+        }
     }
 
-    public void deleteUserById(int id) {
+    public boolean deleteUserById(int id) {
         UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
         if (user != null) {
             user.setIsDeleted(true);
             userRepository.save(user);
+            return true; // Deletion was successful
         } else {
+            // Log an error message for debugging
+            System.err.println("Invalid user ID for deletion: " + id);
             throw new IllegalArgumentException("Invalid user ID");
         }
     }
@@ -121,5 +368,63 @@ public class UserService {
         }
         // If the email does not exist, return a success message
         return false;
+    }
+}
+
+package com.nearbyvendor.palit.service;
+
+import com.nearbyvendor.palit.entity.AccountEntity;
+import com.nearbyvendor.palit.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class AccountService {
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    public List<AccountEntity> getAllAccounts() {
+        return accountRepository.findByIsDeletedFalse();
+    }
+
+    public AccountEntity getAccountById(int accountId) {
+        AccountEntity account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        if (account == null) {
+            // Log an error message for debugging
+            System.err.println("Account not found with ID: " + accountId);
+        }
+        return account;
+    }
+
+    public AccountEntity createAccount(AccountEntity account) {
+        return accountRepository.save(account);
+    }
+
+    public AccountEntity editAccountById(int accountId, AccountEntity account) {
+        AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        if (existingAccount != null) {
+            account.setId(accountId);
+            return accountRepository.save(account);
+        } else {
+            // Log an error message for debugging
+            System.err.println("Invalid account ID for editing: " + accountId);
+            throw new IllegalArgumentException("Invalid account ID");
+        }
+    }
+
+    public boolean deleteAccountById(int accountId) {
+        AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        if (existingAccount != null) {
+            existingAccount.setIsDeleted(true);
+            accountRepository.save(existingAccount);
+            return true; // Deletion was successful
+        } else {
+            // Log an error message for debugging
+            System.err.println("Invalid account ID for deletion: " + accountId);
+            return false; // Deletion was not successful
+        }
     }
 }

@@ -9,11 +9,16 @@ import { UserContext } from "../UserContext";
 
 const mapContainerStyle = {
   width: "100%",
-  height: "calc(100vh - 64px)",
+  height: "calc(100vh - 90px)",
 };
 
 const mapOptions = {
   streetViewControl: false,
+  zoomControl: false,
+  mapTypeControl: false,
+  scaleControl: false,
+  rotateControl: false,
+  fullscreenControl: false,
   styles: [
     {
       featureType: "poi",
@@ -46,6 +51,23 @@ function Home() {
     setShowSlider(!showSlider);
   };
 
+  // Function to pan and zoom the map
+  const panAndZoomMap = () => {
+    if (mapRef.current) {
+      const newCenter = showSlider
+        ? {
+            lat: currentPosition.lat,
+            lng: currentPosition.lng + 0.0020, // adjust this value as needed
+          }
+        : {
+            lat: currentPosition.lat,
+            lng: currentPosition.lng,
+          };
+      mapRef.current.panTo(newCenter);
+      mapRef.current.setZoom(17); // adjust this value as needed
+    }
+  };
+
   useEffect(() => {
     console.log("User Data:", user);
   }, [user]);
@@ -59,6 +81,16 @@ function Home() {
           mapRef.current.panTo({ lat: latitude, lng: longitude });
         }
         // update the user's location in the database using axios
+        // use the updateLocationById API from the LocationService class
+        // pass the user's id and the current position as parameters
+        axios
+          .put(`/api/updateLocationById/${user.id}`, currentPosition)
+          .then((response) => {
+            console.log("Location updated successfully");
+          })
+          .catch((error) => {
+            console.error("Error updating location: ", error);
+          });
       },
       (error) => console.log(error),
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
@@ -71,7 +103,27 @@ function Home() {
 
   // fetch nearby users from the database using axios
   useEffect(() => {
-    // then filter out the users who are admins or more than 200 meters away
+    // use the getAllUsers API from the UserService class
+    axios
+      .get("/api/getAllUsers")
+      .then((response) => {
+        // then filter out the users who are admins or more than 200 meters away
+        const users = response.data.filter(
+          (user) =>
+            user.role !== "ADMIN" &&
+            getDistance(
+              currentPosition.lat,
+              currentPosition.lng,
+              user.latitude,
+              user.longitude
+            ) <= 200
+        );
+        // set the nearbyUsers state with the filtered users
+        setNearbyUsers(users);
+      })
+      .catch((error) => {
+        console.error("Error fetching users: ", error);
+      });
   }, [currentPosition]);
 
   const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -105,14 +157,14 @@ function Home() {
                 showSlider
                   ? {
                       lat: currentPosition.lat,
-                      lng: currentPosition.lng + 0.0006,
+                      lng: currentPosition.lng + 0.0020,
                     }
                   : {
                       lat: currentPosition.lat,
                       lng: currentPosition.lng,
                     }
               }
-              zoom={19}
+              zoom={17}
               className="flex-1"
               options={mapOptions}
               onLoad={onMapLoad}
@@ -128,7 +180,7 @@ function Home() {
               )}
               <Circle
                 center={currentPosition}
-                radius={100}
+                radius={200}
                 options={{
                   strokeColor: "#0071B3",
                   strokeOpacity: 0.8,
@@ -165,24 +217,9 @@ function Home() {
                 backgroundColor: "white",
                 padding: "10px",
                 borderRadius: "5px",
-                boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)"
-
+                boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
               }}
-              onClick={() => {
-                if (mapRef.current) {
-                  const newCenter = showSlider
-                    ? {
-                        lat: currentPosition.lat,
-                        lng: currentPosition.lng + 0.0006, // adjust this value as needed
-                      }
-                    : {
-                        lat: currentPosition.lat,
-                        lng: currentPosition.lng,
-                      };
-                  mapRef.current.panTo(newCenter);
-                  mapRef.current.setZoom(19); // adjust this value as needed
-                }
-              }}
+              onClick={panAndZoomMap}
             >
               <FaLocationArrow size={20} />
             </button>

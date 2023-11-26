@@ -2,6 +2,8 @@ package com.nearbyvendor.palit.entity;
 
 import javax.persistence.*;
 
+import org.apache.catalina.Store;
+
 import java.util.Date;
 
 @Entity
@@ -10,7 +12,6 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userId")
     private int userId;
 
     private String firstName;
@@ -27,8 +28,19 @@ public class UserEntity {
     private boolean isDeleted;
 
     @Lob
-    @Column(name = "image")
     private byte[] image;
+
+    @OneToOne
+    @JoinColumn(name = "accountId", referencedColumnName = "accountId")
+    private AccountEntity account;
+
+    @OneToOne
+    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
+    private LocationEntity location;
+
+    @OneToOne
+    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
+    private StoreEntity store;
 
     public UserEntity() {
         super();
@@ -111,5 +123,29 @@ public class UserEntity {
 
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public AccountEntity getAccount() {
+        return this.account;
+    }
+    
+    public void setAccount(AccountEntity account) {
+        this.account = account;
+    }
+    
+    public LocationEntity getLocation() {
+        return this.location;
+    }
+    
+    public void setLocation(LocationEntity location) {
+        this.location = location;
+    }
+
+    public StoreEntity getStore() {
+        return this.store;
+    }
+    
+    public void setStore(StoreEntity store) {
+        this.store = store;
     }
 }

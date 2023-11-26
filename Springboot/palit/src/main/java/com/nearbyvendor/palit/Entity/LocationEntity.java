@@ -9,12 +9,10 @@ public class LocationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int locationId;
+
     private double latitude;
-    private double longitude;
     
-    @OneToOne
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private UserEntity user;
+    private double longitude;
 
     private boolean isDeleted;
 
@@ -25,7 +23,6 @@ public class LocationEntity {
         this.locationId = locationId;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.user = user;
     }
 
     public int getId() {
@@ -50,14 +47,6 @@ public class LocationEntity {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
     }
 
     public boolean getIsDeleted() {

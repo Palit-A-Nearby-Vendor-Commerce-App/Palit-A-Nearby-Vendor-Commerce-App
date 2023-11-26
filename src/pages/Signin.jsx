@@ -59,7 +59,7 @@ const Signin = () => {
         firstName: user.firstName,
         image: user.image,
         lastName: user.lastName,
-        // ...
+        // ... 
       });
 
       history.push("/home");

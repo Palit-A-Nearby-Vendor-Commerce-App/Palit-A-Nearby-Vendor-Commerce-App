@@ -1,45 +1,36 @@
 import React from "react";
-import dragiconenter from "../assets/images/dragiconenter.png";
-import dragiconexit from "../assets/images/dragiconexit.png";
+import { FaStore } from "react-icons/fa";
 import stroke from "../assets/images/stroke.png";
 import ManageStore from "./ManageStore";
 
 const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
-    const sliderBoxStyle = {
-        position: "absolute",
-        top: 40,
-        right: showSlider ? "30px" : "-410px",
-        width: "400px",
-        height: "90%",
-        backgroundColor: "#fff",
-        transition: "right 0.3s ease",
-        overflow: "hidden",
-        borderRadius: "10px",
-        padding: "20px",
-    };
-
-    const buttonStyle = {
-        position: "absolute",
-        top: 400,
-        right: showSlider ? "440px" : "10px",
-        zIndex: 1,
-        cursor: "pointer",
-        transition: "right 0.3s ease", // Add this line to make the button transition smoothly
-    };
+  const sliderBoxStyle = {
+    position: "absolute",
+    top: 25,
+    right: showSlider ? "30px" : "-410px",
+    width: "400px",
+    height: "90%",
+    backgroundColor: "#fff",
+    borderRadius: "5px",
+    boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
+    transition: "right 0.3s ease",
+    overflow: "hidden",
+    padding: "20px",
+  };
 
     return (
         <div>
             <div style={sliderBoxStyle}>
-                <img
+            <img
                     src={stroke}
                     alt="Stroke"
                     style={{
                         width: "auto",
-                        height: "100%",
+                        height: "100%", 
                         position: "absolute",
                     }}
                 />
-                <ManageStore />
+            <ManageStore />
             </div>
             <button style={buttonStyle} onClick={handleSliderToggle}>
                 <img

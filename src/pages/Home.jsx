@@ -1,10 +1,17 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  useCallback,
+} from "react";
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import marker from "../assets/images/vendor-self-pin.png";
-import axios from "axios"; // import axios library
+import axios from "axios";
 import NavigationBar from "../components/NavigationBar";
 import MapSlidingBox from "./MapSlidingBox";
-import { FaLocationArrow } from "react-icons/fa";
+import { FaLocationArrow, FaStore } from "react-icons/fa";
+import { MdOutlineReportGmailerrorred } from "react-icons/md";
 import { UserContext } from "../UserContext";
 
 const mapContainerStyle = {
@@ -37,36 +44,49 @@ const defaultCenter = {
   lng: -38.523,
 };
 
+const R = 6371; // Radius of the earth in km
+const deg2rad = (deg) => deg * (Math.PI / 180);
+const getDistance = (lat1, lon1, lat2, lon2) => {
+  // Distance in meters
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1000;
+};
+
 function Home() {
   const { user } = useContext(UserContext);
   const [currentPosition, setCurrentPosition] = useState(defaultCenter);
-  const [nearbyUsers, setNearbyUsers] = useState([]); // state to store nearby users
+  const [nearbyUsers, setNearbyUsers] = useState([]);
   const [showSlider, setShowSlider] = useState(false);
-  const mapRef = React.useRef();
-  const onMapLoad = React.useCallback((map) => {
+  const mapRef = useRef();
+  const onMapLoad = useCallback((map) => {
     mapRef.current = map;
   }, []);
 
   const handleSliderToggle = () => {
     setShowSlider(!showSlider);
+    panAndZoomMap();
   };
 
-  // Function to pan and zoom the map
   const panAndZoomMap = () => {
     if (mapRef.current) {
       const newCenter = showSlider
         ? {
             lat: currentPosition.lat,
-            lng: currentPosition.lng + 0.0020, // adjust this value as needed
+            lng: currentPosition.lng + 0.002,
           }
-        : {
-            lat: currentPosition.lat,
-            lng: currentPosition.lng,
-          };
+        : currentPosition;
       mapRef.current.panTo(newCenter);
-      mapRef.current.setZoom(17); // adjust this value as needed
+      mapRef.current.setZoom(17);
     }
   };
+
+  const handleReport = () => {
+    window.location.href = "/report";
+  }
 
   useEffect(() => {
     console.log("User Data:", user);
@@ -74,23 +94,20 @@ function Home() {
 
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setCurrentPosition({ lat: latitude, lng: longitude });
+      ({ coords }) => {
+        const position = { lat: coords.latitude, lng: coords.longitude };
+        setCurrentPosition(position);
         if (mapRef.current) {
-          mapRef.current.panTo({ lat: latitude, lng: longitude });
+          mapRef.current.panTo(position);
         }
         // update the user's location in the database using axios
-        // use the updateLocationById API from the LocationService class
-        // pass the user's id and the current position as parameters
         axios
-          .put(`/api/updateLocationById/${user.id}`, currentPosition)
-          .then((response) => {
-            console.log("Location updated successfully");
-          })
-          .catch((error) => {
-            console.error("Error updating location: ", error);
-          });
+          .put(
+            `http://localhost:8080/api/updateLocationById/${user.id}`,
+            position
+          )
+          .then(() => console.log("Location updated successfully"))
+          .catch((error) => console.error("Error updating location: ", error));
       },
       (error) => console.log(error),
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
@@ -103,47 +120,25 @@ function Home() {
 
   // fetch nearby users from the database using axios
   useEffect(() => {
-    // use the getAllUsers API from the UserService class
     axios
-      .get("/api/getAllUsers")
-      .then((response) => {
-        // then filter out the users who are admins or more than 200 meters away
-        const users = response.data.filter(
-          (user) =>
-            user.role !== "ADMIN" &&
-            getDistance(
-              currentPosition.lat,
-              currentPosition.lng,
-              user.latitude,
-              user.longitude
-            ) <= 200
+      .get("http://localhost:8080/api/getAllUsers")
+      .then(({ data }) => {
+        // filter out the users who are admins or more than 200 meters away
+        setNearbyUsers(
+          data.filter(
+            (user) =>
+              user.role !== "ADMIN" &&
+              getDistance(
+                currentPosition.lat,
+                currentPosition.lng,
+                user.latitude,
+                user.longitude
+              ) <= 200
+          )
         );
-        // set the nearbyUsers state with the filtered users
-        setNearbyUsers(users);
       })
-      .catch((error) => {
-        console.error("Error fetching users: ", error);
-      });
+      .catch((error) => console.error("Error fetching users: ", error));
   }, [currentPosition]);
-
-  const getDistance = (lat1, lon1, lat2, lon2) => {
-    const R = 6371; // Radius of the earth in km
-    const dLat = deg2rad(lat2 - lat1); // deg2rad below
-    const dLon = deg2rad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(deg2rad(lat1)) *
-        Math.cos(deg2rad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const d = R * c; // Distance in km
-    return d * 1000; // Distance in meters
-  };
-
-  const deg2rad = (deg) => {
-    return deg * (Math.PI / 180);
-  };
 
   return (
     <>
@@ -157,12 +152,9 @@ function Home() {
                 showSlider
                   ? {
                       lat: currentPosition.lat,
-                      lng: currentPosition.lng + 0.0020,
+                      lng: currentPosition.lng + 0.002,
                     }
-                  : {
-                      lat: currentPosition.lat,
-                      lng: currentPosition.lng,
-                    }
+                  : currentPosition
               }
               zoom={17}
               className="flex-1"
@@ -211,17 +203,33 @@ function Home() {
             </GoogleMap>
             <button
               style={{
-                position: "absolute",
-                right: "80px",
-                bottom: "20px",
                 backgroundColor: "white",
+                position: "absolute",
+                right: showSlider ? "440px" : "80px", // Adjust the right property based on whether the MapSlidingBox is shown or not
+                bottom: "80px",
                 padding: "10px",
                 borderRadius: "5px",
-                boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
+                boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
+                transition: "right 0.3s ease", // Add a transition to make the movement smooth
               }}
               onClick={panAndZoomMap}
             >
               <FaLocationArrow size={20} />
+            </button>
+            <button
+              style={{
+                backgroundColor: "white",
+                position: "absolute",
+                left: "30px", 
+                bottom: "30px", 
+                padding: "10px",
+                borderRadius: "5px",
+                boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
+                transition: "left 0.3s ease, bottom 0.3s ease",
+              }}
+              onClick={handleReport}
+            >
+              <MdOutlineReportGmailerrorred size={30} />
             </button>
           </div>
         </LoadScript>

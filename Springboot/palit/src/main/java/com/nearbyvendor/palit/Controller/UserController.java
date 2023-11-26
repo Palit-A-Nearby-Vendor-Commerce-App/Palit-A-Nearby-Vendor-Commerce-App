@@ -1,5 +1,7 @@
 package com.nearbyvendor.palit.controller;
 
+import com.nearbyvendor.palit.entity.AccountEntity;
+import com.nearbyvendor.palit.entity.LocationEntity;
 import com.nearbyvendor.palit.entity.UserEntity;
 import com.nearbyvendor.palit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,5 +82,38 @@ public class UserController {
     public ResponseEntity<Boolean> checkEmail(@RequestBody UserEntity userData) {
         boolean isEmailTaken = userService.checkEmail(userData);
         return new ResponseEntity<>(isEmailTaken, HttpStatus.OK);
+    }
+
+    // define the controller API function that returns the service function
+    @GetMapping("/getAccountByUserId/{userId}")
+    public ResponseEntity<AccountEntity> getAccountByAccountId(@PathVariable int accountId) {
+        AccountEntity account = userService.getAccountByAccountId(accountId);
+        if (account != null) {
+            return ResponseEntity.ok(account);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // define the controller API function that returns the service function for location
+    @GetMapping("/getLocationByUserId/{userId}")
+    public ResponseEntity<LocationEntity> getLocationByLocationId(@PathVariable int locationId) {
+        LocationEntity location = userService.getLocationByLocationId(locationId);
+        if (location != null) {
+            return ResponseEntity.ok(location);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // define the controller API function that returns the service function for store
+    @GetMapping("/getStoreByStoreId/{storeId}")
+    public ResponseEntity<LocationEntity> getStoreByStoreId(@PathVariable int storeId) {
+        LocationEntity store = userService.getLocationByLocationId(storeId);
+        if (store != null) {
+            return ResponseEntity.ok(store);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

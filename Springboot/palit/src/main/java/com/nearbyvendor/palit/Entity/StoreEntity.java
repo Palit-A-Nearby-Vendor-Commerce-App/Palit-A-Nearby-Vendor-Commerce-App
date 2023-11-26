@@ -16,8 +16,6 @@ public class StoreEntity {
     
     private String category;
     
-    private int vendorAccountId;
-    
     private int rating;
     
     private boolean isDeleted;
@@ -30,7 +28,6 @@ public class StoreEntity {
         this.storeName = storeName;
         this.description = description;
         this.category = category;
-        this.vendorAccountId = vendorAccountId;
     }
     
     public int getId() {
@@ -65,14 +62,6 @@ public class StoreEntity {
         this.category = category;
     }
     
-    public int getVendorAccountId() {
-        return vendorAccountId;
-    }
-    
-    public void setVendorAccountId(int vendorAccountId) {
-        this.vendorAccountId = vendorAccountId;
-    }
-    
     public int getRating() {
         return rating;
     }
@@ -81,12 +70,6 @@ public class StoreEntity {
         this.rating = rating;
     }
     
-    @Override
-    public String toString() {
-        return "StoreEntity [storeId=" + storeId + ", storeName=" + storeName + ", description=" + description
-                + ", category=" + category + ", vendorAccountId=" + vendorAccountId + ", rating=" + rating + "]";
-    }
-
     public boolean getIsDeleted() {
         return isDeleted;
     }
@@ -94,4 +77,11 @@ public class StoreEntity {
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
+    
+    @Override
+    public String toString() {
+        return "StoreEntity [storeId=" + storeId + ", storeName=" + storeName + ", description=" + description
+                + ", category=" + category + ", rating=" + rating + "]";
+    }
+
 }

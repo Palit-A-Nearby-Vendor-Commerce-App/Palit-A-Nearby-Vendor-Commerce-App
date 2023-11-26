@@ -9,22 +9,16 @@ public class ChatEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "chat_id")
     private int chatId;
 
-    @Column(name = "sender_id")
     private int senderId;
 
-    @Column(name = "receiver_id")
     private int receiverId;
 
-    @Column(name = "message_content")
     private String messageContent;
 
-    @Column(name = "timestamp")
     private Timestamp timestamp;
 
-    @Column(name = "conversation_id")
     private int conversationId;
 
     private boolean isDeleted;

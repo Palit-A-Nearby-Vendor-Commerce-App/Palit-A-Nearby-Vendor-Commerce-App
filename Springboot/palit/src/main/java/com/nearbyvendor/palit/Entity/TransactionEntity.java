@@ -3,23 +3,19 @@ package com.nearbyvendor.palit.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "trajsaction")
+@Table(name = "transaction")
 public class TransactionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int transactionId;
 
-    @Column(nullable = false)
     private int accountCustomerId;
 
-    @Column(nullable = false)
     private int accountVendorId;
 
-    @Column(nullable = false)
     private String status;
 
-    @Column(nullable = false)
     private int rating;
     
     private boolean isDeleted;

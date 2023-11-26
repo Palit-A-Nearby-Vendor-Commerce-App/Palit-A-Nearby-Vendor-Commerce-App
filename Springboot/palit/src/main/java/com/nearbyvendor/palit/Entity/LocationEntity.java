@@ -16,6 +16,8 @@ public class LocationEntity {
 
     private boolean isDeleted;
 
+    private boolean isActive;
+
     public LocationEntity() {
     }
 
@@ -55,5 +57,13 @@ public class LocationEntity {
 
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public boolean getIsActive() {
+        return this.isActive;
+    }
+    
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 }

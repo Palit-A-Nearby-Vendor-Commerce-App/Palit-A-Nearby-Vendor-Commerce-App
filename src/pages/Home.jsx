@@ -33,6 +33,7 @@ const defaultCenter = {
 };
 
 function Home() {
+  const { user } = useContext(UserContext);
   const [currentPosition, setCurrentPosition] = useState(defaultCenter);
   const [nearbyUsers, setNearbyUsers] = useState([]); // state to store nearby users
   const [showSlider, setShowSlider] = useState(false);

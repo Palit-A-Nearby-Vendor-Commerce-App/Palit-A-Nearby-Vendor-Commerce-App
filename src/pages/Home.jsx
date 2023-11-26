@@ -1,10 +1,16 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  useCallback,
+} from "react";
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import marker from "../assets/images/vendor-self-pin.png";
 import axios from "axios";
 import NavigationBar from "../components/NavigationBar";
 import MapSlidingBox from "./MapSlidingBox";
-import { FaLocationArrow } from "react-icons/fa";
+import { FaLocationArrow, FaStore } from "react-icons/fa";
 import { UserContext } from "../UserContext";
 
 const mapContainerStyle = {
@@ -61,6 +67,7 @@ function Home() {
 
   const handleSliderToggle = () => {
     setShowSlider(!showSlider);
+    panAndZoomMap();
   };
 
   const panAndZoomMap = () => {
@@ -68,7 +75,7 @@ function Home() {
       const newCenter = showSlider
         ? {
             lat: currentPosition.lat,
-            lng: currentPosition.lng + 0.0020,
+            lng: currentPosition.lng + 0.002,
           }
         : currentPosition;
       mapRef.current.panTo(newCenter);
@@ -82,15 +89,18 @@ function Home() {
 
   useEffect(() => {
     const watchId = navigator.geolocation.watchPosition(
-      ({ coords: { latitude, longitude } }) => {
-        const position = { lat: latitude, lng: longitude };
+      ({ coords }) => {
+        const position = { lat: coords.latitude, lng: coords.longitude };
         setCurrentPosition(position);
         if (mapRef.current) {
           mapRef.current.panTo(position);
         }
         // update the user's location in the database using axios
         axios
-          .put(`http://localhost:8080/api/updateLocationById/${user.id}`, position)
+          .put(
+            `http://localhost:8080/api/updateLocationById/${user.id}`,
+            position
+          )
           .then(() => console.log("Location updated successfully"))
           .catch((error) => console.error("Error updating location: ", error));
       },
@@ -137,7 +147,7 @@ function Home() {
                 showSlider
                   ? {
                       lat: currentPosition.lat,
-                      lng: currentPosition.lng + 0.0020,
+                      lng: currentPosition.lng + 0.002,
                     }
                   : currentPosition
               }
@@ -188,13 +198,14 @@ function Home() {
             </GoogleMap>
             <button
               style={{
-                position: "absolute",
-                right: "80px",
-                bottom: "20px",
                 backgroundColor: "white",
+                position: "absolute",
+                right: showSlider ? "440px" : "80px", // Adjust the right property based on whether the MapSlidingBox is shown or not
+                bottom: "80px",
                 padding: "10px",
                 borderRadius: "5px",
-                boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
+                boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
+                transition: "right 0.3s ease", // Add a transition to make the movement smooth
               }}
               onClick={panAndZoomMap}
             >

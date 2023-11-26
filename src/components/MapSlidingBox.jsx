@@ -1,7 +1,7 @@
 import React from "react";
 import { FaStore } from "react-icons/fa";
 import stroke from "../assets/images/stroke.png";
-import ManageStore from "./ManageStore";
+import ManageStore from "../pages/ManageStore";
 const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
   const sliderBoxStyle = {
     position: "absolute",

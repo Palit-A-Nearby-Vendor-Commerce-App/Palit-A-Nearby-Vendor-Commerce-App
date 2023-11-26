@@ -25,6 +25,8 @@ public class ProductServiceService {
         if (productService.isPresent()) {
             return productService.get();
         } else {
+            // Log an error message for debugging
+            System.err.println("Product service not found with id: " + id);
             throw new RuntimeException("Product service not found with id: " + id);
         }
     }
@@ -50,17 +52,22 @@ public class ProductServiceService {
             existingProductService.get().setImagePath(productService.getImagePath());
             return productServiceRepository.save(existingProductService.get());
         } else {
+            // Log an error message for debugging
+            System.err.println("Product service not found with id: " + id);
             throw new RuntimeException("Product service not found with id: " + id);
         }
     }
 
     // Delete product service by setting isDeleted to true
-    public void deleteProductServiceById(int id) {
+    public boolean deleteProductServiceById(int id) {
         Optional<ProductServiceEntity> existingProductService = productServiceRepository.findByProductIdAndIsDeletedFalse(id);
         if (existingProductService.isPresent()) {
             existingProductService.get().setIsDeleted(true);
             productServiceRepository.save(existingProductService.get());
+            return true; // Deletion was successful
         } else {
+            // Log an error message for debugging
+            System.err.println("Product service not found with id: " + id);
             throw new RuntimeException("Product service not found with id: " + id);
         }
     }

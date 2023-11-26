@@ -1,11 +1,9 @@
 package com.nearbyvendor.palit.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "location")
 public class LocationEntity {
 
     @Id
@@ -13,17 +11,21 @@ public class LocationEntity {
     private int locationId;
     private double latitude;
     private double longitude;
-    private int accountId;
+    
+    @OneToOne
+    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    private UserEntity user;
+
     private boolean isDeleted;
 
     public LocationEntity() {
     }
 
-    public LocationEntity(int locationId, double latitude, double longitude, int accountId) {
+    public LocationEntity(int locationId, double latitude, double longitude, UserEntity user) {
         this.locationId = locationId;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.accountId = accountId;
+        this.user = user;
     }
 
     public int getId() {
@@ -50,12 +52,12 @@ public class LocationEntity {
         this.longitude = longitude;
     }
 
-    public int getAccountId() {
-        return accountId;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setAccountId(int accountId) {
-        this.accountId = accountId;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
     public boolean getIsDeleted() {

@@ -25,6 +25,8 @@ public class ConversationService {
         if (conversation.isPresent()) {
             return conversation.get();
         } else {
+            // Log an error message for debugging
+            System.err.println("ConversationEntity not found with id: " + id);
             throw new RuntimeException("ConversationEntity not found with id: " + id);
         }
     }
@@ -42,17 +44,22 @@ public class ConversationService {
             existingConversation.get().setReceiverId(conversation.getReceiverId());
             return conversationRepository.save(existingConversation.get());
         } else {
+            // Log an error message for debugging
+            System.err.println("ConversationEntity not found with id: " + id);
             throw new RuntimeException("ConversationEntity not found with id: " + id);
         }
     }
 
     // Delete a conversation by id by setting isDeleted to true
-    public void deleteConversationById(int id) {
+    public boolean deleteConversationById(int id) {
         Optional<ConversationEntity> conversation = conversationRepository.findByConversationIdAndIsDeletedFalse(id);
         if (conversation.isPresent()) {
             conversation.get().setIsDeleted(true);
             conversationRepository.save(conversation.get());
+            return true; // Deletion was successful
         } else {
+            // Log an error message for debugging
+            System.err.println("ConversationEntity not found with id: " + id);
             throw new RuntimeException("ConversationEntity not found with id: " + id);
         }
     }

@@ -1,70 +1,283 @@
-Hi, this is Bing. I'm happy to help you with your request. 😊
+@creative @youcan implement the commented axios parts based on the service classes given their apis are the same name as the function. 
 
-I can generate some sample code for a user profile form connected to a React form using APIs to upload an image and the user's name, age, and address. I will use JPA repository and Spring Boot framework for the backend, and Axios for the frontend.
+import React, { useState, useEffect, useContext } from "react";
+import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import marker from "../assets/images/vendor-self-pin.png";
+import axios from "axios"; // import axios library
+import NavigationBar from "../components/NavigationBar";
+import MapSlidingBox from "./MapSlidingBox";
+import { FaLocationArrow } from "react-icons/fa";
+import { UserContext } from "../UserContext";
 
-Here is the sample code:
+const mapContainerStyle = {
+  width: "100%",
+  height: "calc(100vh - 64px)",
+};
 
-```java
-// UserController.java
-package com.example.userprofile.controller;
+const mapOptions = {
+  streetViewControl: false,
+  styles: [
+    {
+      featureType: "poi",
+      stylers: [{ visibility: "off" }],
+    },
+    {
+      featureType: "transit",
+      elementType: "labels.icon",
+      stylers: [{ visibility: "off" }],
+    },
+  ],
+};
 
-import com.example.userprofile.model.User;
-import com.example.userprofile.service.UserService;
+const defaultCenter = {
+  lat: -3.745,
+  lng: -38.523,
+};
+
+function Home() {
+  const { user } = useContext(UserContext);
+  const [currentPosition, setCurrentPosition] = useState(defaultCenter);
+  const [nearbyUsers, setNearbyUsers] = useState([]); // state to store nearby users
+  const [showSlider, setShowSlider] = useState(false);
+  const mapRef = React.useRef();
+  const onMapLoad = React.useCallback((map) => {
+    mapRef.current = map;
+  }, []);
+
+  const handleSliderToggle = () => {
+    setShowSlider(!showSlider);
+  };
+
+  useEffect(() => {
+    console.log("User Data:", user);
+  }, [user]);
+
+  useEffect(() => {
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentPosition({ lat: latitude, lng: longitude });
+        if (mapRef.current) {
+          mapRef.current.panTo({ lat: latitude, lng: longitude });
+        }
+        // update the user's location in the database using axios
+      },
+      (error) => console.log(error),
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+    );
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
+
+  // fetch nearby users from the database using axios
+  useEffect(() => {
+    // then filter out the users who are admins or more than 200 meters away
+  }, [currentPosition]);
+
+  const getDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1); // deg2rad below
+    const dLon = deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(deg2rad(lat1)) *
+        Math.cos(deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
+    return d * 1000; // Distance in meters
+  };
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI / 180);
+  };
+
+  return (
+    <>
+      <div className="w-full font-custom">
+        <NavigationBar />
+        <LoadScript googleMapsApiKey="AIzaSyBNM-CYx7dA0gckgBmybtovang7Bvp8lK0">
+          <div>
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={
+                showSlider
+                  ? {
+                      lat: currentPosition.lat,
+                      lng: currentPosition.lng + 0.0006,
+                    }
+                  : {
+                      lat: currentPosition.lat,
+                      lng: currentPosition.lng,
+                    }
+              }
+              zoom={19}
+              className="flex-1"
+              options={mapOptions}
+              onLoad={onMapLoad}
+            >
+              {window.google && (
+                <Marker
+                  position={currentPosition}
+                  icon={{
+                    url: marker,
+                    scaledSize: new window.google.maps.Size(30, 30),
+                  }}
+                />
+              )}
+              <Circle
+                center={currentPosition}
+                radius={100}
+                options={{
+                  strokeColor: "#0071B3",
+                  strokeOpacity: 0.8,
+                  strokeWeight: 2,
+                  fillColor: "#0071B3",
+                  fillOpacity: 0.05,
+                }}
+              />
+              {nearbyUsers.map((user) => (
+                // render markers for nearby users
+                <Marker
+                  key={user.accountId}
+                  position={{ lat: user.latitude, lng: user.longitude }}
+                  onClick={() => {
+                    // open the store page of the user when clicked
+                    window.location.href = `/store/${user.accountId}`;
+                  }}
+                />
+              ))}
+              <MapSlidingBox
+                showSlider={showSlider}
+                handleSliderToggle={handleSliderToggle}
+              />
+              <MapSlidingBox
+                showSlider={showSlider}
+                handleSliderToggle={handleSliderToggle}
+              />
+            </GoogleMap>
+            <button
+              style={{
+                position: "absolute",
+                right: "80px",
+                bottom: "20px",
+                backgroundColor: "white",
+                padding: "10px",
+                borderRadius: "5px",
+                boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)"
+
+              }}
+              onClick={() => {
+                if (mapRef.current) {
+                  const newCenter = showSlider
+                    ? {
+                        lat: currentPosition.lat,
+                        lng: currentPosition.lng + 0.0006, // adjust this value as needed
+                      }
+                    : {
+                        lat: currentPosition.lat,
+                        lng: currentPosition.lng,
+                      };
+                  mapRef.current.panTo(newCenter);
+                  mapRef.current.setZoom(19); // adjust this value as needed
+                }
+              }}
+            >
+              <FaLocationArrow size={20} />
+            </button>
+          </div>
+        </LoadScript>
+      </div>
+    </>
+  );
+}
+
+export default Home;
+-------------------------------------------------------
+package com.nearbyvendor.palit.service;
+
+import com.nearbyvendor.palit.entity.LocationEntity;
+import com.nearbyvendor.palit.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.stereotype.Service;
 
-@RestController
-@RequestMapping("/api/users")
-public class UserController {
+import java.util.List;
+
+@Service
+public class LocationService {
 
     @Autowired
-    private UserService userService;
+    private LocationRepository locationRepository;
 
-    // Get all users
-    @GetMapping
-    public ResponseEntity<?> getAllUsers() {
-        return userService.getAllUsers();
+    // Get all locations where isDeleted is false
+    public List<LocationEntity> getAllLocations() {
+        return locationRepository.findByIsDeletedFalse();
     }
 
-    // Get user by id
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    // Get location by id where isDeleted is false
+    public LocationEntity getLocationById(int id) {
+        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+        if (location != null) {
+            return location;
+        } else {
+            // Log an error message for debugging
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
+        }
     }
 
-    // Create or update user
-    @PostMapping
-    public ResponseEntity<?> createUserOrUpdate(@RequestParam("file") MultipartFile file,
-                                                @RequestParam("name") String name,
-                                                @RequestParam("age") int age,
-                                                @RequestParam("address") String address) {
-        return userService.createUserOrUpdate(file, name, age, address);
+    // Create location
+    public LocationEntity createLocation(LocationEntity location) {
+        return locationRepository.save(location);
     }
 
-    // Delete user by id
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
-        return userService.deleteUserById(id);
+    // Update location by id where isDeleted is false
+    public LocationEntity updateLocationById(int id, LocationEntity location) {
+        LocationEntity existingLocation = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+        if (existingLocation != null) {
+            existingLocation.setLatitude(location.getLatitude());
+            existingLocation.setLongitude(location.getLongitude());
+            existingLocation.setAccountId(location.getAccountId());
+            return locationRepository.save(existingLocation);
+        } else {
+            // Log an error message for debugging
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
+        }
+    }
+
+    // Delete location by id
+    public boolean deleteLocationById(int id) {
+        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+        if (location != null) {
+            location.setIsDeleted(true);
+            locationRepository.save(location);
+            return true; // Deletion was successful
+        } else {
+            // Log an error message for debugging
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
+        }
     }
 }
-```
 
-```java
-// UserService.java
-package com.example.userprofile.service;
+package com.nearbyvendor.palit.service;
 
-import com.example.userprofile.model.User;
-import com.example.userprofile.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import com.nearbyvendor.palit.entity.UserEntity;
+import com.nearbyvendor.palit.repository.UserRepository;
+
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -72,198 +285,146 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    // Get all users
-    public ResponseEntity<?> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findByIsDeletedFalse();
     }
 
-    // Get user by id
-    public ResponseEntity<?> getUserById(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+    public UserEntity getUserById(int id) {
+        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
+        if (user != null) {
+            return user;
+        } else {
+            // Log an error message for debugging
+            System.err.println("UserEntity not found with id: " + id);
+            throw new RuntimeException("UserEntity not found with id: " + id);
         }
-        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    // Create or update user
-    public ResponseEntity<?> createUserOrUpdate(MultipartFile file, String name, int age, String address) {
-        User user = new User();
-        user.setName(name);
-        user.setAge(age);
-        user.setAddress(address);
-        try {
-            user.setImage(file.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("File upload error", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        user = userRepository.save(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    public UserEntity createUser(MultipartFile image, String firstName, String lastName, String birthDate, String email, String password)
+            throws IOException, ParseException {
+        UserEntity newUserEntity = new UserEntity();
+        newUserEntity.setImage(image.getBytes());
+        newUserEntity.setFirstName(firstName);
+        newUserEntity.setLastName(lastName);
+        // Convert the birthDate string to java.sql.Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Date parsedDate = dateFormat.parse(birthDate);
+        java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+        newUserEntity.setBirthDate(sqlDate);
+        newUserEntity.setEmail(email);
+        newUserEntity.setPassword(password);
+        // Save the updated user in the repository
+        return userRepository.save(newUserEntity);
     }
 
-    // Delete user by id
-    public ResponseEntity<?> deleteUserById(Long id) {
-        User user = userRepository.findById(id).orElse(null);
-        if (user == null) {
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+    public UserEntity updateUserById(int id, MultipartFile image, String firstName, String lastName, String birthDate, String email,
+            String password)
+            throws IOException, ParseException {
+        Optional<UserEntity> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            UserEntity existingUser = user.get();
+            existingUser.setImage(image.getBytes());
+            existingUser.setFirstName(firstName);
+            existingUser.setLastName(lastName);
+            // Convert the birthDate string to java.sql.Date
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date parsedDate = dateFormat.parse(birthDate);
+            java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+            existingUser.setBirthDate(sqlDate);
+            existingUser.setEmail(email);
+            existingUser.setPassword(password);
+            // Save the updated user in the repository
+            return userRepository.save(existingUser);
+        } else {
+            // Log an error message for debugging
+            System.err.println("Invalid user ID for updating: " + id);
+            throw new IllegalArgumentException("Invalid user ID");
         }
-        userRepository.delete(user);
-        return new ResponseEntity<>("User deleted", HttpStatus.OK);
+    }
+
+    public boolean deleteUserById(int id) {
+        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
+        if (user != null) {
+            user.setIsDeleted(true);
+            userRepository.save(user);
+            return true; // Deletion was successful
+        } else {
+            // Log an error message for debugging
+            System.err.println("Invalid user ID for deletion: " + id);
+            throw new IllegalArgumentException("Invalid user ID");
+        }
+    }
+
+    // Create a method to check if an email already exists
+    public boolean checkEmail(UserEntity userData) {
+        // Get the list of users from the previous method
+        List<UserEntity> users = getAllUsers();
+        // Loop through the users and compare the email with the userData
+        for (UserEntity user : users) {
+            if (user.getEmail().equals(userData.getEmail())) {
+                // If the email already exists, return a message
+                return true;
+            }
+        }
+        // If the email does not exist, return a success message
+        return false;
     }
 }
-```
 
-```java
-// User.java
-package com.example.userprofile.model;
+package com.nearbyvendor.palit.service;
 
-import javax.persistence.*;
+import com.nearbyvendor.palit.entity.AccountEntity;
+import com.nearbyvendor.palit.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Entity
-@Table(name = "users")
-public class User {
+import java.util.List;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Service
+public class AccountService {
 
-    @Column(name = "name")
-    private String name;
+    @Autowired
+    private AccountRepository accountRepository;
 
-    @Column(name = "age")
-    private int age;
-
-    @Column(name = "address")
-    private String address;
-
-    @Lob
-    @Column(name = "image")
-    private byte[] image;
-
-    public User() {
+    public List<AccountEntity> getAllAccounts() {
+        return accountRepository.findByIsDeletedFalse();
     }
 
-    public User(String name, int age, String address, byte[] image) {
-        this.name = name;
-        this.age = age;
-        this.address = address;
-        this.image = image;
+    public AccountEntity getAccountById(int accountId) {
+        AccountEntity account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        if (account == null) {
+            // Log an error message for debugging
+            System.err.println("Account not found with ID: " + accountId);
+        }
+        return account;
     }
 
-    // Getters and setters
+    public AccountEntity createAccount(AccountEntity account) {
+        return accountRepository.save(account);
+    }
+
+    public AccountEntity editAccountById(int accountId, AccountEntity account) {
+        AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        if (existingAccount != null) {
+            account.setId(accountId);
+            return accountRepository.save(account);
+        } else {
+            // Log an error message for debugging
+            System.err.println("Invalid account ID for editing: " + accountId);
+            throw new IllegalArgumentException("Invalid account ID");
+        }
+    }
+
+    public boolean deleteAccountById(int accountId) {
+        AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        if (existingAccount != null) {
+            existingAccount.setIsDeleted(true);
+            accountRepository.save(existingAccount);
+            return true; // Deletion was successful
+        } else {
+            // Log an error message for debugging
+            System.err.println("Invalid account ID for deletion: " + accountId);
+            return false; // Deletion was not successful
+        }
+    }
 }
-```
-
-```java
-// UserRepository.java
-package com.example.userprofile.repository;
-
-import com.example.userprofile.model.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-}
-```
-
-```jsx
-// UserProfileForm.js
-import React, { useState } from "react";
-import axios from "axios";
-
-const UserProfileForm = () => {
-  const [file, setFile] = useState(null);
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [address, setAddress] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("name", name);
-    formData.append("age", age);
-    formData.append("address", address);
-    axios
-      .post("/api/users", formData)
-      .then((response) => {
-        console.log(response.data);
-        alert("User created or updated successfully");
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("User creation or update failed");
-      });
-  };
-
-  return (
-    <div className="user-profile-form">
-      <h1>User Profile Form</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="file">Image</label>
-          <input
-            type="file"
-            id="file"
-            name="file"
-            accept="image/*"
-            onChange={(e) => setFile(e.target.files[0])}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="name">Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="age">Age</label>
-          <input
-            type="number"
-            id="age"
-            name="age"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="address">Address</label>
-          <input
-            type="text"
-            id="address"
-            name="address"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <button type="submit">Submit</button>
-        </div>
-      </form>
-    </div>
-  );
-};
-
-export default UserProfileForm;
-```
-
-I hope this helps you with your project. 😊
-
-Source: Conversation with Bing, 11/23/2023
-(1) github.com. https://github.com/caiciji/tanhua/tree/382c73e4bbe14fe2c21f7c19fd66e6bd93c185e3/tanhua%2Ftanhua-server%2Fsrc%2Fmain%2Fjava%2Fcom%2Ftanhua%2Fserver%2Fcontroller%2FUserController.java.
-(2) github.com. https://github.com/AidanaZh/KTMU-Yoklama-Project-Repository/tree/9c2a7231b68dd9369dfd131364154257ba61850a/newTest%2Fsrc%2Fmain%2Fjava%2Fcom%2Fexample%2FnewTest%2FService%2FStudentService.java.
-(3) github.com. https://github.com/malinabenegui/HelpUp/tree/500ab3bab04c61b46d8047f7984f5e8820fd9fc3/helpup-api%2Fsrc%2Fmain%2Fjava%2Fcom%2Fmalinabenegui%2Fhelp%2Fservices%2Fuser%2FUserService.java.
-(4) github.com. https://github.com/michaelwageuh12/hatleyAppTask/tree/06d0eefdcbd1c64e82042727ca7edec1272d2cc7/task%2Fsrc%2Fmain%2Fjava%2Fcom%2Fexample%2Fhatley%2Ftask%2Fservice%2FSuperMarketService.java.
-(5) github.com. https://github.com/MaxIT95/CoreTaskTemplateHybernate/tree/6d02508b8fc2fbd27e2fc21344a48f9a3741f637/src%2Fmain%2Fjava%2Fjm%2Ftask%2Fcore%2Fjdbc%2Fmodel%2FUser.java.
-(6) github.com. https://github.com/timaogurtzova/userCRUDApp/tree/4974e9092ff1363f094844d23d261e0b30cd712f/src%2Fmain%2Fjava%2Fmodel%2FUser.java.

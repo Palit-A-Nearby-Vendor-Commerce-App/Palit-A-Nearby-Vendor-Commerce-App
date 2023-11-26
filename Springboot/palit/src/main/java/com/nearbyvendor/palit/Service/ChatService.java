@@ -1,13 +1,12 @@
 package com.nearbyvendor.palit.service;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.nearbyvendor.palit.entity.ChatEntity;
+import com.nearbyvendor.palit.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.nearbyvendor.palit.entity.ChatEntity;
-import com.nearbyvendor.palit.repository.ChatRepository;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ChatService {
@@ -34,18 +33,23 @@ public class ChatService {
             existingChat.setConversationId(chat.getConversationId());
             return chatRepository.save(existingChat);
         } else {
+            // Log an error message for debugging
+            System.err.println("ChatEntity not found with id: " + chatId);
             throw new RuntimeException("ChatEntity not found with id: " + chatId);
         }
     }
 
-    public void deleteChatById(int chatId) {
+    public boolean deleteChatById(int chatId) {
         Optional<ChatEntity> chatOptional = chatRepository.findByChatIdAndIsDeletedFalse(chatId);
         if (chatOptional.isPresent()) {
             ChatEntity chat = chatOptional.get();
             chat.setIsDeleted(true);
             chatRepository.save(chat);
+            return true; // Deletion was successful
         } else {
+            // Log an error message for debugging
+            System.err.println("ChatEntity not found with id: " + chatId);
             throw new RuntimeException("ChatEntity not found with id: " + chatId);
         }
-    }
+    }    
 }

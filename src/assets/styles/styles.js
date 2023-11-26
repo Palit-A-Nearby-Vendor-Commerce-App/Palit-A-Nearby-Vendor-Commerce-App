@@ -9,6 +9,11 @@ import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import MuiAlert from "@mui/material/Alert";
+
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 export const NAV_HOVER_STYLE =
   "relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-customYellow after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center";
@@ -103,3 +108,7 @@ export const StyledBadge = styled(Badge)(({ theme }) => ({
     },
   },
 }));
+
+export const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});

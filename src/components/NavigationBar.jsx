@@ -1,4 +1,4 @@
-import React, { useContext,useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Button } from "@material-ui/core";
 import logo from "../assets/images/logo-white.png";
@@ -6,13 +6,17 @@ import { NAV_HOVER_STYLE } from "../assets/styles/styles.js";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min.js";
 import { UserContext } from "../UserContext"; // Update the path based on your file structure
 import sampleStore from "../assets/images/storesample.png";
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const NavigationBar = () => {
   const [isHovered, setIsHovered] = useState(false);
   const { user, setUser } = useContext(UserContext);
   const loc = useLocation();
   const history = useHistory();
-  console.log(loc);
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleLogout = () => {
     // Perform logout actions (e.g., clear user data)
@@ -21,6 +25,14 @@ const NavigationBar = () => {
 
     // Redirect to the default page ("/")
     history.push("/");
+  };
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -45,31 +57,42 @@ const NavigationBar = () => {
         {user ? (
           // If the user is logged in, display Logout button and user image
           <div className="flex items-center gap-4">
-            <Button
-              variant="outlined"
-              style={{
-                textTransform: "none",
-                borderColor: "white",
-                width: "120px",
-                fontSize: "22px",
-                border:"none",
-                color: isHovered ? "#F4D23E" : "white",
-                borderColor: isHovered ? "#F4D23E" : "white",
-                fontFamily: "Poppins",
-                transition: "color 0.3s, border-color 0.3s",
-              }}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              onClick={handleLogout}
-            >
-              Logout
-            </Button>
-            {/* Add the user image here */}
             <img
-              src={sampleStore} // replace with the actual path to the user's image
+              src={`data:image/png;base64, ${user.image}`}
               alt="User"
               className="w-12 h-12 rounded-full"
+              onClick={handleMenu}
             />
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              style={{ marginTop: "50px" }}
+            >
+              <MenuItem
+                onClick={handleClose}
+                style={{ display: "flex", gap: "10px" }}
+              >
+                <AccountCircleIcon /> Profile
+              </MenuItem>
+              <MenuItem
+                onClick={handleLogout}
+                style={{ display: "flex", gap: "10px" }}
+              >
+                <LogoutIcon />
+                Logout
+              </MenuItem>
+            </Menu>
           </div>
         ) : (
           // If the user is not logged in, display Sign In button

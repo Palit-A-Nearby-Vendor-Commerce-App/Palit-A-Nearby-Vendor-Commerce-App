@@ -18,7 +18,14 @@ public class ReportService {
     }
 
     public ReportEntity getReportById(int id) {
-        return reportRepository.findByReportIdAndIsDeletedFalse(id);
+        ReportEntity report = reportRepository.findByReportIdAndIsDeletedFalse(id);
+        if (report != null) {
+            return report;
+        } else {
+            // Log an error message for debugging
+            System.err.println("ReportEntity not found with id: " + id);
+            throw new RuntimeException("ReportEntity not found with id: " + id);
+        }
     }
 
     public ReportEntity createReport(ReportEntity report) {
@@ -31,20 +38,21 @@ public class ReportService {
             report.setId(id);
             return reportRepository.save(report);
         } else {
-            // Handle the case when the report ID is null or does not exist
-            // You can throw an exception or handle it in a different way based on your requirements
+            // Log an error message for debugging
+            System.err.println("Invalid report ID for updating: " + id);
             throw new IllegalArgumentException("Invalid report ID");
         }
     }
 
-    public void deleteReportById(int id) {
+    public boolean deleteReportById(int id) {
         ReportEntity existingReport = reportRepository.findByReportIdAndIsDeletedFalse(id);
         if (existingReport != null) {
             existingReport.setIsDeleted(true);
             reportRepository.save(existingReport);
+            return true; // Deletion was successful
         } else {
-            // Handle the case when the report ID is null or does not exist
-            // You can throw an exception or handle it in a different way based on your requirements
+            // Log an error message for debugging
+            System.err.println("Invalid report ID for deletion: " + id);
             throw new IllegalArgumentException("Invalid report ID");
         }
     }

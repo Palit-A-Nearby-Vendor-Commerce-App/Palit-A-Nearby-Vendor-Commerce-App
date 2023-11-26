@@ -18,7 +18,14 @@ public class TransactionService {
     }
 
     public TransactionEntity getTransactionById(int id) {
-        return transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
+        TransactionEntity transaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
+        if (transaction != null) {
+            return transaction;
+        } else {
+            // Log an error message for debugging
+            System.err.println("TransactionEntity not found with id: " + id);
+            throw new RuntimeException("TransactionEntity not found with id: " + id);
+        }
     }
 
     public TransactionEntity createTransaction(TransactionEntity transaction) {
@@ -33,20 +40,21 @@ public class TransactionService {
             transaction.setIsDeleted(false);
             return transactionRepository.save(transaction);
         } else {
-            // Handle the case when the transaction ID is null or does not exist
-            // You can throw an exception or handle it in a different way based on your requirements
+            // Log an error message for debugging
+            System.err.println("Invalid transaction ID for updating: " + id);
             throw new IllegalArgumentException("Invalid transaction ID");
         }
     }
 
-    public void deleteTransactionById(int id) {
+    public boolean deleteTransactionById(int id) {
         TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
         if (existingTransaction != null) {
             existingTransaction.setIsDeleted(true);
             transactionRepository.save(existingTransaction);
+            return true; // Deletion was successful
         } else {
-            // Handle the case when the transaction ID is null or does not exist
-            // You can throw an exception or handle it in a different way based on your requirements
+            // Log an error message for debugging
+            System.err.println("Invalid transaction ID for deletion: " + id);
             throw new IllegalArgumentException("Invalid transaction ID");
         }
     }

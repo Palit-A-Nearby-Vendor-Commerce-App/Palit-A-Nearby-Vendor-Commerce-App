@@ -99,76 +99,86 @@ function Signup() {
 
   const handleConfirm = async () => {
     try {
-      if (
-        !axios.post("http://localhost:8080/api/isEmailTaken", {
+      // Check if email is already taken
+      const emailCheckResponse = await axios.post(
+        "http://localhost:8080/api/isEmailTaken",
+        {
           email: userData.email,
-        })
-      ) {
-        setAlert("Email already exists. Please use a different email.");
-      } else {
-        // Create user
-        const formData = new FormData();
-        formData.append("image", userData.image);
-        formData.append("firstName", userData.firstName);
-        formData.append("lastName", userData.lastName);
-        formData.append(
-          "birthDate",
-          moment(userData.birthDate).format("YYYY-MM-DD")
-        );
-        formData.append("email", userData.email);
-        formData.append("password", userData.password);
-        const userResponse = await axios.post(
-          // Use the URL for the POST mapping to create a new user
-          "http://localhost:8080/api/createUser",
-          formData
-          // Use the FormData object to append the required parameters
-        );
-        const user = userResponse.data;
-
-        //create location
-        const locationData = {
-          lat: 0,
-          lng: 0,
-          userId: user.userId,
-        };
-        await axios.post(
-          "http://localhost:8080/api/createLocation",
-          locationData
-        );
-
-        // Create account
-        const accountData = {
-          isVendor: userData.userType === "vendor",
-          isAdmin: false,
-          userId: user.userId,
-        };
-        await axios.post(
-          "http://localhost:8080/api/createAccount",
-          accountData
-        );
-
-        // If user is a vendor, create store
-        if (userData.userType === "vendor") {
-          const storeData = {
-            storeName: userData.storeName,
-            description: userData.description,
-            category: userData.category,
-            vendorAccountId: user.userId,
-          };
-          await axios.post("http://localhost:8080/api/createStore", storeData);
         }
+      );
 
-        // Alert the user that the user creation is successful
-        setSuccess(true);
-
-        setTimeout(() => {
-          setSuccess(null);
-          history.push("/signin");
-        }, 3000);
+      if (emailCheckResponse.data.exists) {
+        setAlert("Email already exists. Please use a different email.");
+        return;
       }
+
+      // Create location
+      const locationResponse = await axios.post(
+        "http://localhost:8080/api/createLocation",
+        {
+          lat: 0, // Replace with actual latitude if available
+          lng: 0, // Replace with actual longitude if available
+          isActive: false
+        }
+      );
+      const locationId = locationResponse.data.locationId;
+
+      // Create account
+      const accountData = {
+        isVendor: userData.userType === "vendor",
+        isAdmin: false,
+      };
+      const accountResponse = await axios.post(
+        "http://localhost:8080/api/createAccount",
+        accountData
+      );
+      const accountId = accountResponse.data.accountId;
+
+      // Optionally create a store and get its ID
+      let storeId = null;
+      if (userData.userType === "vendor") {
+        const storeData = {
+          storeName: userData.storeName,
+          description: userData.description,
+          category: userData.category,
+          vendorAccountId: accountId,
+        };
+        const storeResponse = await axios.post(
+          "http://localhost:8080/api/createStore",
+          storeData
+        );
+        storeId = storeResponse.data.storeId;
+      }
+
+      // Prepare FormData for user creation
+      const formData = new FormData();
+      formData.append("image", userData.image);
+      formData.append("firstName", userData.firstName);
+      formData.append("lastName", userData.lastName);
+      formData.append(
+        "birthDate",
+        moment(userData.birthDate).format("YYYY-MM-DD")
+      );
+      formData.append("email", userData.email);
+      formData.append("password", userData.password);
+      formData.append("locationId", locationId);
+      formData.append("accountId", accountId);
+      if (storeId) {
+        formData.append("storeId", storeId);
+      }
+
+      // Create user with locationId, accountId, and storeId (if applicable)
+      await axios.post("http://localhost:8080/api/createUser", formData);
+
+      // Alert the user that the user creation is successful
+      setSuccess(true);
+
+      setTimeout(() => {
+        setSuccess(null);
+        history.push("/signin");
+      }, 3000);
     } catch (error) {
       console.error(error);
-      // Alert the user that the user creation is not successful
       setAlert("User creation failed. Please try again.");
     }
   };

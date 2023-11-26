@@ -11,6 +11,7 @@ import axios from "axios";
 import NavigationBar from "../components/NavigationBar";
 import MapSlidingBox from "./MapSlidingBox";
 import { FaLocationArrow, FaStore } from "react-icons/fa";
+import { MdOutlineReportGmailerrorred } from "react-icons/md";
 import { UserContext } from "../UserContext";
 
 const mapContainerStyle = {
@@ -82,6 +83,10 @@ function Home() {
       mapRef.current.setZoom(17);
     }
   };
+
+  const handleReport = () => {
+    window.location.href = "/report";
+  }
 
   useEffect(() => {
     console.log("User Data:", user);
@@ -210,6 +215,21 @@ function Home() {
               onClick={panAndZoomMap}
             >
               <FaLocationArrow size={20} />
+            </button>
+            <button
+              style={{
+                backgroundColor: "white",
+                position: "absolute",
+                left: "30px", 
+                bottom: "30px", 
+                padding: "10px",
+                borderRadius: "5px",
+                boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
+                transition: "left 0.3s ease, bottom 0.3s ease",
+              }}
+              onClick={handleReport}
+            >
+              <MdOutlineReportGmailerrorred size={30} />
             </button>
           </div>
         </LoadScript>

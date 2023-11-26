@@ -1,10 +1,22 @@
-import React from "react";
+import React, { useContext } from "react"; // Import useContext from react
 import { Button } from "@material-ui/core";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
+import { UserContext } from "../UserContext";
 
 import NavigationBar from "../components/NavigationBar.jsx";
 
 const Landing = () => {
+  // Access the user context
+  const { user } = useContext(UserContext);
+
+  // Check if a user exists in the context
+  const userExists = user !== null; // Replace with your actual logic
+
+  if (userExists) {
+    // Redirect to "/home" if user exists
+    return <Redirect to="/home" />;
+  }
+
   return (
     <div className="w-full h-screen bg-primary bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">
       <NavigationBar />

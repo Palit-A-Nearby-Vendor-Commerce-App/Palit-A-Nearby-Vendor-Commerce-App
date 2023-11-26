@@ -55,8 +55,8 @@ const Aboutus = () => {
         </p>
 
         <div className="pt-16 flex gap-8 w-full">
-          {membersData.map((member) => (
-            <div className="w-full text-left">
+          {membersData.map((member, index) => (
+            <div className="w-full text-left" key={index}>
               <img
                 src={member.img}
                 alt={member.name}

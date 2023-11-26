@@ -111,7 +111,7 @@ const Chat = () => {
               >
                 {conversation[0].receiver_id === 101 && "Gregorio Bainabai"}
               </h2>
-              <p className="text-gray-400 text-sm text-green-500">∙ Online</p>
+              <p className="text-sm text-green-500">∙ Online</p>
             </div>
           </div>
         </div>

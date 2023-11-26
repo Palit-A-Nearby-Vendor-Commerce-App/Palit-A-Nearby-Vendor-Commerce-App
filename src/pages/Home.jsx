@@ -4,6 +4,7 @@ import marker from "../assets/images/vendor-self-pin.png";
 import axios from "axios"; // import axios library
 import NavigationBar from "../components/NavigationBar";
 import MapSlidingBox from "./MapSlidingBox";
+import { FaLocationArrow } from "react-icons/fa";
 
 const mapContainerStyle = {
   width: "100%",
@@ -34,6 +35,10 @@ function Home() {
   const [currentPosition, setCurrentPosition] = useState(defaultCenter);
   const [nearbyUsers, setNearbyUsers] = useState([]); // state to store nearby users
   const [showSlider, setShowSlider] = useState(false);
+  const mapRef = React.useRef();
+  const onMapLoad = React.useCallback((map) => {
+    mapRef.current = map;
+  }, []);
 
   const handleSliderToggle = () => {
     setShowSlider(!showSlider);
@@ -44,19 +49,10 @@ function Home() {
       (position) => {
         const { latitude, longitude } = position.coords;
         setCurrentPosition({ lat: latitude, lng: longitude });
+        if (mapRef.current) {
+          mapRef.current.panTo({ lat: latitude, lng: longitude });
+        }
         // update the user's location in the database using axios
-        // try {
-        //   axios.put("http://localhost:3004/nearbyUsers", {
-        //     id: 2,
-        //     latitude: latitude,
-        //     longitude: longitude,
-        //     isAdmin: false,
-        //     isVendor: false,
-        //     store: null,
-        //   });
-        // } catch (error) {
-        //   console.error("There was an error!", error);
-        // }
       },
       (error) => console.log(error),
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
@@ -69,31 +65,7 @@ function Home() {
 
   // fetch nearby users from the database using axios
   useEffect(() => {
-    axios
-      .get("http://localhost:3004/nearbyUsers", {
-        params: {
-          accountId: localStorage.getItem("accountId"),
-          isVendor: localStorage.getItem("isVendor"),
-        },
-      })
-      .then((response) => {
-        // // filter out the users who are admins or more than 200 meters away
-        // const filteredUsers = response.data.filter(
-        //   (user) =>
-        //     !user.isAdmin &&
-        //     getDistance(
-        //       currentPosition.lat,
-        //       currentPosition.lng,
-        //       user.latitude,
-        //       user.longitude
-        //     ) <= 200
-        // );
-        // setNearbyUsers(filteredUsers);
-        setNearbyUsers(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // then filter out the users who are admins or more than 200 meters away
   }, [currentPosition]);
 
   const getDistance = (lat1, lon1, lat2, lon2) => {
@@ -123,13 +95,21 @@ function Home() {
           <div>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
-              center={{
-                lat: currentPosition.lat,
-                lng: currentPosition.lng + 0.0006,
-              }}
+              center={
+                showSlider
+                  ? {
+                      lat: currentPosition.lat,
+                      lng: currentPosition.lng + 0.0006,
+                    }
+                  : {
+                      lat: currentPosition.lat,
+                      lng: currentPosition.lng,
+                    }
+              }
               zoom={19}
               className="flex-1"
               options={mapOptions}
+              onLoad={onMapLoad}
             >
               {window.google && (
                 <Marker
@@ -156,18 +136,46 @@ function Home() {
                 <Marker
                   key={user.accountId}
                   position={{ lat: user.latitude, lng: user.longitude }}
-                  // icon={{
-                  //   url: user.store.category, // use the store category as the icon
-                  //   scaledSize: new window.google.maps.Size(30, 30),
-                  // }}
                   onClick={() => {
                     // open the store page of the user when clicked
                     window.location.href = `/store/${user.accountId}`;
                   }}
                 />
               ))}
-              <MapSlidingBox showSlider={showSlider} handleSliderToggle={handleSliderToggle} />
+              <MapSlidingBox
+                showSlider={showSlider}
+                handleSliderToggle={handleSliderToggle}
+              />
             </GoogleMap>
+            <button
+              style={{
+                position: "absolute",
+                right: "80px",
+                bottom: "20px",
+                backgroundColor: "white",
+                padding: "10px",
+                borderRadius: "5px",
+                boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)"
+
+              }}
+              onClick={() => {
+                if (mapRef.current) {
+                  const newCenter = showSlider
+                    ? {
+                        lat: currentPosition.lat,
+                        lng: currentPosition.lng + 0.0006, // adjust this value as needed
+                      }
+                    : {
+                        lat: currentPosition.lat,
+                        lng: currentPosition.lng,
+                      };
+                  mapRef.current.panTo(newCenter);
+                  mapRef.current.setZoom(19); // adjust this value as needed
+                }
+              }}
+            >
+              <FaLocationArrow size={20} />
+            </button>
           </div>
         </LoadScript>
       </div>

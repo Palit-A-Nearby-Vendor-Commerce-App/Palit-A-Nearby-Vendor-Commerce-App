@@ -54,4 +54,12 @@ public class AccountService {
             return false; // Deletion was not successful
         }
     }
+
+    // define the get account entity by user id method
+    public AccountEntity getAccountByUserId(int userId) {
+        // use the account repository to find the account entity by user id
+        AccountEntity accountEntity = accountRepository.findByUserUserIdAndIsDeletedFalse(userId);
+        // return the account entity or null if not found
+        return accountEntity;
+    }
 }

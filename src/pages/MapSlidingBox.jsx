@@ -1,13 +1,15 @@
 import React from "react";
 import dragiconenter from "../assets/images/dragiconenter.png";
 import dragiconexit from "../assets/images/dragiconexit.png";
+import stroke from "../assets/images/stroke.png";
+import ManageStore from "./ManageStore";
 
 const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
     const sliderBoxStyle = {
         position: "absolute",
         top: 40,
-        right: showSlider ? "30px" : "-350px",
-        width: "300px",
+        right: showSlider ? "30px" : "-410px",
+        width: "400px",
         height: "90%",
         backgroundColor: "#fff",
         transition: "right 0.3s ease",
@@ -19,7 +21,7 @@ const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
     const buttonStyle = {
         position: "absolute",
         top: 400,
-        right: showSlider ? "340px" : "0",
+        right: showSlider ? "440px" : "10px",
         zIndex: 1,
         cursor: "pointer",
         transition: "right 0.3s ease", // Add this line to make the button transition smoothly
@@ -28,10 +30,16 @@ const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
     return (
         <div>
             <div style={sliderBoxStyle}>
-                <div>
-                    <h2>Sliding Box Content</h2>
-                    {/* Add your sliding box content here */}
-                </div>
+            <img
+                    src={stroke}
+                    alt="Stroke"
+                    style={{
+                        width: "auto",
+                        height: "100%", 
+                        position: "absolute",
+                    }}
+                />
+            <ManageStore />
             </div>
             <button style={buttonStyle} onClick={handleSliderToggle}>
                 <img

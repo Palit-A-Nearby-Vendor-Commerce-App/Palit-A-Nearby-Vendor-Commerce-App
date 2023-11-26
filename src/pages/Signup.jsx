@@ -3,6 +3,16 @@ import axios from "axios";
 import moment from "moment"; // Import moment library
 import logo from "../assets/images/logo.png";
 import { useHistory } from "react-router-dom";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Snackbar from "@mui/material/Snackbar";
+import { Alert } from "../assets/styles/styles.js";
 
 function Signup() {
   const history = useHistory();
@@ -10,7 +20,10 @@ function Signup() {
   const [alert, setAlert] = useState("");
   const [isImageEmpty, setIsImageEmpty] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(true);
+  const [success, setSuccess] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const [userData, setUserData] = useState({
     firstName: "",
     lastName: "",
@@ -38,7 +51,8 @@ function Signup() {
 
   const validatePassword = (password) => {
     // At least 8 characters, includes uppercase, lowercase, number, and special character
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
   };
 
@@ -47,8 +61,8 @@ function Signup() {
       ...userData,
       [e.target.name]: e.target.value,
     });
-    
-    if (e.target.name === 'password') {
+
+    if (e.target.name === "password") {
       setIsPasswordValid(validatePassword(e.target.value));
     }
   };
@@ -134,8 +148,12 @@ function Signup() {
         }
 
         // Alert the user that the user creation is successful
-        setAlert("User created successfully.");
-        history.push("/signin");
+        setSuccess(true);
+
+        setTimeout(() => {
+          setSuccess(null);
+          history.push("/signin");
+        }, 3000);
       }
     } catch (error) {
       console.error(error);
@@ -150,7 +168,7 @@ function Signup() {
   };
 
   return (
-    <div className="w-full bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom mb-10">
+    <div className="w-full pb-10 bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">
       <div className="w-full flex items-center justify-center">
         <img src={logo} alt="Palit logo" className="w-[250px] h-[102px] mt-5" />
       </div>
@@ -164,7 +182,7 @@ function Signup() {
                 className="w-[90px] h-[90px] rounded-[20px] mx-auto"
               />
             ) : (
-              <label className="w-[90px] h-[90px] flex justify-center items-center bg-gray-300 rounded-[20px] cursor-pointer mx-auto">
+              <label className="w-[90px] h-[90px] flex justify-center items-center bg-primary rounded-[20px] cursor-pointer mx-auto">
                 <input
                   name="image"
                   type="file"
@@ -172,7 +190,7 @@ function Signup() {
                   onChange={handleImageChange}
                   className="hidden"
                 />
-                <span className="text-lg font-bold">+</span>
+                <span className="text-5xl font-semibold` text-white">+</span>
               </label>
             )}
             {isImageEmpty && <p className="text-red-500">Image is required</p>}
@@ -216,7 +234,12 @@ function Signup() {
               type="password"
               className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
             />
-            {!isPasswordValid && <p className="text-red-500">Password must be at least 8 characters, include an uppercase and lowercase letter, a number, and a special character.</p>}
+            {!isPasswordValid && (
+              <p className="text-red-500">
+                Password must be at least 8 characters, include an uppercase and
+                lowercase letter, a number, and a special character.
+              </p>
+            )}
           </div>
           <div className="mt-4">
             <input
@@ -278,9 +301,7 @@ function Signup() {
               </div>
             </>
           )}
-          <p className="text-center mt-4 text-red-600">
-          {alert}
-          </p>
+          <p className="text-center mt-4 text-red-600">{alert}</p>
           <button
             type="submit"
             className="w-full bg-primary p-3 text-white rounded-[20px] mt-10"
@@ -291,8 +312,11 @@ function Signup() {
       </div>
 
       {confirm && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-[20px] p-5">
+        <div
+          className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50
+        "
+        >
+          {/* <div className="bg-white rounded-[20px] p-5">
             <p className="text-lg font-bold">
               Are you sure you want to sign up?
             </p>
@@ -310,7 +334,57 @@ function Signup() {
                 Confirm
               </button>
             </div>
-          </div>
+          </div> */}
+          <React.Fragment>
+            <Dialog
+              fullScreen={fullScreen}
+              open={confirm}
+              onClose={handleCancel}
+              aria-labelledby="responsive-dialog-title"
+            >
+              <DialogTitle id="responsive-dialog-title">
+                {"Sign up confirmation"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Are you sure you want to become part of our community and
+                  create an account?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  autoFocus
+                  onClick={handleCancel}
+                  style={{ backgroundColor: "#ccc", color: "#fff" }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleConfirm}
+                  style={{ backgroundColor: "#1976D2", color: "#fff" }}
+                  autoFocus
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </React.Fragment>
+
+          {success && (
+            <Snackbar
+              open={success}
+              autoHideDuration={6000}
+              onClose={() => false}
+            >
+              <Alert
+                onClose={() => false}
+                severity="success"
+                sx={{ width: "100%" }}
+              >
+                Created account successfully!
+              </Alert>
+            </Snackbar>
+          )}
         </div>
       )}
     </div>

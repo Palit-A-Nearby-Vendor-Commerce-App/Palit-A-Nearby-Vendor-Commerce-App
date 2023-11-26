@@ -48,19 +48,12 @@ const Signin = () => {
       (user) => user.email === email && user.password === password
     );
 
-    console.log("AKo si user", user);
+    console.log("Ako si user", user);
 
     if (user) {
       console.log("Current user: ", user);
       // Update the user context with the retrieved user data
-      setUser({
-        userId: user.userId,
-        email: user.email,
-        firstName: user.firstName,
-        image: user.image,
-        lastName: user.lastName,
-        // ... 
-      });
+      setUser(user);
 
       history.push("/home");
     } else {

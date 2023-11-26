@@ -118,6 +118,7 @@ function Signup() {
         {
           lat: 0, // Replace with actual latitude if available
           lng: 0, // Replace with actual longitude if available
+          isActive: false
         }
       );
       const locationId = locationResponse.data.locationId;

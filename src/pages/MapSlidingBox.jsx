@@ -30,16 +30,16 @@ const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
     return (
         <div>
             <div style={sliderBoxStyle}>
-            <img
+                <img
                     src={stroke}
                     alt="Stroke"
                     style={{
                         width: "auto",
-                        height: "100%", 
+                        height: "100%",
                         position: "absolute",
                     }}
                 />
-            <ManageStore />
+                <ManageStore />
             </div>
             <button style={buttonStyle} onClick={handleSliderToggle}>
                 <img

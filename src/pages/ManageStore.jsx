@@ -1,192 +1,44 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
+import { UserContext } from "../UserContext";
+import redRating from "../assets/images/redRating.png";
 
 const ManageStore = () => {
-    const [stores, setStores] = useState([]);
-    const [products, setProducts] = useState([]);
+    const { user, setUser } = useContext(UserContext);
+    const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const addStore = (newStore) => {
-        setStores([...stores, newStore]);
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
     };
 
-    const updateStore = (updatedStore) => {
-        setStores((prevStores) =>
-            prevStores.map((store) =>
-                store.storeId === updatedStore.storeId ? updatedStore : store
-            )
-        );
-    };
-
-    const deleteStore = (storeId) => {
-        setStores((prevStores) =>
-            prevStores.filter((store) => store.storeId !== storeId)
-        );
-    };
-
-    const addProduct = (newProduct) => {
-        setProducts([...products, newProduct]);
-    };
-
-    const updateProduct = (updatedProduct) => {
-        setProducts((prevProducts) =>
-            prevProducts.map((product) =>
-                product.productId === updatedProduct.productId ? updatedProduct : product
-            )
-        );
-    };
-
-    const deleteProduct = (productId) => {
-        setProducts((prevProducts) =>
-            prevProducts.filter((product) => product.productId !== productId)
-        );
+    const handleClose = () => {
+        setAnchorEl(null);
     };
 
     return (
         <div>
-            <StoreList stores={stores} deleteStore={deleteStore} />
-            <AddStore addStore={addStore} stores={stores} />
-            <UpdateStore updateStore={updateStore} />
-            <ProductList products={products} deleteProduct={deleteProduct} />
-            <AddProduct addProduct={addProduct} />
-            <UpdateProduct updateProduct={updateProduct} />
+            <div style={{ display: 'flex' }}>
+                <img
+                    src={`data:image/png;base64, ${user.image}`}
+                    alt="User"
+                    className="w-14 h-15 rounded-full border-2 border-black"
+                    onClick={handleMenu}
+                />
+                <div className="ml-3" style={{ flexDirection: 'column' }}>
+                    <h2 className="text-xl font-semibold">Bentong's Kitchen</h2>
+                    <p className="text-sm">Food</p>
+                    <div className="flex">
+                        <img src={redRating} alt="Rating" className="w-5 h-5" />
+                        <p className="font-medium">4.8</p>
+                    </div>
+                </div>
+            </div>
+            <div className="p-2" style={{height: "90px"}}>
+            <p className= "text-sm" style={{ textAlign: "justify" }}>Bentong’s Kariton combines the convenience of a mobile shop with the variety of a traditional Filipino convenience store.</p>
+            </div>
+            <h1 className="p-2 text-lg font-medium" style={{ fontSize: "25px", color: "#0071B3" }}>Products</h1>
+            
         </div>
     );
-};
-
-const StoreList = ({ stores, deleteStore }) => {
-    return (
-        <div>
-            <h2>Stores</h2>
-            <ul>
-                {stores.map((store) => (
-                    <li key={store.storeId}>
-                        {store.storeName} -{" "}
-                        <button onClick={() => deleteStore(store.storeId)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-};
-
-const AddStore = ({ addStore, stores }) => {
-    const [newStore, setNewStore] = useState({
-        storeName: "",
-        description: "",
-        category: "",
-        vendorAccountId: 0,
-        rating: 0,
-    });
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewStore({ ...newStore, [name]: value });
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        addStore({ ...newStore, storeId: stores.length + 1 });
-        // Clear form fields
-        setNewStore({
-            storeName: "",
-            description: "",
-            category: "",
-            vendorAccountId: 0,
-            rating: 0,
-        });
-    };
-
-    return (
-        <div>
-            <h2>Add Store</h2>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    Store Name:
-                    <input
-                        type="text"
-                        name="storeName"
-                        value={newStore.storeName}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                <br />
-                <label>
-                    Description:
-                    <input
-                        type="text"
-                        name="description"
-                        value={newStore.description}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                <br />
-                <label>
-                    Category:
-                    <input
-                        type="text"
-                        name="category"
-                        value={newStore.category}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                <br />
-                <label>
-                    Vendor Account ID:
-                    <input
-                        type="number"
-                        name="vendorAccountId"
-                        value={newStore.vendorAccountId}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                <br />
-                <label>
-                    Rating:
-                    <input
-                        type="number"
-                        name="rating"
-                        value={newStore.rating}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                <br />
-                <button type="submit">Add Store</button>
-            </form>
-        </div>
-    );
-};
-
-
-const UpdateStore = ({ updateStore }) => {
-    // Similar to AddStore, but with logic for updating an existing store
-    return <div>Update Store Form</div>;
-};
-
-const ProductList = ({ products, deleteProduct }) => {
-    return (
-        <div>
-            <h2>Products</h2>
-            <ul>
-                {products.map((product) => (
-                    <li key={product.productId}>
-                        {product.name} -{" "}
-                        <button onClick={() => deleteProduct(product.productId)}>
-                            Delete
-                        </button>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
-};
-
-const AddProduct = ({ addProduct }) => {
-    // Similar to AddStore, but with fields for adding a new product
-    return <div>Add Product Form</div>;
-};
-
-const UpdateProduct = ({ updateProduct }) => {
-    // Similar to AddStore, but with logic for updating an existing product
-    return <div>Update Product Form</div>;
-};
+}
 
 export default ManageStore;

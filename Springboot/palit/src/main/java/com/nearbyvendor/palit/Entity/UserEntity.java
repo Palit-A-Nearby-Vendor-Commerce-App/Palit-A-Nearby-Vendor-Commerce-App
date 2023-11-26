@@ -2,8 +2,6 @@ package com.nearbyvendor.palit.entity;
 
 import javax.persistence.*;
 
-import org.apache.catalina.Store;
-
 import java.util.Date;
 
 @Entity

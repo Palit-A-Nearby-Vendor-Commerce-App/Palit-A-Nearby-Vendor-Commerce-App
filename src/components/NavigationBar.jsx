@@ -79,12 +79,12 @@ const NavigationBar = () => {
               onClose={handleClose}
               style={{ marginTop: "50px" }}
             >
-              <MenuItem
+              {/* <MenuItem
                 onClick={handleClose}
                 style={{ display: "flex", gap: "10px" }}
               >
                 <AccountCircleIcon /> Profile
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem
                 onClick={handleLogout}
                 style={{ display: "flex", gap: "10px" }}

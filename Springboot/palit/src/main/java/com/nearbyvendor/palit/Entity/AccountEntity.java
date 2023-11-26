@@ -3,12 +3,11 @@ package com.nearbyvendor.palit.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "accounts")
+@Table(name = "account")
 public class AccountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "account_id")
     private int accountId;
 
     private boolean isVendor;
@@ -16,10 +15,6 @@ public class AccountEntity {
     private boolean isAdmin;
 
     private boolean isDeleted;
-
-    @OneToOne
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
-    private UserEntity user;
 
     // getters and setters
     public int getId() {
@@ -44,14 +39,6 @@ public class AccountEntity {
 
     public void setIsAdmin(boolean isAdmin) {
         this.isAdmin = isAdmin;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
     }
 
     public boolean getIsDeleted() {

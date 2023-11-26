@@ -8,13 +8,10 @@ public class ConversationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "conversation_id")
     private int conversationId;
 
-    @Column(name = "sender_id")
     private int senderId;
 
-    @Column(name = "receiver_id")
     private int receiverId;
     
     private boolean isDeleted;

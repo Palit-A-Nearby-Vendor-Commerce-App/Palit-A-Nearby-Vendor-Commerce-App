@@ -57,13 +57,4 @@ public class AccountController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-    // define the controller API function that returns the service function
-    @GetMapping("/getAccountByUserId/{userId}")
-    public ResponseEntity<AccountEntity> getAccountEntityByUserId(@PathVariable int userId) {
-        // use the account service to get the account entity by user id
-        AccountEntity accountEntity = accountService.getAccountByUserId(userId);
-        // return the account entity or not found status if null
-        return accountEntity != null ? ResponseEntity.ok(accountEntity) : ResponseEntity.notFound().build();
-    }
 }

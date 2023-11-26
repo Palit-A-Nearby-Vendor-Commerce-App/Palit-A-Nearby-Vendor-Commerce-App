@@ -6,14 +6,15 @@ import ManageStore from "./ManageStore";
 const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
   const sliderBoxStyle = {
     position: "absolute",
-    top: 40,
+    top: 25,
     right: showSlider ? "30px" : "-410px",
     width: "400px",
     height: "90%",
     backgroundColor: "#fff",
+    borderRadius: "5px",
+    boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
     transition: "right 0.3s ease",
     overflow: "hidden",
-    borderRadius: "10px",
     padding: "20px",
   };
 

@@ -8,22 +8,16 @@ public class ProductServiceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
     private int productId;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
     private String description;
 
-    @Column(name = "price")
     private double price;
 
-    @Column(name = "store_id")
     private int storeId;
 
-    @Column(name = "image_path")
     private String imagePath;
     
     private boolean isDeleted;

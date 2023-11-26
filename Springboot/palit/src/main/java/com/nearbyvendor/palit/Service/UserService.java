@@ -1,7 +1,10 @@
 package com.nearbyvendor.palit.service;
 
+import com.nearbyvendor.palit.entity.AccountEntity;
 import com.nearbyvendor.palit.entity.UserEntity;
 import com.nearbyvendor.palit.repository.UserRepository;
+import com.nearbyvendor.palit.entity.LocationEntity;
+import com.nearbyvendor.palit.entity.StoreEntity;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,5 +105,29 @@ public class UserService {
         }
         // If the email does not exist, return a success message
         return false;
+    }
+
+    // define the get account entity by account id method
+    public AccountEntity getAccountByAccountId(int accountId) {
+        // use the account repository to find the account entity by user id
+        AccountEntity accountEntity = userRepository.findByAccountAccountIdAndIsDeletedFalse(accountId);
+        // return the account entity or null if not found
+        return accountEntity;
+    }
+
+    // define get location entity by location id method
+    public LocationEntity getLocationByLocationId(int locationId) {
+        // use the user repository to find the location entity by location id
+        LocationEntity locationEntity = userRepository.findByLocationLocationIdAndIsDeletedFalse(locationId);
+        // return the location entity or null if not found
+        return locationEntity;
+    }
+
+    //define get store entity by store id method
+    public StoreEntity getStoreByStoreId(int storeId) {
+        // use the user repository to find the store entity by store id
+        StoreEntity storeEntity = userRepository.findByStoreStoreIdAndIsDeletedFalse(storeId);
+        // return the store entity or null if not found
+        return storeEntity;
     }
 }

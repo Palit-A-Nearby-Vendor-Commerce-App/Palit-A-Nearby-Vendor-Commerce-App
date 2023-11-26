@@ -13,7 +13,5 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
   AccountEntity findByAccountIdAndIsDeletedFalse(int accountId);
 
   List<AccountEntity> findByIsDeletedFalse();
-    
-  AccountEntity findByUserUserIdAndIsDeletedFalse(int userId);
   
 }

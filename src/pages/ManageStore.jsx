@@ -1,4 +1,3 @@
-// Import necessary components and styles
 import { Button, TextField } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { UserContext } from "../UserContext";
@@ -6,13 +5,14 @@ import redRating from "../assets/images/redRating.png";
 
 const ManageStore = () => {
     const { user, setUser } = useContext(UserContext);
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [editedProduct, setEditedProduct] = useState({
         picture: "",
         name: "",
         price: "",
     });
+    const [products, setProducts] = useState([]);
 
     // Handle click on user image
     const handleMenu = (event) => {
@@ -77,8 +77,27 @@ const ManageStore = () => {
         document.getElementById("fileInput").click();
     };
 
+    // Handle click on "Add" button
+    const handleAdd = () => {
+        // Validate that all required fields are filled
+        if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
+            alert("Please fill in all product details.");
+            return;
+        }
+
+        // Add the edited product to the list of products
+        setProducts((prevProducts) => [...prevProducts, editedProduct]);
+
+        // Clear the edited product state
+        setEditedProduct({
+            picture: "",
+            name: "",
+            price: "",
+        });
+    };
+
     return (
-        <div>
+        <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
             {/* User details */}
             <div style={{ display: 'flex' }}>
                 <img
@@ -107,7 +126,7 @@ const ManageStore = () => {
 
             {/* Edit mode */}
             {editMode ? (
-                <div>
+                <div className="productscomponent" style={{ maxHeight: "450px", overflowY: "auto", flex: "1",position: "relative" }}>
                     <input
                         type="file"
                         id="fileInput"
@@ -154,6 +173,30 @@ const ManageStore = () => {
                         size="small"
                         style={{ width: "40%", fontSize: "12px", marginTop: "80px", position: "absolute", marginLeft: "10px" }}
                     />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        style={{ borderRadius: "15px", width: "40%", marginTop: "130px", marginLeft: "10px" }}
+                        onClick={handleAdd}
+                    >
+                        Add
+                    </Button>
+                    <div style={{ marginTop: "20px" }}>
+                        <h3>Added Product Details:</h3>
+                        {products.map((product, index) => (
+                            <div key={index}>
+                                <p>Product Name: {product.name}</p>
+                                <p>Product Price: {product.price}</p>
+                                {product.picture && (
+                                    <img
+                                        src={product.picture}
+                                        alt={`Product ${index + 1}`}
+                                        style={{ width: "100px", height: "100px", marginTop: "10px" }}
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             ) : null}
 
@@ -181,6 +224,6 @@ const ManageStore = () => {
             </div>
         </div>
     );
-}
+};
 
 export default ManageStore;

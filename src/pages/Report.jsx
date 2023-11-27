@@ -83,24 +83,64 @@
 // };
 
 // export default Report;
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import NavigationBar from "../components/NavigationBar"
 import { UserContext } from "../UserContext";
-import { Paper } from "@material-ui/core";
+import axios from "axios";
 
 const Report = () => {
-    const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext);
+  const reportRef = useRef(); // Change the ref name
+
+  const handleSubmitReport = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(reportRef.current); // Use the ref name
+    const reportData = {
+      senderId: user.id,
+      messageContent: formData.get("message"), // Use the get method to get form field value
+      timestamp: new Date()
+    };
+    console.log(reportData);
+
+    try {
+      // use async/await syntax for better readability
+      // send the report to the backend
+      const response = await axios.post(`http://localhost:8080/api/createReport`, reportData);
+      // Handle the response from the backend
+      console.log(response.data);
+      alert("Report created successfully");
+      reportRef.current.reset();
+    } catch (error) {
+      // Handle the error from the backend or emailjs
+      console.log(error);
+      alert("Report creation failed");
+    }
+  }
 
   return (
-    <div>
-        <NavigationBar />
-        <h1>Report</h1>
-        <p>Hi {user.name}</p>
-        <Paper>
-            
-        </Paper>
+    <div className="w-full h-screen bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom flex flex-col items-center">
+      <NavigationBar />
+      <div className="my-auto bg-blue-500 w-300 h-250">
+        <div className="flex">
+          <div className="w-250 h-full bg-white p-4">
+            <h1>Submit a report</h1>
+            Details of the report
+            <form ref={reportRef} onClick={handleSubmitReport} >
+              <input
+                type="text"
+                name="message"
+                placeholder="Message"
+              />
+              <input
+                type="submit"
+                value="Send"
+              />
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export  default Report

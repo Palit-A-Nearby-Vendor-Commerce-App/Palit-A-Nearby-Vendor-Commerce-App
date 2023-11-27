@@ -1,5 +1,5 @@
 import React from "react";
-import { FaStore } from "react-icons/fa";
+import { GoSidebarExpand, GoSidebarCollapse  } from "react-icons/go";
 import stroke from "../assets/images/stroke.png";
 import ManageStore from "../pages/ManageStore";
 const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
@@ -44,7 +44,7 @@ const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
         }}
         onClick={handleSliderToggle}
       >
-        <FaStore size={20} />
+        {showSlider ? <GoSidebarCollapse size={20} /> : <GoSidebarExpand size={20} />}
       </button>
     </div>
   );

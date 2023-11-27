@@ -2,6 +2,7 @@ package com.nearbyvendor.palit.controller;
 
 import com.nearbyvendor.palit.entity.AccountEntity;
 import com.nearbyvendor.palit.entity.LocationEntity;
+import com.nearbyvendor.palit.entity.StoreEntity;
 import com.nearbyvendor.palit.entity.UserEntity;
 import com.nearbyvendor.palit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,15 +38,19 @@ public class UserController {
         }
     }
 
-    @PostMapping(value = "/createUser", consumes = {"multipart/form-data"})
+    @PostMapping(value = "/createUser", consumes = { "multipart/form-data" })
     public ResponseEntity<UserEntity> createUser(@RequestParam("image") MultipartFile image,
-                                                 @RequestParam("firstName") String firstName,
-                                                 @RequestParam("lastName") String lastName,
-                                                 @RequestParam("birthDate") String birthDate,
-                                                 @RequestParam("email") String email,
-                                                 @RequestParam("password") String password) {
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName,
+            @RequestParam("birthDate") String birthDate,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("account") AccountEntity account,
+            @RequestParam("location") LocationEntity location,
+            @RequestParam("store") StoreEntity store) {
         try {
-            UserEntity newUser = userService.createUser(image, firstName, lastName, birthDate, email, password);
+            UserEntity newUser = userService.createUser(image, firstName, lastName, birthDate, email, password, account,
+                    location, store);
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         } catch (IOException | ParseException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -59,9 +64,12 @@ public class UserController {
                                                  @RequestParam("lastName") String lastName,
                                                  @RequestParam("birthDate") String birthDate,
                                                  @RequestParam("email") String email,
-                                                 @RequestParam("password") String password) {
+                                                 @RequestParam("password") String password,
+                                                 @RequestParam("account") AccountEntity account,
+                                                 @RequestParam("location") LocationEntity location,
+                                                 @RequestParam("store") StoreEntity store) {
         try {
-            UserEntity updatedUser = userService.updateUserById(id, image, firstName, lastName, birthDate, email, password);
+            UserEntity updatedUser = userService.updateUserById(id, image, firstName, lastName, birthDate, email, password, account, location, store);
             if (updatedUser != null) {
                 return new ResponseEntity<>(updatedUser, HttpStatus.OK);
             } else {
@@ -95,7 +103,8 @@ public class UserController {
         }
     }
 
-    // define the controller API function that returns the service function for location
+    // define the controller API function that returns the service function for
+    // location
     @GetMapping("/getLocationByUserId/{userId}")
     public ResponseEntity<LocationEntity> getLocationByLocationId(@PathVariable int locationId) {
         LocationEntity location = userService.getLocationByLocationId(locationId);
@@ -106,7 +115,8 @@ public class UserController {
         }
     }
 
-    // define the controller API function that returns the service function for store
+    // define the controller API function that returns the service function for
+    // store
     @GetMapping("/getStoreByStoreId/{storeId}")
     public ResponseEntity<LocationEntity> getStoreByStoreId(@PathVariable int storeId) {
         LocationEntity store = userService.getLocationByLocationId(storeId);

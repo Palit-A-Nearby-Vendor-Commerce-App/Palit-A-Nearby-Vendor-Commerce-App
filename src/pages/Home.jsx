@@ -9,8 +9,8 @@ import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import marker from "../assets/images/vendor-self-pin.png";
 import axios from "axios";
 import NavigationBar from "../components/NavigationBar";
-import MapSlidingBox from "./MapSlidingBox";
-import { FaLocationArrow, FaStore } from "react-icons/fa";
+import MapSlidingBox from "../components/MapSlidingBox";
+import { IoMdLocate } from "react-icons/io";
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
 import { UserContext } from "../UserContext";
 
@@ -214,7 +214,7 @@ function Home() {
               }}
               onClick={panAndZoomMap}
             >
-              <FaLocationArrow size={20} />
+              <IoMdLocate size={20} />
             </button>
             <button
               style={{

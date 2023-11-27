@@ -37,7 +37,8 @@ public class UserService {
         }
     }
 
-    public UserEntity createUser(MultipartFile image, String firstName, String lastName, String birthDate, String email, String password)
+    public UserEntity createUser(MultipartFile image, String firstName, String lastName, String birthDate, String email,
+            String password, AccountEntity account, LocationEntity location, StoreEntity store)
             throws IOException, ParseException {
         UserEntity newUserEntity = new UserEntity();
         newUserEntity.setImage(image.getBytes());
@@ -50,12 +51,15 @@ public class UserService {
         newUserEntity.setBirthDate(sqlDate);
         newUserEntity.setEmail(email);
         newUserEntity.setPassword(password);
+        newUserEntity.setAccount(account);
+        newUserEntity.setLocation(location);
+        newUserEntity.setStore(store);
         // Save the updated user in the repository
         return userRepository.save(newUserEntity);
     }
 
-    public UserEntity updateUserById(int id, MultipartFile image, String firstName, String lastName, String birthDate, String email,
-            String password)
+    public UserEntity updateUserById(int id, MultipartFile image, String firstName, String lastName, String birthDate,
+            String email, String password, AccountEntity account, LocationEntity location, StoreEntity store)
             throws IOException, ParseException {
         Optional<UserEntity> user = userRepository.findById(id);
         if (user.isPresent()) {
@@ -70,6 +74,9 @@ public class UserService {
             existingUser.setBirthDate(sqlDate);
             existingUser.setEmail(email);
             existingUser.setPassword(password);
+            existingUser.setAccount(account);
+            existingUser.setLocation(location);
+            existingUser.setStore(store);
             // Save the updated user in the repository
             return userRepository.save(existingUser);
         } else {
@@ -123,7 +130,7 @@ public class UserService {
         return locationEntity;
     }
 
-    //define get store entity by store id method
+    // define get store entity by store id method
     public StoreEntity getStoreByStoreId(int storeId) {
         // use the user repository to find the store entity by store id
         StoreEntity storeEntity = userRepository.findByStoreStoreIdAndIsDeletedFalse(storeId);

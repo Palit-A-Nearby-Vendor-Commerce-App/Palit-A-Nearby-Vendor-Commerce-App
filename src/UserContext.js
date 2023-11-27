@@ -1,11 +1,9 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState } from "react";
+import axios from "axios";
 
-// Create a context for the user data
 export const UserContext = createContext();
 
-// Create a custom hook to store and retrieve the user data from localstorage
 const useLocalStorage = (key, initialValue) => {
-  // Get the stored value from localstorage
   const [storedValue, setStoredValue] = useState(() => {
     try {
       const item = window.localStorage.getItem(key);
@@ -16,13 +14,10 @@ const useLocalStorage = (key, initialValue) => {
     }
   });
 
-  // Set the value and update the localstorage
   const setValue = (value) => {
     try {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      window.localStorage.setItem(key, JSON.stringify(value));
+      setStoredValue(value);
     } catch (error) {
       console.error(error);
     }
@@ -31,14 +26,55 @@ const useLocalStorage = (key, initialValue) => {
   return [storedValue, setValue];
 };
 
-// Create a provider component to wrap the app and provide the user data
 export const UserProvider = ({ children }) => {
-  // Use the custom hook to store and retrieve the user data
   const [user, setUser] = useLocalStorage("user", null);
 
-  // Return the provider component with the user data and the setter function
+  const updateUser = async (userId, formData) => {
+    try {
+      const response = await axios.put(
+        `/api/updateUserById/${userId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setUser(response.data);
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  };
+
+  const updateAccount = async (accountId, accountData) => {
+    try {
+      await axios.put(`/api/editAccountById/${accountId}`, accountData);
+      setUser({ ...user, account: { ...user.account, ...accountData } });
+    } catch (error) {
+      console.error("Error updating account:", error);
+    }
+  };
+
+  const updateLocation = async (locationId, locationData) => {
+    try {
+      await axios.put(`/api/updateLocationById/${locationId}`, locationData);
+      setUser({ ...user, location: { ...user.location, ...locationData } });
+    } catch (error) {
+      console.error("Error updating location:", error);
+    }
+  };
+
+  const updateStore = async (storeId, storeData) => {
+    try {
+      await axios.put(`/api/updateStoreById/${storeId}`, storeData);
+      setUser({ ...user, store: { ...user.store, ...storeData } });
+    } catch (error) {
+      console.error("Error updating store:", error);
+    }
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, updateUser }}>
       {children}
     </UserContext.Provider>
   );

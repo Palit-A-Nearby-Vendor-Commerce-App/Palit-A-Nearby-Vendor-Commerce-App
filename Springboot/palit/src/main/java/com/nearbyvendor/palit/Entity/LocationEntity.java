@@ -11,7 +11,7 @@ public class LocationEntity {
     private int locationId;
 
     private double latitude;
-    
+
     private double longitude;
 
     private boolean isDeleted;
@@ -62,7 +62,7 @@ public class LocationEntity {
     public boolean getIsActive() {
         return this.isActive;
     }
-    
+
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }

@@ -10,7 +10,7 @@ import marker from "../assets/images/vendor-self-pin.png";
 import axios from "axios";
 import NavigationBar from "../components/NavigationBar";
 import MapSlidingBox from "../components/MapSlidingBox";
-import { IoMdLocate } from "react-icons/io";
+import { FaLocationArrow, FaStore } from "react-icons/fa";
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
 import { UserContext } from "../UserContext";
 
@@ -103,7 +103,7 @@ function Home() {
         // update the user's location in the database using axios
         axios
           .put(
-            `http://localhost:8080/api/updateLocationById/${user.location.locationId}}`,
+            `http://localhost:8080/api/updateLocationById/${user.id}`,
             position
           )
           .then(() => console.log("Location updated successfully"))
@@ -120,7 +120,24 @@ function Home() {
 
   // fetch nearby users from the database using axios
   useEffect(() => {
-    
+    axios
+      .get("http://localhost:8080/api/getAllUsers")
+      .then(({ data }) => {
+        // filter out the users who are admins or more than 200 meters away
+        setNearbyUsers(
+          data.filter(
+            (user) =>
+              user.role !== "ADMIN" &&
+              getDistance(
+                currentPosition.lat,
+                currentPosition.lng,
+                user.latitude,
+                user.longitude
+              ) <= 200
+          )
+        );
+      })
+      .catch((error) => console.error("Error fetching users: ", error));
   }, [currentPosition]);
 
   return (
@@ -136,7 +153,7 @@ function Home() {
                   ? {
                       lat: currentPosition.lat,
                       lng: currentPosition.lng + 0.002,
-                    } 
+                    }
                   : currentPosition
               }
               zoom={17}
@@ -197,7 +214,7 @@ function Home() {
               }}
               onClick={panAndZoomMap}
             >
-              <IoMdLocate size={20} />
+              <FaLocationArrow size={20} />
             </button>
             <button
               style={{

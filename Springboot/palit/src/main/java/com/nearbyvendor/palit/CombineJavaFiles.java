@@ -15,6 +15,8 @@ public class CombineJavaFiles {
             exemptFilesAndFolders.add("CombineJavaFiles.java");
             exemptFilesAndFolders.add("PalitApplication.java");
             exemptFilesAndFolders.add("config");
+            exemptFilesAndFolders.add("repository");
+            exemptFilesAndFolders.add("service");
 
             if (!javaFiles.isEmpty()) {
                 BufferedWriter combinedWriter = new BufferedWriter(new FileWriter("combined.txt")); // Change the filename to 'combined.txt'

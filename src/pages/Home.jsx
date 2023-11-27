@@ -57,6 +57,16 @@ function Home() {
     }
   }, [currentPosition]);
 
+  const renderVendorMarkerIcon = () => {
+    if (typeof window.google === 'object' && typeof window.google.maps === 'object') {
+      return {
+        url: marker,
+        scaledSize: new window.google.maps.Size(30, 30),
+      };
+    }
+    return undefined;
+  };
+
   useEffect(() => {
     const updateLocationInContext = (position) => {
       const { latitude, longitude } = position.coords;
@@ -79,7 +89,6 @@ function Home() {
   const calculateOffset = () => {
     if (mapRef.current) {
       const zoomLevel = mapRef.current.getZoom();
-      // Offset decreases with increasing zoom level
       return 0.020 / Math.pow(2, zoomLevel - 14);
     }
     return 0;
@@ -112,31 +121,42 @@ function Home() {
     axios
       .get("http://localhost:8080/api/getAllUsers")
       .then(({ data }) => {
-        setNearbyUsers(
-          data.filter(
-            (otherUser) =>
-              otherUser.account.isVendor &&
-              getDistance(
-                currentPosition.lat,
-                currentPosition.lng,
-                otherUser.location.latitude,
-                otherUser.location.longitude
-              ) <= 200
-          )
-        );
+        // Filter out users who are vendors and within 200 meters of the current user
+        const vendorsNearby = data.filter((otherUser) => {
+          if (
+            !user.account.isVendor &&
+            otherUser.account.isVendor &&
+            getDistance(
+              currentPosition.lat,
+              currentPosition.lng,
+              otherUser.location.latitude,
+              otherUser.location.longitude
+            ) <= 200
+          ) {
+            return true;
+          }
+          return false;
+        });
+
+        // Mark the vendors on the map with markers
+        vendorsNearby.forEach((vendor) => {
+          const vendorMarker = new window.google.maps.Marker({
+            position: {
+              lat: vendor.location.latitude,
+              lng: vendor.location.longitude,
+            },
+            map: mapRef.current, // Assuming you have a map reference
+            icon: renderVendorMarkerIcon(), // Define the icon for vendors
+          });
+
+          // You can add click event handling for the markers if needed
+          vendorMarker.addListener("click", () => {
+            window.location.href = `/store/${vendor.accountId}`;
+          });
+        });
       })
       .catch((error) => console.error("Error fetching users: ", error));
-  }, [currentPosition]);
-
-  const renderMarkerIcon = () => {
-    if (typeof window.google === 'object' && typeof window.google.maps === 'object') {
-      return {
-        url: marker,
-        scaledSize: new window.google.maps.Size(30, 30),
-      };
-    }
-    return undefined;
-  };
+  }, [currentPosition, user.account.isVendor]);
 
   return (
     <>
@@ -154,7 +174,7 @@ function Home() {
               {currentPosition && (
                 <Marker
                   position={currentPosition}
-                  icon={renderMarkerIcon()}
+                  icon={renderVendorMarkerIcon()}
                 />
               )}
               {currentPosition && (
@@ -170,15 +190,6 @@ function Home() {
                   }}
                 />
               )}
-              {nearbyUsers.map((user) => (
-                <Marker
-                  key={user.accountId}
-                  position={{ lat: user.location.latitude, lng: user.location.longitude }}
-                  onClick={() => {
-                    window.location.href = `/store/${user.accountId}`;
-                  }}
-                />
-              ))}
               <MapSlidingBox
                 showSlider={showSlider}
                 handleSliderToggle={handleSliderToggle}
@@ -188,8 +199,8 @@ function Home() {
               style={{
                 backgroundColor: "white",
                 position: "absolute",
-                left: "30px", 
-                bottom: "30px", 
+                left: "30px",
+                bottom: "30px",
                 padding: "10px",
                 borderRadius: "5px",
                 boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",

@@ -45,31 +45,33 @@ public class UserController {
             @RequestParam("birthDate") String birthDate,
             @RequestParam("email") String email,
             @RequestParam("password") String password,
-            @RequestParam("account") AccountEntity account,
-            @RequestParam("location") LocationEntity location,
-            @RequestParam("store") StoreEntity store) {
+            @RequestParam("accountId") int accountId,
+            @RequestParam("locationId") int locationId,
+            @RequestParam("storeId") String storeId) {
         try {
-            UserEntity newUser = userService.createUser(image, firstName, lastName, birthDate, email, password, account,
-                    location, store);
+            UserEntity newUser = userService.createUser(image, firstName, lastName, birthDate, email, password,
+                    accountId,
+                    locationId, storeId);
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         } catch (IOException | ParseException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
-    @PutMapping(value = "/updateUserById/{id}", consumes = {"multipart/form-data"})
+    @PutMapping(value = "/updateUserById/{id}", consumes = { "multipart/form-data" })
     public ResponseEntity<UserEntity> updateUser(@PathVariable("id") int id,
-                                                 @RequestParam("image") MultipartFile image,
-                                                 @RequestParam("firstName") String firstName,
-                                                 @RequestParam("lastName") String lastName,
-                                                 @RequestParam("birthDate") String birthDate,
-                                                 @RequestParam("email") String email,
-                                                 @RequestParam("password") String password,
-                                                 @RequestParam("account") AccountEntity account,
-                                                 @RequestParam("location") LocationEntity location,
-                                                 @RequestParam("store") StoreEntity store) {
+            @RequestParam("image") MultipartFile image,
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName,
+            @RequestParam("birthDate") String birthDate,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
+            @RequestParam("accountId") int accountId,
+            @RequestParam("locationId") int locationId,
+            @RequestParam("storeId") String storeId) {
         try {
-            UserEntity updatedUser = userService.updateUserById(id, image, firstName, lastName, birthDate, email, password, account, location, store);
+            UserEntity updatedUser = userService.updateUserById(id, image, firstName, lastName, birthDate, email,
+                    password, accountId, locationId, storeId);
             if (updatedUser != null) {
                 return new ResponseEntity<>(updatedUser, HttpStatus.OK);
             } else {
@@ -118,8 +120,8 @@ public class UserController {
     // define the controller API function that returns the service function for
     // store
     @GetMapping("/getStoreByStoreId/{storeId}")
-    public ResponseEntity<LocationEntity> getStoreByStoreId(@PathVariable int storeId) {
-        LocationEntity store = userService.getLocationByLocationId(storeId);
+    public ResponseEntity<StoreEntity> getStoreByStoreId(@PathVariable int storeId) {
+        StoreEntity store = userService.getStoreByStoreId(storeId);
         if (store != null) {
             return ResponseEntity.ok(store);
         } else {

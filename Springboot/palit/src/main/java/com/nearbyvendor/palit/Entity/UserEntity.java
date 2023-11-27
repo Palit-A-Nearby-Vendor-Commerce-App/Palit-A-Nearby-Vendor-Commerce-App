@@ -46,7 +46,7 @@ public class UserEntity {
     }
 
     public UserEntity(int userId, String firstName, String lastName, Date birthDate, String email, String password,
-            byte[] image) {
+            byte[] image, AccountEntity account, LocationEntity location, StoreEntity store) {
         super();
         this.userId = userId;
         this.firstName = firstName;
@@ -56,6 +56,9 @@ public class UserEntity {
         this.password = password;
         this.isDeleted = false;
         this.image = image;
+        this.account = account;
+        this.location = location;
+        this.store = store;
     }
 
     // getters and setters

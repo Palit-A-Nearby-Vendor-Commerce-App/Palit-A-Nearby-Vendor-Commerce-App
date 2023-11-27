@@ -121,7 +121,8 @@ function Signup() {
           isActive: false
         }
       );
-      const locationId = locationResponse.data.locationId;
+      console.log(locationResponse.data)
+      const locationId = locationResponse.data.id;
 
       // Create account
       const accountData = {
@@ -132,7 +133,8 @@ function Signup() {
         "http://localhost:8080/api/createAccount",
         accountData
       );
-      const accountId = accountResponse.data.accountId;
+      console.log(accountResponse.data)
+      const accountId = accountResponse.data.id;
 
       // Optionally create a store and get its ID
       let storeId = null;
@@ -147,6 +149,7 @@ function Signup() {
           "http://localhost:8080/api/createStore",
           storeData
         );
+        console.log(storeResponse.data)
         storeId = storeResponse.data.storeId;
       }
 
@@ -161,11 +164,12 @@ function Signup() {
       );
       formData.append("email", userData.email);
       formData.append("password", userData.password);
+      console.log(locationId)
       formData.append("locationId", locationId);
+      console.log(accountId)
       formData.append("accountId", accountId);
-      if (storeId) {
-        formData.append("storeId", storeId);
-      }
+      console.log(storeId)
+      formData.append("storeId", storeId);
 
       // Create user with locationId, accountId, and storeId (if applicable)
       await axios.post("http://localhost:8080/api/createUser", formData);

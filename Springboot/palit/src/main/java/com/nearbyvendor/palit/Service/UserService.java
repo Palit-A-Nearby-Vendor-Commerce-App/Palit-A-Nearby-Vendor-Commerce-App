@@ -2,6 +2,9 @@ package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.AccountEntity;
 import com.nearbyvendor.palit.entity.UserEntity;
+import com.nearbyvendor.palit.repository.AccountRepository;
+import com.nearbyvendor.palit.repository.LocationRepository;
+import com.nearbyvendor.palit.repository.StoreRepository;
 import com.nearbyvendor.palit.repository.UserRepository;
 import com.nearbyvendor.palit.entity.LocationEntity;
 import com.nearbyvendor.palit.entity.StoreEntity;
@@ -21,6 +24,12 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private LocationRepository locationRepository;
+    @Autowired
+    private StoreRepository storeRepository;
 
     public List<UserEntity> getAllUsers() {
         return userRepository.findByIsDeletedFalse();
@@ -38,7 +47,7 @@ public class UserService {
     }
 
     public UserEntity createUser(MultipartFile image, String firstName, String lastName, String birthDate, String email,
-            String password, AccountEntity account, LocationEntity location, StoreEntity store)
+            String password, int accountId, int locationId, String storeId)
             throws IOException, ParseException {
         UserEntity newUserEntity = new UserEntity();
         newUserEntity.setImage(image.getBytes());
@@ -51,15 +60,23 @@ public class UserService {
         newUserEntity.setBirthDate(sqlDate);
         newUserEntity.setEmail(email);
         newUserEntity.setPassword(password);
+        AccountEntity account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
         newUserEntity.setAccount(account);
+        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(locationId);
         newUserEntity.setLocation(location);
-        newUserEntity.setStore(store);
+        if (storeId.equals("null")) {
+            newUserEntity.setStore(null);
+        } else {
+            int storeIdInt = Integer.parseInt(storeId);
+            StoreEntity store = storeRepository.findByStoreIdAndIsDeletedFalse(storeIdInt);
+            newUserEntity.setStore(store);
+        }
         // Save the updated user in the repository
         return userRepository.save(newUserEntity);
     }
 
     public UserEntity updateUserById(int id, MultipartFile image, String firstName, String lastName, String birthDate,
-            String email, String password, AccountEntity account, LocationEntity location, StoreEntity store)
+            String email, String password, int accountId, int locationId, String storeId)
             throws IOException, ParseException {
         Optional<UserEntity> user = userRepository.findById(id);
         if (user.isPresent()) {
@@ -74,9 +91,17 @@ public class UserService {
             existingUser.setBirthDate(sqlDate);
             existingUser.setEmail(email);
             existingUser.setPassword(password);
+            AccountEntity account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
             existingUser.setAccount(account);
+            LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(locationId);
             existingUser.setLocation(location);
-            existingUser.setStore(store);
+            if (storeId.equals("null")) {
+                existingUser.setStore(null);
+            } else {
+                int storeIdInt = Integer.parseInt(storeId);
+                StoreEntity store = storeRepository.findByStoreIdAndIsDeletedFalse(storeIdInt);
+                existingUser.setStore(store);
+            }
             // Save the updated user in the repository
             return userRepository.save(existingUser);
         } else {

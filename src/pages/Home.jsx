@@ -103,7 +103,7 @@ function Home() {
         // update the user's location in the database using axios
         axios
           .put(
-            `http://localhost:8080/api/updateLocationById/${user.id}`,
+            `http://localhost:8080/api/updateLocationById/${user.location.locationId}}`,
             position
           )
           .then(() => console.log("Location updated successfully"))
@@ -120,24 +120,7 @@ function Home() {
 
   // fetch nearby users from the database using axios
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/getAllUsers")
-      .then(({ data }) => {
-        // filter out the users who are admins or more than 200 meters away
-        setNearbyUsers(
-          data.filter(
-            (user) =>
-              user.role !== "ADMIN" &&
-              getDistance(
-                currentPosition.lat,
-                currentPosition.lng,
-                user.latitude,
-                user.longitude
-              ) <= 200
-          )
-        );
-      })
-      .catch((error) => console.error("Error fetching users: ", error));
+    
   }, [currentPosition]);
 
   return (
@@ -153,7 +136,7 @@ function Home() {
                   ? {
                       lat: currentPosition.lat,
                       lng: currentPosition.lng + 0.002,
-                    }
+                    } 
                   : currentPosition
               }
               zoom={17}

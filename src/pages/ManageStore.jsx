@@ -1,4 +1,3 @@
-// Import necessary components and styles
 import { Button, TextField } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { UserContext } from "../UserContext";
@@ -6,13 +5,14 @@ import redRating from "../assets/images/redRating.png";
 
 const ManageStore = () => {
     const { user, setUser } = useContext(UserContext);
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [editedProduct, setEditedProduct] = useState({
         picture: "",
         name: "",
         price: "",
     });
+    const [products, setProducts] = useState([]);
 
     // Handle click on user image
     const handleMenu = (event) => {
@@ -77,8 +77,27 @@ const ManageStore = () => {
         document.getElementById("fileInput").click();
     };
 
+    // Handle click on "Add" button
+    const handleAdd = () => {
+        // Validate that all required fields are filled
+        if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
+            alert("Please fill in all product details.");
+            return;
+        }
+
+        // Add the edited product to the list of products
+        setProducts((prevProducts) => [...prevProducts, editedProduct]);
+
+        // Clear the edited product state
+        setEditedProduct({
+            picture: "",
+            name: "",
+            price: "",
+        });
+    };
+
     return (
-        <div>
+        <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
             {/* User details */}
             <div style={{ display: 'flex' }}>
                 <img
@@ -107,7 +126,7 @@ const ManageStore = () => {
 
             {/* Edit mode */}
             {editMode ? (
-                <div>
+                <div className="productscomponent" style={{ maxHeight: "400px", overflowY: "auto", flex: "1", position: "relative" }}>
                     <input
                         type="file"
                         id="fileInput"
@@ -141,7 +160,7 @@ const ManageStore = () => {
                         onChange={handleInputChange}
                         margin="normal"
                         size="small"
-                        style={{ width: "40%", fontSize: "12px", position: "absolute", marginTop: "20px", marginLeft: "10px" }}
+                        style={{ width: "40%", fontSize: "12px", position: "absolute", marginTop: "5px", marginLeft: "10px" }}
                     />
                     <TextField
                         label="Product Price"
@@ -152,8 +171,37 @@ const ManageStore = () => {
                         onChange={handleInputChange}
                         margin="normal"
                         size="small"
-                        style={{ width: "40%", fontSize: "12px", marginTop: "80px", position: "absolute", marginLeft: "10px" }}
+                        style={{ width: "40%", fontSize: "12px", marginTop: "60px", position: "absolute", marginLeft: "10px" }}
                     />
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        style={{ borderRadius: "15px", width: "40%", marginTop: "100px", marginLeft: "10px" }}
+                        onClick={handleAdd}
+                    >
+                        Add
+                    </Button>
+                    <div style={{ marginTop: "20px" }}>
+                        {products.map((product, index) => (
+                            <div key={index} style={{ marginBottom: "20px", position: "relative" }}>
+                                {product.picture && (
+                                    <div style={{ position: "relative" }}>
+                                        <img
+                                            src={product.picture}
+                                            alt={`Product ${index + 1}`}
+                                            style={{ width: "50%", height: "150px", border: "1px solid black", borderRadius: "15px" }}
+                                        />
+                                        <p style={{ position: "absolute", top: "1px", left: "25%", width: "50%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}>
+                                            {product.name}
+                                        </p>
+                                        <p style={{ position: "absolute", bottom: "1px", left: "1%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
+                                            ₱ {product.price}
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             ) : null}
 
@@ -181,6 +229,6 @@ const ManageStore = () => {
             </div>
         </div>
     );
-}
+};
 
 export default ManageStore;

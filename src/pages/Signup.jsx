@@ -118,10 +118,9 @@ function Signup() {
         {
           lat: 0, // Replace with actual latitude if available
           lng: 0, // Replace with actual longitude if available
-          isActive: false
+          isActive: false,
         }
       );
-      console.log(locationResponse.data)
       const locationId = locationResponse.data.id;
 
       // Create account
@@ -133,7 +132,6 @@ function Signup() {
         "http://localhost:8080/api/createAccount",
         accountData
       );
-      console.log(accountResponse.data)
       const accountId = accountResponse.data.id;
 
       // Optionally create a store and get its ID
@@ -149,7 +147,6 @@ function Signup() {
           "http://localhost:8080/api/createStore",
           storeData
         );
-        console.log(storeResponse.data)
         storeId = storeResponse.data.storeId;
       }
 
@@ -164,11 +161,8 @@ function Signup() {
       );
       formData.append("email", userData.email);
       formData.append("password", userData.password);
-      console.log(locationId)
       formData.append("locationId", locationId);
-      console.log(accountId)
       formData.append("accountId", accountId);
-      console.log(storeId)
       formData.append("storeId", storeId);
 
       // Create user with locationId, accountId, and storeId (if applicable)

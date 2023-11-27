@@ -43,9 +43,12 @@ public class UserController {
                                                  @RequestParam("lastName") String lastName,
                                                  @RequestParam("birthDate") String birthDate,
                                                  @RequestParam("email") String email,
-                                                 @RequestParam("password") String password) {
+                                                 @RequestParam("password") String password)
+                                                 @RequestParam("account") AccountEntity account,
+                                                 @RequestParam("location") LocationEntity location,
+                                                 @RequestParam("store") LocationEntity store) {
         try {
-            UserEntity newUser = userService.createUser(image, firstName, lastName, birthDate, email, password);
+            UserEntity newUser = userService.createUser(image, firstName, lastName, birthDate, email, password, account, location, store);
             return new ResponseEntity<>(newUser, HttpStatus.CREATED);
         } catch (IOException | ParseException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -59,9 +62,12 @@ public class UserController {
                                                  @RequestParam("lastName") String lastName,
                                                  @RequestParam("birthDate") String birthDate,
                                                  @RequestParam("email") String email,
-                                                 @RequestParam("password") String password) {
+                                                 @RequestParam("password") String password),
+                                                 @RequestParam("account") AccountEntity account,
+                                                 @RequestParam("location") LocationEntity location,
+                                                 @RequestParam("store") LocationEntity store) {
         try {
-            UserEntity updatedUser = userService.updateUserById(id, image, firstName, lastName, birthDate, email, password);
+            UserEntity updatedUser = userService.updateUserById(id, image, firstName, lastName, birthDate, email, password, account, location, store);
             if (updatedUser != null) {
                 return new ResponseEntity<>(updatedUser, HttpStatus.OK);
             } else {

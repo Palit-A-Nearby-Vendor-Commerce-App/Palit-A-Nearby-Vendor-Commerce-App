@@ -37,7 +37,9 @@ public class UserService {
         }
     }
 
-    public UserEntity createUser(MultipartFile image, String firstName, String lastName, String birthDate, String email, String password, AccountEntity account, LocationEntity location, StoreEntity store) throws IOException, ParseException {
+    public UserEntity createUser(MultipartFile image, String firstName, String lastName, String birthDate, String email,
+            String password, AccountEntity account, LocationEntity location, StoreEntity store)
+            throws IOException, ParseException {
         UserEntity newUserEntity = new UserEntity();
         newUserEntity.setImage(image.getBytes());
         newUserEntity.setFirstName(firstName);

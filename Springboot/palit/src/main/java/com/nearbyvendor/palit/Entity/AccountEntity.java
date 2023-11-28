@@ -33,8 +33,11 @@ public class AccountEntity {
     @JoinColumn(name = "storeId", referencedColumnName = "storeId")
     private StoreEntity store;
     
-    @ManyToMany(mappedBy = "account")
-    private Set<TransactionEntity> transaction;
+    @OneToMany(mappedBy = "customer")
+    private Set<TransactionEntity> customerTransactions;
+    
+    @OneToMany(mappedBy = "vendor")
+    private Set<TransactionEntity> vendorTransactions;
     
     @OneToMany(mappedBy = "account")
     private List<ReportEntity> report;

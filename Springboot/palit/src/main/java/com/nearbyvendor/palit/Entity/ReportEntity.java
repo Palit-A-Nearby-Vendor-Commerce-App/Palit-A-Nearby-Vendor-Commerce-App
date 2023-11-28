@@ -26,7 +26,7 @@ public class ReportEntity {
     private boolean isDeleted;
     
     @ManyToOne
-    @JoinColumn(name = "accountId")
+    @JoinColumn(name = "senderId")
     private AccountEntity account;
 
     public ReportEntity() {

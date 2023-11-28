@@ -21,16 +21,15 @@ public class TransactionEntity {
     private int rating;
     
     private boolean isDeleted;
+   
+    @ManyToOne
+    @JoinColumn(name = "accountCustomerId", referencedColumnName = "accountId")
+    private AccountEntity customer;
     
-    @ManyToMany(cascade= { CascadeType.ALL })
-    @JoinTable(
-    		name = "Transactions",
-    		joinColumns = { @JoinColumn(name = "transactionId")},
-    		inverseJoinColumns = { @JoinColumn(name = "accountId") }
-    )
+    @ManyToOne
+    @JoinColumn(name = "accountVendorId", referencedColumnName = "accountId")
+    private AccountEntity vendor;    
     
-    private Set<AccountEntity> accounts;
-
     public TransactionEntity() {
     }
 

@@ -30,15 +30,22 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    public AccountEntity editAccountById(int accountId, AccountEntity account) {
+    public AccountEntity updateAccountById(int accountId, AccountEntity account) {
         AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
         if (existingAccount != null) {
-            account.setId(accountId);
-            return accountRepository.save(account);
+            existingAccount.setEmail(account.getEmail());
+            existingAccount.setPassword(account.getPassword());
+            existingAccount.setIsVendor(account.getIsVendor());
+            existingAccount.setIsAdmin(account.getIsAdmin());
+            existingAccount.setIsDeleted(account.getIsDeleted());
+            existingAccount.setUser(account.getUser());
+            existingAccount.setLocation(account.getLocation());
+            existingAccount.setStore(account.getStore());
+            return accountRepository.save(existingAccount);
         } else {
             // Log an error message for debugging
-            System.err.println("Invalid account ID for editing: " + accountId);
-            throw new IllegalArgumentException("Invalid account ID");
+            System.err.println("Invalid account ID for update: " + accountId);
+            throw new RuntimeException("Invalid account ID for update: " + accountId);
         }
     }
 
@@ -53,5 +60,21 @@ public class AccountService {
             System.err.println("Invalid account ID for deletion: " + accountId);
             return false; // Deletion was not successful
         }
+    }
+
+    // Create a method to check if an email already exists
+    public boolean checkEmail(AccountEntity account) {
+        // Get the list of accounts from the previous method
+        List<AccountEntity> accounts = getAllAccounts();
+        // Loop through the list of accounts
+        for (AccountEntity a : accounts) {
+            // Check if the email of the current account is equal to the email of the account being created
+            if (a.getEmail().equals(account.getEmail())) {
+                // Log an error message for debugging
+                System.err.println("Email already exists: " + account.getEmail());
+                return true; // Email already exists
+            }
+        }
+        return false; // Email does not exist
     }
 }

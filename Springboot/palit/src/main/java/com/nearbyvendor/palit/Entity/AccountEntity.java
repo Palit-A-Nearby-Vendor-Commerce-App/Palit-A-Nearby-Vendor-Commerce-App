@@ -107,27 +107,27 @@ public class AccountEntity {
 		this.store = store;
 	}
 
-	public boolean isVendor() {
+	public boolean getIsVendor() {
 		return isVendor;
 	}
 
-	public void setVendor(boolean isVendor) {
+	public void setIsVendor(boolean isVendor) {
 		this.isVendor = isVendor;
 	}
 
-	public boolean isAdmin() {
+	public boolean getIsAdmin() {
 		return isAdmin;
 	}
 
-	public void setAdmin(boolean isAdmin) {
+	public void setIsAdmin(boolean isAdmin) {
 		this.isAdmin = isAdmin;
 	}
 
-	public boolean isDeleted() {
+	public boolean getIsDeleted() {
 		return isDeleted;
 	}
 
-	public void setDeleted(boolean isDeleted) {
+	public void setIsDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
 

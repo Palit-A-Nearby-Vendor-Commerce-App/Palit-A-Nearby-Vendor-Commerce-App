@@ -12,11 +12,10 @@ public class ProductServiceEntity {
 
     private String name;
 
-
     private double price;
 
-
-    private String imagePath;
+    @Lob
+    private byte[] image;
     
     private boolean isDeleted;
     
@@ -27,11 +26,11 @@ public class ProductServiceEntity {
     public ProductServiceEntity() {
     }
 
-    public ProductServiceEntity(String name, double price, String imagePath, StoreEntity store) {
+    public ProductServiceEntity(String name, double price, byte[] image, StoreEntity store) {
         this.name = name;
         this.price = price;
         this.store = store;
-        this.imagePath = imagePath;
+        this.image = image;
     }
 
     public int getId() {
@@ -59,12 +58,12 @@ public class ProductServiceEntity {
         this.price = price;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public byte[] getImage() {
+        return image;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 
 

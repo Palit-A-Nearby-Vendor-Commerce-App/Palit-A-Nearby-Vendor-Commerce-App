@@ -1,5 +1,7 @@
 package com.nearbyvendor.palit.entity;
 
+import java.util.Set;
+
 import javax.persistence.*;
 
 @Entity
@@ -19,6 +21,15 @@ public class TransactionEntity {
     private int rating;
     
     private boolean isDeleted;
+    
+    @ManyToMany(cascade= { CascadeType.ALL })
+    @JoinTable(
+    		name = "Transactions",
+    		joinColumns = { @JoinColumn(name = "transactionId")},
+    		inverseJoinColumns = { @JoinColumn(name = "accountId") }
+    )
+    
+    private Set<AccountEntity> accounts;
 
     public TransactionEntity() {
     }

@@ -64,15 +64,18 @@ Palit is a web app that connects nearby vendors and customers who want to buy or
 @startuml
 class User {
     - int userId
-    - String name
+    - String firstName
+    - String lastName
     - Date birthDate
     - byte[] image
     - int accountId
     - boolean isDeleted
     + int getUserId()
     + void setUserId(int userId)
-    + String getName()
-    + void setName(String name)
+    + String getFirstName()
+    + void setFirstName(String firstName)
+    + String getLastName()
+    + void setLastName(String lastName)
     + Date getBirthDate()
     + void setBirthDate(Date birthDate)
     + byte[] getImage()
@@ -117,7 +120,6 @@ class Store {
     - String storeName
     - String description
     - String category
-    - int rating
     - boolean isDeleted
     + int getStoreId()
     + void setStoreId(int storeId)
@@ -127,8 +129,6 @@ class Store {
     + void setDescription(String description)
     + String getCategory()
     + void setCategory(String category)
-    + int getRating()
-    + void setRating(int rating)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
 }
@@ -194,11 +194,11 @@ class Conversation {
 }
 
 Account "*" -- "*" Conversation : participates in
+Account "1" -- "*" Chat : sends
 
 class Chat {
     - int chatId
     - int senderId
-    - int receiverId
     - String messageContent
     - Timestamp timestamp
     - int conversationId
@@ -207,8 +207,6 @@ class Chat {
     + void setChatId(int chatId)
     + int getSenderId()
     + void setSenderId(int senderId)
-    + int getReceiverId()
-    + void setReceiverId(int receiverId)
     + String getMessageContent()
     + void setMessageContent(String messageContent)
     + Timestamp getTimestamp()
@@ -219,24 +217,25 @@ class Chat {
     + void setIsDeleted(boolean isDeleted)
 }
 
-Account "*" -- "*" Chat : sends
-
 Chat "*" -- "1" Conversation : belongs to
 
 class Transaction {
+    - int transactionId
     - int accountCustomerId
     - int accountVendorId
     - String status
-    - int rating
+    - Timestamp timestamp
     - boolean isDeleted
+    + int getTransactionId()
+    + void setTransactionId(int transactionId)
     + int getAccountCustomerId()
     + void setAccountCustomerId(int accountCustomerId)
     + int getAccountVendorId()
     + void setAccountVendorId(int accountVendorId)
     + String getStatus()
     + void setStatus(String status)
-    + int getRating()
-    + void setRating(int rating)
+    + Timestamp getTimestamp()
+    + void setTimestamp(Timestamp timestamp)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
 }
@@ -287,115 +286,113 @@ Account "1" -- "*" Report : sends
 - ERD:
 ```
 @startuml
-
 entity User {
-    * userId : INT
+    userId int [PK]
     --
-    name : VARCHAR(255)
-    birthDate : DATE
-    image : BLOB
-    accountId : INT
-    isDeleted : BOOLEAN
+    firstName varchar(255)
+    lastName varchar(255)
+    birthDate date
+    image blob
+    accountId int [FK]
+    isDeleted boolean
 }
 
 entity Account {
-    * accountId : INT
+    accountId int [PK]
     --
-    email : VARCHAR(255)
-    password : VARCHAR(255)
-    isVendor : BOOLEAN
-    isAdmin : BOOLEAN
-    locationId : INT
-    storeId : INT
-    isDeleted : BOOLEAN
+    email varchar(255)
+    password varchar(255)
+    isVendor boolean
+    isAdmin boolean
+    locationId int [FK]
+    storeId int [FK]
+    isDeleted boolean
 }
 
 User ||--|| Account
 
 entity Store {
-    * storeId : INT
+    storeId int [PK]
     --
-    storeName : VARCHAR(255)
-    description : VARCHAR(255)
-    category : VARCHAR(255)
-    rating : INT
-    isDeleted : BOOLEAN
+    storeName varchar(255)
+    description text
+    category varchar(255)
+    isDeleted boolean
 }
 
-Account ||--o| Store
+Account ||--|| Store
 
 entity ProductService {
-    * productId : INT
+    productId int [PK]
     --
-    name : VARCHAR(255)
-    price : DOUBLE
-    storeId : INT
-    image : BLOB
-    isDeleted : BOOLEAN
+    name varchar(255)
+    price decimal(10,2)
+    storeId int [FK]
+    image blob
+    isDeleted boolean
 }
 
-Store ||--o{ ProductService
+Store ||--|{ ProductService
 
 entity Location {
-    * locationId : INT
+    locationId int [PK]
     --
-    latitude : DOUBLE
-    longitude : DOUBLE
-    isActive : BOOLEAN
-    isDeleted : BOOLEAN
+    latitude double
+    longitude double
+    isDeleted boolean
+    isActive boolean
 }
 
-Account ||--o| Location
+Account ||--|| Location
 
 entity Conversation {
-    * conversationId : INT
+    conversationId int [PK]
     --
-    customerAccountId : INT
-    vendorAccountId : INT
-    isDeleted : BOOLEAN
+    customerAccountId int [FK]
+    vendorAccountId int [FK]
+    isDeleted boolean
 }
 
-Account ||--o{ Conversation
+Account }|..|{ Conversation
 
 entity Chat {
-    * chatId : INT
+    chatId int [PK]
     --
-    senderId : INT
-    receiverId : INT
-    messageContent : VARCHAR(255)
-    timestamp : TIMESTAMP
-    conversationId : INT
-    isDeleted : BOOLEAN
+    senderId int [FK]
+    messageContent text
+    timestamp timestamp
+    conversationId int [FK]
+    isDeleted boolean
 }
 
-Account ||--o{ Chat
-Chat ||--|| Conversation
+Account ||--|{ Chat
+Chat }|..|| Conversation
 
 entity Transaction {
-    * accountCustomerId : INT
-    * accountVendorId : INT
+    int transactionId [PK]
     --
-    status : VARCHAR(255)
-    rating : INT
-    isDeleted : BOOLEAN
+    accountCustomerId int [FK]
+    accountVendorId int [FK]
+    status varchar(255)
+    timestamp timestamp
+    isDeleted boolean
 }
 
-Account ||--o{ Transaction
+Account }|..|{ Transaction
 
 entity Report {
-    * reportId : INT
+    reportId int [PK]
     --
-    senderId : INT
-    messageContent : VARCHAR(255)
-    timestamp : TIMESTAMP
-    isResolved : BOOLEAN
-    isDeleted : BOOLEAN
+    senderId int [FK]
+    messageContent text
+    timestamp timestamp
+    isResolved boolean
+    isDeleted boolean
 }
 
-Account ||--o{ Report
+Account ||--|{ Report
 
 @enduml
-
 ```
 -----------------------------------------------------
 

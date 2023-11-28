@@ -1,5 +1,7 @@
 package com.nearbyvendor.palit.entity;
 
+import java.util.*;
+
 import javax.persistence.*;
 
 @Entity
@@ -30,6 +32,12 @@ public class AccountEntity {
     @OneToOne
     @JoinColumn(name = "storeId", referencedColumnName = "storeId")
     private StoreEntity store;
+    
+    @ManyToMany(mappedBy = "account")
+    private Set<TransactionEntity> transaction;
+    
+    @OneToMany(mappedBy = "account")
+    private List<ReportEntity> report;
     
     // constructors
     public AccountEntity() {

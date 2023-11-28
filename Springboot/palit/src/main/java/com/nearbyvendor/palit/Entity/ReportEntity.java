@@ -24,6 +24,10 @@ public class ReportEntity {
     private boolean isResolved;
     
     private boolean isDeleted;
+    
+    @ManyToOne
+    @JoinColumn(name = "accountId")
+    private AccountEntity account;
 
     public ReportEntity() {
     }

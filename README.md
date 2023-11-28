@@ -1,10 +1,10 @@
 # Palit-A-Nearby-Vendor-Commerce-App
 # App Development Plan
 
-## Developers:
-Badilla, Mark Kenneth
-Briones, Joshua
-Coyoca, Alestair Cyril
+## Developers:<br/>
+Badilla, Mark Kenneth<br/>
+Briones, Joshua<br/>
+Coyoca, Alestair Cyril<br/>
 Selma, Kheisa
 
 ## Overview

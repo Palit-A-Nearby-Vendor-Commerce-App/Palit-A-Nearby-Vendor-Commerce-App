@@ -19,7 +19,7 @@ public class StoreService {
     }
     
     public StoreEntity getStoreById(int storeId) {
-        StoreEntity store = storeRepository.findByStore_StoreIdAndIsDeletedFalse(storeId);
+        StoreEntity store = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
         if (store != null) {
             return store;
         } else {
@@ -34,7 +34,7 @@ public class StoreService {
     }
     
     public StoreEntity updateStoreById(int storeId, StoreEntity store) {
-        StoreEntity existingStore = storeRepository.findByStore_StoreIdAndIsDeletedFalse(storeId);
+        StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
         if (existingStore != null) {
             store.setId(storeId);
             return storeRepository.save(store);
@@ -46,7 +46,7 @@ public class StoreService {
     }
 
     public boolean deleteStoreById(int storeId) {
-        StoreEntity existingStore = storeRepository.findByStore_StoreIdAndIsDeletedFalse(storeId);
+        StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
         if (existingStore != null) {
             existingStore.setIsDeleted(true);
             storeRepository.save(existingStore);

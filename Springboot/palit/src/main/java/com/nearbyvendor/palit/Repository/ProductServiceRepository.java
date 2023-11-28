@@ -15,7 +15,7 @@ public interface ProductServiceRepository extends JpaRepository<ProductServiceEn
 
     Optional<ProductServiceEntity> findByProductIdAndIsDeletedFalse(int productId);
 
-    List<ProductServiceEntity> findByStoreStoreIdAndIsDeletedFalse(int storeId);
+    List<ProductServiceEntity> findByStore_StoreIdAndIsDeletedFalse(int storeId);
 
     List<ProductServiceEntity> findByIsDeletedFalse();
 }

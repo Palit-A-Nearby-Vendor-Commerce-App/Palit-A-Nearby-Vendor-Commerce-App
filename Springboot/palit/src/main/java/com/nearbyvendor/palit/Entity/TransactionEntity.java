@@ -17,8 +17,6 @@ public class TransactionEntity {
     private int accountVendorId;
 
     private String status;
-
-    private int rating;
     
     private boolean isDeleted;
     
@@ -34,11 +32,10 @@ public class TransactionEntity {
     public TransactionEntity() {
     }
 
-    public TransactionEntity(int accountCustomerId, int accountVendorId, String status, int rating) {
+    public TransactionEntity(int accountCustomerId, int accountVendorId, String status) {
         this.accountCustomerId = accountCustomerId;
         this.accountVendorId = accountVendorId;
         this.status = status;
-        this.rating = rating;
     }
 
     public int getId() {
@@ -71,14 +68,6 @@ public class TransactionEntity {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
     }
 
     public boolean getIsDeleted() {

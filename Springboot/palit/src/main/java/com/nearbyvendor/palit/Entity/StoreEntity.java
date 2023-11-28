@@ -20,17 +20,24 @@ public class StoreEntity {
     
     private boolean isDeleted;
     
+    @OneToOne(mappedBy = "store")
+    private AccountEntity account;
+    
+    @OneToOne(mappedBy = "store")
+    private ProductServiceEntity productService;
+    
     public StoreEntity() {
         // default constructor
     }
     
-    public StoreEntity(String storeName, String description, String category, int vendorAccountId) {
+    public StoreEntity(String storeName, String description, String category, int rating, AccountEntity account, ProductServiceEntity productService) {
         this.storeName = storeName;
         this.description = description;
         this.category = category;
     }
     
-    public int getId() {
+
+	public int getId() {
         return storeId;
     }
     

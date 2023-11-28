@@ -12,24 +12,25 @@ public class ProductServiceEntity {
 
     private String name;
 
-    private String description;
 
     private double price;
 
-    private int storeId;
 
     private String imagePath;
     
     private boolean isDeleted;
+    
+    @OneToOne
+    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
+    private StoreEntity store;
 
     public ProductServiceEntity() {
     }
 
-    public ProductServiceEntity(String name, String description, double price, int storeId, String imagePath) {
+    public ProductServiceEntity(String name, double price, String imagePath, StoreEntity store) {
         this.name = name;
-        this.description = description;
         this.price = price;
-        this.storeId = storeId;
+        this.store = store;
         this.imagePath = imagePath;
     }
 
@@ -49,14 +50,7 @@ public class ProductServiceEntity {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
+   
     public double getPrice() {
         return price;
     }
@@ -73,13 +67,6 @@ public class ProductServiceEntity {
         this.imagePath = imagePath;
     }
 
-    public int getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(int storeId) {
-        this.storeId = storeId;
-    }
 
     public boolean getIsDeleted() {
         return isDeleted;
@@ -88,4 +75,13 @@ public class ProductServiceEntity {
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
+
+	public StoreEntity getStore() {
+		return store;
+	}
+
+	public void setStore(StoreEntity store) {
+		this.store = store;
+	}
+    
 }

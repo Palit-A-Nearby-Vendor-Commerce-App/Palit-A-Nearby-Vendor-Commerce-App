@@ -18,13 +18,18 @@ public class LocationEntity {
 
     private boolean isActive;
 
+    @OneToOne(mappedBy = "location")
+    private AccountEntity account;
+    
     public LocationEntity() {
     }
 
-    public LocationEntity(int locationId, double latitude, double longitude, UserEntity user) {
+    public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account ) {
         this.locationId = locationId;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.isActive = isActive;
+        this.account = account;
     }
 
     public int getId() {

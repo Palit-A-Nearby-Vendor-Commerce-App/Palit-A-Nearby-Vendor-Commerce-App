@@ -9,7 +9,11 @@ public class AccountEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer accountId;
-
+    
+    private String email;
+    
+    private String password;
+    
     private boolean isVendor;
 
     private boolean isAdmin;
@@ -19,12 +23,20 @@ public class AccountEntity {
     @OneToOne(mappedBy = "account")
     private UserEntity user;
 
+    @OneToOne
+    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
+    private LocationEntity location;
+
+    @OneToOne
+    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
+    private StoreEntity store;
+    
     // constructors
     public AccountEntity() {
         super();
     }
 
-    public AccountEntity(int accountId, boolean isVendor, boolean isAdmin, boolean isDeleted) {
+    public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store, boolean isVendor, boolean isAdmin, boolean isDeleted) {
         super();
         this.accountId = accountId;
         this.email = email;
@@ -35,38 +47,84 @@ public class AccountEntity {
         this.isAdmin = isAdmin;
         this.isDeleted = isDeleted;
     }
-
-
+    
+    
     // getters and setters
-    public int getId() {
-        return accountId;
-    }
 
-    public void setId(int accountId) {
-        this.accountId = accountId;
-    }
+    public Integer getAccountId() {
+		return accountId;
+	}
 
-    public boolean getIsVendor() {
-        return isVendor;
-    }
+	public void setAccountId(Integer accountId) {
+		this.accountId = accountId;
+	}
 
-    public void setIsVendor(boolean isVendor) {
-        this.isVendor = isVendor;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public boolean getIsAdmin() {
-        return isAdmin;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public void setIsAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
-    }
+	public String getPassword() {
+		return password;
+	}
 
-    public boolean getIsDeleted() {
-        return isDeleted;
-    }
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
+	public UserEntity getUser() {
+		return user;
+	}
+
+	public void setUser(UserEntity user) {
+		this.user = user;
+	}
+
+	public LocationEntity getLocation() {
+		return location;
+	}
+
+	public void setLocation(LocationEntity location) {
+		this.location = location;
+	}
+
+	public StoreEntity getStore() {
+		return store;
+	}
+
+	public void setStore(StoreEntity store) {
+		this.store = store;
+	}
+
+	public boolean isVendor() {
+		return isVendor;
+	}
+
+	public void setVendor(boolean isVendor) {
+		this.isVendor = isVendor;
+	}
+
+	public boolean isAdmin() {
+		return isAdmin;
+	}
+
+	public void setAdmin(boolean isAdmin) {
+		this.isAdmin = isAdmin;
+	}
+
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	
+
+	
+   
 }

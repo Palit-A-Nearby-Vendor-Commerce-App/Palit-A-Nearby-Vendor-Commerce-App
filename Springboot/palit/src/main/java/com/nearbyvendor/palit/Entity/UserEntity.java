@@ -19,9 +19,6 @@ public class UserEntity {
     @Temporal(TemporalType.DATE)
     private Date birthDate;
 
-    private String email;
-
-    private String password;
 
     private boolean isDeleted;
 
@@ -32,13 +29,13 @@ public class UserEntity {
     @JoinColumn(name = "accountId", referencedColumnName = "accountId")
     private AccountEntity account;
 
-    @OneToOne
-    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
-    private LocationEntity location;
-
-    @OneToOne
-    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
-    private StoreEntity store;
+//    @OneToOne
+//    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
+//    private LocationEntity location;
+//
+//    @OneToOne
+//    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
+//    private StoreEntity store;
 
     // constructors
     public UserEntity() {
@@ -46,24 +43,18 @@ public class UserEntity {
     }
 
     // constructor with all fields
-    public UserEntity(int userId, String firstName, String lastName, Date birthDate, String email, String password,
-            boolean isDeleted, byte[] image, AccountEntity account, LocationEntity location, StoreEntity store) {
+    public UserEntity(int userId, String firstName, String lastName, Date birthDate, boolean isDeleted, byte[] image, AccountEntity account) {
         super();
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
-        this.email = email;
-        this.password = password;
         this.isDeleted = isDeleted;
         this.image = image;
         this.account = account;
-        this.location = location;
-        this.store = store;
     }
 
-    public UserEntity(int userId, String firstName, String lastName, Date birthDate, String email, String password,
-            byte[] image, AccountEntity account, LocationEntity location, StoreEntity store) {
+    public UserEntity(int userId, String firstName, String lastName, Date birthDate, byte[] image, AccountEntity account) {
         super();
         this.userId = userId;
         this.firstName = firstName;
@@ -106,22 +97,7 @@ public class UserEntity {
         this.birthDate = birthDate;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
+   
     public byte[] getImage() {
         return image;
     }
@@ -146,19 +122,5 @@ public class UserEntity {
         this.account = account;
     }
     
-    public LocationEntity getLocation() {
-        return this.location;
-    }
-    
-    public void setLocation(LocationEntity location) {
-        this.location = location;
-    }
-
-    public StoreEntity getStore() {
-        return this.store;
-    }
-    
-    public void setStore(StoreEntity store) {
-        this.store = store;
-    }
+   
 }

@@ -29,15 +29,7 @@ public class UserEntity {
     @JoinColumn(name = "accountId", referencedColumnName = "accountId")
     private AccountEntity account;
 
-//    @OneToOne
-//    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
-//    private LocationEntity location;
-//
-//    @OneToOne
-//    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
-//    private StoreEntity store;
-
-    // constructors
+    // constructor with no fields
     public UserEntity() {
         super();
     }

@@ -64,15 +64,18 @@ Palit is a web app that connects nearby vendors and customers who want to buy or
 @startuml
 class User {
     - int userId
-    - String name
+    - String firstName
+    - String lastName
     - Date birthDate
     - byte[] image
     - int accountId
     - boolean isDeleted
     + int getUserId()
     + void setUserId(int userId)
-    + String getName()
-    + void setName(String name)
+    + String getFirstName()
+    + void setFirstName(String firstName)
+    + String getLastName()
+    + void setLastName(String lastName)
     + Date getBirthDate()
     + void setBirthDate(Date birthDate)
     + byte[] getImage()
@@ -217,11 +220,14 @@ class Chat {
 Chat "*" -- "1" Conversation : belongs to
 
 class Transaction {
+    - int transactionId
     - int accountCustomerId
     - int accountVendorId
     - String status
     - Timestamp timestamp
     - boolean isDeleted
+    + int getTransactionId()
+    + void setTransactionId(int transactionId)
     + int getAccountCustomerId()
     + void setAccountCustomerId(int accountCustomerId)
     + int getAccountVendorId()
@@ -282,7 +288,9 @@ Account "1" -- "*" Report : sends
 @startuml
 entity User {
     userId int [PK]
-    name varchar(255)
+    --
+    firstName varchar(255)
+    lastName varchar(255)
     birthDate date
     image blob
     accountId int [FK]
@@ -291,6 +299,7 @@ entity User {
 
 entity Account {
     accountId int [PK]
+    --
     email varchar(255)
     password varchar(255)
     isVendor boolean
@@ -304,6 +313,7 @@ User ||--|| Account
 
 entity Store {
     storeId int [PK]
+    --
     storeName varchar(255)
     description text
     category varchar(255)
@@ -314,6 +324,7 @@ Account ||--|| Store
 
 entity ProductService {
     productId int [PK]
+    --
     name varchar(255)
     price decimal(10,2)
     storeId int [FK]
@@ -325,6 +336,7 @@ Store ||--|{ ProductService
 
 entity Location {
     locationId int [PK]
+    --
     latitude double
     longitude double
     isDeleted boolean
@@ -335,6 +347,7 @@ Account ||--|| Location
 
 entity Conversation {
     conversationId int [PK]
+    --
     customerAccountId int [FK]
     vendorAccountId int [FK]
     isDeleted boolean
@@ -344,6 +357,7 @@ Account }|..|{ Conversation
 
 entity Chat {
     chatId int [PK]
+    --
     senderId int [FK]
     messageContent text
     timestamp timestamp
@@ -355,6 +369,8 @@ Account ||--|{ Chat
 Chat }|..|| Conversation
 
 entity Transaction {
+    int transactionId [PK]
+    --
     accountCustomerId int [FK]
     accountVendorId int [FK]
     status varchar(255)
@@ -366,6 +382,7 @@ Account }|..|{ Transaction
 
 entity Report {
     reportId int [PK]
+    --
     senderId int [FK]
     messageContent text
     timestamp timestamp

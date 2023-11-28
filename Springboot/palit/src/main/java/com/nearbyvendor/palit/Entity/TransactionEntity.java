@@ -10,9 +10,9 @@ public class TransactionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int transactionId;
 
-    private int accountCustomerId;
-
-    private int accountVendorId;
+//    private int accountCustomerId;
+//
+//    private int accountVendorId; //delete sa daw hehe
 
     private String status;
     
@@ -29,9 +29,9 @@ public class TransactionEntity {
     public TransactionEntity() {
     }
 
-    public TransactionEntity(int accountCustomerId, int accountVendorId, String status) {
-        this.accountCustomerId = accountCustomerId;
-        this.accountVendorId = accountVendorId;
+    public TransactionEntity(AccountEntity customer, AccountEntity vendor, String status) {
+        this.customer = customer;
+        this.vendor = vendor;
         this.status = status;
     }
 
@@ -43,20 +43,20 @@ public class TransactionEntity {
         this.transactionId = transactionId;
     }
 
-    public int getAccountCustomerId() {
-        return accountCustomerId;
+    public AccountEntity getAccountCustomerId() {
+        return customer;
     }
 
-    public void setAccountCustomerId(int accountCustomerId) {
-        this.accountCustomerId = accountCustomerId;
+    public void setAccountCustomerId(AccountEntity customer) {
+        this.customer = customer;
     }
 
-    public int getAccountVendorId() {
-        return accountVendorId;
+    public AccountEntity getAccountVendorId() {
+        return vendor;
     }
 
-    public void setAccountVendorId(int accountVendorId) {
-        this.accountVendorId = accountVendorId;
+    public void setAccountVendorId(AccountEntity vendor) {
+        this.vendor = vendor;
     }
 
     public String getStatus() {

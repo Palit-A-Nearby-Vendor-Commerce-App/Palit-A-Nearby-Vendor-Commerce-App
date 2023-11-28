@@ -11,8 +11,12 @@ public class ReportEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int reportId;
 
-    @Column(nullable = false)
-    private int senderId;
+//    @Column(nullable = false)
+//    private int senderId; //remove sa daw ni
+    
+    @ManyToOne
+    @JoinColumn(name = "senderId")
+    private AccountEntity account;
 
     @Column(nullable = false)
     private String messageContent;
@@ -25,15 +29,13 @@ public class ReportEntity {
     
     private boolean isDeleted;
     
-    @ManyToOne
-    @JoinColumn(name = "senderId")
-    private AccountEntity account;
+
 
     public ReportEntity() {
     }
 
-    public ReportEntity(int senderId, String messageContent, Timestamp timestamp, boolean isResolved) {
-        this.senderId = senderId;
+    public ReportEntity(AccountEntity account, String messageContent, Timestamp timestamp, boolean isResolved) {
+        this.account = account;
         this.messageContent = messageContent;
         this.timestamp = timestamp;
         this.isResolved = isResolved;
@@ -47,12 +49,12 @@ public class ReportEntity {
         this.reportId = reportId;
     }
 
-    public int getSenderId() {
-        return senderId;
+    public AccountEntity getSenderId() {
+        return account;
     }
 
-    public void setSenderId(int senderId) {
-        this.senderId = senderId;
+    public void setSenderId(AccountEntity account) {
+        this.account = account;
     }
 
     public String getMessageContent() {

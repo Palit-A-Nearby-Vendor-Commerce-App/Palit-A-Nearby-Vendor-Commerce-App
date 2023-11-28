@@ -10,52 +10,29 @@ Selma, Kheisa
 ## Overview
 Palit is a web app that connects nearby vendors and customers who want to buy or sell goods or services in a convenient and cash-based way. The app uses realtime geolocation to show the users' locations on a map and allows them to chat and transact with each other.
 
-## Features Overview
-#### User Categories
-- **Customers**: Order from vendors.
-- **Vendors**: Sell goods/services and manage their stores.
-- **Admins**: Access the database with CRUD capabilities.
+## Ideas
+- **3 Types of Users**: Customers who will order from vendors. Vendors who will sell to customers and manage their own stores. Admins who have full access to the database and crud powers.
+- **Accounts**: Users can sign up. In the sign up screen they enter their email, name, birthdate, and choose if they are a customer or a vendor. Admins cannot log in normally in the /signin page. They have a separate page /adminsignin to access the dashboard using their predefined email and password. Admin accounts are manually created in the databse during development and cannot be created through signup. All signups will create only vendors or customers, never admins.
+- **Admin Dashboard**: It is the user interface custom built to reflect the database and allows admins to perform CRUD operations. There is a left sidebar showing the links to different tables and a dashboard link. default link is the dashboard link which shows stats on top and table heads below.
+- **Map**: This is the screen that appears upon log in. Users can see their own location and the locations of other users (they can only see vendors' icons who are not admins if they are a customer, and only see customers' icons who are not admins if they are a vendor) within a certain distance limit (200 meters) on a map they also see a report icon to the lower left. Admins do not show up on the map. 
+- **Custom Icons**: In customer's POV, the vendors show up as an icon depending on the services or the products they offer. We have created a fixed catalogue of categories that vendors can use to describe their stores such as fish, fruits, hats, etc. In vendor's pov the customer icons are either light blue with white stroke if they are not currently ordering and dark blue with white stroke if they are currently ordering.
+- **Report**: In the map screen the both customers and vendors can see a report icon in the lower left which when pressed opens the report screen. Here they can input their message to the admins about bugs they faced, suggestions, or problems they had with other users. Admins will respond outside the app via email as the id of the user who reported is visible to the admin which can be used to see their email.
+- **Store as floating window in the map**: The store page will appear as a floating window in the right side of the map page. In vendor's pov, vendors can view their store by clicking on the my store icon at the bottom of the queue floating window. In the store, they can click the edit store button to enter edit mode and edit their store name, description, category which will determine the icon in the map, and products or services. They can also specify the name, price, and image of each product or service they offer. New vendors upon clicking my store, will show their empty store which have default stores with null names, description, and category and no products. Stores with no products will not appear in the map to prevent confusion. 
 
-#### Account Registration
-- **Sign Up**: Users provide their email, name, and birthdate, and choose to register as a customer or vendor.
-- **Admin Login**: Separate login at `/adminsignin` for predefined admin accounts; admins are not created through the signup process.
+In the customer's pov, if no store has been selected yet, this floating window will show Select a vendor to 
+see their store... When a vendors who have set up their store are nearby, they show up as icons in the customer's map. When customer selects a store, they can view the vendors' store name, description, category, and products or services. They can also select the quantity they want, and see the total price below. They can also place an order by tapping the order button, which will create a transaction object sent to the vendor thru chat, listing the products and quantities they selected with a status of in queue. The order button becomes a cancel order button when clicked.
+- **Chat**: Vendors and customers can chat with each other for inquiries, negotiations, or feedback. Transactions created by the customers are also sent as messages in chat, where the status can change from in queue to now serving to completed or to cancelled. Vendors can accept orders by tapping the accept button in transaction object in chat or they can ignore it completely. Customers can cancel their orders by tapping the cancel button in the store page. Once the order is completed, customers can rate the vendor by filling out a 5 star form in chat which appears attached below the transaction object.
+- **Customer queue as floating window in the map**: In vendor's pov, if no customer has ordered, this will show Waiting for customers... When there are ordering customers, the ordering customers will show up as a list with a header of In Queue. They are also visible as dark blue dots on the map. The vendor may click a customer in queue to open the chat page with that customer then click the accept order button to change the customer's status as now serving. The customer they are currently serving will appear in a red div with white text on top of the in queue list with a header "Now Serving" on top of the div. They also show up in the map as a red pin. When the vendor marks the order as complete in chat, the customer's status will change to completed and theyll revert as a light blue icon in map, disappearing from the queue.
+- **Cash on delivery**: Customers only pay after receiving their ordered goods or services, similar to how traditional transactions work.
+- **Report**: Users can file a report for any bugs or issues they face with other users. Their reports are shown as the first table in the admin dashboard. 
+- **About us Page**: this will show the development team
+- **Contact us Page**: this will show a form to contact the developers behind the project
+- **Services Page**: this will show a summary of what the app offers.
 
-#### Admin Dashboard
-- **Interface**: A sidebar for navigation, with a default dashboard showing statistics and table headers.
+## Limitations
+- **In-app payment**: We will not offer in-app payment due to the time constraint and security issues.
+- **We are student newbie developers** who are still learning about the frameworks and APIs that we need to use and especially React for front end.
 
-#### Map Functionality
-- **User Locations**: Displays user locations within a 200-meter radius, excluding admins. Different icons represent different user types and states.
-
-#### Icons
-- **Vendor Icons**: Vary based on the store's category.
-- **Customer Icons**: Light or dark blue to indicate order status.
-
-#### Reporting System
-- **Function**: Users report issues or provide feedback via a report icon, with admins responding through email.
-
-#### Store Management
-- **Floating Window**: A sidebar for vendors to manage their store details and products/services. New vendors see a placeholder store setup.
-
-#### Customer Store Interaction
-- **Selection and Ordering**: Customers select a vendor to view and order from their store, with the ability to cancel orders.
-
-#### Chat System
-- **Communication**: Customers and vendors negotiate and give feedback. Includes transaction status updates and a rating system post-completion.
-
-#### Customer Queue Management
-- **Vendor View**: A list of customers ordering, with current serving status highlighted and an easy transition to chat for order acceptance.
-
-#### Payment System
-- **Cash on Delivery**: Customers pay upon receipt of goods/services, no in-app payment due to limitations.
-
-#### Additional Pages
-- **About Us**: Information about the development team.
-- **Contact Us**: A form for reaching out to developers.
-- **Services**: A summary of app offerings.
-
-### Limitations
-- **No In-App Payment**: Excluded due to time constraints and security concerns.
-- **Developer Experience**: The team is composed of students learning necessary frameworks and technologies, with a focus on React for front-end development.
 
 # Diagrams so far:
 

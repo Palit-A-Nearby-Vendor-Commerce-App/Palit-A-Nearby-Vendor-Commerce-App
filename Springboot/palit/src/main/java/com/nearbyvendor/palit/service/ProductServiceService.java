@@ -33,7 +33,7 @@ public class ProductServiceService {
 
     // Get product services by store id where isDeleted is false
     public List<ProductServiceEntity> getProductServicesByStoreId(int storeId) {
-        return productServiceRepository.findByStoreIdAndIsDeletedFalse(storeId);
+        return productServiceRepository.findByStore_StoreIdAndIsDeletedFalse(storeId);
     }
 
     // Create product service

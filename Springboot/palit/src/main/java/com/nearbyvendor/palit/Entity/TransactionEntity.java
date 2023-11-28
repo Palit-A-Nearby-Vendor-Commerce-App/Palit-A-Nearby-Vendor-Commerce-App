@@ -1,7 +1,5 @@
 package com.nearbyvendor.palit.entity;
 
-import java.util.Set;
-
 import javax.persistence.*;
 
 @Entity
@@ -17,34 +15,24 @@ public class TransactionEntity {
 //    private int accountVendorId; //delete sa daw hehe
 
     private String status;
-
-    private int rating;
     
     private boolean isDeleted;
+   
+    @ManyToOne
+    @JoinColumn(name = "accountCustomerId", referencedColumnName = "accountId")
+    private AccountEntity customer;
     
-    @ManyToMany(cascade= { CascadeType.ALL })
-    @JoinTable(
-    		name = "Transactions",
-    		joinColumns = { @JoinColumn(name = "transactionId")},
-    		inverseJoinColumns = { @JoinColumn(name = "accountId") }
-    )
+    @ManyToOne
+    @JoinColumn(name = "accountVendorId", referencedColumnName = "accountId")
+    private AccountEntity vendor;    
     
-    private Set<AccountEntity> accounts;
-
     public TransactionEntity() {
     }
 
-<<<<<<< HEAD
-    public TransactionEntity(int accountCustomerId, int accountVendorId, String status, int rating) {
-        this.accountCustomerId = accountCustomerId;
-        this.accountVendorId = accountVendorId;
-=======
     public TransactionEntity(AccountEntity customer, AccountEntity vendor, String status) {
         this.customer = customer;
         this.vendor = vendor;
->>>>>>> 7365c53e4aac9eba308c008506d3760d1d39ac72
         this.status = status;
-        this.rating = rating;
     }
 
     public int getId() {
@@ -77,14 +65,6 @@ public class TransactionEntity {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
     }
 
     public boolean getIsDeleted() {

@@ -18,37 +18,37 @@ public class ChatEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int chatId;
 
-    private int senderId;
+//    private int senderId;
+    @ManyToOne
+    @JoinColumn(name = "senderId", referencedColumnName = "accountId")
+    private AccountEntity account;
 
     private String messageContent;
 
     private Timestamp timestamp;
 
-    private int conversationId;
-
-    private boolean isDeleted;
-
+//    private int conversationId;
     @ManyToOne
     @JoinColumn(name = "conversationId", referencedColumnName = "conversationId")
     private ConversationEntity conversation;
 
-    @ManyToOne
-    @JoinColumn(name = "senderId", referencedColumnName = "accountId")
-    private AccountEntity account;
+    private boolean isDeleted;
+
+
+
+
 
     public ChatEntity() {
     }
 
-    public ChatEntity(int chatId, int senderId, String messageContent, Timestamp timestamp, int conversationId,
-            boolean isDeleted, ConversationEntity conversation, AccountEntity account) {
+    public ChatEntity(int chatId, AccountEntity account, String messageContent, Timestamp timestamp, ConversationEntity conversation,
+            boolean isDeleted) {
         this.chatId = chatId;
-        this.senderId = senderId;
+        this.account = account;
         this.messageContent = messageContent;
         this.timestamp = timestamp;
-        this.conversationId = conversationId;
-        this.isDeleted = isDeleted;
         this.conversation = conversation;
-        this.account = account;
+        this.isDeleted = isDeleted;
     }
 
     public int getChatId() {
@@ -58,14 +58,14 @@ public class ChatEntity {
     public void setChatId(int chatId) {
         this.chatId = chatId;
     }
-
-    public int getSenderId() {
-        return senderId;
-    }
-
-    public void setSenderId(int senderId) {
-        this.senderId = senderId;
-    }
+//
+//    public int getSenderId() {
+//        return senderId;
+//    }
+//
+//    public void setSenderId(int senderId) {
+//        this.senderId = senderId;
+//    }
 
     public String getMessageContent() {
         return messageContent;
@@ -83,19 +83,11 @@ public class ChatEntity {
         this.timestamp = timestamp;
     }
 
-    public int getConversationId() {
-        return conversationId;
-    }
-
-    public void setConversationId(int conversationId) {
-        this.conversationId = conversationId;
-    }
-
     public boolean isDeleted() {
         return isDeleted;
     }
 
-    public void setDeleted(boolean isDeleted) {
+    public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
 

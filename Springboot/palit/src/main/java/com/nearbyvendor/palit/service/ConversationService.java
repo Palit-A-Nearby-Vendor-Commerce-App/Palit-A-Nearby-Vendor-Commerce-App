@@ -40,8 +40,8 @@ public class ConversationService {
     public ConversationEntity updateConversationById(int id, ConversationEntity conversation) {
         Optional<ConversationEntity> existingConversation = conversationRepository.findByConversationIdAndIsDeletedFalse(id);
         if (existingConversation.isPresent()) {
-            existingConversation.get().setSenderId(conversation.getSenderId());
-            existingConversation.get().setReceiverId(conversation.getReceiverId());
+            existingConversation.get().setVendor(conversation.getVendor());
+            existingConversation.get().setCustomer(conversation.getCustomer());
             return conversationRepository.save(existingConversation.get());
         } else {
             // Log an error message for debugging

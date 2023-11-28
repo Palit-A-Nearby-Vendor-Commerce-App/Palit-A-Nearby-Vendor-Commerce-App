@@ -11,11 +11,11 @@ import java.util.Optional;
 public interface ProductServiceRepository extends JpaRepository<ProductServiceEntity, Integer> {
 
     // Find product services by store id
-    List<ProductServiceEntity> findByStoreId(int storeId);
+    List<ProductServiceEntity> findByStoreStoreId(int storeId);
 
     Optional<ProductServiceEntity> findByProductIdAndIsDeletedFalse(int productId);
 
-    List<ProductServiceEntity> findByStoreIdAndIsDeletedFalse(int storeId);
+    List<ProductServiceEntity> findByStoreStoreIdAndIsDeletedFalse(int storeId);
 
     List<ProductServiceEntity> findByIsDeletedFalse();
 }

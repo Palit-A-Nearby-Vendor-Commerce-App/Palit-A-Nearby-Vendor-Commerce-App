@@ -25,7 +25,14 @@ public class ChatController {
 
     // Create a new chat
     @PostMapping("/createChat")
-    public ResponseEntity<ChatEntity> createChat(@RequestBody ChatEntity chat) {
+    public ResponseEntity<Object> createChat(@RequestBody ChatEntity chat) {
+        // Check if the account is provided in the request
+        if (chat.getAccount() == null) {
+            return new ResponseEntity<>("Account information is required for creating a chat.", HttpStatus.BAD_REQUEST);
+        }
+
+        // Other validations or processing logic can be added as needed
+
         ChatEntity createdChat = chatService.createChat(chat);
         return new ResponseEntity<>(createdChat, HttpStatus.CREATED);
     }

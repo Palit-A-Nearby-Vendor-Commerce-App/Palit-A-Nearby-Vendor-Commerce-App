@@ -57,7 +57,7 @@ Palit is a web app that connects nearby vendors and customers who want to buy or
 - **No In-App Payment**: Excluded due to time constraints and security concerns.
 - **Developer Experience**: The team is composed of students learning necessary frameworks and technologies, with a focus on React for front-end development.
 
-# Diagrams so far:
+# Diagrams in PlantUML:
 
 - Class diagram:
 ```

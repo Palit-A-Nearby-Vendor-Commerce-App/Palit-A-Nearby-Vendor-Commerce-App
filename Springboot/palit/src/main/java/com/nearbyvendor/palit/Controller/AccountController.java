@@ -40,7 +40,7 @@ public class AccountController {
 
     @PutMapping("/editAccountById/{id}")
     public ResponseEntity<AccountEntity> editAccountById(@PathVariable int id, @RequestBody AccountEntity account) {
-        AccountEntity updatedAccount = accountService.editAccountById(id, account);
+        AccountEntity updatedAccount = accountService.updateAccountById(id, account);
         if (updatedAccount != null) {
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
         } else {
@@ -56,5 +56,11 @@ public class AccountController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping("/isEmailTaken")
+    public ResponseEntity<Boolean> checkEmail(@RequestBody AccountEntity account) {
+        boolean isEmailTaken = accountService.checkEmail(account);
+        return new ResponseEntity<>(isEmailTaken, HttpStatus.OK);
     }
 }

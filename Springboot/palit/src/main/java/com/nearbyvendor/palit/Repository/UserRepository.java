@@ -1,8 +1,5 @@
 package com.nearbyvendor.palit.repository;
 
-import com.nearbyvendor.palit.entity.AccountEntity;
-import com.nearbyvendor.palit.entity.LocationEntity;
-import com.nearbyvendor.palit.entity.StoreEntity;
 import com.nearbyvendor.palit.entity.UserEntity;
 
 import java.util.List;

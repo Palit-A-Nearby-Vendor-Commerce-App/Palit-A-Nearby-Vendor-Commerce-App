@@ -46,9 +46,8 @@ public class ProductServiceService {
         Optional<ProductServiceEntity> existingProductService = productServiceRepository.findByProductIdAndIsDeletedFalse(id);
         if (existingProductService.isPresent()) {
             existingProductService.get().setName(productService.getName());
-            existingProductService.get().setDescription(productService.getDescription());
             existingProductService.get().setPrice(productService.getPrice());
-            existingProductService.get().setStoreId(productService.getStoreId());
+            existingProductService.get().setStore(productService.getStore());
             existingProductService.get().setImagePath(productService.getImagePath());
             return productServiceRepository.save(existingProductService.get());
         } else {

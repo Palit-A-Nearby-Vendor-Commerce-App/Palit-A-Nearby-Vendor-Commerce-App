@@ -1,8 +1,5 @@
 package com.nearbyvendor.palit.controller;
 
-import com.nearbyvendor.palit.entity.AccountEntity;
-import com.nearbyvendor.palit.entity.LocationEntity;
-import com.nearbyvendor.palit.entity.StoreEntity;
 import com.nearbyvendor.palit.entity.UserEntity;
 import com.nearbyvendor.palit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,11 +47,5 @@ public class UserController {
     public ResponseEntity<Void> deleteUserById(@PathVariable int id) {
         userService.deleteUserById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @PostMapping("/isEmailTaken")
-    public ResponseEntity<Boolean> checkEmail(@RequestBody UserEntity userData) {
-        boolean isEmailTaken = userService.checkEmail(userData);
-        return new ResponseEntity<>(isEmailTaken, HttpStatus.OK);
     }
 }

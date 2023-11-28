@@ -20,7 +20,7 @@ public class ProductServiceEntity {
     
     private boolean isDeleted;
     
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "storeId", referencedColumnName = "storeId")
     private StoreEntity store;
 

@@ -16,6 +16,8 @@ public class StoreEntity {
     
     private String category;
     
+    private int rating;
+    
     private boolean isDeleted;
     
     @OneToOne(mappedBy = "store")
@@ -28,7 +30,7 @@ public class StoreEntity {
         // default constructor
     }
     
-    public StoreEntity(String storeName, String description, String category, AccountEntity account, ProductServiceEntity productService) {
+    public StoreEntity(String storeName, String description, String category, int rating, AccountEntity account, ProductServiceEntity productService) {
         this.storeName = storeName;
         this.description = description;
         this.category = category;
@@ -67,6 +69,14 @@ public class StoreEntity {
         this.category = category;
     }
     
+    public int getRating() {
+        return rating;
+    }
+    
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+    
     public boolean getIsDeleted() {
         return isDeleted;
     }
@@ -78,7 +88,7 @@ public class StoreEntity {
     @Override
     public String toString() {
         return "StoreEntity [storeId=" + storeId + ", storeName=" + storeName + ", description=" + description
-                + ", category=" + category + "]";
+                + ", category=" + category + ", rating=" + rating + "]";
     }
 
 }

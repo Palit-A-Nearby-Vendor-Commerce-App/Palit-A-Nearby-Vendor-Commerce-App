@@ -1,65 +1,68 @@
 package com.nearbyvendor.palit.entity;
 
-import java.util.*;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import java.util.Set;
 
 @Entity
 @Table(name = "account")
 public class AccountEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer accountId;
-    
-    private String email;
-    
-    private String password;
-    
-    private boolean isVendor;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer accountId;
 
-    private boolean isAdmin;
+	private String email;
 
-    private boolean isDeleted;
+	private String password;
 
-    @OneToOne(mappedBy = "account")
-    private UserEntity user;
+	private boolean isVendor;
 
-    @OneToOne
-    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
-    private LocationEntity location;
+	private boolean isAdmin;
 
-    @OneToOne
-    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
-    private StoreEntity store;
-    
-    @ManyToMany(mappedBy = "account")
-    private Set<TransactionEntity> transaction;
-    
-    @OneToMany(mappedBy = "account")
-    private List<ReportEntity> report;
-    
-    // constructors
-    public AccountEntity() {
-        super();
-    }
+	private boolean isDeleted;
 
-    public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store, boolean isVendor, boolean isAdmin, boolean isDeleted) {
-        super();
-        this.accountId = accountId;
-        this.email = email;
-        this.password = password;
-        this.location = location;
-        this.store = store;
-        this.isVendor = isVendor;
-        this.isAdmin = isAdmin;
-        this.isDeleted = isDeleted;
-    }
-    
-    
-    // getters and setters
+	@OneToOne(mappedBy = "account")
+	private UserEntity user;
 
-    public Integer getAccountId() {
+	@OneToOne
+	@JoinColumn(name = "locationId", referencedColumnName = "locationId")
+	private LocationEntity location;
+
+	@OneToOne
+	@JoinColumn(name = "storeId", referencedColumnName = "storeId")
+	private StoreEntity store;
+
+	@ManyToMany(mappedBy = "participants")
+	private Set<ConversationEntity> conversation;
+	// constructors
+	public AccountEntity() {
+		super();
+	}
+
+	public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store,
+			boolean isVendor, boolean isAdmin, boolean isDeleted, Set<ConversationEntity> conversation) {
+		super();
+		this.accountId = accountId;
+		this.email = email;
+		this.password = password;
+		this.location = location;
+		this.store = store;
+		this.isVendor = isVendor;
+		this.isAdmin = isAdmin;
+		this.isDeleted = isDeleted;
+		this.conversation = conversation;
+	}
+
+	// getters and setters
+
+	public Integer getAccountId() {
 		return accountId;
 	}
 
@@ -131,8 +134,12 @@ public class AccountEntity {
 		this.isDeleted = isDeleted;
 	}
 
+	public Set<ConversationEntity> getConversation() {
+		return conversation;
+	}
 	
+	public void setConversation(Set<ConversationEntity> conversation) {
+		this.conversation = conversation;
+	}
 
-	
-   
 }

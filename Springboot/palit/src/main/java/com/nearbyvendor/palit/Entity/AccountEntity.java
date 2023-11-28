@@ -8,13 +8,34 @@ public class AccountEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int accountId;
+    private Integer accountId;
 
     private boolean isVendor;
 
     private boolean isAdmin;
 
     private boolean isDeleted;
+
+    @OneToOne(mappedBy = "account")
+    private UserEntity user;
+
+    // constructors
+    public AccountEntity() {
+        super();
+    }
+
+    public AccountEntity(int accountId, boolean isVendor, boolean isAdmin, boolean isDeleted) {
+        super();
+        this.accountId = accountId;
+        this.email = email;
+        this.password = password;
+        this.location = location;
+        this.store = store;
+        this.isVendor = isVendor;
+        this.isAdmin = isAdmin;
+        this.isDeleted = isDeleted;
+    }
+
 
     // getters and setters
     public int getId() {

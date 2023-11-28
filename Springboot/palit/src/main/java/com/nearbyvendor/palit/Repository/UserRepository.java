@@ -17,9 +17,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
   UserEntity findByUserIdAndIsDeletedFalse(int userId);
     
-  AccountEntity findByAccountAccountIdAndIsDeletedFalse(int accountId);
-
-  LocationEntity  findByLocationLocationIdAndIsDeletedFalse(int locationId);
-
-  StoreEntity findByStoreStoreIdAndIsDeletedFalse(int storeId);
 }

@@ -27,7 +27,7 @@ public class UserEntity {
 
     @Lob
     private byte[] image;
-
+    
     @OneToOne
     @JoinColumn(name = "accountId", referencedColumnName = "accountId")
     private AccountEntity account;
@@ -40,9 +40,26 @@ public class UserEntity {
     @JoinColumn(name = "storeId", referencedColumnName = "storeId")
     private StoreEntity store;
 
+    // constructors
     public UserEntity() {
         super();
-        this.isDeleted = false;
+    }
+
+    // constructor with all fields
+    public UserEntity(int userId, String firstName, String lastName, Date birthDate, String email, String password,
+            boolean isDeleted, byte[] image, AccountEntity account, LocationEntity location, StoreEntity store) {
+        super();
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.email = email;
+        this.password = password;
+        this.isDeleted = isDeleted;
+        this.image = image;
+        this.account = account;
+        this.location = location;
+        this.store = store;
     }
 
     public UserEntity(int userId, String firstName, String lastName, Date birthDate, String email, String password,
@@ -52,13 +69,8 @@ public class UserEntity {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
-        this.email = email;
-        this.password = password;
         this.isDeleted = false;
         this.image = image;
-        this.account = account;
-        this.location = location;
-        this.store = store;
     }
 
     // getters and setters

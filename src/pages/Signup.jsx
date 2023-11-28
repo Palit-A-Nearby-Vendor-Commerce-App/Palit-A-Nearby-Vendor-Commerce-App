@@ -62,9 +62,9 @@ function Signup() {
       [e.target.name]: e.target.value,
     });
 
-    if (e.target.name === "password") {
-      setIsPasswordValid(validatePassword(e.target.value));
-    }
+    // if (e.target.name === "password") {
+    //   setIsPasswordValid(validatePassword(e.target.value));
+    // }
   };
 
   const handleSubmit = async (e) => {
@@ -82,16 +82,16 @@ function Signup() {
     const today = moment();
     const birthDate = moment(userData.birthdate);
     const age = today.diff(birthDate, "years");
-    if (age < 13) {
-      setAlert("You must be at least 13 years old to sign up.");
-      return;
-    }
+    // if (age < 13) {
+    //   setAlert("You must be at least 13 years old to sign up.");
+    //   return;
+    // }
 
-    // Check if the image field is empty
-    if (!userData.image) {
-      setAlert("You must upload an image to sign up.");
-      return;
-    }
+    // // Check if the image field is empty
+    // if (!userData.image) {
+    //   setAlert("You must upload an image to sign up.");
+    //   return;
+    // }
 
     // Show the confirmation popup
     setConfirm(true);
@@ -99,18 +99,18 @@ function Signup() {
 
   const handleConfirm = async () => {
     try {
-      // Check if email is already taken
-      const emailCheckResponse = await axios.post(
-        "http://localhost:8080/api/isEmailTaken",
-        {
-          email: userData.email,
-        }
-      );
+      // // Check if email is already taken
+      // const emailCheckResponse = await axios.post(
+      //   "http://localhost:8080/api/isEmailTaken",
+      //   {
+      //     email: userData.email,
+      //   }
+      // );
 
-      if (emailCheckResponse.data.exists) {
-        setAlert("Email already exists. Please use a different email.");
-        return;
-      }
+      // if (emailCheckResponse.data.exists) {
+      //   setAlert("Email already exists. Please use a different email.");
+      //   return;
+      // }
 
       // Create location
       const locationResponse = await axios.post(
@@ -121,7 +121,7 @@ function Signup() {
           isActive: false,
         }
       );
-      const locationId = locationResponse.data.id;
+      const location = locationResponse.data;
 
       // Create account
       const accountData = {
@@ -132,41 +132,46 @@ function Signup() {
         "http://localhost:8080/api/createAccount",
         accountData
       );
-      const accountId = accountResponse.data.id;
+      const account = accountResponse.data;
 
       // Optionally create a store and get its ID
-      let storeId = null;
+      let store = null;
       if (userData.userType === "vendor") {
         const storeData = {
           storeName: userData.storeName,
           description: userData.description,
-          category: userData.category,
-          vendorAccountId: accountId,
+          category: userData.category
         };
         const storeResponse = await axios.post(
           "http://localhost:8080/api/createStore",
           storeData
         );
-        storeId = storeResponse.data.storeId;
+        store = storeResponse.data;
       }
+      
+      function convertToBase64(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.onerror = error => reject(error);
+        });
+      }
+      
 
-      // Prepare FormData for user creation
-      const formData = new FormData();
-      formData.append("image", userData.image);
-      formData.append("firstName", userData.firstName);
-      formData.append("lastName", userData.lastName);
-      formData.append(
-        "birthDate",
-        moment(userData.birthDate).format("YYYY-MM-DD")
-      );
-      formData.append("email", userData.email);
-      formData.append("password", userData.password);
-      formData.append("locationId", locationId);
-      formData.append("accountId", accountId);
-      formData.append("storeId", storeId);
+      // Create user JSON with converted image, location, account, and store
+      const userJson = {
+        ...userData,
+        image: userData.image ? await convertToBase64(userData.image) : null,
+        location,
+        account,
+        store,
+      };
 
-      // Create user with locationId, accountId, and storeId (if applicable)
-      await axios.post("http://localhost:8080/api/createUser", formData);
+      console.log(userJson)
+
+      // Create user
+      await axios.post("http://localhost:8080/api/createUser", userJson);
 
       // Alert the user that the user creation is successful
       setSuccess(true);
@@ -236,7 +241,7 @@ function Signup() {
           </div>
           <div className="mt-4">
             <input
-              type="email"
+              // type="email"
               name="email"
               onChange={handleChange}
               placeholder="Email"

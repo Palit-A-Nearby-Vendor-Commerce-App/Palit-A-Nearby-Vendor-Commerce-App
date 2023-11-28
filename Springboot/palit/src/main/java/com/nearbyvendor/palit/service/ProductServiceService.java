@@ -48,7 +48,7 @@ public class ProductServiceService {
             existingProductService.get().setName(productService.getName());
             existingProductService.get().setPrice(productService.getPrice());
             existingProductService.get().setStore(productService.getStore());
-            existingProductService.get().setImagePath(productService.getImagePath());
+            existingProductService.get().setImage(productService.getImage());
             return productServiceRepository.save(existingProductService.get());
         } else {
             // Log an error message for debugging

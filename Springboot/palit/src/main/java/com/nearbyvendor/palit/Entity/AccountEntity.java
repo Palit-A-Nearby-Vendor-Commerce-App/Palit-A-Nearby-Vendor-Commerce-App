@@ -1,142 +1,142 @@
 package com.nearbyvendor.palit.entity;
 
-import java.util.*;
-
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "accountId")
 @Entity
 @Table(name = "account")
 public class AccountEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer accountId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer accountId;
 
-	private String email;
+    private String email;
 
-	private String password;
+    private String password;
 
-	private boolean isVendor;
+    private boolean isVendor;
 
-	private boolean isAdmin;
+    private boolean isAdmin;
 
-	private boolean isDeleted;
+    private boolean isDeleted;
 
-	@OneToOne(mappedBy = "account")
-	private UserEntity user;
+    @OneToOne(mappedBy = "account")
+    private UserEntity user;
 
-	@OneToOne
-	@JoinColumn(name = "locationId", referencedColumnName = "locationId")
-	private LocationEntity location;
+    @OneToOne
+    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
+    private LocationEntity location;
 
-	@OneToOne
-	@JoinColumn(name = "storeId", referencedColumnName = "storeId")
-	private StoreEntity store;
+    @OneToOne
+    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
+    private StoreEntity store;
 
-	@OneToMany(mappedBy = "customer")
-	private Set<TransactionEntity> customerTransactions;
+    @OneToMany(mappedBy = "customer")
+    private Set<TransactionEntity> customerTransactions;
 
-	@OneToMany(mappedBy = "account")
-	private Set<ChatEntity> chat;
+    @OneToMany(mappedBy = "account")
+    private Set<ChatEntity> chat;
 
-	@OneToMany(mappedBy = "customer")
-	private Set<ConversationEntity> conversations;
+    @OneToMany(mappedBy = "customer")
+    private Set<ConversationEntity> conversations;
 
-	@OneToMany(mappedBy = "vendor")
-	private Set<TransactionEntity> vendorTransactions;
+    @OneToMany(mappedBy = "vendor")
+    private Set<TransactionEntity> vendorTransactions;
 
-	@OneToMany(mappedBy = "account")
-	private List<ReportEntity> report;
+    @OneToMany(mappedBy = "account")
+    private List<ReportEntity> report;
 
-	public AccountEntity() {
-	}
+    public AccountEntity() {
+    }
 
-	public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store,
-			boolean isVendor, boolean isAdmin) {
-		this.accountId = accountId;
-		this.email = email;
-		this.password = password;
-		this.location = location;
-		this.store = store;
-		this.isVendor = isVendor;
-		this.isAdmin = isAdmin;
-		this.isDeleted = false;
-	}
+    public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store,
+                         boolean isVendor, boolean isAdmin) {
+        this.accountId = accountId;
+        this.email = email;
+        this.password = password;
+        this.location = location;
+        this.store = store;
+        this.isVendor = isVendor;
+        this.isAdmin = isAdmin;
+        this.isDeleted = false;
+    }
 
-	public Integer getAccountId() {
-		return accountId;
-	}
+    public Integer getAccountId() {
+        return accountId;
+    }
 
-	public void setAccountId(Integer accountId) {
-		this.accountId = accountId;
-	}
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public UserEntity getUser() {
-		return user;
-	}
+    public UserEntity getUser() {
+        return user;
+    }
 
-	public void setUser(UserEntity user) {
-		this.user = user;
-	}
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
 
-	public LocationEntity getLocation() {
-		return location;
-	}
+    public LocationEntity getLocation() {
+        return location;
+    }
 
-	public void setLocation(LocationEntity location) {
-		this.location = location;
-	}
+    public void setLocation(LocationEntity location) {
+        this.location = location;
+    }
 
-	public StoreEntity getStore() {
-		return store;
-	}
+    public StoreEntity getStore() {
+        return store;
+    }
 
-	public void setStore(StoreEntity store) {
-		this.store = store;
-	}
+    public void setStore(StoreEntity store) {
+        this.store = store;
+    }
 
-	public boolean getIsVendor() {
-		return isVendor;
-	}
+    public boolean getIsVendor() {
+        return isVendor;
+    }
 
-	public void setIsVendor(boolean isVendor) {
-		this.isVendor = isVendor;
-	}
+    public void setIsVendor(boolean isVendor) {
+        this.isVendor = isVendor;
+    }
 
-	public boolean getIsAdmin() {
-		return isAdmin;
-	}
+    public boolean getIsAdmin() {
+        return isAdmin;
+    }
 
-	public void setIsAdmin(boolean isAdmin) {
-		this.isAdmin = isAdmin;
-	}
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
 
-	public boolean getIsDeleted() {
-		return isDeleted;
-	}
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
 
-	public void setIsDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted;
-	}
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 
 }

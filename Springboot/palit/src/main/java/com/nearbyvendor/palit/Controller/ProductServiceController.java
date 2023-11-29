@@ -46,7 +46,7 @@ public class ProductServiceController {
 
     @PutMapping("/updateProductServiceById/{id}")
     public ResponseEntity<ProductServiceEntity> updateProductService(@PathVariable int id,
-            @RequestBody ProductServiceEntity productService) {
+                                                                     @RequestBody ProductServiceEntity productService) {
         ProductServiceEntity updatedProductService = productServiceService.updateProductServiceById(id, productService);
         if (updatedProductService != null) {
             return new ResponseEntity<>(updatedProductService, HttpStatus.OK);

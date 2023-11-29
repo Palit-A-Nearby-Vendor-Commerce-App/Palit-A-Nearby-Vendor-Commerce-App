@@ -1,9 +1,9 @@
 package com.nearbyvendor.palit.entity;
 
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import javax.persistence.*;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "storeId")
 @Entity
@@ -33,7 +33,7 @@ public class StoreEntity {
     }
 
     public StoreEntity(String storeName, String description, String category, AccountEntity account,
-            ProductServiceEntity productService) {
+                       ProductServiceEntity productService) {
         this.storeName = storeName;
         this.description = description;
         this.category = category;

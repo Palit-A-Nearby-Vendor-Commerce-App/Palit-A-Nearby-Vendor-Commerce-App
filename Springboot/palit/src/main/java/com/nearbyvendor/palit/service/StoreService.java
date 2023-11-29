@@ -1,12 +1,11 @@
 package com.nearbyvendor.palit.service;
 
-import java.util.List;
-
+import com.nearbyvendor.palit.entity.StoreEntity;
+import com.nearbyvendor.palit.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.nearbyvendor.palit.entity.StoreEntity;
-import com.nearbyvendor.palit.repository.StoreRepository;
+import java.util.List;
 
 @Service
 public class StoreService {

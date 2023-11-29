@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -39,7 +40,7 @@ public class UserController {
 
     @PutMapping(value = "/updateUserById/{id}")
     public ResponseEntity<UserEntity> updateUser(@PathVariable("id") int id,
-            @RequestBody UserEntity updatedUserEntity) {
+                                                 @RequestBody UserEntity updatedUserEntity) {
         UserEntity user = userService.updateUserById(id, updatedUserEntity);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }

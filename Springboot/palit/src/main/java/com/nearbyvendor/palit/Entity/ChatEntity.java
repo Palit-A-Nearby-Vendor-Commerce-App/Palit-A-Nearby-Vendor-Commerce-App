@@ -1,17 +1,10 @@
 package com.nearbyvendor.palit.entity;
 
-import java.sql.Timestamp;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "chatId")
 @Entity
@@ -40,7 +33,7 @@ public class ChatEntity {
     }
 
     public ChatEntity(int chatId, AccountEntity account, String messageContent, Timestamp timestamp,
-            ConversationEntity conversation) {
+                      ConversationEntity conversation) {
         this.chatId = chatId;
         this.account = account;
         this.messageContent = messageContent;

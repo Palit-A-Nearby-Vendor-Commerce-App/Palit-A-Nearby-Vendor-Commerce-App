@@ -40,7 +40,7 @@ public class TransactionController {
 
     @PutMapping("updateTransactionById/{id}")
     public ResponseEntity<TransactionEntity> updateTransactionById(@PathVariable int id,
-            @RequestBody TransactionEntity transaction) {
+                                                                   @RequestBody TransactionEntity transaction) {
         TransactionEntity updatedTransaction = transactionService.updateTransactionById(id, transaction);
         if (updatedTransaction != null) {
             return new ResponseEntity<>(updatedTransaction, HttpStatus.OK);

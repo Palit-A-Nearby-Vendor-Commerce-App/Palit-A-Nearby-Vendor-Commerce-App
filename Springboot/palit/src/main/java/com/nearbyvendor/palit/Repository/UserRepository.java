@@ -1,17 +1,16 @@
 package com.nearbyvendor.palit.repository;
 
 import com.nearbyvendor.palit.entity.UserEntity;
-
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
-  List<UserEntity> findByIsDeletedFalse();
+    List<UserEntity> findByIsDeletedFalse();
 
-  UserEntity findByUserIdAndIsDeletedFalse(int userId);
+    UserEntity findByUserIdAndIsDeletedFalse(int userId);
 
 }

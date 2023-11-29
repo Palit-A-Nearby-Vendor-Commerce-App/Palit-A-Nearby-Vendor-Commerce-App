@@ -1,10 +1,9 @@
 package com.nearbyvendor.palit.entity;
 
-import javax.persistence.*;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import javax.persistence.*;
 import java.util.Date;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
@@ -36,7 +35,7 @@ public class UserEntity {
     }
 
     public UserEntity(int userId, String firstName, String lastName, Date birthDate, boolean isDeleted, byte[] image,
-            AccountEntity account) {
+                      AccountEntity account) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -48,7 +47,7 @@ public class UserEntity {
     }
 
     public UserEntity(int userId, String firstName, String lastName, Date birthDate, byte[] image,
-            AccountEntity account) {
+                      AccountEntity account) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;

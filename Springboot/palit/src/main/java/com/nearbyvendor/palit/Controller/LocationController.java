@@ -40,7 +40,7 @@ public class LocationController {
 
     @PutMapping("/updateLocationById/{id}")
     public ResponseEntity<LocationEntity> updateLocationById(@PathVariable("id") int id,
-            @RequestBody LocationEntity location) {
+                                                             @RequestBody LocationEntity location) {
         LocationEntity updatedLocation = locationService.updateLocationById(id, location);
         if (updatedLocation != null) {
             return new ResponseEntity<>(updatedLocation, HttpStatus.OK);

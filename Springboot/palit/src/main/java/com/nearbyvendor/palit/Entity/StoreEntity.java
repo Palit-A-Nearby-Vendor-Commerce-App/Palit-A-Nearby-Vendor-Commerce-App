@@ -2,10 +2,11 @@ package com.nearbyvendor.palit.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "storeId")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "storeId")
 @Entity
 @Table(name = "store")
 public class StoreEntity {
@@ -22,9 +23,11 @@ public class StoreEntity {
 
     private boolean isDeleted;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "store")
     private AccountEntity account;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "store")
     private ProductServiceEntity productService;
 

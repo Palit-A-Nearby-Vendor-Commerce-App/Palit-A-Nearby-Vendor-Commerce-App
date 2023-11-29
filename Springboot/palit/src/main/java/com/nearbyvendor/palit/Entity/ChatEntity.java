@@ -45,8 +45,7 @@ public class ChatEntity {
     public ChatEntity() {
     }
 
-    public ChatEntity(int chatId, AccountEntity account, String messageContent, Timestamp timestamp, ConversationEntity conversation,
-            boolean isDeleted) {
+    public ChatEntity(int chatId, AccountEntity account, String messageContent, Timestamp timestamp, ConversationEntity conversation) {
         this.chatId = chatId;
         this.account = account;
         this.messageContent = messageContent;

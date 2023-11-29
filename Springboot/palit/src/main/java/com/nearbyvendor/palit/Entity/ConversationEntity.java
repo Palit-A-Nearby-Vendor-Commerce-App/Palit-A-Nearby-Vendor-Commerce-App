@@ -54,7 +54,7 @@ public class ConversationEntity {
 //        this.chat = chat;
 //    }
     
-    public ConversationEntity(int conversationId, AccountEntity vendor, AccountEntity customer, boolean isDeleted) {
+    public ConversationEntity(int conversationId, AccountEntity vendor, AccountEntity customer) {
         this.conversationId = conversationId;
         this.vendor = vendor;
         this.customer = customer;

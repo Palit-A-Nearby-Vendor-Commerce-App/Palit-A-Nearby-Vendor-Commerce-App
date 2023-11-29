@@ -28,7 +28,7 @@ public class LocationEntity {
     public LocationEntity() {
     }
 
-    public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account, boolean isDeleted ) {
+    public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account ) {
         this.locationId = locationId;
         this.latitude = latitude;
         this.longitude = longitude;

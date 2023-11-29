@@ -30,7 +30,7 @@ public class ProductServiceEntity {
     public ProductServiceEntity() {
     }
 
-    public ProductServiceEntity(String name, double price, byte[] image, StoreEntity store, boolean isDeleted) {
+    public ProductServiceEntity(String name, double price, byte[] image, StoreEntity store) {
         this.name = name;
         this.price = price;
         this.store = store;

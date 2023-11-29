@@ -56,7 +56,7 @@ public class AccountEntity {
     public AccountEntity() {
     }
 
-    public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store, boolean isVendor, boolean isAdmin, boolean isDeleted) {
+    public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store, boolean isVendor, boolean isAdmin) {
         this.accountId = accountId;
         this.email = email;
         this.password = password;

@@ -10,10 +10,6 @@ public class TransactionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int transactionId;
 
-//    private int accountCustomerId;
-//
-//    private int accountVendorId; //delete sa daw hehe
-
     private String status;
     
     private boolean isDeleted;

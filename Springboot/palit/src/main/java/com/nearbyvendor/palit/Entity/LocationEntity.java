@@ -36,11 +36,11 @@ public class LocationEntity {
         this.account = account;
     }
 
-    public int getId() {
+    public int getLocationId() {
         return locationId;
     }
 
-    public void setId(int locationId) {
+    public void setLocationId(int locationId) {
         this.locationId = locationId;
     }
 

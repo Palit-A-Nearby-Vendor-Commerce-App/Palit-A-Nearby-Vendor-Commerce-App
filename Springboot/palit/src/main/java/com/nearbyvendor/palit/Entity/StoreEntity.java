@@ -39,11 +39,11 @@ public class StoreEntity {
     }
     
 
-	public int getId() {
+	public int getStoreId() {
         return storeId;
     }
     
-    public void setId(int storeId) {
+    public void setStoreId(int storeId) {
         this.storeId = storeId;
     }
     

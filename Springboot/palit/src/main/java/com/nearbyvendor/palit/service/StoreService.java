@@ -36,7 +36,7 @@ public class StoreService {
     public StoreEntity updateStoreById(int storeId, StoreEntity store) {
         StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
         if (existingStore != null) {
-            store.setId(storeId);
+            store.setStoreId(storeId);
             return storeRepository.save(store);
         } else {
             // Log an error message for debugging

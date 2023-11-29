@@ -36,7 +36,7 @@ public class TransactionService {
     public TransactionEntity updateTransactionById(int id, TransactionEntity transaction) {
         TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
         if (existingTransaction != null) {
-            transaction.setId(existingTransaction.getId());
+            transaction.setTransactionId(existingTransaction.getTransactionId());
             transaction.setIsDeleted(false);
             return transactionRepository.save(transaction);
         } else {

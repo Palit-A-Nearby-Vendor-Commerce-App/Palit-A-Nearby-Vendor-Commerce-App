@@ -35,7 +35,7 @@ public class ReportService {
     public ReportEntity updateReportById(int id, ReportEntity report) {
         ReportEntity existingReport = reportRepository.findByReportIdAndIsDeletedFalse(id);
         if (existingReport != null) {
-            report.setId(id);
+            report.setReportId(id);
             return reportRepository.save(report);
         } else {
             // Log an error message for debugging

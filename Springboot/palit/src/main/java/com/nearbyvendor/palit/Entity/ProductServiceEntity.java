@@ -37,11 +37,11 @@ public class ProductServiceEntity {
         this.image = image;
     }
 
-    public int getId() {
+    public int getProductServiceId() {
         return productId;
     }
 
-    public void setId(int productId) {
+    public void setProductServiceId(int productId) {
         this.productId = productId;
     }
 

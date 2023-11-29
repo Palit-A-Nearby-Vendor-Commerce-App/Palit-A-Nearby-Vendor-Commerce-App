@@ -35,11 +35,11 @@ public class TransactionEntity {
         this.status = status;
     }
 
-    public int getId() {
+    public int getTransactionId() {
         return transactionId;
     }
 
-    public void setId(int transactionId) {
+    public void setTransactionId(int transactionId) {
         this.transactionId = transactionId;
     }
 

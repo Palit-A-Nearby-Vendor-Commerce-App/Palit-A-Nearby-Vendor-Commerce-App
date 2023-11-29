@@ -52,7 +52,7 @@ public class ChatEntity {
         this.messageContent = messageContent;
         this.timestamp = timestamp;
         this.conversation = conversation;
-        this.isDeleted = isDeleted;
+        this.isDeleted = false;
     }
 
     public int getChatId() {

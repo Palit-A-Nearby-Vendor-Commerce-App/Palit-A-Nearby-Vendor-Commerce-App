@@ -28,12 +28,13 @@ public class LocationEntity {
     public LocationEntity() {
     }
 
-    public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account ) {
+    public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account, boolean isDeleted ) {
         this.locationId = locationId;
         this.latitude = latitude;
         this.longitude = longitude;
         this.isActive = isActive;
         this.account = account;
+        this.isDeleted = false;
     }
 
     public int getLocationId() {

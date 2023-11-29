@@ -66,7 +66,7 @@ public class AccountEntity {
         this.store = store;
         this.isVendor = isVendor;
         this.isAdmin = isAdmin;
-        this.isDeleted = isDeleted;
+        this.isDeleted = false;
     }
     
     

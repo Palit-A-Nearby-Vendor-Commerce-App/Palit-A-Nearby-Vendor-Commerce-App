@@ -30,11 +30,12 @@ public class ProductServiceEntity {
     public ProductServiceEntity() {
     }
 
-    public ProductServiceEntity(String name, double price, byte[] image, StoreEntity store) {
+    public ProductServiceEntity(String name, double price, byte[] image, StoreEntity store, boolean isDeleted) {
         this.name = name;
         this.price = price;
         this.store = store;
         this.image = image;
+        this.isDeleted = false;
     }
 
     public int getProductServiceId() {

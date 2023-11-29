@@ -58,7 +58,7 @@ public class ConversationEntity {
         this.conversationId = conversationId;
         this.vendor = vendor;
         this.customer = customer;
-        this.isDeleted = isDeleted;
+        this.isDeleted = false;
     }
 
 

@@ -4,6 +4,9 @@ import java.util.*;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "account")
 public class AccountEntity {
@@ -22,29 +25,37 @@ public class AccountEntity {
 
     private boolean isDeleted;
 
+    @JsonManagedReference
     @OneToOne(mappedBy = "account")
     private UserEntity user;
 
+    @JsonBackReference
     @OneToOne
     @JoinColumn(name = "locationId", referencedColumnName = "locationId")
     private LocationEntity location;
 
+    @JsonBackReference
     @OneToOne
     @JoinColumn(name = "storeId", referencedColumnName = "storeId")
     private StoreEntity store;
     
+    @JsonManagedReference
     @OneToMany(mappedBy = "customer")
     private Set<TransactionEntity> customerTransactions;
     
+    @JsonManagedReference
     @OneToMany(mappedBy = "account")
     private Set<ChatEntity> chat;
     
+    @JsonManagedReference
     @OneToMany(mappedBy = "customer")
     private Set<ConversationEntity> conversations;
     
+    @JsonManagedReference
     @OneToMany(mappedBy = "vendor")
     private Set<TransactionEntity> vendorTransactions;
     
+    @JsonManagedReference
     @OneToMany(mappedBy = "account")
     private List<ReportEntity> report;
     

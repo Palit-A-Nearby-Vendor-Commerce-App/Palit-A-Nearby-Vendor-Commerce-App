@@ -1,6 +1,9 @@
 package com.nearbyvendor.palit.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import java.sql.Timestamp;
 
 @Entity
@@ -14,17 +17,15 @@ public class ReportEntity {
 //    @Column(nullable = false)
 //    private int senderId; //remove sa daw ni
     
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "senderId")
     private AccountEntity account;
 
-    @Column(nullable = false)
     private String messageContent;
 
-    @Column(nullable = false)
     private Timestamp timestamp;
 
-    @Column(nullable = false)
     private boolean isResolved;
     
     private boolean isDeleted;

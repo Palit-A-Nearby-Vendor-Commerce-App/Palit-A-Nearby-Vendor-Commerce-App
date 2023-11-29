@@ -2,6 +2,8 @@ package com.nearbyvendor.palit.entity;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "product_service")
 public class ProductServiceEntity {
@@ -19,6 +21,7 @@ public class ProductServiceEntity {
     
     private boolean isDeleted;
     
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "storeId", referencedColumnName = "storeId")
     private StoreEntity store;

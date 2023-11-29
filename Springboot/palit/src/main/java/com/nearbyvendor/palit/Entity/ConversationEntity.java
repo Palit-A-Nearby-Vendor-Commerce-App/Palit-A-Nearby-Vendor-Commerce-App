@@ -1,6 +1,10 @@
 package com.nearbyvendor.palit.entity;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.Set;
 
 @Entity
@@ -14,14 +18,17 @@ public class ConversationEntity {
 //    private int vendorAccountId;
 
 //    private int customerAccountId;
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "vendorAccountId", referencedColumnName = "accountId")
     private AccountEntity vendor;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "customerAccountId", referencedColumnName = "accountId")
     private AccountEntity customer;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "conversation")
     private Set<ChatEntity> chat;    
     

@@ -23,13 +23,10 @@ public class ReportEntity {
     @JoinColumn(name = "senderId")
     private AccountEntity account;
 
-    @Column(nullable = false)
     private String messageContent;
 
-    @Column(nullable = false)
     private Timestamp timestamp;
 
-    @Column(nullable = false)
     private boolean isResolved;
     
     private boolean isDeleted;

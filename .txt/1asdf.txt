@@ -1,0 +1,486 @@
+revised this sign up page to have the same look and features as the return statement below. use tailwind and materialui:
+```
+import React, { useState } from "react";
+import axios from "axios";
+
+const Signup = () => {
+  // state variables for user input
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [isVendor, setIsVendor] = useState(false);
+  const [storeName, setStoreName] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
+  const [latitude, setLatitude] = useState(0);
+  const [longitude, setLongitude] = useState(0);
+  const [userImage, setUserImage] = useState(null); // state variable for user image
+  const [storeImage, setStoreImage] = useState(null); // state variable for store image
+
+  // state variable for error message
+  const [error, setError] = useState("");
+
+  // function to handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // prevent default behavior of form
+    try {
+      // check if email is already taken
+      const emailResponse = await axios.post("/api/isEmailTaken", {
+        email: email,
+      });
+      if (emailResponse.data) {
+        // email is taken, show error message
+        setError("Email is already taken. Please use another email.");
+      } else {
+        // email is not taken, proceed to create account
+        const accountResponse = await axios.post("/api/createAccount", {
+          email: email,
+          password: password,
+          isVendor: isVendor,
+          isAdmin: false,
+        });
+        // get the created account id
+        const accountId = accountResponse.data.accountId;
+        // create user with the account id and the user image
+        const userFormData = new FormData(); // create a form data object
+        userFormData.append("firstName", firstName); // append the user input
+        userFormData.append("lastName", lastName);
+        userFormData.append("birthDate", birthDate);
+        userFormData.append("account", JSON.stringify({ accountId: accountId })); // append the account object as a string
+        userFormData.append("image", userImage); // append the user image file
+        await axios.post("/api/createUser", userFormData, {
+          headers: {
+            "Content-Type": "multipart/form-data", // set the content type header
+          },
+        });
+        // create location with the account id
+        await axios.post("/api/createLocation", {
+          latitude: latitude,
+          longitude: longitude,
+          isActive: true,
+          account: {
+            accountId: accountId,
+          },
+        });
+        // if the user is a vendor, create store with the account id and the store image
+        if (isVendor) {
+          const storeFormData = new FormData(); // create another form data object
+          storeFormData.append("storeName", storeName); // append the store input
+          storeFormData.append("description", description);
+          storeFormData.append("category", category);
+          storeFormData.append("account", JSON.stringify({ accountId: accountId })); // append the account object as a string
+          storeFormData.append("image", storeImage); // append the store image file
+          await axios.post("/api/createStore", storeFormData, {
+            headers: {
+              "Content-Type": "multipart/form-data", // set the content type header
+            },
+          });
+        }
+        // clear the error message
+        setError("");
+        // redirect to login page or home page
+        // window.location.href = "/login" or "/home";
+      }
+    } catch (err) {
+      // something went wrong, show error message
+      setError(err.message);
+    }
+  };
+
+  // function to handle vendor checkbox change
+  const handleVendorChange = (e) => {
+    setIsVendor(e.target.checked);
+  };
+
+  // function to get the current location of the user
+  const getLocation = () => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // set the latitude and longitude state variables
+        setLatitude(position.coords.latitude);
+        setLongitude(position.coords.longitude);
+      },
+      (error) => {
+        // something went wrong, show error message
+        setError(error.message);
+      }
+    );
+  };
+
+  // function to handle user image change
+  const handleUserImageChange = (e) => {
+    setUserImage(e.target.files[0]); // set the user image state variable to the selected file
+  };
+
+  // function to handle store image change
+  const handleStoreImageChange = (e) => {
+    setStoreImage(e.target.files[0]); // set the store image state variable to the selected file
+  };
+
+  return (
+    <div className="container">
+      <h1>Sign Up</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="firstName">First Name</label>
+          <input
+            type="text"
+            id="firstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="lastName">Last Name</label>
+          <input
+            type="text"
+            id="lastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="birthDate">Birth Date</label>
+          <input
+            type="date"
+            id="birthDate"
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="userImage">User Image</label>
+          <input
+            type="file"
+            id="userImage"
+            accept="image/*"
+            onChange={handleUserImageChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="isVendor">Are you a vendor?</label>
+          <input
+            type="checkbox"
+            id="isVendor"
+            checked={isVendor}
+            onChange={handleVendorChange}
+          />
+        </div>
+        {isVendor && (
+          // show the store details only if the user is a vendor
+          <div className="store-details">
+            <div className="form-group">
+              <label htmlFor="storeName">Store Name</label>
+              <input
+                type="text"
+                id="storeName"
+                value={storeName}
+                onChange={(e) => setStoreName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="description">Description</label>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="category">Category</label>
+              <select
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+              >
+                <option value="">Select a category</option>
+                <option value="Food">Food</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Books">Books</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label htmlFor="storeImage">Store Image</label>
+              <input
+                type="file"
+                id="storeImage"
+                accept="image/*"
+                onChange={handleStoreImageChange}
+                required
+              />
+            </div>
+          </div>
+        )}
+        <div className="form-group">
+          <label htmlFor="location">Location</label>
+          <button type="button" id="location" onClick={getLocation}>
+            Get Current Location
+          </button>
+          <p>
+            Latitude: {latitude} Longitude: {longitude}
+          </p>
+        </div>
+        <div className="form-group">
+          <button type="submit">Sign Up</button>
+        </div>
+        {error && <p className="error">{error}</p>}
+      </form>
+    </div>
+  );
+};
+
+export default Signup;
+
+```
+
+
+```
+return (
+    <div className="w-full pb-10 bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">
+      <div className="w-full flex items-center justify-center">
+        <img src={logo} alt="Palit logo" className="w-[250px] h-[102px] mt-5" />
+      </div>
+      <div className="w-[500px] m-auto">
+        <form onSubmit={handleSubmit} className="mt-8">
+          <div className="mt-4 text-center">
+            <label className="w-[90px] h-[90px] flex justify-center items-center bg-primary rounded-[20px] cursor-pointer mx-auto">
+              <input
+                name="image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-[90px] h-[90px] rounded-[20px]"
+                />
+              ) : (
+                <span className="text-5xl font-semibold` text-white">+</span>
+              )}
+            </label>
+            {isImageEmpty && <p className="text-red-500">Image is required</p>}
+          </div>
+          <div className="mt-4 flex">
+            <div className="mr-2 w-full">
+              <input
+                name="firstName"
+                onChange={handleChange}
+                placeholder="First Name"
+                required
+                className="rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy w-full"
+              />
+            </div>
+            <div className="w-full">
+              <input
+                name="lastName"
+                onChange={handleChange}
+                placeholder="Last Name"
+                required
+                className="rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy w-full"
+              />
+            </div>
+          </div>
+          <div className="mt-4">
+            <input
+              // type="email"
+              name="email"
+              onChange={handleChange}
+              placeholder="Email"
+              required
+              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+            />
+          </div>
+          <div className="mt-4">
+            <input
+              name="password"
+              onChange={handleChange}
+              placeholder="Password"
+              required
+              type="password"
+              className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+            />
+            {!isPasswordValid && (
+              <p className="text-red-500">
+                Password must be at least 8 characters, include an uppercase and
+                lowercase letter, a number, and a special character.
+              </p>
+            )}
+          </div>
+          <div className="mt-4">
+            <input
+              name="birthdate"
+              type="date"
+              onChange={handleChange}
+              placeholder="Birthdate"
+              required
+              className="w-full rounded-[20px] p-3 mt-1 text-gray-400 font-custom border border-grayy"
+            />
+          </div>
+          <div className="mt-4">
+            <select
+              name="userType"
+              onChange={handleChange}
+              required
+              className="w-full rounded-[20px] p-3 mt-1 text-gray-400 font-custom border border-grayy"
+            >
+              <option value="">Select user type</option>
+              <option value="customer">Customer</option>
+              <option value="vendor">Vendor</option>
+            </select>
+          </div>
+
+          {userData.userType === "vendor" && (
+            <>
+              <div className="mt-4">
+                <input
+                  name="storeName"
+                  onChange={handleChange}
+                  placeholder="Store Name"
+                  required
+                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+                />
+              </div>
+              <div className="mt-4">
+                <input
+                  name="description"
+                  onChange={handleChange}
+                  placeholder="Description"
+                  required
+                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border-gray" />
+              </div>
+              <div className="mt-4">
+                <select
+                  name="category"
+                  onChange={handleChange}
+                  placeholder="Category"
+                  required
+                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
+                >
+                  <option value="">Select category</option>
+                  <option value="fish">Fish</option>
+                  <option value="fruits">Fruits</option>
+                  <option value="assorted">Assorted</option>
+                  <option value="manicure">Manicure</option>
+                </select>
+              </div>
+            </>
+          )}
+          <p className="text-center mt-4 text-red-600">{alert}</p>
+          <button
+            type="submit"
+            className="w-full bg-primary p-3 text-white rounded-[20px] mt-10"
+          >
+            Sign Up
+          </button>
+        </form>
+      </div>
+
+      {confirm && (
+        <div
+          className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50
+                      "
+        >
+          <React.Fragment>
+            <Dialog
+              fullScreen={fullScreen}
+              open={confirm}
+              onClose={handleCancel}
+              aria-labelledby="responsive-dialog-title"
+            >
+              <DialogTitle id="responsive-dialog-title">
+                {"Sign up confirmation"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Are you sure you want to become part of our community and
+                  create an account?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button
+                  autoFocus
+                  onClick={handleCancel}
+                  style={{ backgroundColor: "#ccc", color: "#fff" }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleConfirm}
+                  style={{ backgroundColor: "#1976D2", color: "#fff" }}
+                  autoFocus
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+              {success && (
+                <Snackbar
+                  open={success}
+                  autoHideDuration={6000}
+                  onClose={() => false}
+                >
+                  <Alert
+                    onClose={() => false}
+                    severity="success"
+                    sx={{ width: "100%" }}
+                  >
+                    Created account successfully!
+                  </Alert>
+                </Snackbar>
+              )}
+              {error && (
+                <Snackbar
+                  open={error}
+                  autoHideDuration={6000}
+                  onClose={() => false}
+                >
+                  <Alert
+                    onClose={() => false}
+                    severity="error"
+                    sx={{ width: "100%" }}
+                  >
+                    Failed to create account. Please try again.
+                  </Alert>
+                </Snackbar>
+              )}
+            </Dialog>
+          </React.Fragment>
+        </div>
+      )}
+    </div>
+  );
+}
+```

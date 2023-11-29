@@ -31,7 +31,8 @@ function App() {
           <Route path="/services" exact component={Services} />
           <Route path="/store" exact component={Store} />
           <Route path="/report" exact component={Report} />
-
+          <Route path="/home" exact component={Home} />
+          <Route path="/chat" exact component={Chat} />
 
           <Route path="/adminlogin3x8Yz7!qA" exact component={Admin} />
           <Route
@@ -76,10 +77,6 @@ function App() {
             exact
             component={AdminDashboard}
           />
-
-          <Route path="/home" exact component={Home} />
-          <Route path="/admin" exact component={Admin} />
-          <Route path="/chat" exact component={Chat} />
 
           <Route component={Landing} />
         </Switch>

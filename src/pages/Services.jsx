@@ -1,7 +1,7 @@
 import React from "react";
 import NavigationBar from "../components/NavigationBar";
 
-import { services } from "../assets/styles/styles";
+import { services } from "../data/dummy";
 
 const Services = () => {
   return (
@@ -27,25 +27,27 @@ const Services = () => {
       </div>
 
       <div className="grid grid-cols-3 gap-5 items-center justify-center p-10 bg-red w-full">
-  {services.map((service, index) => (
-    <div className="flex flex-col items-center bg-white p-10 rounded-lg text-center shadow-md" key={index}>
-      <div className="bg-slate-100 rounded-full p-2">
-        <img
-          src={service.logo}
-          className="w-12 h-12 rounded-full"
-          alt="Service Logo"
-        />
+        {services.map((service, index) => (
+          <div
+            className="flex flex-col items-center bg-white p-10 rounded-lg text-center shadow-md"
+            key={index}
+          >
+            <div className="bg-slate-100 rounded-full p-2">
+              <img
+                src={service.logo}
+                className="w-12 h-12 rounded-full"
+                alt="Service Logo"
+              />
+            </div>
+            <h2 className="font-semibold text-2xl mt-5 mb-4">
+              {service.title}
+            </h2>
+            <p className="text-slate-500">{service.description}</p>
+          </div>
+        ))}
       </div>
-      <h2 className="font-semibold text-2xl mt-5 mb-4">
-        {service.title}
-      </h2>
-      <p className="text-slate-500">{service.description}</p>
-    </div>
-  ))}
-</div>
     </div>
   );
 };
 
 export default Services;
-

@@ -54,11 +54,9 @@ public class AccountEntity {
     
     // constructors
     public AccountEntity() {
-        super();
     }
 
     public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store, boolean isVendor, boolean isAdmin, boolean isDeleted) {
-        super();
         this.accountId = accountId;
         this.email = email;
         this.password = password;

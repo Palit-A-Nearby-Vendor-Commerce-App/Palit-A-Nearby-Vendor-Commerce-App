@@ -1,4 +1,614 @@
 
+AccountController.java:
+```
+package com.nearbyvendor.palit.controller;
+
+import com.nearbyvendor.palit.entity.AccountEntity;
+import com.nearbyvendor.palit.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class AccountController {
+
+    @Autowired
+    private AccountService accountService;
+
+    @GetMapping("/getAllAccounts")
+    public ResponseEntity<List<AccountEntity>> getAllAccounts() {
+        List<AccountEntity> accounts = accountService.getAllAccounts();
+        return new ResponseEntity<>(accounts, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAccountById/{id}")
+    public ResponseEntity<AccountEntity> getAccountById(@PathVariable int id) {
+        AccountEntity account = accountService.getAccountById(id);
+        if (account != null) {
+            return new ResponseEntity<>(account, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/createAccount")
+    public ResponseEntity<AccountEntity> createAccount(@RequestBody AccountEntity account) {
+        AccountEntity createdAccount = accountService.createAccount(account);
+        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/editAccountById/{id}")
+    public ResponseEntity<AccountEntity> editAccountById(@PathVariable int id, @RequestBody AccountEntity account) {
+        AccountEntity updatedAccount = accountService.updateAccountById(id, account);
+        if (updatedAccount != null) {
+            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/deleteAccountById/{id}")
+    public ResponseEntity<Void> deleteAccountById(@PathVariable int id) {
+        boolean deleted = accountService.deleteAccountById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping("/isEmailTaken")
+    public ResponseEntity<Boolean> checkEmail(@RequestBody AccountEntity account) {
+        boolean isEmailTaken = accountService.checkEmail(account);
+        return new ResponseEntity<>(isEmailTaken, HttpStatus.OK);
+    }
+}
+
+```
+
+ChatController.java:
+```
+package com.nearbyvendor.palit.controller;
+
+import com.nearbyvendor.palit.entity.ChatEntity;
+import com.nearbyvendor.palit.service.ChatService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class ChatController {
+
+    @Autowired
+    private ChatService chatService;
+
+    // Get all chats by conversation id
+    @GetMapping("getChatsByConversationId/{conversationId}")
+    public ResponseEntity<List<ChatEntity>> getChatsByConversationId(@PathVariable int conversationId) {
+        List<ChatEntity> chats = chatService.getChatsByConversationId(conversationId);
+        return new ResponseEntity<>(chats, HttpStatus.OK);
+    }
+
+    // Create a new chat
+    @PostMapping("/createChat")
+    public ResponseEntity<Object> createChat(@RequestBody ChatEntity chat) {
+        // Check if the account is provided in the request
+        if (chat.getAccount() == null) {
+            return new ResponseEntity<>("Account information is required for creating a chat.", HttpStatus.BAD_REQUEST);
+        }
+
+        // Other validations or processing logic can be added as needed
+
+        ChatEntity createdChat = chatService.createChat(chat);
+        return new ResponseEntity<>(createdChat, HttpStatus.CREATED);
+    }
+
+    // Update an existing chat
+    @PutMapping("updateChatById/{chatId}")
+    public ResponseEntity<ChatEntity> updateChatById(@PathVariable int chatId, @RequestBody ChatEntity chat) {
+        ChatEntity updatedChat = chatService.updateChatById(chatId, chat);
+        if (updatedChat != null) {
+            return new ResponseEntity<>(updatedChat, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Delete an existing chat
+    @DeleteMapping("deleteChatById/{chatId}")
+    public ResponseEntity<Void> deleteChatById(@PathVariable int chatId) {
+        boolean deleted = chatService.deleteChatById(chatId);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
+
+```
+
+ConversationController.java:
+```
+package com.nearbyvendor.palit.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.nearbyvendor.palit.entity.ConversationEntity;
+import com.nearbyvendor.palit.service.ConversationService;
+
+@RestController
+@RequestMapping("/api")
+public class ConversationController {
+
+    @Autowired
+    private ConversationService conversationService;
+
+    // Get all conversations
+    @GetMapping("/getAllConversations")
+    public ResponseEntity<List<ConversationEntity>> getAllConversations() {
+        List<ConversationEntity> conversations = conversationService.getAllConversations();
+        return new ResponseEntity<>(conversations, HttpStatus.OK);
+    }
+
+    // Get a conversation by id
+    @GetMapping("/getConversationById/{id}")
+    public ResponseEntity<ConversationEntity> getConversationById(@PathVariable("id") int id) {
+        ConversationEntity conversation = conversationService.getConversationById(id);
+        if (conversation != null) {
+            return new ResponseEntity<>(conversation, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Create a new conversation
+    @PostMapping("/createConversation")
+    public ResponseEntity<ConversationEntity> createConversation(@RequestBody ConversationEntity conversation) {
+        ConversationEntity newConversation = conversationService.createConversation(conversation);
+        return new ResponseEntity<>(newConversation, HttpStatus.CREATED);
+    }
+
+    // Update an existing conversation
+    @PutMapping("/updateConversationById/{id}")
+    public ResponseEntity<ConversationEntity> updateConversationById(@PathVariable("id") int id, @RequestBody ConversationEntity conversation) {
+        ConversationEntity updatedConversation = conversationService.updateConversationById(id, conversation);
+        if (updatedConversation != null) {
+            return new ResponseEntity<>(updatedConversation, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Delete a conversation by id
+    @DeleteMapping("/deleteConversationById/{id}")
+    public ResponseEntity<Void> deleteConversationById(@PathVariable("id") int id) {
+        boolean deleted = conversationService.deleteConversationById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
+
+```
+
+LocationController.java:
+```
+package com.nearbyvendor.palit.controller;
+
+import com.nearbyvendor.palit.entity.LocationEntity;
+import com.nearbyvendor.palit.service.LocationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class LocationController {
+
+    @Autowired
+    private LocationService locationService;
+
+    // Get all locations
+    @GetMapping("/getAllLocations")
+    public ResponseEntity<List<LocationEntity>> getAllLocations() {
+        List<LocationEntity> locations = locationService.getAllLocations();
+        return new ResponseEntity<>(locations, HttpStatus.OK);
+    }
+
+    // Get location by id
+    @GetMapping("/getLocationById/{id}")
+    public ResponseEntity<LocationEntity> getLocationById(@PathVariable("id") int id) {
+        LocationEntity location = locationService.getLocationById(id);
+        if (location != null) {
+            return new ResponseEntity<>(location, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Create location
+    @PostMapping("/createLocation")
+    public ResponseEntity<LocationEntity> createLocation(@RequestBody LocationEntity location) {
+        LocationEntity newLocation = locationService.createLocation(location);
+        return new ResponseEntity<>(newLocation, HttpStatus.CREATED);
+    }
+
+    // Update location
+    @PutMapping("/updateLocationById/{id}")
+    public ResponseEntity<LocationEntity> updateLocationById(@PathVariable("id") int id, @RequestBody LocationEntity location) {
+        LocationEntity updatedLocation = locationService.updateLocationById(id, location);
+        if (updatedLocation != null) {
+            return new ResponseEntity<>(updatedLocation, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Delete location
+    @DeleteMapping("/deleteLocationById/{id}")
+    public ResponseEntity<Void> deleteLocationById(@PathVariable("id") int id) {
+        boolean deleted = locationService.deleteLocationById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
+
+```
+
+ProductServiceController.java:
+```
+package com.nearbyvendor.palit.controller;
+
+import com.nearbyvendor.palit.entity.ProductServiceEntity;
+import com.nearbyvendor.palit.service.ProductServiceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class ProductServiceController {
+
+    @Autowired
+    private ProductServiceService productServiceService;
+
+    // Get all product services
+    @GetMapping("/getAllProductServices")
+    public ResponseEntity<List<ProductServiceEntity>> getAllProductServices() {
+        List<ProductServiceEntity> productServices = productServiceService.getAllProductServices();
+        return new ResponseEntity<>(productServices, HttpStatus.OK);
+    }
+
+    // Get product service by id
+    @GetMapping("/getProductServiceById/{id}")
+    public ResponseEntity<ProductServiceEntity> getProductServiceById(@PathVariable int id) {
+        ProductServiceEntity productService = productServiceService.getProductServiceById(id);
+        if (productService != null) {
+            return new ResponseEntity<>(productService, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Get product services by store id
+    @GetMapping("/getProductServicesByStoreId/store/{storeId}")
+    public ResponseEntity<List<ProductServiceEntity>> getProductServicesByStoreId(@PathVariable int storeId) {
+        List<ProductServiceEntity> productServices = productServiceService.getProductServicesByStoreId(storeId);
+        return new ResponseEntity<>(productServices, HttpStatus.OK);
+    }
+
+    // Create product service
+    @PostMapping("/createProductService")
+    public ResponseEntity<ProductServiceEntity> createProductService(@RequestBody ProductServiceEntity productService) {
+        ProductServiceEntity newProductService = productServiceService.createProductService(productService);
+        return new ResponseEntity<>(newProductService, HttpStatus.CREATED);
+    }
+
+    // Update product service
+    @PutMapping("/updateProductServiceById/{id}")
+    public ResponseEntity<ProductServiceEntity> updateProductService(@PathVariable int id, @RequestBody ProductServiceEntity productService) {
+        ProductServiceEntity updatedProductService = productServiceService.updateProductServiceById(id, productService);
+        if (updatedProductService != null) {
+            return new ResponseEntity<>(updatedProductService, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Delete product service
+    @DeleteMapping("/deleteProductServiceById/{id}")
+    public ResponseEntity<Void> deleteProductServiceById(@PathVariable int id) {
+        boolean deleted = productServiceService.deleteProductServiceById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
+
+```
+
+ReportController.java:
+```
+package com.nearbyvendor.palit.controller;
+
+import com.nearbyvendor.palit.entity.ReportEntity;
+import com.nearbyvendor.palit.service.ReportService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class ReportController {
+
+    @Autowired
+    private ReportService reportService;
+
+    // Get all reports
+    @GetMapping("/getAllReports")
+    public ResponseEntity<List<ReportEntity>> getAllReports() {
+        List<ReportEntity> reports = reportService.getAllReports();
+        return new ResponseEntity<>(reports, HttpStatus.OK);
+    }
+
+    // Get a report by ID
+    @GetMapping("/getReportById/{id}")
+    public ResponseEntity<ReportEntity> getReportById(@PathVariable int id) {
+        ReportEntity report = reportService.getReportById(id);
+        if (report != null) {
+            return new ResponseEntity<>(report, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Create a new report
+    @PostMapping("/createReport")
+    public ResponseEntity<ReportEntity> createReport(@RequestBody ReportEntity report) {
+        ReportEntity newReport = reportService.createReport(report);
+        return new ResponseEntity<>(newReport, HttpStatus.CREATED);
+    }
+
+    // Update an existing report
+    @PutMapping("/updateReportById/{id}")
+    public ResponseEntity<ReportEntity> updateReportById(@PathVariable int id, @RequestBody ReportEntity report) {
+        ReportEntity updatedReport = reportService.updateReportById(id, report);
+        if (updatedReport != null) {
+            return new ResponseEntity<>(updatedReport, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Delete an existing report
+    @DeleteMapping("/deleteReportById/{id}")
+    public ResponseEntity<Void> deleteReportById(@PathVariable int id) {
+        boolean deleted = reportService.deleteReportById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
+
+```
+
+StoreController.java:
+```
+package com.nearbyvendor.palit.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.nearbyvendor.palit.entity.StoreEntity;
+import com.nearbyvendor.palit.service.StoreService;
+
+@RestController
+@RequestMapping("/api")
+public class StoreController {
+    
+    @Autowired
+    private StoreService storeService;
+    
+    @GetMapping("/getAllStores")
+    public ResponseEntity<List<StoreEntity>> getAllStores() {
+        List<StoreEntity> stores = storeService.getAllStores();
+        return new ResponseEntity<>(stores, HttpStatus.OK);
+    }
+    
+    @GetMapping("/getStoreById/{id}")
+    public ResponseEntity<StoreEntity> getStoreById(@PathVariable("id") int id) {
+        StoreEntity store = storeService.getStoreById(id);
+        if (store != null) {
+            return new ResponseEntity<>(store, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    
+    @PostMapping("/createStore")
+    public ResponseEntity<StoreEntity> createStore(@RequestBody StoreEntity store) {
+        StoreEntity newStore = storeService.createStore(store);
+        return new ResponseEntity<>(newStore, HttpStatus.CREATED);
+    }
+    
+    @PutMapping("/updateStoreById/{id}")
+    public ResponseEntity<StoreEntity> updateStore(@PathVariable("id") int id, @RequestBody StoreEntity store) {
+        StoreEntity updatedStore = storeService.updateStoreById(id, store);
+        if (updatedStore != null) {
+            return new ResponseEntity<>(updatedStore, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
+
+```
+
+TransactionController.java:
+```
+package com.nearbyvendor.palit.controller;
+
+import com.nearbyvendor.palit.entity.TransactionEntity;
+import com.nearbyvendor.palit.service.TransactionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class TransactionController {
+
+    @Autowired
+    private TransactionService transactionService;
+
+    // Get all transactions
+    @GetMapping("/getAllTransactions")
+    public ResponseEntity<List<TransactionEntity>> getTransactions() {
+        List<TransactionEntity> transactions = transactionService.getAllTransactions();
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    }
+
+    // Get a transaction by ID
+    @GetMapping("/getTransactionById/{id}")
+    public ResponseEntity<TransactionEntity> getTransactionById(@PathVariable int id) {
+        TransactionEntity transaction = transactionService.getTransactionById(id);
+        if (transaction != null) {
+            return new ResponseEntity<>(transaction, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Create a new transaction
+    @PostMapping("/createTransaction")
+    public ResponseEntity<TransactionEntity> createTransaction(@RequestBody TransactionEntity transaction) {
+        TransactionEntity newTransaction = transactionService.createTransaction(transaction);
+        return new ResponseEntity<>(newTransaction, HttpStatus.CREATED);
+    }
+
+    // Update an existing transaction
+    @PutMapping("updateTransactionById/{id}")
+    public ResponseEntity<TransactionEntity> updateTransactionById(@PathVariable int id, @RequestBody TransactionEntity transaction) {
+        TransactionEntity updatedTransaction = transactionService.updateTransactionById(id, transaction);
+        if (updatedTransaction != null) {
+            return new ResponseEntity<>(updatedTransaction, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Delete an existing transaction
+    @DeleteMapping("deleteTransactionById/{id}")
+    public ResponseEntity<Void> deleteTransactionById(@PathVariable int id) {
+        transactionService.deleteTransactionById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}
+
+```
+
+UserController.java:
+```
+package com.nearbyvendor.palit.controller;
+
+import com.nearbyvendor.palit.entity.UserEntity;
+import com.nearbyvendor.palit.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+public class UserController {
+
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
+        List<UserEntity> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("/getUserById/{id}")
+    public ResponseEntity<UserEntity> getUserById(@PathVariable int id) {
+        UserEntity user = userService.getUserById(id);
+        if (user != null) {
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PostMapping(value = "/createUser")
+    public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity newUserEntity) {
+        UserEntity user = userService.createUser(newUserEntity);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    @PutMapping(value = "/updateUserById/{id}")
+    public ResponseEntity<UserEntity> updateUser(@PathVariable("id") int id, @RequestBody UserEntity updatedUserEntity) {
+        UserEntity user = userService.updateUserById(id, updatedUserEntity);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/deleteUserById/{id}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable int id) {
+        userService.deleteUserById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}
+
+```
+
 AccountEntity.java:
 ```
 package com.nearbyvendor.palit.entity;
@@ -472,11 +1082,11 @@ public class LocationEntity {
         this.account = account;
     }
 
-    public int getId() {
+    public int getLocationId() {
         return locationId;
     }
 
-    public void setId(int locationId) {
+    public void setLocationId(int locationId) {
         this.locationId = locationId;
     }
 
@@ -556,11 +1166,11 @@ public class ProductServiceEntity {
         this.image = image;
     }
 
-    public int getId() {
+    public int getProductServiceId() {
         return productId;
     }
 
-    public void setId(int productId) {
+    public void setProductServiceId(int productId) {
         this.productId = productId;
     }
 
@@ -656,11 +1266,11 @@ public class ReportEntity {
         this.isResolved = isResolved;
     }
 
-    public int getId() {
+    public int getReportId() {
         return reportId;
     }
 
-    public void setId(int reportId) {
+    public void setReportId(int reportId) {
         this.reportId = reportId;
     }
 
@@ -750,11 +1360,11 @@ public class StoreEntity {
     }
     
 
-	public int getId() {
+	public int getStoreId() {
         return storeId;
     }
     
-    public void setId(int storeId) {
+    public void setStoreId(int storeId) {
         this.storeId = storeId;
     }
     
@@ -839,11 +1449,11 @@ public class TransactionEntity {
         this.status = status;
     }
 
-    public int getId() {
+    public int getTransactionId() {
         return transactionId;
     }
 
-    public void setId(int transactionId) {
+    public void setTransactionId(int transactionId) {
         this.transactionId = transactionId;
     }
 

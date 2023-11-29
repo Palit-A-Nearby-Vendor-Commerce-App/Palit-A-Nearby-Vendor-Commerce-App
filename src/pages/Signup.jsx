@@ -22,6 +22,7 @@ function Signup() {
   const [isPasswordValid, setIsPasswordValid] = useState(true);
   const [success, setSuccess] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [error, setError] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const [userData, setUserData] = useState({
@@ -112,27 +113,20 @@ function Signup() {
       //   return;
       // }
 
+      
+
       // Create location
+      const locationData = {
+        lat: 0, // Replace with actual latitude if available
+        lng: 0, // Replace with actual longitude if available
+        isActive: false,
+        isDeleted: false,
+      };
       const locationResponse = await axios.post(
         "http://localhost:8080/api/createLocation",
-        {
-          lat: 0, // Replace with actual latitude if available
-          lng: 0, // Replace with actual longitude if available
-          isActive: false,
-        }
+        locationData
       );
       const location = locationResponse.data;
-
-      // Create account
-      const accountData = {
-        isVendor: userData.userType === "vendor",
-        isAdmin: false,
-      };
-      const accountResponse = await axios.post(
-        "http://localhost:8080/api/createAccount",
-        accountData
-      );
-      const account = accountResponse.data;
 
       // Optionally create a store and get its ID
       let store = null;
@@ -141,6 +135,7 @@ function Signup() {
           storeName: userData.storeName,
           description: userData.description,
           category: userData.category,
+          isDeleted: false,
         };
         const storeResponse = await axios.post(
           "http://localhost:8080/api/createStore",
@@ -148,6 +143,20 @@ function Signup() {
         );
         store = storeResponse.data;
       }
+
+      // Create account
+      const accountData = {
+        email: userData.email,
+        password: userData.password,
+        isVendor: userData.userType === "vendor",
+        isAdmin: false,
+        isDeleted: false,
+      };
+      const accountResponse = await axios.post(
+        "http://localhost:8080/api/createAccount",
+        accountData
+      );
+      const account = accountResponse.data;
 
       function convertToBase64(file) {
         return new Promise((resolve, reject) => {
@@ -162,9 +171,7 @@ function Signup() {
       const userJson = {
         ...userData,
         image: userData.image ? await convertToBase64(userData.image) : null,
-        location,
-        account,
-        store,
+        account
       };
 
       console.log(userJson);
@@ -181,7 +188,7 @@ function Signup() {
       }, 3000);
     } catch (error) {
       console.error(error);
-      setAlert("User creation failed. Please try again.");
+      setError(true); // Add this line
     }
   };
 
@@ -337,7 +344,7 @@ function Signup() {
       {confirm && (
         <div
           className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50
-        "
+                      "
         >
           <React.Fragment>
             <Dialog
@@ -385,6 +392,21 @@ function Signup() {
                     Created account successfully!
                   </Alert>
                 </Snackbar>
+              )}
+              {error && (
+                <Snackbar
+                open={success}
+                autoHideDuration={6000}
+                onClose={() => false}
+              >
+                <Alert
+                  onClose={() => false}
+                  severity="error"
+                  sx={{ width: "100%" }}
+                >
+                  Failed to create account. Please try again.
+                </Alert>
+              </Snackbar>
               )}
             </Dialog>
           </React.Fragment>

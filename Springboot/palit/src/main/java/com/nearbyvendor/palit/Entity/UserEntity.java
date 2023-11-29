@@ -35,6 +35,20 @@ public class UserEntity {
 
     // constructor with no fields
     public UserEntity() {
+        super();
+    }
+
+    // constructor with all fields
+    public UserEntity(int userId, String firstName, String lastName, Date birthDate, boolean isDeleted, byte[] image, AccountEntity account) {
+        super();
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.isDeleted = isDeleted;
+        this.image = image;
+        this.account = account;
+        this.isDeleted = false;
     }
 
     public UserEntity(int userId, String firstName, String lastName, Date birthDate, byte[] image, AccountEntity account) {

@@ -40,6 +40,7 @@ public class ReportEntity {
         this.messageContent = messageContent;
         this.timestamp = timestamp;
         this.isResolved = isResolved;
+        this.isDeleted = false;
     }
 
     public int getReportId() {

@@ -36,6 +36,7 @@ public class StoreEntity {
         this.storeName = storeName;
         this.description = description;
         this.category = category;
+        this.isDeleted = false;
     }
     
 

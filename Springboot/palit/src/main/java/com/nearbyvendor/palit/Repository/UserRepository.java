@@ -13,5 +13,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
   List<UserEntity> findByIsDeletedFalse();
 
   UserEntity findByUserIdAndIsDeletedFalse(int userId);
-    
+
 }

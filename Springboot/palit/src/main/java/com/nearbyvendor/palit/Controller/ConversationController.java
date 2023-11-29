@@ -24,14 +24,12 @@ public class ConversationController {
     @Autowired
     private ConversationService conversationService;
 
-    // Get all conversations
     @GetMapping("/getAllConversations")
     public ResponseEntity<List<ConversationEntity>> getAllConversations() {
         List<ConversationEntity> conversations = conversationService.getAllConversations();
         return new ResponseEntity<>(conversations, HttpStatus.OK);
     }
 
-    // Get a conversation by id
     @GetMapping("/getConversationById/{id}")
     public ResponseEntity<ConversationEntity> getConversationById(@PathVariable("id") int id) {
         ConversationEntity conversation = conversationService.getConversationById(id);
@@ -42,16 +40,15 @@ public class ConversationController {
         }
     }
 
-    // Create a new conversation
     @PostMapping("/createConversation")
     public ResponseEntity<ConversationEntity> createConversation(@RequestBody ConversationEntity conversation) {
         ConversationEntity newConversation = conversationService.createConversation(conversation);
         return new ResponseEntity<>(newConversation, HttpStatus.CREATED);
     }
 
-    // Update an existing conversation
     @PutMapping("/updateConversationById/{id}")
-    public ResponseEntity<ConversationEntity> updateConversationById(@PathVariable("id") int id, @RequestBody ConversationEntity conversation) {
+    public ResponseEntity<ConversationEntity> updateConversationById(@PathVariable("id") int id,
+            @RequestBody ConversationEntity conversation) {
         ConversationEntity updatedConversation = conversationService.updateConversationById(id, conversation);
         if (updatedConversation != null) {
             return new ResponseEntity<>(updatedConversation, HttpStatus.OK);
@@ -60,7 +57,6 @@ public class ConversationController {
         }
     }
 
-    // Delete a conversation by id
     @DeleteMapping("/deleteConversationById/{id}")
     public ResponseEntity<Void> deleteConversationById(@PathVariable("id") int id) {
         boolean deleted = conversationService.deleteConversationById(id);

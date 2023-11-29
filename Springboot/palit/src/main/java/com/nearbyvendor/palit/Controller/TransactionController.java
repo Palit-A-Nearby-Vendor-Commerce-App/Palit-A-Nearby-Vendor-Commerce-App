@@ -16,14 +16,12 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    // Get all transactions
     @GetMapping("/getAllTransactions")
     public ResponseEntity<List<TransactionEntity>> getTransactions() {
         List<TransactionEntity> transactions = transactionService.getAllTransactions();
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
-    // Get a transaction by ID
     @GetMapping("/getTransactionById/{id}")
     public ResponseEntity<TransactionEntity> getTransactionById(@PathVariable int id) {
         TransactionEntity transaction = transactionService.getTransactionById(id);
@@ -34,16 +32,15 @@ public class TransactionController {
         }
     }
 
-    // Create a new transaction
     @PostMapping("/createTransaction")
     public ResponseEntity<TransactionEntity> createTransaction(@RequestBody TransactionEntity transaction) {
         TransactionEntity newTransaction = transactionService.createTransaction(transaction);
         return new ResponseEntity<>(newTransaction, HttpStatus.CREATED);
     }
 
-    // Update an existing transaction
     @PutMapping("updateTransactionById/{id}")
-    public ResponseEntity<TransactionEntity> updateTransactionById(@PathVariable int id, @RequestBody TransactionEntity transaction) {
+    public ResponseEntity<TransactionEntity> updateTransactionById(@PathVariable int id,
+            @RequestBody TransactionEntity transaction) {
         TransactionEntity updatedTransaction = transactionService.updateTransactionById(id, transaction);
         if (updatedTransaction != null) {
             return new ResponseEntity<>(updatedTransaction, HttpStatus.OK);
@@ -52,7 +49,6 @@ public class TransactionController {
         }
     }
 
-    // Delete an existing transaction
     @DeleteMapping("deleteTransactionById/{id}")
     public ResponseEntity<Void> deleteTransactionById(@PathVariable int id) {
         transactionService.deleteTransactionById(id);

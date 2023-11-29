@@ -22,7 +22,7 @@ public class TransactionService {
         if (transaction != null) {
             return transaction;
         } else {
-            // Log an error message for debugging
+
             System.err.println("TransactionEntity not found with id: " + id);
             throw new RuntimeException("TransactionEntity not found with id: " + id);
         }
@@ -38,7 +38,7 @@ public class TransactionService {
             transaction.setTransactionId(existingTransaction.getTransactionId());
             return transactionRepository.save(transaction);
         } else {
-            // Log an error message for debugging
+
             System.err.println("Invalid transaction ID for updating: " + id);
             throw new IllegalArgumentException("Invalid transaction ID");
         }
@@ -49,9 +49,9 @@ public class TransactionService {
         if (existingTransaction != null) {
             existingTransaction.setIsDeleted(true);
             transactionRepository.save(existingTransaction);
-            return true; // Deletion was successful
+            return true;
         } else {
-            // Log an error message for debugging
+
             System.err.println("Invalid transaction ID for deletion: " + id);
             throw new IllegalArgumentException("Invalid transaction ID");
         }

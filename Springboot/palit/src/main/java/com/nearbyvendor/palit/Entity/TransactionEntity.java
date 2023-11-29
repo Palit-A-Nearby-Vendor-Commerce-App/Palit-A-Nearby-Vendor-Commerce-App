@@ -15,17 +15,17 @@ public class TransactionEntity {
     private int transactionId;
 
     private String status;
-    
+
     private boolean isDeleted;
-   
+
     @ManyToOne
     @JoinColumn(name = "accountCustomerId", referencedColumnName = "accountId")
     private AccountEntity customer;
-    
+
     @ManyToOne
     @JoinColumn(name = "accountVendorId", referencedColumnName = "accountId")
-    private AccountEntity vendor;    
-    
+    private AccountEntity vendor;
+
     public TransactionEntity() {
     }
 

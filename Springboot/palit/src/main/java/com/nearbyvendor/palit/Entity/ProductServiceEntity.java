@@ -20,9 +20,9 @@ public class ProductServiceEntity {
 
     @Lob
     private byte[] image;
-    
+
     private boolean isDeleted;
-    
+
     @ManyToOne
     @JoinColumn(name = "storeId", referencedColumnName = "storeId")
     private StoreEntity store;
@@ -54,7 +54,6 @@ public class ProductServiceEntity {
         this.name = name;
     }
 
-   
     public double getPrice() {
         return price;
     }
@@ -71,7 +70,6 @@ public class ProductServiceEntity {
         this.image = image;
     }
 
-
     public boolean getIsDeleted() {
         return isDeleted;
     }
@@ -80,12 +78,12 @@ public class ProductServiceEntity {
         this.isDeleted = isDeleted;
     }
 
-	public StoreEntity getStore() {
-		return store;
-	}
+    public StoreEntity getStore() {
+        return store;
+    }
 
-	public void setStore(StoreEntity store) {
-		this.store = store;
-	}
-    
+    public void setStore(StoreEntity store) {
+        this.store = store;
+    }
+
 }

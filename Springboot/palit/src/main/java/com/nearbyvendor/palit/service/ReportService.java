@@ -22,7 +22,7 @@ public class ReportService {
         if (report != null) {
             return report;
         } else {
-            // Log an error message for debugging
+
             System.err.println("ReportEntity not found with id: " + id);
             throw new RuntimeException("ReportEntity not found with id: " + id);
         }
@@ -38,7 +38,7 @@ public class ReportService {
             report.setReportId(id);
             return reportRepository.save(report);
         } else {
-            // Log an error message for debugging
+
             System.err.println("Invalid report ID for updating: " + id);
             throw new IllegalArgumentException("Invalid report ID");
         }
@@ -49,9 +49,9 @@ public class ReportService {
         if (existingReport != null) {
             existingReport.setIsDeleted(true);
             reportRepository.save(existingReport);
-            return true; // Deletion was successful
+            return true;
         } else {
-            // Log an error message for debugging
+
             System.err.println("Invalid report ID for deletion: " + id);
             throw new IllegalArgumentException("Invalid report ID");
         }

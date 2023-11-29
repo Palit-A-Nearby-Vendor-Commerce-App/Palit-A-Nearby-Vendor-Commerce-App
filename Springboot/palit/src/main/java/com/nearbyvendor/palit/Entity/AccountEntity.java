@@ -12,65 +12,62 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 @Table(name = "account")
 public class AccountEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer accountId;
-    
-    private String email;
-    
-    private String password;
-    
-    private boolean isVendor;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer accountId;
 
-    private boolean isAdmin;
+	private String email;
 
-    private boolean isDeleted;
+	private String password;
 
-    @OneToOne(mappedBy = "account")
-    private UserEntity user;
+	private boolean isVendor;
 
-    @OneToOne
-    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
-    private LocationEntity location;
+	private boolean isAdmin;
 
-    @OneToOne
-    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
-    private StoreEntity store;
-    
-    @OneToMany(mappedBy = "customer")
-    private Set<TransactionEntity> customerTransactions;
-    
-    @OneToMany(mappedBy = "account")
-    private Set<ChatEntity> chat;
-    
-    @OneToMany(mappedBy = "customer")
-    private Set<ConversationEntity> conversations;
-    
-    @OneToMany(mappedBy = "vendor")
-    private Set<TransactionEntity> vendorTransactions;
-    
-    @OneToMany(mappedBy = "account")
-    private List<ReportEntity> report;
-    
-    // constructors
-    public AccountEntity() {
-    }
+	private boolean isDeleted;
 
-    public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store, boolean isVendor, boolean isAdmin) {
-        this.accountId = accountId;
-        this.email = email;
-        this.password = password;
-        this.location = location;
-        this.store = store;
-        this.isVendor = isVendor;
-        this.isAdmin = isAdmin;
-        this.isDeleted = false;
-    }
-    
-    
-    // getters and setters
+	@OneToOne(mappedBy = "account")
+	private UserEntity user;
 
-    public Integer getAccountId() {
+	@OneToOne
+	@JoinColumn(name = "locationId", referencedColumnName = "locationId")
+	private LocationEntity location;
+
+	@OneToOne
+	@JoinColumn(name = "storeId", referencedColumnName = "storeId")
+	private StoreEntity store;
+
+	@OneToMany(mappedBy = "customer")
+	private Set<TransactionEntity> customerTransactions;
+
+	@OneToMany(mappedBy = "account")
+	private Set<ChatEntity> chat;
+
+	@OneToMany(mappedBy = "customer")
+	private Set<ConversationEntity> conversations;
+
+	@OneToMany(mappedBy = "vendor")
+	private Set<TransactionEntity> vendorTransactions;
+
+	@OneToMany(mappedBy = "account")
+	private List<ReportEntity> report;
+
+	public AccountEntity() {
+	}
+
+	public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store,
+			boolean isVendor, boolean isAdmin) {
+		this.accountId = accountId;
+		this.email = email;
+		this.password = password;
+		this.location = location;
+		this.store = store;
+		this.isVendor = isVendor;
+		this.isAdmin = isAdmin;
+		this.isDeleted = false;
+	}
+
+	public Integer getAccountId() {
 		return accountId;
 	}
 
@@ -142,8 +139,4 @@ public class AccountEntity {
 		this.isDeleted = isDeleted;
 	}
 
-	
-
-	
-   
 }

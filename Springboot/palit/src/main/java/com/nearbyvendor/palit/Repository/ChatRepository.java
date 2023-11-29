@@ -10,7 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ChatRepository extends JpaRepository<ChatEntity, Integer> {
 
-    // Find all chats by conversation id
     List<ChatEntity> findByConversation_ConversationId(int conversationId);
 
     List<ChatEntity> findByConversation_ConversationIdAndIsDeletedFalse(int conversationId);

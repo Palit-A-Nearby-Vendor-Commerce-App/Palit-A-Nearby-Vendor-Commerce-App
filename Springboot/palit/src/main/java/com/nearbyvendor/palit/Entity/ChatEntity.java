@@ -22,7 +22,6 @@ public class ChatEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int chatId;
 
-//    private int senderId;
     @ManyToOne
     @JoinColumn(name = "senderId", referencedColumnName = "accountId")
     private AccountEntity account;
@@ -31,21 +30,17 @@ public class ChatEntity {
 
     private Timestamp timestamp;
 
-//    private int conversationId;
     @ManyToOne
     @JoinColumn(name = "conversationId", referencedColumnName = "conversationId")
     private ConversationEntity conversation;
 
     private boolean isDeleted;
 
-
-
-
-
     public ChatEntity() {
     }
 
-    public ChatEntity(int chatId, AccountEntity account, String messageContent, Timestamp timestamp, ConversationEntity conversation) {
+    public ChatEntity(int chatId, AccountEntity account, String messageContent, Timestamp timestamp,
+            ConversationEntity conversation) {
         this.chatId = chatId;
         this.account = account;
         this.messageContent = messageContent;
@@ -61,14 +56,6 @@ public class ChatEntity {
     public void setChatId(int chatId) {
         this.chatId = chatId;
     }
-//
-//    public int getSenderId() {
-//        return senderId;
-//    }
-//
-//    public void setSenderId(int senderId) {
-//        this.senderId = senderId;
-//    }
 
     public String getMessageContent() {
         return messageContent;

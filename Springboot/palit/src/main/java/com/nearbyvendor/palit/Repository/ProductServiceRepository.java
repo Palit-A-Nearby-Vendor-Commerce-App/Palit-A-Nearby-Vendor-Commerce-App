@@ -10,7 +10,6 @@ import java.util.Optional;
 @Repository
 public interface ProductServiceRepository extends JpaRepository<ProductServiceEntity, Integer> {
 
-    // Find product services by store id
     List<ProductServiceEntity> findByStoreStoreId(int storeId);
 
     Optional<ProductServiceEntity> findByProductIdAndIsDeletedFalse(int productId);

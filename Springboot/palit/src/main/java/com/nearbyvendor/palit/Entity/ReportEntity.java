@@ -16,9 +16,6 @@ public class ReportEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int reportId;
 
-//    @Column(nullable = false)
-//    private int senderId; //remove sa daw ni
-    
     @ManyToOne
     @JoinColumn(name = "senderId")
     private AccountEntity account;
@@ -28,9 +25,8 @@ public class ReportEntity {
     private Timestamp timestamp;
 
     private boolean isResolved;
-    
+
     private boolean isDeleted;
-    
 
     public ReportEntity() {
     }

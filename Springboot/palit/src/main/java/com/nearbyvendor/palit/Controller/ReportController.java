@@ -16,14 +16,12 @@ public class ReportController {
     @Autowired
     private ReportService reportService;
 
-    // Get all reports
     @GetMapping("/getAllReports")
     public ResponseEntity<List<ReportEntity>> getAllReports() {
         List<ReportEntity> reports = reportService.getAllReports();
         return new ResponseEntity<>(reports, HttpStatus.OK);
     }
 
-    // Get a report by ID
     @GetMapping("/getReportById/{id}")
     public ResponseEntity<ReportEntity> getReportById(@PathVariable int id) {
         ReportEntity report = reportService.getReportById(id);
@@ -34,14 +32,12 @@ public class ReportController {
         }
     }
 
-    // Create a new report
     @PostMapping("/createReport")
     public ResponseEntity<ReportEntity> createReport(@RequestBody ReportEntity report) {
         ReportEntity newReport = reportService.createReport(report);
         return new ResponseEntity<>(newReport, HttpStatus.CREATED);
     }
 
-    // Update an existing report
     @PutMapping("/updateReportById/{id}")
     public ResponseEntity<ReportEntity> updateReportById(@PathVariable int id, @RequestBody ReportEntity report) {
         ReportEntity updatedReport = reportService.updateReportById(id, report);
@@ -52,7 +48,6 @@ public class ReportController {
         }
     }
 
-    // Delete an existing report
     @DeleteMapping("/deleteReportById/{id}")
     public ResponseEntity<Void> deleteReportById(@PathVariable int id) {
         boolean deleted = reportService.deleteReportById(id);

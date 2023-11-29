@@ -17,28 +17,26 @@ public class UserEntity {
     private int userId;
 
     private String firstName;
-    
+
     private String lastName;
 
     @Temporal(TemporalType.DATE)
     private Date birthDate;
 
-
     private boolean isDeleted;
 
     @Lob
     private byte[] image;
-    
+
     @OneToOne
     @JoinColumn(name = "accountId", referencedColumnName = "accountId")
     private AccountEntity account;
 
-    // constructor with no fields
     public UserEntity() {
     }
 
-    // constructor with all fields
-    public UserEntity(int userId, String firstName, String lastName, Date birthDate, boolean isDeleted, byte[] image, AccountEntity account) {
+    public UserEntity(int userId, String firstName, String lastName, Date birthDate, boolean isDeleted, byte[] image,
+            AccountEntity account) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -49,7 +47,8 @@ public class UserEntity {
         this.isDeleted = false;
     }
 
-    public UserEntity(int userId, String firstName, String lastName, Date birthDate, byte[] image, AccountEntity account) {
+    public UserEntity(int userId, String firstName, String lastName, Date birthDate, byte[] image,
+            AccountEntity account) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -58,7 +57,6 @@ public class UserEntity {
         this.image = image;
     }
 
-    // getters and setters
     public int getUserId() {
         return userId;
     }
@@ -91,7 +89,6 @@ public class UserEntity {
         this.birthDate = birthDate;
     }
 
-   
     public byte[] getImage() {
         return image;
     }
@@ -111,10 +108,9 @@ public class UserEntity {
     public AccountEntity getAccount() {
         return this.account;
     }
-    
+
     public void setAccount(AccountEntity account) {
         this.account = account;
     }
-    
-   
+
 }

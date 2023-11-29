@@ -36,12 +36,11 @@ public class ChatService {
 
             return chatRepository.save(existingChat);
         } else {
-            // Log an error message for debugging
+
             System.err.println("ChatEntity not found with id: " + chatId);
             throw new RuntimeException("ChatEntity not found with id: " + chatId);
         }
     }
-
 
     public boolean deleteChatById(int chatId) {
         Optional<ChatEntity> chatOptional = chatRepository.findByChatIdAndIsDeletedFalse(chatId);
@@ -49,11 +48,11 @@ public class ChatService {
             ChatEntity chat = chatOptional.get();
             chat.setIsDeleted(true);
             chatRepository.save(chat);
-            return true; // Deletion was successful
+            return true;
         } else {
-            // Log an error message for debugging
+
             System.err.println("ChatEntity not found with id: " + chatId);
             throw new RuntimeException("ChatEntity not found with id: " + chatId);
         }
-    }    
+    }
 }

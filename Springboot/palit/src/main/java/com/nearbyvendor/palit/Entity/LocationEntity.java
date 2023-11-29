@@ -24,11 +24,11 @@ public class LocationEntity {
 
     @OneToOne(mappedBy = "location")
     private AccountEntity account;
-    
+
     public LocationEntity() {
     }
 
-    public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account ) {
+    public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account) {
         this.locationId = locationId;
         this.latitude = latitude;
         this.longitude = longitude;

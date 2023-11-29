@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface TransactionRepository extends JpaRepository<TransactionEntity, Integer> {
 
   List<TransactionEntity> findAllByIsDeletedFalse();
-    // You can add custom methods here if needed
 
   TransactionEntity findByTransactionIdAndIsDeletedFalse(int transactionId);
 }

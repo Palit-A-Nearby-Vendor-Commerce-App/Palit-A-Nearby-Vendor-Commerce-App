@@ -33,6 +33,7 @@ public class TransactionEntity {
         this.customer = customer;
         this.vendor = vendor;
         this.status = status;
+        this.isDeleted = false;
     }
 
     public int getTransactionId() {

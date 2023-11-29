@@ -48,6 +48,7 @@ public class UserEntity {
         this.isDeleted = isDeleted;
         this.image = image;
         this.account = account;
+        this.isDeleted = false;
     }
 
     public UserEntity(int userId, String firstName, String lastName, Date birthDate, byte[] image, AccountEntity account) {

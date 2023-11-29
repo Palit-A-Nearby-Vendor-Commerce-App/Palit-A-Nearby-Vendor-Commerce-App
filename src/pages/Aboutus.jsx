@@ -8,16 +8,16 @@ import dogge from "../assets/images/dummy_prof.jpeg";
 const membersData = [
   {
     name: "Mark Kenneth Badilla",
-    position: "Full-stack Developer",
+    position: "Web Developer",
     img: dogge,
   },
   {
     name: "Alestair Cyril Coyoca",
-    position: "Full-stack Developer",
+    position: "Web Developer",
     img: dogge,
   },
-  { name: "Kheisa Selma", position: "Full-stack Developer", img: dogge },
-  { name: "Joshua Briones", position: "Full-stack Developer", img: dogge },
+  { name: "Kheisa Selma", position: "Web Developer", img: dogge },
+  { name: "Joshua Briones", position: "Web Developer", img: dogge },
 ];
 
 const Aboutus = () => {

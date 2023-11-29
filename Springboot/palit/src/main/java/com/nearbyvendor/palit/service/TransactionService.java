@@ -29,7 +29,6 @@ public class TransactionService {
     }
 
     public TransactionEntity createTransaction(TransactionEntity transaction) {
-        transaction.setIsDeleted(false);
         return transactionRepository.save(transaction);
     }
 
@@ -37,7 +36,6 @@ public class TransactionService {
         TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
         if (existingTransaction != null) {
             transaction.setTransactionId(existingTransaction.getTransactionId());
-            transaction.setIsDeleted(false);
             return transactionRepository.save(transaction);
         } else {
             // Log an error message for debugging

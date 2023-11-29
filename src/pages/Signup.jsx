@@ -119,8 +119,7 @@ function Signup() {
       const locationData = {
         lat: 0, // Replace with actual latitude if available
         lng: 0, // Replace with actual longitude if available
-        isActive: false,
-        isDeleted: false,
+        isActive: false
       };
       const locationResponse = await axios.post(
         "http://localhost:8080/api/createLocation",
@@ -134,8 +133,7 @@ function Signup() {
         const storeData = {
           storeName: userData.storeName,
           description: userData.description,
-          category: userData.category,
-          isDeleted: false,
+          category: userData.category
         };
         const storeResponse = await axios.post(
           "http://localhost:8080/api/createStore",

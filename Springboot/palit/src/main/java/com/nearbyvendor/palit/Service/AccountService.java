@@ -37,7 +37,6 @@ public class AccountService {
             existingAccount.setPassword(account.getPassword());
             existingAccount.setIsVendor(account.getIsVendor());
             existingAccount.setIsAdmin(account.getIsAdmin());
-            existingAccount.setIsDeleted(account.getIsDeleted());
             existingAccount.setUser(account.getUser());
             existingAccount.setLocation(account.getLocation());
             existingAccount.setStore(account.getStore());

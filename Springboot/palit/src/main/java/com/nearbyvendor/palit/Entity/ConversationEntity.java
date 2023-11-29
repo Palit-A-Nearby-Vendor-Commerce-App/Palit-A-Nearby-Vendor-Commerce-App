@@ -1,12 +1,13 @@
 package com.nearbyvendor.palit.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.Set;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "conversationId")
+// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "conversationId")
 @Entity
 @Table(name = "conversation")
 public class ConversationEntity {
@@ -23,8 +24,10 @@ public class ConversationEntity {
     @JoinColumn(name = "customerAccountId", referencedColumnName = "accountId")
     private AccountEntity customer;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "conversation")
     private Set<ChatEntity> chat;
+
 
     private boolean isDeleted;
 

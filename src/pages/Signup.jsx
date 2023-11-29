@@ -140,7 +140,7 @@ function Signup() {
         const storeData = {
           storeName: userData.storeName,
           description: userData.description,
-          category: userData.category
+          category: userData.category,
         };
         const storeResponse = await axios.post(
           "http://localhost:8080/api/createStore",
@@ -148,16 +148,15 @@ function Signup() {
         );
         store = storeResponse.data;
       }
-      
+
       function convertToBase64(file) {
         return new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result.split(',')[1]);
-          reader.onerror = error => reject(error);
+          reader.onload = () => resolve(reader.result.split(",")[1]);
+          reader.onerror = (error) => reject(error);
         });
       }
-      
 
       // Create user JSON with converted image, location, account, and store
       const userJson = {
@@ -168,7 +167,7 @@ function Signup() {
         store,
       };
 
-      console.log(userJson)
+      console.log(userJson);
 
       // Create user
       await axios.post("http://localhost:8080/api/createUser", userJson);
@@ -340,25 +339,6 @@ function Signup() {
           className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50
         "
         >
-          {/* <div className="bg-white rounded-[20px] p-5">
-            <p className="text-lg font-bold">
-              Are you sure you want to sign up?
-            </p>
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={handleCancel}
-                className="bg-gray-300 p-2 rounded-[10px] mr-2"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirm}
-                className="bg-primary p-2 rounded-[10px] text-white"
-              >
-                Confirm
-              </button>
-            </div>
-          </div> */}
           <React.Fragment>
             <Dialog
               fullScreen={fullScreen}
@@ -391,24 +371,23 @@ function Signup() {
                   Confirm
                 </Button>
               </DialogActions>
+              {success && (
+                <Snackbar
+                  open={success}
+                  autoHideDuration={6000}
+                  onClose={() => false}
+                >
+                  <Alert
+                    onClose={() => false}
+                    severity="success"
+                    sx={{ width: "100%" }}
+                  >
+                    Created account successfully!
+                  </Alert>
+                </Snackbar>
+              )}
             </Dialog>
           </React.Fragment>
-
-          {success && (
-            <Snackbar
-              open={success}
-              autoHideDuration={6000}
-              onClose={() => false}
-            >
-              <Alert
-                onClose={() => false}
-                severity="success"
-                sx={{ width: "100%" }}
-              >
-                Created account successfully!
-              </Alert>
-            </Snackbar>
-          )}
         </div>
       )}
     </div>

@@ -45,7 +45,7 @@ const Signin = () => {
     e.preventDefault();
 
     const user = userData.find(
-      (user) => user.email === email && user.password === password
+      (user) => user.account.email === email && user.account.password === password
     );
 
     console.log("Ako si user", user);

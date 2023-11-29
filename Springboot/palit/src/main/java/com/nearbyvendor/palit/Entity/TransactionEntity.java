@@ -2,8 +2,10 @@ package com.nearbyvendor.palit.entity;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "transactionId")
 @Entity
 @Table(name = "transaction")
 public class TransactionEntity {
@@ -16,12 +18,10 @@ public class TransactionEntity {
     
     private boolean isDeleted;
    
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "accountCustomerId", referencedColumnName = "accountId")
     private AccountEntity customer;
     
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "accountVendorId", referencedColumnName = "accountId")
     private AccountEntity vendor;    

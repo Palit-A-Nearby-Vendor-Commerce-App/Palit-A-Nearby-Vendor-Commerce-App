@@ -2,8 +2,10 @@ package com.nearbyvendor.palit.entity;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "locationId")
 @Entity
 @Table(name = "location")
 public class LocationEntity {
@@ -20,7 +22,6 @@ public class LocationEntity {
 
     private boolean isActive;
 
-    @JsonManagedReference
     @OneToOne(mappedBy = "location")
     private AccountEntity account;
     

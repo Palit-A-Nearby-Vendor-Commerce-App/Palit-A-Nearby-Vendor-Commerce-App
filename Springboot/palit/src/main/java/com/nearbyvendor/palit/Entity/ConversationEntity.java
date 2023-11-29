@@ -2,11 +2,12 @@ package com.nearbyvendor.palit.entity;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import java.util.Set;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "conversationId")
 @Entity
 @Table(name = "conversation")
 public class ConversationEntity {
@@ -18,17 +19,14 @@ public class ConversationEntity {
 //    private int vendorAccountId;
 
 //    private int customerAccountId;
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "vendorAccountId", referencedColumnName = "accountId")
     private AccountEntity vendor;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "customerAccountId", referencedColumnName = "accountId")
     private AccountEntity customer;
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "conversation")
     private Set<ChatEntity> chat;    
     

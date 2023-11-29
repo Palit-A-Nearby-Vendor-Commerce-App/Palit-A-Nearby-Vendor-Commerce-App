@@ -2,10 +2,12 @@ package com.nearbyvendor.palit.entity;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import java.util.Date;
 
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 @Entity
 @Table(name = "users")
 public class UserEntity {
@@ -27,7 +29,6 @@ public class UserEntity {
     @Lob
     private byte[] image;
     
-    @JsonBackReference
     @OneToOne
     @JoinColumn(name = "accountId", referencedColumnName = "accountId")
     private AccountEntity account;

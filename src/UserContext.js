@@ -28,53 +28,9 @@ const useLocalStorage = (key, initialValue) => {
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useLocalStorage("user", null);
-//do not use this to update the location store or account. this only accepts ids of those 3
-  const updateUser = async (userId, formData) => {
-    try {
-      const response = await axios.put(
-        `http://localhost:8080/api/updateUserById/${userId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      setUser(response.data);
-    } catch (error) {
-      console.error("Error updating user:", error);
-    }
-  };
-
-  const updateAccount = async (accountId, accountData) => {
-    try {
-      await axios.put(`http://localhost:8080/api/editAccountById/${accountId}`, accountData);
-      setUser({ ...user, account: { ...user.account, ...accountData } });
-    } catch (error) {
-      console.error("Error updating account:", error);
-    }
-  };
-
-  const updateLocation = async (locationId, locationData) => {
-    try {
-      await axios.put(`http://localhost:8080/api/updateLocationById/${locationId}`, locationData);
-      setUser({ ...user, location: { ...user.location, ...locationData } });
-    } catch (error) {
-      console.error("Error updating location:", error);
-    }
-  };
-
-  const updateStore = async (storeId, storeData) => {
-    try {
-      await axios.put(`http://localhost:8080/api/updateStoreById/${storeId}`, storeData);
-      setUser({ ...user, store: { ...user.store, ...storeData } });
-    } catch (error) {
-      console.error("Error updating store:", error);
-    }
-  };
 
   return (
-    <UserContext.Provider value={{ user, setUser, updateUser, updateAccount, updateStore, updateLocation }}>
+    <UserContext.Provider value={{ user, setUser }}>
       {children}
     </UserContext.Provider>
   );

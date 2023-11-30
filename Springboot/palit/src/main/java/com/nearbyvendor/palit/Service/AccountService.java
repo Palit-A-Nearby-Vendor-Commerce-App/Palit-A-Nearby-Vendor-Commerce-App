@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-
 @Service
 @Transactional
 public class AccountService {
@@ -22,9 +20,6 @@ public class AccountService {
     
     @Autowired
     private LocationRepository locationRepository;
-    
-    @Autowired
-    private EntityManager entityManager;
 
     public List<AccountEntity> getAllAccounts() {
         return accountRepository.findByIsDeletedFalse();

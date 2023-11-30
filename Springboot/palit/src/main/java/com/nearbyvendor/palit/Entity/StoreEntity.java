@@ -1,15 +1,8 @@
 package com.nearbyvendor.palit.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
+import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "storeId")
 @Entity
 @Table(name = "store")
 public class StoreEntity {

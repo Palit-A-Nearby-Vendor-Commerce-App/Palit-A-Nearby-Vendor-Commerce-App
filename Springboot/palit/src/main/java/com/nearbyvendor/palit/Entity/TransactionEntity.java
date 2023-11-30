@@ -1,11 +1,7 @@
 package com.nearbyvendor.palit.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import javax.persistence.*;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "transactionId")
 @Entity
 @Table(name = "transaction")
 public class TransactionEntity {

@@ -53,7 +53,6 @@ function Signup() {
   };
 
   const validatePassword = (password) => {
-    // At least 8 characters, includes uppercase, lowercase, number, and special character
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     return passwordRegex.test(password);
@@ -64,28 +63,35 @@ function Signup() {
       ...userData,
       [e.target.name]: e.target.value,
     });
+
+    if (e.target.name === "password") {
+      setIsPasswordValid(validatePassword(e.target.value));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if the image field is empty
     setIsImageEmpty(!userData.image);
-
-    // Check if the user is at least 13 years old
     const age = moment().diff(moment(userData.birthdate), "years");
     if (age < 13) {
       setAlert("You must be at least 13 years old to sign up.");
       return;
     }
 
-    // Show the confirmation popup
-    setConfirm(true);
+    if (!validatePassword(userData.password)) {
+      setIsPasswordValid(false);
+      setAlert("Password must meet the required criteria.");
+      return;
+    }
+
+    if (userData.image && isPasswordValid && age >= 13) {
+      setConfirm(true);
+    }
   };
 
   const handleConfirm = async () => {
     try {
-      // Check if email is already taken
       const emailCheckResponse = await axios.post(
         "http://localhost:8080/api/isEmailTaken",
         {
@@ -98,17 +104,14 @@ function Signup() {
         return;
       }
 
-      // Create location
       const locationResponse = await axios.post(
         "http://localhost:8080/api/createLocation",
         {
           latitude: userData.lat,
           longitude: userData.lng,
-          // isActive: true,
         }
       );
 
-      // Optionally create a store if the account is a vendor
       let storeResponse = null;
       if (userData.userType === "vendor") {
         storeResponse = await axios.post(
@@ -121,7 +124,6 @@ function Signup() {
         );
       }
 
-      // Create account
       const accountResponse = await axios.post(
         "http://localhost:8080/api/createAccount",
         {
@@ -143,7 +145,6 @@ function Signup() {
         });
       }
 
-      // Create user JSON with converted image and other needed details
       const imageBase64 = await convertToBase64(userData.image);
       const user = {
         firstName: userData.firstName,
@@ -153,29 +154,26 @@ function Signup() {
         account: accountResponse.data,
       };
 
-      // Create user
       const userResponse = await axios.post(
         "http://localhost:8080/api/createUser",
         user
       );
 
-      // Alert the user that the user creation is successful
       setSuccess(true);
-
       setTimeout(() => {
         setSuccess(null);
         history.push("/signin");
       }, 3000);
     } catch (error) {
       console.error(error);
-      setError(true); // Add this line
+      setError(true);
     }
   };
 
   const handleCancel = () => {
-    // Hide the confirmation popup
     setConfirm(false);
   };
+
 
   return (
     <div className="w-full pb-10 bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">

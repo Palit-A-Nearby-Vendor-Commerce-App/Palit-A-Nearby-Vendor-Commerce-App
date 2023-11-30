@@ -1,7 +1,5 @@
 package com.nearbyvendor.palit.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;

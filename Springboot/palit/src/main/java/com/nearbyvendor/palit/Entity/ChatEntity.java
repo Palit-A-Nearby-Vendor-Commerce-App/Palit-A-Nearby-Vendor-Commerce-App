@@ -15,7 +15,7 @@ public class ChatEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int chatId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "senderId", referencedColumnName = "accountId")
     private AccountEntity account;
 
@@ -23,7 +23,7 @@ public class ChatEntity {
 
     private Timestamp timestamp;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "conversationId", referencedColumnName = "conversationId")
     private ConversationEntity conversation;
 

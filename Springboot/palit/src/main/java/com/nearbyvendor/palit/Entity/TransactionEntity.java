@@ -18,11 +18,11 @@ public class TransactionEntity {
 
     private boolean isDeleted;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "accountCustomerId", referencedColumnName = "accountId")
     private AccountEntity customer;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "accountVendorId", referencedColumnName = "accountId")
     private AccountEntity vendor;
 

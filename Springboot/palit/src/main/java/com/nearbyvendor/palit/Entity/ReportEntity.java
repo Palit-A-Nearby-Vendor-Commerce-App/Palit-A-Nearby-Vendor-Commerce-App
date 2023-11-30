@@ -15,7 +15,7 @@ public class ReportEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int reportId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "senderId")
     private AccountEntity account;
 

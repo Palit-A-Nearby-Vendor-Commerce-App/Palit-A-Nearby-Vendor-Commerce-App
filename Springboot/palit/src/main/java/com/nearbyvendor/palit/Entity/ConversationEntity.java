@@ -16,16 +16,16 @@ public class ConversationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int conversationId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "vendorAccountId", referencedColumnName = "accountId")
     private AccountEntity vendor;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "customerAccountId", referencedColumnName = "accountId")
     private AccountEntity customer;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "conversation")
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.REMOVE)
     private Set<ChatEntity> chat;
 
 

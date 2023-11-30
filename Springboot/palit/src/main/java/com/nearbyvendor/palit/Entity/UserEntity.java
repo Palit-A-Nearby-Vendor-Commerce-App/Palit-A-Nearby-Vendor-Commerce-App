@@ -27,7 +27,7 @@ public class UserEntity {
     @Lob
     private byte[] image;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "accountId", referencedColumnName = "accountId")
     private AccountEntity account;
 

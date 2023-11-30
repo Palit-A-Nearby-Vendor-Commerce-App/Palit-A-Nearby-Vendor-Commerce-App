@@ -101,14 +101,19 @@ const NavigationBar = () => {
               variant="outlined"
               style={{
                 textTransform: "none",
-                borderColor: "white",
+                backgroundColor: "#F4D23E",
+                color: "#2a2c41",
+                border: "none",
                 width: "120px",
                 fontSize: "18px",
-                color: isHovered ? "#F4D23E" : "white",
-                borderColor: isHovered ? "#F4D23E" : "white",
+                backgroundColor: isHovered ? "#f5d751" : "#F4D23E",
                 fontFamily: "Poppins",
+                textDecoration: "semibold",
                 borderRadius: "20px",
-                transition: "color 0.3s, border-color 0.3s",
+                transition: "color 0.3s, border-color 0.3s, box-shadow 0.3s", // Add box-shadow to the transition
+                boxShadow: isHovered
+                  ? "5px 5px 30px rgba(0, 0, 0, 0.2)"
+                  : "none",
               }}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}

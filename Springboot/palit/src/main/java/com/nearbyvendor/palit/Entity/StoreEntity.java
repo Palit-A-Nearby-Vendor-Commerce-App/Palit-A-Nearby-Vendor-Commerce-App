@@ -22,11 +22,11 @@ public class StoreEntity {
     private boolean isDeleted;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "store", cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "store")//, cascade = CascadeType.MERGE)
     private AccountEntity account;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "store", cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "store")//, cascade = CascadeType.REMOVE)
     private ProductServiceEntity productService;
 
     public StoreEntity() {

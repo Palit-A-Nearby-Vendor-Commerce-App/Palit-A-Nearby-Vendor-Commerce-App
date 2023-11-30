@@ -167,13 +167,13 @@ function Signup() {
     } catch (error) {
       console.error(error);
       setError(true);
+      setConfirm(false);
     }
   };
 
   const handleCancel = () => {
     setConfirm(false);
   };
-
 
   return (
     <div className="w-full pb-10 bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">

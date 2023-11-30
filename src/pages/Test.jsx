@@ -7,14 +7,47 @@ import React, {
 } from "react";
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import marker from "../assets/images/vendor-self-pin.png";
-import customerMarker from "../assets/images/customer-map-icon.png";
 import axios from "axios";
 import NavigationBar from "../components/NavigationBar";
 import MapSlidingBox from "../components/MapSlidingBox";
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
 import { UserContext } from "../UserContext";
-import { mapContainerStyle, mapOptions } from "../assets/styles/styles";
-import { getDistance } from "../utils/functions";
+
+const mapContainerStyle = {
+  width: "100%",
+  height: "calc(100vh - 90px)",
+};
+
+const mapOptions = {
+  streetViewControl: false,
+  zoomControl: false,
+  mapTypeControl: false,
+  scaleControl: false,
+  rotateControl: false,
+  fullscreenControl: false,
+  styles: [
+    {
+      featureType: "poi",
+      stylers: [{ visibility: "off" }],
+    },
+    {
+      featureType: "transit",
+      elementType: "labels.icon",
+      stylers: [{ visibility: "off" }],
+    },
+  ],
+};
+
+const R = 6371;
+const deg2rad = (deg) => deg * (Math.PI / 180);
+const getDistance = (lat1, lon1, lat2, lon2) => {
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1000;
+};
 
 function Home() {
   const { user, updateLocation } = useContext(UserContext);
@@ -22,6 +55,8 @@ function Home() {
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [showSlider, setShowSlider] = useState(false);
   const mapRef = useRef();
+
+  console.log("/map, user: ", user);
 
   const onMapLoad = useCallback(
     (map) => {
@@ -100,37 +135,16 @@ function Home() {
     axios
       .get("http://localhost:8080/api/getAllUsers")
       .then(({ data }) => {
-        console.log(
-          getDistance(
-            currentPosition.lat,
-            currentPosition.lng,
-            10.1381623,
-            123.6739757
-          ) <= 200
-        );
-
-        console.log(data[4].account.location.isActive);
-
         // Filter out users who are vendors and within 200 meters of the current user
-        const usersNearby = data.filter((otherUser) => {
-          // if (
-          //   user.account.isVendor &&
-          //   !otherUser.account.isVendor &&
-          //   getDistance(
-          //     currentPosition.lat,
-          //     currentPosition.lng,
-          //     otherUser.location.latitude,
-          //     otherUser.location.longitude
-          //   ) <= 200
-          // )
+        const vendorsNearby = data.filter((otherUser) => {
           if (
-            !otherUser.account.isVendor &&
-            otherUser.account.location.isActive &&
+            !user.account.isVendor &&
+            otherUser.account.isVendor &&
             getDistance(
               currentPosition.lat,
               currentPosition.lng,
-              otherUser.account.location.latitude,
-              otherUser.account.location.longitude
+              otherUser.location.latitude,
+              otherUser.location.longitude
             ) <= 200
           ) {
             return true;
@@ -138,24 +152,20 @@ function Home() {
           return false;
         });
 
-        console.log("Filtered vendors:", usersNearby);
         // Mark the vendors on the map with markers
-        usersNearby.forEach((user) => {
+        vendorsNearby.forEach((vendor) => {
           const vendorMarker = new window.google.maps.Marker({
             position: {
-              lat: user.account.location.latitude,
-              lng: user.account.location.longitude,
+              lat: vendor.location.latitude,
+              lng: vendor.location.longitude,
             },
             map: mapRef.current, // Assuming you have a map reference
-            icon: {
-              url: customerMarker,
-              scaledSize: new window.google.maps.Size(10, 10),
-            },
+            icon: renderVendorMarkerIcon(), // Define the icon for vendors
           });
 
           // You can add click event handling for the markers if needed
           vendorMarker.addListener("click", () => {
-            window.location.href = `/store/${user.accountId}`;
+            window.location.href = `/store/${vendor.accountId}`;
           });
         });
       })
@@ -176,12 +186,10 @@ function Home() {
               onLoad={onMapLoad}
             >
               {currentPosition && (
-                <>
-                  <Marker
-                    position={currentPosition}
-                    icon={renderVendorMarkerIcon()}
-                  />
-                </>
+                <Marker
+                  position={currentPosition}
+                  icon={renderVendorMarkerIcon()}
+                />
               )}
               {currentPosition && (
                 <Circle

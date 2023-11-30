@@ -25,7 +25,7 @@ public class ConversationEntity {
     private AccountEntity customer;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "conversation", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "conversation")//, cascade = CascadeType.REMOVE)
     private Set<ChatEntity> chat;
 
 

@@ -28,7 +28,7 @@ public class AccountEntity {
     private boolean isDeleted;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "account")//, cascade = CascadeType.ALL)
     private UserEntity user;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -40,23 +40,23 @@ public class AccountEntity {
     private StoreEntity store;
     
     @JsonIgnore
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "customer")//, cascade = CascadeType.REMOVE)
     private Set<TransactionEntity> customerTransactions;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "account")//, cascade = CascadeType.REMOVE)
     private Set<ChatEntity> chat;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "customer")//, cascade = CascadeType.REMOVE)
     private Set<ConversationEntity> conversations;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "vendor", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "vendor")//, cascade = CascadeType.REMOVE)
     private Set<TransactionEntity> vendorTransactions;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "account")//, cascade = CascadeType.REMOVE)
     private List<ReportEntity> report;
 
     public AccountEntity() {

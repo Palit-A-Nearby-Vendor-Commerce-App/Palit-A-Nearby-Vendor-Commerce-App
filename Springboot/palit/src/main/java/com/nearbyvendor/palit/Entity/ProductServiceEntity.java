@@ -38,11 +38,11 @@ public class ProductServiceEntity {
         this.isDeleted = false;
     }
 
-    public int getProductServiceId() {
+    public int getProductId() {
         return productId;
     }
 
-    public void setProductServiceId(int productId) {
+    public void setProductId(int productId) {
         this.productId = productId;
     }
 

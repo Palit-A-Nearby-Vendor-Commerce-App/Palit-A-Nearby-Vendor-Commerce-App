@@ -12,6 +12,9 @@ import CloseIcon from "@mui/icons-material/Close";
 export const NAV_HOVER_STYLE =
   "relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-customYellow after:w-full after:scale-x-0 after:hover:scale-x-100 after:transition after:duration-300 after:origin-center";
 
+export const NAV_ACTIVE_STYLE =
+  "relative text-xl w-fit block after:block after:content-[''] after:absolute after:h-[3px] after:bg-customYellow after:w-full after:scale-x-100";
+
 export const GRADIENT_BG = {
   backgroundColor: "hsla(0, 0%, 100%, 1)",
   backgroundImage:
@@ -67,3 +70,28 @@ export const StyledBadge = styled(Badge)(({ theme }) => ({
 export const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
+
+export const mapContainerStyle = {
+  width: "100%",
+  height: "calc(100vh - 90px)",
+};
+
+export const mapOptions = {
+  streetViewControl: false,
+  zoomControl: false,
+  mapTypeControl: false,
+  scaleControl: false,
+  rotateControl: false,
+  fullscreenControl: false,
+  styles: [
+    {
+      featureType: "poi",
+      stylers: [{ visibility: "off" }],
+    },
+    {
+      featureType: "transit",
+      elementType: "labels.icon",
+      stylers: [{ visibility: "off" }],
+    },
+  ],
+};

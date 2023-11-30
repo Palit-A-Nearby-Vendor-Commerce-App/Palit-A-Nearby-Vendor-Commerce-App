@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Button } from "@material-ui/core";
 import logo from "../assets/images/logo-white.png";
-import { NAV_HOVER_STYLE } from "../assets/styles/styles.js";
+import { NAV_HOVER_STYLE, NAV_ACTIVE_STYLE } from "../assets/styles/styles.js";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min.js";
 import { UserContext } from "../UserContext"; // Update the path based on your file structure
 import sampleStore from "../assets/images/storesample.png";
@@ -40,16 +40,32 @@ const NavigationBar = () => {
       <img src={logo} alt="Palit logo" className="w-30 h-16" />
       <div className="flex items-center justify-center gap-8">
         <ul className="flex gap-8 items-center justify-center text-white text-xl">
-          <li className={NAV_HOVER_STYLE}>
-            <Link to="/">Home</Link>
+          <li
+            className={
+              loc.pathname === "/home" ? NAV_ACTIVE_STYLE : NAV_HOVER_STYLE
+            }
+          >
+            <Link to="/home">Home</Link>
           </li>
-          <li className={NAV_HOVER_STYLE}>
+          <li
+            className={
+              loc.pathname === "/aboutus" ? NAV_ACTIVE_STYLE : NAV_HOVER_STYLE
+            }
+          >
             <Link to="/aboutus">About us</Link>
           </li>
-          <li className={NAV_HOVER_STYLE}>
+          <li
+            className={
+              loc.pathname === "/contactus" ? NAV_ACTIVE_STYLE : NAV_HOVER_STYLE
+            }
+          >
             <Link to="/contactus">Contact us</Link>
           </li>
-          <li className={NAV_HOVER_STYLE}>
+          <li
+            className={
+              loc.pathname === "/services" ? NAV_ACTIVE_STYLE : NAV_HOVER_STYLE
+            }
+          >
             <Link to="/services">Services</Link>
           </li>
         </ul>

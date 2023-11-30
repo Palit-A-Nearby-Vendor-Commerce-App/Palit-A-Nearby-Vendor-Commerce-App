@@ -22,11 +22,11 @@ public class StoreEntity {
     private boolean isDeleted;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "store")//, cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "store")
     private AccountEntity account;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "store")//, cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "store")
     private ProductServiceEntity productService;
 
     public StoreEntity() {
@@ -40,6 +40,7 @@ public class StoreEntity {
         this.category = category;
         this.account = account;
         this.isDeleted = false;
+        this.productService = productService;
     }
 
     public int getStoreId() {
@@ -82,10 +83,22 @@ public class StoreEntity {
         this.isDeleted = isDeleted;
     }
 
-    @Override
-    public String toString() {
-        return "StoreEntity [storeId=" + storeId + ", storeName=" + storeName + ", description=" + description
-                + ", category=" + category + "]";
+    public AccountEntity getAccount() {
+        return account;
     }
+
+    public void setAccount(AccountEntity account) {
+        this.account = account;
+    }
+
+    public ProductServiceEntity getProductService() {
+        return productService;
+    }
+
+    public void setProductService(ProductServiceEntity productService) {
+        this.productService = productService;
+    }
+
+    
 
 }

@@ -23,7 +23,7 @@ public class ProductServiceEntity {
 
     private boolean isDeleted;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @JoinColumn(name = "storeId", referencedColumnName = "storeId")
     private StoreEntity store;
 

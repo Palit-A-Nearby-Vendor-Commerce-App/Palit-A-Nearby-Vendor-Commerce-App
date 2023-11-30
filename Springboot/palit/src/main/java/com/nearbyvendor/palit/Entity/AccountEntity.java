@@ -31,11 +31,11 @@ public class AccountEntity {
     @OneToOne(mappedBy = "account")//, cascade = CascadeType.ALL)
     private UserEntity user;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "locationId", referencedColumnName = "locationId")
     private LocationEntity location;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "storeId", referencedColumnName = "storeId")
     private StoreEntity store;
     

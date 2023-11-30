@@ -24,7 +24,7 @@ public class LocationEntity {
     private boolean isActive;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "location")//, cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "location")
     private AccountEntity account;
 
     public LocationEntity() {

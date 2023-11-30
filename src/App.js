@@ -16,7 +16,6 @@ import Store from "./pages/Store";
 import Report from "./pages/Report";
 
 import AdminDashboard from "./components/AdminDashboard";
-import SampleData from "./pages/SampleData";
 // import Dashboard from "./Admin/Dashboard";
 
 function App() {

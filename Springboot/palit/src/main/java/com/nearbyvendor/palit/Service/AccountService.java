@@ -2,16 +2,29 @@ package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.AccountEntity;
 import com.nearbyvendor.palit.repository.AccountRepository;
+import com.nearbyvendor.palit.repository.LocationRepository;
+import com.nearbyvendor.palit.entity.LocationEntity;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 @Service
+@Transactional
 public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+    
+    @Autowired
+    private LocationRepository locationRepository;
+    
+    @Autowired
+    private EntityManager entityManager;
 
     public List<AccountEntity> getAllAccounts() {
         return accountRepository.findByIsDeletedFalse();
@@ -27,6 +40,11 @@ public class AccountService {
     }
 
     public AccountEntity createAccount(AccountEntity account) {
+        LocationEntity location = locationRepository.findById(account.getLocation().getLocationId()).orElse(null);
+        if (location == null) {
+            throw new RuntimeException("Location not found for ID: " + account.getLocation().getLocationId());
+        }
+        account.setLocation(location);
         return accountRepository.save(account);
     }
 

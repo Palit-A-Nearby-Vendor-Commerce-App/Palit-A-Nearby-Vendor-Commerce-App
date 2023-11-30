@@ -16,6 +16,7 @@ import Store from "./pages/Store";
 import Report from "./pages/Report";
 
 import AdminDashboard from "./components/AdminDashboard";
+import SampleData from "./pages/SampleData";
 // import Dashboard from "./Admin/Dashboard";
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
           <Route path="/report" exact component={Report} />
           <Route path="/home" exact component={Home} />
           <Route path="/chat" exact component={Chat} />
+          <Route path="/sampledata" exact component={SampleData} />
 
           <Route path="/adminlogin3x8Yz7!qA" exact component={Admin} />
           <Route

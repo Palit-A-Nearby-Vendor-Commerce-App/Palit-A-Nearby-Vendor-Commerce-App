@@ -1,0 +1,73 @@
+Here is a summary of the entities and their APIs:
+
+- AccountEntity: This entity represents an account of a user or a vendor. It has fields such as email, password, isVendor, isAdmin, isDeleted, and associations with other entities such as UserEntity, LocationEntity, StoreEntity, TransactionEntity, ChatEntity, ConversationEntity, and ReportEntity. The APIs for this entity are:
+
+    * `/getAllAccounts`: This API returns a list of all accounts in the database.
+    * `/getAccountById/{id}`: This API returns an account by its id, or null if not found.
+    * `/createAccount`: This API creates a new account and returns it.
+    * `/editAccountById/{id}`: This API updates an existing account by its id and returns it, or null if not found.
+    * `/deleteAccountById/{id}`: This API deletes an existing account by its id and returns no content, or not found if not found.
+    * `/isEmailTaken`: This API checks if an email is already taken by another account and returns a boolean value.
+
+- ChatEntity: This entity represents a chat message between a customer and a vendor. It has fields such as messageContent, timestamp, isDeleted, and associations with AccountEntity and ConversationEntity. The APIs for this entity are:
+
+    * `/getChatsByConversationId/{conversationId}`: This API returns a list of chats by a conversation id.
+    * `/createChat`: This API creates a new chat and returns it.
+    * `/updateChatById/{chatId}`: This API updates an existing chat by its id and returns it, or null if not found.
+    * `/deleteChatById/{chatId}`: This API deletes an existing chat by its id and returns no content, or not found if not found.
+
+- ConversationEntity: This entity represents a conversation between a customer and a vendor. It has fields such as isDeleted and associations with AccountEntity and ChatEntity. The APIs for this entity are:
+
+    * `/getAllConversations`: This API returns a list of all conversations in the database.
+    * `/getConversationById/{id}`: This API returns a conversation by its id, or null if not found.
+    * `/createConversation`: This API creates a new conversation and returns it.
+    * `/updateConversationById/{id}`: This API updates an existing conversation by its id and returns it, or null if not found.
+    * `/deleteConversationById/{id}`: This API deletes an existing conversation by its id and returns no content, or not found if not found.
+
+- LocationEntity: This entity represents a location of a user or a vendor. It has fields such as latitude, longitude, isActive, isDeleted, and an association with AccountEntity. The APIs for this entity are:
+
+    * `/getAllLocations`: This API returns a list of all locations in the database.
+    * `/getLocationById/{id}`: This API returns a location by its id, or null if not found.
+    * `/createLocation`: This API creates a new location and returns it.
+    * `/updateLocationById/{id}`: This API updates an existing location by its id and returns it, or null if not found.
+    * `/deleteLocationById/{id}`: This API deletes an existing location by its id and returns no content, or not found if not found.
+
+- ProductServiceEntity: This entity represents a product or a service offered by a vendor. It has fields such as name, price, image, isDeleted, and an association with StoreEntity. The APIs for this entity are:
+
+    * `/getAllProductServices`: This API returns a list of all product services in the database.
+    * `/getProductServiceById/{id}`: This API returns a product service by its id, or null if not found.
+    * `/getProductServicesByStoreId/store/{storeId}`: This API returns a list of product services by a store id.
+    * `/createProductService`: This API creates a new product service and returns it.
+    * `/updateProductServiceById/{id}`: This API updates an existing product service by its id and returns it, or null if not found.
+    * `/deleteProductServiceById/{id}`: This API deletes an existing product service by its id and returns no content, or not found if not found.
+
+- ReportEntity: This entity represents a report sent by a user to the admin. It has fields such as messageContent, timestamp, isResolved, isDeleted, and an association with AccountEntity. The APIs for this entity are:
+
+    * `/getAllReports`: This API returns a list of all reports in the database.
+    * `/getReportById/{id}`: This API returns a report by its id, or null if not found.
+    * `/createReport`: This API creates a new report and returns it.
+    * `/updateReportById/{id}`: This API updates an existing report by its id and returns it, or null if not found.
+    * `/deleteReportById/{id}`: This API deletes an existing report by its id and returns no content, or not found if not found.
+
+- StoreEntity: This entity represents a store of a vendor. It has fields such as storeName, description, category, isDeleted, and associations with AccountEntity and ProductServiceEntity. The APIs for this entity are:
+
+    * `/getAllStores`: This API returns a list of all stores in the database.
+    * `/getStoreById/{id}`: This API returns a store by its id, or null if not found.
+    * `/createStore`: This API creates a new store and returns it.
+    * `/updateStoreById/{id}`: This API updates an existing store by its id and returns it, or null if not found.
+
+- TransactionEntity: This entity represents a transaction between a customer and a vendor. It has fields such as status, isDeleted, and associations with AccountEntity. The APIs for this entity are:
+
+    * `/getAllTransactions`: This API returns a list of all transactions in the database.
+    * `/getTransactionById/{id}`: This API returns a transaction by its id, or null if not found.
+    * `/createTransaction`: This API creates a new transaction and returns it.
+    * `/updateTransactionById/{id}`: This API updates an existing transaction by its id and returns it, or null if not found.
+    * `/deleteTransactionById/{id}`: This API deletes an existing transaction by its id and returns no content, or not found if not found.
+
+- UserEntity: This entity represents a user profile. It has fields such as firstName, lastName, birthDate, image, isDeleted, and an association with AccountEntity. The APIs for this entity are:
+
+    * `/getAllUsers`: This API returns a list of all users in the database.
+    * `/getUserById/{id}`: This API returns a user by its id, or null if not found.
+    * `/createUser`: This API creates a new user and returns it.
+    * `/updateUserById/{id}`: This API updates an existing user by its id and returns it, or null if not found.
+    * `/deleteUserById/{id}`: This API deletes an existing user by its id and returns no content, or not found if not found.

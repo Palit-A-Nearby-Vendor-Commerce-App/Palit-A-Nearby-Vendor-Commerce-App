@@ -1,14 +1,11 @@
 package com.nearbyvendor.palit.entity;
 
-//import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-//import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
 
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "accountId")
 @Entity
 @Table(name = "account")
 public class AccountEntity {
@@ -28,7 +25,7 @@ public class AccountEntity {
     private boolean isDeleted;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "account")//, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "account")
     private UserEntity user;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -40,23 +37,23 @@ public class AccountEntity {
     private StoreEntity store;
     
     @JsonIgnore
-    @OneToMany(mappedBy = "customer")//, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "customer")
     private Set<TransactionEntity> customerTransactions;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "account")//, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "account")
     private Set<ChatEntity> chat;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "customer")//, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "customer")
     private Set<ConversationEntity> conversations;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "vendor")//, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "vendor")
     private Set<TransactionEntity> vendorTransactions;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "account")//, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "account")
     private List<ReportEntity> report;
 
     public AccountEntity() {

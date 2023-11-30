@@ -1,12 +1,8 @@
 package com.nearbyvendor.palit.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "chatId")
 @Entity
 @Table(name = "chat")
 public class ChatEntity {
@@ -15,15 +11,15 @@ public class ChatEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int chatId;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "senderId", referencedColumnName = "accountId")
-    private AccountEntity account;
-
     private String messageContent;
 
     private Timestamp timestamp;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "senderId", referencedColumnName = "accountId")
+    private AccountEntity account;
+
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "conversationId", referencedColumnName = "conversationId")
     private ConversationEntity conversation;
 

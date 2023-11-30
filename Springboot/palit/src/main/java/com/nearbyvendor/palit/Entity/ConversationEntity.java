@@ -1,13 +1,9 @@
 package com.nearbyvendor.palit.entity;
-
-//import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-//import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.Set;
 
-// @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "conversationId")
 @Entity
 @Table(name = "conversation")
 public class ConversationEntity {
@@ -16,16 +12,16 @@ public class ConversationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int conversationId;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "vendorAccountId", referencedColumnName = "accountId")
     private AccountEntity vendor;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "customerAccountId", referencedColumnName = "accountId")
     private AccountEntity customer;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "conversation")//, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "conversation")
     private Set<ChatEntity> chat;
 
 

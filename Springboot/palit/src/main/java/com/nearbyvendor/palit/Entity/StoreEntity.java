@@ -1,8 +1,13 @@
 package com.nearbyvendor.palit.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "storeId")
 @Entity
@@ -33,14 +38,12 @@ public class StoreEntity {
 
     }
 
-    public StoreEntity(String storeName, String description, String category, AccountEntity account,
-                       ProductServiceEntity productService) {
+    public StoreEntity(String storeName, String description, String category, AccountEntity account) {
         this.storeName = storeName;
         this.description = description;
         this.category = category;
         this.account = account;
         this.isDeleted = false;
-        this.productService = productService;
     }
 
     public int getStoreId() {
@@ -91,14 +94,5 @@ public class StoreEntity {
         this.account = account;
     }
 
-    public ProductServiceEntity getProductService() {
-        return productService;
-    }
-
-    public void setProductService(ProductServiceEntity productService) {
-        this.productService = productService;
-    }
-
-    
 
 }

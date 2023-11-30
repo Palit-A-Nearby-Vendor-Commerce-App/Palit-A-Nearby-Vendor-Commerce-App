@@ -4,11 +4,13 @@ import com.nearbyvendor.palit.entity.ProductServiceEntity;
 import com.nearbyvendor.palit.repository.ProductServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class ProductServiceService {
 
     @Autowired

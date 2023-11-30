@@ -10,6 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LogoutIcon from "@mui/icons-material/Logout";
+import axios from "axios";
 
 const NavigationBar = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -22,7 +23,17 @@ const NavigationBar = () => {
     // Perform logout actions (e.g., clear user data)
     setUser(null);
     // Additional logout actions can be added here
-
+    axios.put(`http://localhost:8080/api/updateLocationById/${user.id}`, {
+      // user user's location but update the isActive to true
+      ...user.account.location,
+      isActive: false,
+    })
+    .then(response => {
+      console.log(response.data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
     // Redirect to the default page ("/")
     history.push("/");
   };
@@ -95,12 +106,6 @@ const NavigationBar = () => {
               onClose={handleClose}
               style={{ marginTop: "50px" }}
             >
-              {/* <MenuItem
-                onClick={handleClose}
-                style={{ display: "flex", gap: "10px" }}
-              >
-                <AccountCircleIcon /> Profile
-              </MenuItem> */}
               <MenuItem
                 onClick={handleLogout}
                 style={{ display: "flex", gap: "10px" }}

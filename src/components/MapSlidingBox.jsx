@@ -44,7 +44,7 @@ const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
         }}
         onClick={handleSliderToggle}
       >
-        {showSlider ? <GoSidebarCollapse size={20} /> : <GoSidebarExpand size={20} />}
+        {showSlider ? <GoSidebarCollapse size={30} /> : <GoSidebarExpand size={30} />}
       </button>
     </div>
   );

@@ -1,5 +1,6 @@
 import { Button, TextField } from "@mui/material";
-import React, { useContext, useState } from "react";
+import axios from 'axios';
+import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import redRating from "../assets/images/redRating.png";
 
@@ -13,6 +14,40 @@ const ManageStore = () => {
         price: "",
     });
     const [products, setProducts] = useState([]);
+    const [store, setStore] = useState(null); 
+
+    useEffect(() => {
+        // Replace with your actual API endpoints
+        const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.id}`;
+        const accountApiEndpoint = 'http://localhost:8080/api/getAccountById/';
+        const storeApiEndpoint = 'http://localhost:8080/api/getStoreById/';
+
+        axios.get(userApiEndpoint)
+            .then(response => {
+                if (response.data && response.data.accountId) {
+                    return axios.get(accountApiEndpoint + response.data.accountId);
+                } else {
+                    throw new Error('Account ID not found in user data');
+                }
+            })
+            .then(response => {
+                if (response.data && response.data.store) {
+                    return axios.get(storeApiEndpoint + response.data.store.storeId);
+                } else {
+                    throw new Error('Store ID not found in account data');
+                }
+            })
+            .then(response => {
+                if (response.data) {
+                    setStore(response.data); // Set the store state
+                    console.log('Store data:', response.data); // Log the store data
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data: ', error);
+            });
+    }, []);
+
 
     // Handle click on user image
     const handleMenu = (event) => {
@@ -104,23 +139,24 @@ const ManageStore = () => {
                     src={`data:image/png;base64, ${user.image}`}
                     alt="User"
                     className="w-14 h-15 rounded-full border-2 border-black"
+                    style={{ width: '70px', height: '70px' }}
                     onClick={handleMenu}
                 />
                 <div className="ml-3" style={{ flexDirection: 'column' }}>
                     {/* Store Name */}
-                    <h2 className="text-xl font-semibold">Bentong's Kitchen</h2>
+                    <h2 className="text-xl font-semibold">{user.account.store ? user.account.store.storeName : 'Loading...'}</h2>
                     {/* Category */}
-                    <p className="text-sm">Food</p>
+                    <p className="text-sm">{user.account.store ? user.account.store.category : 'Loading...'}</p>
                     <div className="flex">
                         <img src={redRating} alt="Rating" className="w-5 h-5" />
                         <p className="font-medium">4.8</p>
                     </div>
                 </div>
             </div>
-
+    
             {/* Store description */}
             <div className="p-2" style={{ height: "90px" }}>
-                <p className="text-sm" style={{ textAlign: "justify" }}>Bentong’s Kariton combines the convenience of a mobile shop with the variety of a traditional Filipino convenience store.</p>
+                <p className="text-sm" style={{ textAlign: "justify" }}>{user.account.store ? user.account.store.description : 'Loading...'}</p>
             </div>
 
             {/* Products section */}

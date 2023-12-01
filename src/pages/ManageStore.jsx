@@ -14,7 +14,7 @@ const ManageStore = () => {
         price: "",
     });
     const [products, setProducts] = useState([]);
-    const [store, setStore] = useState(null); 
+    const [store, setStore] = useState(null);
 
     useEffect(() => {
         // Replace with your actual API endpoints
@@ -120,8 +120,23 @@ const ManageStore = () => {
             return;
         }
 
+        // Prepare the product data
+        const productData = {
+            ...editedProduct,
+            store: { storeId: user.account.store.storeId },  // Add the storeId
+        };
+
         // Add the edited product to the list of products
-        setProducts((prevProducts) => [...prevProducts, editedProduct]);
+        setProducts((prevProducts) => [...prevProducts, productData]);
+
+        // Make a POST request to the ProductService API endpoint
+        axios.post('http://localhost:8080/api/createProductService', productData)
+            .then(response => {
+                console.log('Product created:', response.data);
+            })
+            .catch(error => {
+                console.error('Error creating product:', error);
+            });
 
         // Clear the edited product state
         setEditedProduct({
@@ -130,6 +145,7 @@ const ManageStore = () => {
             price: "",
         });
     };
+
 
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
@@ -153,7 +169,7 @@ const ManageStore = () => {
                     </div>
                 </div>
             </div>
-    
+
             {/* Store description */}
             <div className="p-2" style={{ height: "90px" }}>
                 <p className="text-sm" style={{ textAlign: "justify" }}>{user.account.store ? user.account.store.description : 'Loading...'}</p>

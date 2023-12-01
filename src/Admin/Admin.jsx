@@ -25,7 +25,7 @@ const Admin = () => {
 
   const fetchUserData = () => {
     axios
-      .get("http://localhost:3005/admins")
+      .get("http://localhost:8080/api/getAllAdminAccounts")
       .then((response) => {
         setUserData(response.data);
         setLoading(false);

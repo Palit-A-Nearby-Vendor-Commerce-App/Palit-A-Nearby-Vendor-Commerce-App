@@ -59,9 +59,6 @@ function Home() {
     [currentPosition]
   );
 
-  // Log the user location to the console
-  console.log("User in map: ", user.account.location);
-
   // Define a function for rendering the vendor marker icon
   const renderVendorMarkerIcon = () => {
     // Check if the google maps object is available
@@ -72,7 +69,7 @@ function Home() {
       // Return an object with the marker image url and scaled size
       return {
         url: marker,
-        scaledSize: new window.google.maps.Size(30, 30),
+        scaledSize: new window.google.maps.Size(40, 40),
       };
     }
     // Otherwise, return undefined
@@ -100,6 +97,7 @@ function Home() {
             { latitude: latitude, longitude: longitude }
           )
           .then((response) => {
+            console.log("Location successfully updated: ", response.data);
             // Set the current position state to the response data
             setCurrentPosition({
               lat: response.data.latitude,
@@ -206,30 +204,31 @@ function Home() {
           return false;
         });
 
-        // Log the filtered vendors to the console
         console.log("Filtered vendors:", usersNearby);
         // Mark the vendors on the map with markers
         usersNearby.forEach((user) => {
-          const vendorMarker = new window.google.maps.Marker({
+          const userMarker = new window.google.maps.Marker({
             position: {
               lat: user.account.location.latitude,
               lng: user.account.location.longitude,
             },
             map: mapRef.current, // Assuming you have a map reference
             icon: {
-              url: customerMarker,
-              scaledSize: new window.google.maps.Size(10, 10),
+              url: user.account.isVendor
+                ? vendorIcons(user.account.store.category)
+                : customerMarker,
+              scaledSize: new window.google.maps.Size(30, 30),
             },
           });
 
           // You can add click event handling for the markers if needed
-          vendorMarker.addListener("click", () => {
+          userMarker.addListener("click", () => {
             window.location.href = `/store/${user.accountId}`;
           });
         });
       })
       .catch((error) => console.error("Error fetching users: ", error));
-  }, [currentPosition, user.account.isVendor]);
+  }, [currentPosition, user.account]);
 
   // Return the JSX element for rendering the component
   return (

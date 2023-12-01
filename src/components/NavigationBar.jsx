@@ -108,7 +108,7 @@ const NavigationBar = () => {
             >
               <MenuItem
                 onClick={handleLogout}
-                style={{ display: "flex", gap: "10px" }}
+                style={{ display: "flex", gap: "10px", paddingLeft: "3px", paddingRight: "3px"}}
               >
                 <LogoutIcon />
                 Logout

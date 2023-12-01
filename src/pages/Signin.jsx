@@ -45,14 +45,14 @@ const Signin = () => {
     e.preventDefault();
 
     const user = userData.find(
-      (user) => user.account.email === email && user.account.password === password
+      (user) =>
+        user.account.email === email && user.account.password === password
     );
 
     console.log("Ako si user", user);
 
     if (user) {
       console.log("Current user: ", user);
-      // Update the user context with the retrieved user data
       setUser(user);
 
       history.push("/home");

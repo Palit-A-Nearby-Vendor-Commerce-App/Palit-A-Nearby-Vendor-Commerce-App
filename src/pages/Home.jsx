@@ -7,127 +7,21 @@ import React, {
 } from "react";
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import marker from "../assets/images/vendor-self-pin.png";
+import customerMarker from "../assets/images/customer-map-icon.png";
 import axios from "axios";
 import NavigationBar from "../components/NavigationBar";
 import MapSlidingBox from "../components/MapSlidingBox";
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
 import { UserContext } from "../UserContext";
+import { mapContainerStyle, mapOptions } from "../assets/styles/styles";
+import { getDistance } from "../utils/functions";
 
-const mapContainerStyle = {
-  width: "100%",
-  height: "calc(100vh - 90px)",
-};
-
-const mapOptions = {
-  streetViewControl: false,
-  zoomControl: false,
-  mapTypeControl: false,
-  scaleControl: false,
-  rotateControl: false,
-  fullscreenControl: false,
-  styles: [
-    {
-      featureType: "poi",
-      stylers: [{ visibility: "off" }],
-    },
-    {
-      featureType: "transit",
-      elementType: "labels.icon",
-      stylers: [{ visibility: "off" }],
-    },
-  ],
-};
-
-const R = 6371;
-const deg2rad = (deg) => deg * (Math.PI / 180);
-
-const getDistance = (lat1, lon1, lat2, lon2) => {
-  console.log("gettingDistance");
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1000;
-};
-
-// Define a function to update the location of a given locationId
-const updateLocation = (locationId, location) => {
-  axios
-    .put(`http://localhost:8080/api/updateLocationById/${locationId}`, location)
-    .then((response) => {
-      console.log("Location updated successfully");
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-};
-///////////start
 function Home() {
-  const { user, updateLocation } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [showSlider, setShowSlider] = useState(false);
   const mapRef = useRef();
-
-  // Get the user location from the user context
-  let userLocation = user.account.location;
-
-  // Define a state variable to store the locations
-  const [locations, setLocations] = useState([]);
-
-  // Define a state variable to store the error
-  const [error, setError] = useState(null);
-
-  // Fetch all locations from the API when the component mounts
-  useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/getAllUsers")
-      .then((response) => {
-        console.log("Fetch all locations from the API when the component mounts");
-        setLocations(prevState => response.data);
-        console.log("locations: ", locations);
-        response.data.forEach((location) => {
-          console.log("entering for loop");
-
-            console.log("locationsdafasf: ", location);
-            const distance = getDistance(
-              userLocation.latitude,
-              userLocation.longitude,
-              location.latitude,
-              location.longitude
-            );
-            console.log("distanceasdfad: ", distance);
-            if (distance > 200) {
-              // Calculate the new coordinates that are 200m away from the user location
-              // Use a simple formula that assumes the Earth is a sphere
-              // This is not very accurate but good enough for demonstration purposes
-              const bearing = Math.atan2(
-                location.longitude - userLocation.longitude,
-                location.latitude - userLocation.latitude
-              ); // Angle between the user location and the location in radians
-              const newLatitude =
-                userLocation.latitude +
-                (200 / 6371e3) * Math.cos(bearing) * (180 / Math.PI); // Convert radians to degrees
-              const newLongitude =
-                userLocation.longitude +
-                (200 / 6371e3) * Math.sin(bearing) * (180 / Math.PI);
-              // Create a new location object with the updated coordinates
-              const newLocation = {
-                ...location,
-                latitude: newLatitude,
-                longitude: newLongitude,
-              };
-              // Update the location using the API
-              updateLocation(location.locationId, newLocation);
-            
-          }
-        });
-      })
-      .catch((error) => {
-        setError(error);
-      });
-  }, [userLocation]);
 
   const onMapLoad = useCallback(
     (map) => {
@@ -138,6 +32,8 @@ function Home() {
     },
     [currentPosition]
   );
+
+  console.log("User in map: ", user.account.location);
 
   const renderVendorMarkerIcon = () => {
     if (
@@ -156,9 +52,25 @@ function Home() {
     const updateLocationInContext = (position) => {
       const { latitude, longitude } = position.coords;
       const updatedLocation = { lat: latitude, lng: longitude };
+
       setCurrentPosition(updatedLocation);
-      if (user && user.location) {
-        updateLocation(user.location.id, updatedLocation);
+
+      if (user && user.account.location) {
+        axios
+          .put(
+            `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
+            // { latitude, longitude }
+            { latitude: latitude, longitude: longitude }
+          )
+          .then((response) => {
+            setCurrentPosition({
+              lat: response.data.latitude,
+              lng: response.data.longitude,
+            });
+          })
+          .catch((error) => {
+            console.error("Error updating location:", error);
+          });
       }
     };
 
@@ -169,7 +81,7 @@ function Home() {
     );
 
     return () => navigator.geolocation.clearWatch(watchId);
-  }, [updateLocation, user]);
+  }, [user, user.account.location.latitude, user.account.location.longitude]);
 
   const calculateOffset = () => {
     if (mapRef.current) {
@@ -206,22 +118,28 @@ function Home() {
     axios
       .get("http://localhost:8080/api/getAllUsers")
       .then(({ data }) => {
+        console.log(
+          getDistance(
+            currentPosition.lat,
+            currentPosition.lng,
+            10.1381623,
+            123.6739757
+          ) <= 200
+        );
+
+        console.log(data[4].account.location.isActive);
+
         // Filter out users who are vendors and within 200 meters of the current user
-        const vendorsNearby = data.filter((user) => {
-          console.log("otherUser: ", user);
+        const usersNearby = data.filter((otherUser) => {
           if (
-            !user.account.isVendor &&
             user.account.isVendor &&
+            !otherUser.account.isVendor &&
+            otherUser.account.location.isActive &&
             getDistance(
               currentPosition.lat,
-              console.log(
-                "current post lat lng ",
-                currentPosition.lat,
-                currentPosition.lng
-              ),
               currentPosition.lng,
-              user.location.latitude,
-              user.location.longitude
+              otherUser.account.location.latitude,
+              otherUser.account.location.longitude
             ) <= 200
           ) {
             return true;
@@ -229,20 +147,24 @@ function Home() {
           return false;
         });
 
+        console.log("Filtered vendors:", usersNearby);
         // Mark the vendors on the map with markers
-        vendorsNearby.forEach((vendor) => {
+        usersNearby.forEach((user) => {
           const vendorMarker = new window.google.maps.Marker({
             position: {
-              lat: vendor.location.latitude,
-              lng: vendor.location.longitude,
+              lat: user.account.location.latitude,
+              lng: user.account.location.longitude,
             },
             map: mapRef.current, // Assuming you have a map reference
-            icon: renderVendorMarkerIcon(), // Define the icon for vendors
+            icon: {
+              url: customerMarker,
+              scaledSize: new window.google.maps.Size(10, 10),
+            },
           });
 
           // You can add click event handling for the markers if needed
           vendorMarker.addListener("click", () => {
-            window.location.href = `/store/${vendor.accountId}`;
+            window.location.href = `/store/${user.accountId}`;
           });
         });
       })
@@ -263,10 +185,12 @@ function Home() {
               onLoad={onMapLoad}
             >
               {currentPosition && (
-                <Marker
-                  position={currentPosition}
-                  icon={renderVendorMarkerIcon()}
-                />
+                <>
+                  <Marker
+                    position={currentPosition}
+                    icon={renderVendorMarkerIcon()}
+                  />
+                </>
               )}
               {currentPosition && (
                 <Circle

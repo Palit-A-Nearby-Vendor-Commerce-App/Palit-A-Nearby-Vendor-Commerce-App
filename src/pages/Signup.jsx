@@ -176,8 +176,8 @@ function Signup() {
   };
 
   return (
-    <div className="w-full pb-10 bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">
-      <div className="w-full flex items-center justify-center">
+    <div className="w-full h-screen pb-10 bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">
+      <div className="w-full flex items-center justify-center ">
         <img src={logo} alt="Palit logo" className="w-[250px] h-[102px] mt-5" />
       </div>
       <div className="w-[500px] m-auto">

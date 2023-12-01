@@ -15,6 +15,16 @@ const ManageStore = () => {
   });
   const [products, setProducts] = useState([]);
   const [store, setStore] = useState(null);
+    const { user, setUser } = useContext(UserContext);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [editMode, setEditMode] = useState(false);
+    const [editedProduct, setEditedProduct] = useState({
+        picture: "",
+        name: "",
+        price: "",
+    });
+    const [products, setProducts] = useState([]);
+    const [store, setStore] = useState(null);
 
   useEffect(() => {
     // Replace with your actual API endpoints
@@ -119,9 +129,33 @@ const ManageStore = () => {
       alert("Please fill in all product details.");
       return;
     }
+    // Handle click on "Add" button
+    const handleAdd = () => {
+        // Validate that all required fields are filled
+        if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
+            alert("Please fill in all product details.");
+            return;
+        }
+
+        // Prepare the product data
+        const productData = {
+            ...editedProduct,
+            store: { storeId: user.account.store.storeId },  // Add the storeId
+        };
 
     // Add the edited product to the list of products
     setProducts((prevProducts) => [...prevProducts, editedProduct]);
+        // Add the edited product to the list of products
+        setProducts((prevProducts) => [...prevProducts, productData]);
+
+        // Make a POST request to the ProductService API endpoint
+        axios.post('http://localhost:8080/api/createProductService', productData)
+            .then(response => {
+                console.log('Product created:', response.data);
+            })
+            .catch(error => {
+                console.error('Error creating product:', error);
+            });
 
     // Clear the edited product state
     setEditedProduct({
@@ -130,6 +164,14 @@ const ManageStore = () => {
       price: "",
     });
   };
+        // Clear the edited product state
+        setEditedProduct({
+            picture: "",
+            name: "",
+            price: "",
+        });
+    };
+
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
@@ -164,6 +206,33 @@ const ManageStore = () => {
           {user.account.store ? user.account.store.description : "Loading..."}
         </p>
       </div>
+    return (
+        <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+            {/* User details */}
+            <div style={{ display: 'flex' }}>
+                <img
+                    src={`data:image/png;base64, ${user.image}`}
+                    alt="User"
+                    className="w-14 h-15 rounded-full border-2 border-black"
+                    style={{ width: '70px', height: '70px' }}
+                    onClick={handleMenu}
+                />
+                <div className="ml-3" style={{ flexDirection: 'column' }}>
+                    {/* Store Name */}
+                    <h2 className="text-xl font-semibold">{user.account.store ? user.account.store.storeName : 'Loading...'}</h2>
+                    {/* Category */}
+                    <p className="text-sm">{user.account.store ? user.account.store.category : 'Loading...'}</p>
+                    <div className="flex">
+                        <img src={redRating} alt="Rating" className="w-5 h-5" />
+                        <p className="font-medium">4.8</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Store description */}
+            <div className="p-2" style={{ height: "90px" }}>
+                <p className="text-sm" style={{ textAlign: "justify" }}>{user.account.store ? user.account.store.description : 'Loading...'}</p>
+            </div>
 
       {/* Products section */}
       <h1

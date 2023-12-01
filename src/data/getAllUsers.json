@@ -1,148 +1,56 @@
-{
-  "getAllUsers": [
-    {
-      "userId": 1,
-      "firstName": "a", 
-      "lastName": "a",
-      "birthDate": "2003-03-30",
+[
+  {
+    "userId": 1,
+    "firstName": "a",
+    "lastName": "a",
+    "birthDate": "2003-03-30",
+    "isDeleted": false,
+    "image": null,
+    "account": {
+      "accountId": 2,
+      "email": "b@b.b",
+      "password": "Mkb@02468",
+      "isVendor": false,
+      "isAdmin": false,
       "isDeleted": false,
-      "image": null,
-      "account": {
-        "accountId": 2,
-        "email": "b@b.b",
-        "password": "Mkb@02468",
-        "isVendor": false,
-        "isAdmin": false,
+      "location": {
+        "locationId": 2,
+        "latitude": 10.316661756937911,
+        "longitude": 123.87829254797741,
         "isDeleted": false,
-        "location": {
-          "locationId": 2,
-          "latitude": 10.316661756937911,
-          "longitude": 123.87829254797741,
-          "isDeleted": false,
-          "isActive": true
-        },
-        "store": null
-      }
-    },
-    {
-      "userId": 2,
-      "firstName": "b",
-      "lastName": "b",
-      "birthDate": "1988-07-21",
+        "isActive": true
+      },
+      "store": null
+    }
+  },
+  {
+    "userId": 2,
+    "firstName": "kenneth",
+    "lastName": "bardil",
+    "birthDate": "1999-11-11",
+    "isDeleted": false,
+    "image": null,
+    "account": {
+      "accountId": 2,
+      "email": "b@b.b",
+      "password": "Mkb@02468",
+      "isVendor": true,
+      "isAdmin": false,
       "isDeleted": false,
-      "image": null,
-      "account": {
-        "accountId": 3,
-        "email": "c@c.c",
-        "password": "Pwd@56789",
-        "isVendor": false,
-        "isAdmin": false,
+      "location": {
+        "locationId": 2,
+        "latitude": 0.0,
+        "longitude": 0.0,
         "isDeleted": false,
-        "location": {
-          "locationId": 3,
-          "latitude": 10.316761756937911,
-          "longitude": 123.87839254797741,
-          "isDeleted": false,
-          "isActive": true
-        },
-        "store": null
-      }
-    },
-    {
-      "userId": 3,
-      "firstName": "c",
-      "lastName": "c",
-      "birthDate": "1995-11-15",
-      "isDeleted": false,
-      "image": null,
-      "account": {
-        "accountId": 4,
-        "email": "d@d.d",
-        "password": "Dfg@101112",
-        "isVendor": false,
-        "isAdmin": false,
-        "isDeleted": false,
-        "location": {
-          "locationId": 4,
-          "latitude": 10.316561756937911,
-          "longitude": 123.87819254797741,
-          "isDeleted": false,
-          "isActive": true
-        },
-        "store": null
-      }
-    },
-    {
-      "userId": 4,
-      "firstName": "d",
-      "lastName": "d",
-      "birthDate": "1990-02-05",
-      "isDeleted": false,
-      "image": null,
-      "account": {
-        "accountId": 5,
-        "email": "e@e.e",
-        "password": "Hij@131415",
-        "isVendor": false,
-        "isAdmin": false,
-        "isDeleted": false,
-        "location": {
-          "locationId": 5,
-          "latitude": 10.316861756937911,
-          "longitude": 123.87849254797741,
-          "isDeleted": false,
-          "isActive": true
-        },
-        "store": null
-      }
-    },
-    {
-      "userId": 5,
-      "firstName": "e",
-      "lastName": "e",
-      "birthDate": "1975-04-17",
-      "isDeleted": false,
-      "image": null,
-      "account": {
-        "accountId": 6,
-        "email": "f@f.f",
-        "password": "Klm@161718",
-        "isVendor": false,
-        "isAdmin": false,
-        "isDeleted": false,
-        "location": {
-          "locationId": 6,
-          "latitude": 10.316561756937911,
-          "longitude": 123.87839254797741,
-          "isDeleted": false,
-          "isActive": true
-        },
-        "store": null
-      }
-    },
-    {
-      "userId": 6,
-      "firstName": "f",
-      "lastName": "f",
-      "birthDate": "2001-12-30",
-      "isDeleted": false,
-      "image": null,
-      "account": {
-        "accountId": 7,
-        "email": "g@g.g",
-        "password": "Nop@192021",
-        "isVendor": false,
-        "isAdmin": false,
-        "isDeleted": false,
-        "location": {
-          "locationId": 7,
-          "latitude": 10.316461756937911,
-          "longitude": 123.87819254797741,
-          "isDeleted": false,
-          "isActive": true
-        },
-        "store": null
+        "isActive": true
+      },
+      "store": {
+        "storeId": 1,
+        "storeName": "bardil",
+        "description": "bardil",
+        "category": "fish",
+        "isDeleted": false
       }
     }
-  ]
-}
+  }
+]

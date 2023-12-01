@@ -14,7 +14,7 @@ import MapSlidingBox from "../components/MapSlidingBox";
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
 import { UserContext } from "../UserContext";
 import { mapContainerStyle, mapOptions } from "../assets/styles/styles";
-import { getDistance } from "../utils/functions";
+import { getDistance, vendorIcons } from "../utils/functions";
 
 function Home() {
   const { user, setUser } = useContext(UserContext);
@@ -33,8 +33,6 @@ function Home() {
     [currentPosition]
   );
 
-  console.log("User in map: ", user.account.location);
-
   const renderVendorMarkerIcon = () => {
     if (
       typeof window.google === "object" &&
@@ -42,7 +40,7 @@ function Home() {
     ) {
       return {
         url: marker,
-        scaledSize: new window.google.maps.Size(30, 30),
+        scaledSize: new window.google.maps.Size(40, 40),
       };
     }
     return undefined;
@@ -63,6 +61,7 @@ function Home() {
             { latitude: latitude, longitude: longitude }
           )
           .then((response) => {
+            console.log("Location successfully updated: ", response.data);
             setCurrentPosition({
               lat: response.data.latitude,
               lng: response.data.longitude,
@@ -118,58 +117,69 @@ function Home() {
     axios
       .get("http://localhost:8080/api/getAllUsers")
       .then(({ data }) => {
-        console.log(
-          getDistance(
-            currentPosition.lat,
-            currentPosition.lng,
-            10.1381623,
-            123.6739757
-          ) <= 200
-        );
-
-        console.log(data[4].account.location.isActive);
-
         // Filter out users who are vendors and within 200 meters of the current user
-        const usersNearby = data.filter((otherUser) => {
-          if (
-            user.account.isVendor &&
-            !otherUser.account.isVendor &&
-            otherUser.account.location.isActive &&
-            getDistance(
-              currentPosition.lat,
-              currentPosition.lng,
-              otherUser.account.location.latitude,
-              otherUser.account.location.longitude
-            ) <= 200
-          ) {
-            return true;
-          }
-          return false;
-        });
+        let usersNearby;
+        if (user.account.isVendor) {
+          usersNearby = data.filter((otherUser) => {
+            if (
+              user.account.isVendor &&
+              !otherUser.account.isVendor &&
+              otherUser.account.location.isActive &&
+              getDistance(
+                currentPosition.lat,
+                currentPosition.lng,
+                otherUser.account.location.latitude,
+                otherUser.account.location.longitude
+              ) <= 200
+            ) {
+              return true;
+            }
+            return false;
+          });
+        } else {
+          usersNearby = data.filter((otherUser) => {
+            if (
+              !user.account.isVendor &&
+              otherUser.account.isVendor &&
+              otherUser.account.location.isActive &&
+              getDistance(
+                currentPosition.lat,
+                currentPosition.lng,
+                otherUser.account.location.latitude,
+                otherUser.account.location.longitude
+              ) <= 200
+            ) {
+              return true;
+            }
+            return false;
+          });
+        }
 
-        console.log("Filtered vendors:", usersNearby);
-        // Mark the vendors on the map with markers
+        // Nearby users icons
+
         usersNearby.forEach((user) => {
-          const vendorMarker = new window.google.maps.Marker({
+          const userMarker = new window.google.maps.Marker({
             position: {
               lat: user.account.location.latitude,
               lng: user.account.location.longitude,
             },
             map: mapRef.current, // Assuming you have a map reference
             icon: {
-              url: customerMarker,
-              scaledSize: new window.google.maps.Size(10, 10),
+              url: user.account.isVendor
+                ? vendorIcons(user.account.store.category)
+                : customerMarker,
+              scaledSize: new window.google.maps.Size(30, 30),
             },
           });
 
           // You can add click event handling for the markers if needed
-          vendorMarker.addListener("click", () => {
+          userMarker.addListener("click", () => {
             window.location.href = `/store/${user.accountId}`;
           });
         });
       })
       .catch((error) => console.error("Error fetching users: ", error));
-  }, [currentPosition, user.account.isVendor]);
+  }, [currentPosition, user.account]);
 
   return (
     <>

@@ -107,7 +107,9 @@ const ManageStore = () => {
                     onClick={handleMenu}
                 />
                 <div className="ml-3" style={{ flexDirection: 'column' }}>
+                    {/* Store Name */}
                     <h2 className="text-xl font-semibold">Bentong's Kitchen</h2>
+                    {/* Category */}
                     <p className="text-sm">Food</p>
                     <div className="flex">
                         <img src={redRating} alt="Rating" className="w-5 h-5" />
@@ -181,20 +183,20 @@ const ManageStore = () => {
                     >
                         Add
                     </Button>
-                    <div style={{ marginTop: "20px" }}>
+                    <div style={{ marginTop: "20px", display: "flex", flexWrap: "wrap", justifyContent: "space-between" }}>
                         {products.map((product, index) => (
-                            <div key={index} style={{ marginBottom: "20px", position: "relative" }}>
+                            <div key={index} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
                                 {product.picture && (
                                     <div style={{ position: "relative" }}>
                                         <img
                                             src={product.picture}
                                             alt={`Product ${index + 1}`}
-                                            style={{ width: "50%", height: "150px", border: "1px solid black", borderRadius: "15px" }}
+                                            style={{ width: "100%", height: "150px", border: "1px solid black", borderRadius: "15px" }}
                                         />
-                                        <p style={{ position: "absolute", top: "1px", left: "25%", width: "50%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}>
+                                        <p style={{ position: "absolute", top: "1px", left: "49%", width: "100%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}>
                                             {product.name}
                                         </p>
-                                        <p style={{ position: "absolute", bottom: "1px", left: "1%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
+                                        <p style={{ position: "absolute", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
                                             ₱ {product.price}
                                         </p>
                                     </div>

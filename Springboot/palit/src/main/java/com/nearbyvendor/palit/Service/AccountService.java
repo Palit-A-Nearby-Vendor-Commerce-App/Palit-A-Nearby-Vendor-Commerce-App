@@ -20,7 +20,7 @@ public class AccountService {
     
     @Autowired
     private LocationRepository locationRepository;
-
+    
     public List<AccountEntity> getAllAccounts() {
         return accountRepository.findByIsDeletedFalse();
     }
@@ -87,5 +87,9 @@ public class AccountService {
             }
         }
         return false;
+    }
+
+    public List<AccountEntity> getAllAdminAccounts() {
+    	return accountRepository.findByIsAdminAndIsDeletedFalse(true);
     }
 }

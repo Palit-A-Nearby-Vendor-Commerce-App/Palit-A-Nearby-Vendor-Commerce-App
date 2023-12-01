@@ -64,4 +64,15 @@ public class AccountController {
         boolean isEmailTaken = accountService.checkEmail(account);
         return new ResponseEntity<>(isEmailTaken, HttpStatus.OK);
     }
+    
+    @GetMapping("/getAllAdminAccounts")
+    public ResponseEntity<List<AccountEntity>> getAllAdminAccounts() {
+        List<AccountEntity> adminAccounts = accountService.getAllAdminAccounts();
+
+        if (!adminAccounts.isEmpty()) {
+            return new ResponseEntity<>(adminAccounts, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }

@@ -7,12 +7,13 @@ import reportBg from "../assets/images/reportpng.png";
 const Report = () => {
   const { user } = useContext(UserContext);
   const reportRef = useRef(); // Change the ref name
+  console.log(user)
 
   const handleSubmitReport = async (e) => {
     e.preventDefault();
     const formData = new FormData(reportRef.current); // Use the ref name
     const reportData = {
-      senderId: user.id,
+      senderId: user.account,
       messageContent: formData.get("message"), // Use the get method to get form field value
       timestamp: new Date()
     };
@@ -57,7 +58,7 @@ const Report = () => {
           </div>
           <img
           src={reportBg}
-          alt="Background image"
+          alt="Report bg"
           className="col-span-1"
           />
         </div>

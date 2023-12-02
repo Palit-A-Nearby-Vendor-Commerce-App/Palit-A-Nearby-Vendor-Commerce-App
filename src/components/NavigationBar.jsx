@@ -40,7 +40,7 @@ const NavigationBar = () => {
       });
 
     // Redirect to the default page ("/")
-    history.push("/");
+    history.push("/landing");
   };
 
   const handleMenu = (event) => {

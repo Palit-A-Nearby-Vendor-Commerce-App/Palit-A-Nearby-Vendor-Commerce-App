@@ -1,3 +1,4 @@
+// Import fruits, fish, assorted, and manicure images for vendor icons
 import fruits from "../assets/images/fruits_categ.png";
 import fish from "../assets/images/fish_categ.png";
 import assorted from "../assets/images/assorted_categ.png";
@@ -5,19 +6,26 @@ import manicure from "../assets/images/manicure_categ.png";
 // Import axios library for making HTTP requests
 import axios from "axios";
 
-
+// Define a constant for the Earth's radius in kilometers
 const R = 6371;
+// Define a function to convert degrees to radians
 const deg2rad = (deg) => deg * (Math.PI / 180);
+// Define a function to calculate the distance between two points on the Earth's surface using the haversine formula
 const getDistance = (lat1, lon1, lat2, lon2) => {
+  // Calculate the difference in latitude and longitude in radians
   const dLat = deg2rad(lat2 - lat1);
   const dLon = deg2rad(lon2 - lon1);
+  // Calculate the haversine of half the central angle between the points
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) ** 2;
+  // Return the distance in meters by multiplying the Earth's radius and the inverse haversine of the central angle
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1000;
 };
 
+// Define a function to return the appropriate vendor icon image based on the category
 const vendorIcons = (category) => {
+  // Use a switch statement to match the category with the corresponding image
   switch (category) {
     case "fruits":
       return fruits;
@@ -145,7 +153,7 @@ const fetchNearbyUsers = (
           )
         );
         if (
-          user.account.isVendor == !otherUser.account.isVendor &&
+          user.account.isVendor === !otherUser.account.isVendor &&
           otherUser.account.location.isActive &&
           getDistance(
             currentPosition.lat,

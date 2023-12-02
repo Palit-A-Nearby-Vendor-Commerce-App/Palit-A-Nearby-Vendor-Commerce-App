@@ -14,6 +14,8 @@ public class TransactionEntity {
 
     private boolean isDeleted;
 
+    private String details; // Added string details
+
     @ManyToOne
     @JoinColumn(name = "accountCustomerId", referencedColumnName = "accountId")
     private AccountEntity customer;
@@ -25,10 +27,11 @@ public class TransactionEntity {
     public TransactionEntity() {
     }
 
-    public TransactionEntity(AccountEntity customer, AccountEntity vendor, String status) {
+    public TransactionEntity(AccountEntity customer, AccountEntity vendor, String status, String details) { // Updated constructor
         this.customer = customer;
         this.vendor = vendor;
         this.status = status;
+        this.details = details;
         this.isDeleted = false;
     }
 
@@ -70,5 +73,29 @@ public class TransactionEntity {
 
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public AccountEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(AccountEntity customer) {
+        this.customer = customer;
+    }
+
+    public AccountEntity getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(AccountEntity vendor) {
+        this.vendor = vendor;
     }
 }

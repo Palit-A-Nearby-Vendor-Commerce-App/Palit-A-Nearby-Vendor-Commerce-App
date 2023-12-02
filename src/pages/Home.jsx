@@ -1,25 +1,25 @@
 // Import React and its hooks
 import React, {
-  useState,
-  useEffect,
-  useContext,
-  useRef,
   useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from "react";
 
 // Import Google Maps components from react-google-maps library
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 // Import custom marker images for vendor and customer
-import marker from "../assets/images/vendor-self-pin.png";
 import customerMarker from "../assets/images/customer-map-icon.png";
+import marker from "../assets/images/vendor-self-pin.png";
 
 // Import axios library for making HTTP requests
 import axios from "axios";
 
 // Import custom components for navigation bar and map sliding box
-import NavigationBar from "../components/NavigationBar";
 import MapSlidingBox from "../components/MapSlidingBox";
+import NavigationBar from "../components/NavigationBar";
 
 // Import icon for report button
 import { MdOutlineReportGmailerrorred } from "react-icons/md";

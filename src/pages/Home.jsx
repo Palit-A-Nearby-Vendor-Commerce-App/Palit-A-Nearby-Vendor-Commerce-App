@@ -251,10 +251,9 @@ function Home() {
     if (owner && owner.account.isVendor) {
       setSelectedVendor(owner);
     }
-    // Show the slider if it is not already shown
-    if (!showSlider) {
-      setShowSlider(true);
-    }
+    
+    // Toggle the value of showSlider
+    setShowSlider((prevShowSlider) => !prevShowSlider);
   };
 
   // Return the JSX element for rendering the component

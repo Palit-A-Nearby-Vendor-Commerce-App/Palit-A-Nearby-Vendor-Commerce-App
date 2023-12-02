@@ -296,6 +296,7 @@ function Home() {
                 showSlider={showSlider}
                 handleSliderToggle={handleSliderToggle}
                 selectedVendor={selectedVendor}
+                user={user}
               />
             </GoogleMap>
             <button

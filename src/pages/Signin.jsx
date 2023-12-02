@@ -49,11 +49,34 @@ const Signin = () => {
         user.account.email === email && user.account.password === password
     );
 
-    console.log("Ako si user", user);
+    const isActive = true;
 
     if (user) {
       console.log("Current user: ", user);
-      setUser(user);
+      console.log("Location of user: ", user.account.location.locationId);
+      // update users location to isactive
+      axios
+        .put(
+          `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
+          { isActive: isActive }
+        )
+        .then((response) => {
+          console.log("User is now marked active, Location: ", response.data);
+        })
+        .catch((error) => {
+          console.log("Error updating user location to active.");
+        });
+
+      // get updated user data by getting user by id
+      axios
+        .get(`http://localhost:8080/api/getUserById/${user.userId}`)
+        .then((response) => {
+          console.log("Updated user data: ", response.data);
+          setUser(response.data);
+        })
+        .catch((error) => {
+          console.log("Error getting updated user data.");
+        });
 
       history.push("/home");
     } else {

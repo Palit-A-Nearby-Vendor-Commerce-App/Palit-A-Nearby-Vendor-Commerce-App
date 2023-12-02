@@ -20,20 +20,25 @@ const NavigationBar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleLogout = () => {
-    // Perform logout actions (e.g., clear user data)
-    setUser(null);
     // Additional logout actions can be added here
-    axios.put(`http://localhost:8080/api/updateLocationById/${user.id}`, {
-      // user user's location but update the isActive to true
-      ...user.account.location,
-      isActive: false,
-    })
-    .then(response => {
-      console.log(response.data);
-    })
-    .catch(error => {
-      console.error(error);
-    });
+    axios
+      .put(
+        `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
+        {
+          // user user's location but update the isActive to true
+          ...user.account.location,
+          isActive: false,
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        // Perform logout actions (e.g., clear user data)
+        setUser(null);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
     // Redirect to the default page ("/")
     history.push("/");
   };
@@ -108,7 +113,12 @@ const NavigationBar = () => {
             >
               <MenuItem
                 onClick={handleLogout}
-                style={{ display: "flex", gap: "10px", paddingLeft: "3px", paddingRight: "3px"}}
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  paddingLeft: "3px",
+                  paddingRight: "3px",
+                }}
               >
                 <LogoutIcon />
                 Logout

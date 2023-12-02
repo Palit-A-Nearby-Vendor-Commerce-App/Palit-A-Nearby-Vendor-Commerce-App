@@ -37,6 +37,7 @@ public class LocationService {
     public LocationEntity updateLocationById(int id, LocationEntity location) {
         LocationEntity existingLocation = locationRepository.findByLocationIdAndIsDeletedFalse(id);
         if (existingLocation != null) {
+            existingLocation.setIsActive(location.getIsActive());
             existingLocation.setLatitude(location.getLatitude());
             existingLocation.setLongitude(location.getLongitude());
             return locationRepository.save(existingLocation);

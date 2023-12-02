@@ -9,7 +9,7 @@ import { UserContext } from "../UserContext";
 
 const Signin = () => {
   const history = useHistory();
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -44,18 +44,43 @@ const Signin = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    const user = userData.find(
+    const currentUser = userData.find(
       (user) =>
         user.account.email === email && user.account.password === password
     );
 
-    console.log("Ako si user", user);
+    const isActive = true;
 
-    if (user) {
-      console.log("Current user: ", user);
-      setUser(user);
-
-      history.push("/home");
+    if (currentUser) {
+      console.log("Current user: ", currentUser);
+      console.log(
+        "Location of user: ",
+        currentUser.account.location.locationId
+      );
+      // update users location to isactive
+      axios
+        .put(
+          `http://localhost:8080/api/updateLocationById/${currentUser.account.location.locationId}`,
+          { ...currentUser.account.location,
+            isActive: isActive }
+        )
+        .then((response) => {
+          console.log("User is now marked active, Location: ", response.data);
+          // get updated user data by getting user by id
+          axios
+            .get(`http://localhost:8080/api/getUserById/${currentUser.userId}`)
+            .then((response) => {
+              console.log("Updated user data: ", response);
+              setUser(response.data);
+              history.push("/home");
+            })
+            .catch((error) => {
+              console.log("Error getting updated user data.");
+            });
+        })
+        .catch((error) => {
+          console.log("Error updating user location to active.");
+        });
     } else {
       setError("Invalid email or password");
     }

@@ -1,6 +1,5 @@
 package com.nearbyvendor.palit.service;
 
-import com.nearbyvendor.palit.entity.AccountEntity;
 import com.nearbyvendor.palit.entity.UserEntity;
 import com.nearbyvendor.palit.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import com.nearbyvendor.palit.repository.AccountRepository;
 
 @Service
 @Transactional
@@ -16,9 +14,6 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
 
     public List<UserEntity> getAllUsers() {
         return userRepository.findByIsDeletedFalse();
@@ -48,19 +43,10 @@ public class UserService {
             user.setLastName(updatedUserEntity.getLastName());
             user.setBirthDate(updatedUserEntity.getBirthDate());
             user.setImage(updatedUserEntity.getImage());
-
-            AccountEntity account = accountRepository.findById(updatedUserEntity.getAccount().getAccountId())
-                    .orElse(null);
-            if (account == null) {
-                throw new RuntimeException(
-                        "Account not found for ID: " + updatedUserEntity.getAccount().getAccountId());
-            }
-            user.setAccount(account);
-
+            user.setAccount(updatedUserEntity.getAccount());
             userRepository.save(user);
             return user;
         } else {
-
             System.err.println("Invalid user ID for update: " + id);
             throw new IllegalArgumentException("Invalid user ID");
         }

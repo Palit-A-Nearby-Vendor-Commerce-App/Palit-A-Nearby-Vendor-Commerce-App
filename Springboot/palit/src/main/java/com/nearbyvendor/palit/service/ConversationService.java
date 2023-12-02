@@ -39,13 +39,8 @@ public class ConversationService {
         Optional<ConversationEntity> existingConversation = conversationRepository
                 .findByConversationIdAndIsDeletedFalse(id);
         if (existingConversation.isPresent()) {
-
-            if (conversation.getVendor() != null) {
-                existingConversation.get().setVendor(conversation.getVendor());
-            }
-            if (conversation.getCustomer() != null) {
-                existingConversation.get().setCustomer(conversation.getCustomer());
-            }
+            existingConversation.get().setVendor(conversation.getVendor());
+            existingConversation.get().setCustomer(conversation.getCustomer());
             return conversationRepository.save(existingConversation.get());
         } else {
 

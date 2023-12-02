@@ -37,14 +37,12 @@ public class StoreService {
     public StoreEntity updateStoreById(int storeId, StoreEntity store) {
         StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
         if (existingStore != null) {
-
             existingStore.setStoreName(store.getStoreName());
             existingStore.setDescription(store.getDescription());
             existingStore.setCategory(store.getCategory());
             existingStore.setAccount(store.getAccount());
             return storeRepository.save(existingStore);
         } else {
-
             System.err.println("Invalid store ID for updating: " + storeId);
             throw new IllegalArgumentException("Invalid store ID");
         }

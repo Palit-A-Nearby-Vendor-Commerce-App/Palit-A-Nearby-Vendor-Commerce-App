@@ -39,15 +39,10 @@ public class ChatService {
         Optional<ChatEntity> chatOptional = chatRepository.findByChatIdAndIsDeletedFalse(chatId);
         if (chatOptional.isPresent()) {
             ChatEntity existingChat = chatOptional.get();
-
-            if (chat.getAccount() != null) {
-                existingChat.setAccount(chat.getAccount());
-            }
+            existingChat.setAccount(chat.getAccount());
             existingChat.setMessageContent(chat.getMessageContent());
             existingChat.setTimestamp(chat.getTimestamp());
-            if (chat.getConversation() != null) {
-                existingChat.setConversation(chat.getConversation());
-            }
+            existingChat.setConversation(chat.getConversation());
             return chatRepository.save(existingChat);
         } else {
 

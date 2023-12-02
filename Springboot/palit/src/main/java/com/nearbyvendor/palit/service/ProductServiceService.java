@@ -1,7 +1,6 @@
 package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.ProductServiceEntity;
-import com.nearbyvendor.palit.entity.StoreEntity;
 import com.nearbyvendor.palit.repository.ProductServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import com.nearbyvendor.palit.repository.StoreRepository;
 
 @Service
 @Transactional
@@ -17,9 +15,6 @@ public class ProductServiceService {
 
     @Autowired
     private ProductServiceRepository productServiceRepository;
-    @Autowired
-    private StoreRepository storeRepository;
-
     public List<ProductServiceEntity> getAllProductServices() {
         return productServiceRepository.findByIsDeletedFalse();
     }
@@ -51,12 +46,7 @@ public class ProductServiceService {
             existingProductService.get().setName(productService.getName());
             existingProductService.get().setPrice(productService.getPrice());
             existingProductService.get().setImage(productService.getImage());
-
-            StoreEntity store = storeRepository.findById(productService.getStore().getStoreId()).orElse(null);
-            if (store == null) {
-                throw new RuntimeException("Store not found for ID: " + productService.getStore().getStoreId());
-            }
-            existingProductService.get().setStore(store);
+            existingProductService.get().setStore(productService.getStore());
             return productServiceRepository.save(existingProductService.get());
         } else {
 

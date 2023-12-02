@@ -1,15 +1,16 @@
 package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.AccountEntity;
-import com.nearbyvendor.palit.repository.AccountRepository;
-import com.nearbyvendor.palit.repository.LocationRepository;
 import com.nearbyvendor.palit.entity.LocationEntity;
-
+import com.nearbyvendor.palit.entity.StoreEntity;
+import com.nearbyvendor.palit.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import com.nearbyvendor.palit.repository.LocationRepository;
+import com.nearbyvendor.palit.repository.StoreRepository;
 
 @Service
 @Transactional
@@ -17,10 +18,13 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
-    
+
     @Autowired
     private LocationRepository locationRepository;
-    
+
+    @Autowired
+    private StoreRepository storeRepository;
+
     public List<AccountEntity> getAllAccounts() {
         return accountRepository.findByIsDeletedFalse();
     }
@@ -35,11 +39,6 @@ public class AccountService {
     }
 
     public AccountEntity createAccount(AccountEntity account) {
-        LocationEntity location = locationRepository.findById(account.getLocation().getLocationId()).orElse(null);
-        if (location == null) {
-            throw new RuntimeException("Location not found for ID: " + account.getLocation().getLocationId());
-        }
-        account.setLocation(location);
         return accountRepository.save(account);
     }
 
@@ -51,8 +50,16 @@ public class AccountService {
             existingAccount.setIsVendor(account.getIsVendor());
             existingAccount.setIsAdmin(account.getIsAdmin());
             existingAccount.setUser(account.getUser());
-            existingAccount.setLocation(account.getLocation());
-            existingAccount.setStore(account.getStore());
+            LocationEntity location = locationRepository.findById(account.getLocation().getLocationId()).orElse(null);
+            if (location == null) {
+                throw new RuntimeException("Location not found for ID: " + account.getLocation().getLocationId());
+            }
+            existingAccount.setLocation(location);
+            StoreEntity store = storeRepository.findById(account.getStore().getStoreId()).orElse(null);
+            if (store == null) {
+                throw new RuntimeException("Store not found for ID: " + account.getStore().getStoreId());
+            }
+            existingAccount.setStore(store);
             return accountRepository.save(existingAccount);
         } else {
 
@@ -90,6 +97,6 @@ public class AccountService {
     }
 
     public List<AccountEntity> getAllAdminAccounts() {
-    	return accountRepository.findByIsAdminAndIsDeletedFalse(true);
+        return accountRepository.findByIsAdminAndIsDeletedFalse(true);
     }
 }

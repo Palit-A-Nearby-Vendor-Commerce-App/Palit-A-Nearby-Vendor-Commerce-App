@@ -37,8 +37,11 @@ public class ReportService {
     public ReportEntity updateReportById(int id, ReportEntity report) {
         ReportEntity existingReport = reportRepository.findByReportIdAndIsDeletedFalse(id);
         if (existingReport != null) {
-            report.setReportId(id);
-            return reportRepository.save(report);
+            existingReport.setAccount(report.getAccount());
+            existingReport.setMessageContent(report.getMessageContent());
+            existingReport.setTimestamp(report.getTimestamp());
+            existingReport.setIsResolved(report.getIsResolved());
+            return reportRepository.save(existingReport);
         } else {
 
             System.err.println("Invalid report ID for updating: " + id);

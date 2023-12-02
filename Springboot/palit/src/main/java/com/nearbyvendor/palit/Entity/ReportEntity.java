@@ -81,4 +81,12 @@ public class ReportEntity {
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
+
+    public AccountEntity getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountEntity account) {
+        this.account = account;
+    }
 }

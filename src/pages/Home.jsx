@@ -21,7 +21,7 @@ import { UserContext } from "../UserContext";
 // Import utility functions from "../utils/functions"
 // Import custom styles for map container and options
 import { mapContainerStyle, mapOptions } from "../assets/styles/styles";
-
+// Import utility functions from "../utils/functions"
 import {
   getDistance,
   vendorIcons,

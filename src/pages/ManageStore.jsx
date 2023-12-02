@@ -158,6 +158,8 @@ const ManageStore = () => {
             name: "",
             price: "",
         });
+
+        setImagePreview(null);
     };
 
     return (
@@ -186,14 +188,14 @@ const ManageStore = () => {
                     </div>
                 </div>
             </div>
-
+    
             {/* Store description */}
             <div className="p-2" style={{ height: "90px" }}>
                 <p className="text-sm" style={{ textAlign: "justify" }}>
                     {user.account.store ? user.account.store.description : "Loading..."}
                 </p>
             </div>
-
+    
             {/* Products section */}
             <h1
                 className="p-2 text-lg font-medium"
@@ -201,34 +203,13 @@ const ManageStore = () => {
             >
                 Products
             </h1>
-
-            {/* Display products */}
-            <div style={{ maxHeight: "300px", marginTop: "20px", display: "flex", flexWrap: "wrap", justifyContent: "space-between" , overflow: "auto", position: "relative"}}>
-                {products.map((product, index) => (
-                    <div key={product.productId} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
-                        <img
-                            src={`data:image/png;base64,${product.image}`}
-                            alt={`Product ${index + 1}`}
-                            style={{ width: "100%", height: "150px", border: "1px solid black", borderRadius: "15px" }}
-                        />
-                        <p style={{ position: "absolute", top: "1px", left: "49%", width: "100%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}>
-                            {product.name}
-                        </p>
-                        <p style={{ position: "absolute", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
-                            ₱ {product.price}
-                        </p>
-                    </div>
-                ))}
-            </div>
+    
             {/* Edit mode */}
             {editMode ? (
                 <div
                     className="productscomponent"
-                    style={{
-                        maxHeight: "400px",
-                        overflowY: "auto",
-                        flex: "1",
-                        position: "relative",
+                    style={{ marginBottom: "20px", width: "95%", position: "relative"
+
                     }}
                 >
                     <div className="flex">
@@ -306,6 +287,26 @@ const ManageStore = () => {
             ) : (
                 <div>{ }</div>
             )}
+    
+            {/* Display products */}
+            <div style={{ maxHeight: "300px", display: "flex", flexWrap: "wrap", justifyContent: "space-between" , overflow: "auto", position: "relative"}}>
+                {products.map((product, index) => (
+                    <div key={product.productId} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
+                        <img
+                            src={`data:image/png;base64,${product.image}`}
+                            alt={`Product ${index + 1}`}
+                            style={{ width: "100%", height: "150px", border: "1px solid black", borderRadius: "15px" }}
+                        />
+                        <p style={{ position: "absolute", top: "1px", left: "49%", width: "100%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}>
+                            {product.name}
+                        </p>
+                        <p style={{ position: "absolute", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
+                            ₱ {product.price}
+                        </p>
+                    </div>
+                ))}
+            </div>
+    
             {/* Save/Edit button */}
             <div className="flex mt-4 absolute bottom-8 w-full">
                 {editMode ? (

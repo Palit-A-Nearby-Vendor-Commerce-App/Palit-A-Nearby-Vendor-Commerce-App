@@ -24,7 +24,6 @@ public class UserService {
         if (user != null) {
             return user;
         } else {
-
             System.err.println("UserEntity not found with id: " + id);
             throw new RuntimeException("UserEntity not found with id: " + id);
         }
@@ -38,7 +37,6 @@ public class UserService {
 
         UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
         if (user != null) {
-
             user.setFirstName(updatedUserEntity.getFirstName());
             user.setLastName(updatedUserEntity.getLastName());
             user.setBirthDate(updatedUserEntity.getBirthDate());
@@ -59,7 +57,6 @@ public class UserService {
             userRepository.save(user);
             return true;
         } else {
-
             System.err.println("Invalid user ID for deletion: " + id);
             throw new IllegalArgumentException("Invalid user ID");
         }

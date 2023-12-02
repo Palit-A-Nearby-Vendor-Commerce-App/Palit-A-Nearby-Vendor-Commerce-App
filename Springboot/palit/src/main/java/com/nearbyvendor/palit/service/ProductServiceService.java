@@ -24,7 +24,6 @@ public class ProductServiceService {
         if (productService.isPresent()) {
             return productService.get();
         } else {
-
             System.err.println("Product service not found with id: " + id);
             throw new RuntimeException("Product service not found with id: " + id);
         }
@@ -49,7 +48,6 @@ public class ProductServiceService {
             existingProductService.get().setStore(productService.getStore());
             return productServiceRepository.save(existingProductService.get());
         } else {
-
             System.err.println("Product service not found with id: " + id);
             throw new RuntimeException("Product service not found with id: " + id);
         }
@@ -63,7 +61,6 @@ public class ProductServiceService {
             productServiceRepository.save(existingProductService.get());
             return true;
         } else {
-
             System.err.println("Product service not found with id: " + id);
             throw new RuntimeException("Product service not found with id: " + id);
         }

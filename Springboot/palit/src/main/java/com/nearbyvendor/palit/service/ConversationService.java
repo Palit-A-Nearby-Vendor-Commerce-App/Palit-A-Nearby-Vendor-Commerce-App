@@ -43,7 +43,6 @@ public class ConversationService {
             existingConversation.get().setCustomer(conversation.getCustomer());
             return conversationRepository.save(existingConversation.get());
         } else {
-
             System.err.println("ConversationEntity not found with id: " + id);
             throw new RuntimeException("ConversationEntity not found with id: " + id);
         }
@@ -56,7 +55,6 @@ public class ConversationService {
             conversationRepository.save(conversation.get());
             return true;
         } else {
-
             System.err.println("ConversationEntity not found with id: " + id);
             throw new RuntimeException("ConversationEntity not found with id: " + id);
         }

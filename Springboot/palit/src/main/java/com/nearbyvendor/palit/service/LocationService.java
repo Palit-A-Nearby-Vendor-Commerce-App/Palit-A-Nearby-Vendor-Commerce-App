@@ -23,7 +23,6 @@ public class LocationService {
         if (location != null) {
             return location;
         } else {
-
             System.err.println("LocationEntity not found with id: " + id);
             throw new RuntimeException("LocationEntity not found with id: " + id);
         }
@@ -43,7 +42,6 @@ public class LocationService {
             existingLocation.setAccount(location.getAccount());
             return locationRepository.save(existingLocation);
         } else {
-
             System.err.println("LocationEntity not found with id: " + id);
             throw new RuntimeException("LocationEntity not found with id: " + id);
         }
@@ -56,7 +54,6 @@ public class LocationService {
             locationRepository.save(location);
             return true;
         } else {
-
             System.err.println("LocationEntity not found with id: " + id);
             throw new RuntimeException("LocationEntity not found with id: " + id);
         }

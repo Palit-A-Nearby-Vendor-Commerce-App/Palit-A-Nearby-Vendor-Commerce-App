@@ -25,7 +25,6 @@ public class ChatService {
         if (chatOptional.isPresent()) {
             return chatOptional.get();
         } else {
-
             System.err.println("ChatEntity not found with id: " + chatId);
             throw new RuntimeException("ChatEntity not found with id: " + chatId);
         }
@@ -45,7 +44,6 @@ public class ChatService {
             existingChat.setConversation(chat.getConversation());
             return chatRepository.save(existingChat);
         } else {
-
             System.err.println("ChatEntity not found with id: " + chatId);
             throw new RuntimeException("ChatEntity not found with id: " + chatId);
         }

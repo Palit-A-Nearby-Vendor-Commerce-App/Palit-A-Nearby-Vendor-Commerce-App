@@ -43,7 +43,6 @@ public class ReportService {
             existingReport.setIsResolved(report.getIsResolved());
             return reportRepository.save(existingReport);
         } else {
-
             System.err.println("Invalid report ID for updating: " + id);
             throw new IllegalArgumentException("Invalid report ID");
         }
@@ -56,7 +55,6 @@ public class ReportService {
             reportRepository.save(existingReport);
             return true;
         } else {
-
             System.err.println("Invalid report ID for deletion: " + id);
             throw new IllegalArgumentException("Invalid report ID");
         }

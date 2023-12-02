@@ -55,7 +55,6 @@ public class StoreService {
             storeRepository.save(existingStore);
             return true;
         } else {
-
             System.err.println("Invalid store ID for deletion: " + storeId);
             throw new IllegalArgumentException("Invalid store ID");
         }

@@ -56,7 +56,6 @@ public class AccountService {
             accountRepository.save(existingAccount);
             return true;
         } else {
-
             System.err.println("Invalid account ID for deletion: " + accountId);
             return false;
         }

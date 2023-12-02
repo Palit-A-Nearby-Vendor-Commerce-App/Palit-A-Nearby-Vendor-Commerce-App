@@ -27,52 +27,60 @@ public class LocationEntity {
     public LocationEntity() {
     }
 
-    public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account) {
-        this.locationId = locationId;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.isActive = isActive;
-        this.account = account;
-        this.isDeleted = false;
-    }
+        public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account) {
+            this.locationId = locationId;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.isActive = isActive;
+            this.account = account;
+            this.isDeleted = false;
+        }
 
-    public int getLocationId() {
-        return locationId;
-    }
+        public int getLocationId() {
+            return locationId;
+        }
 
-    public void setLocationId(int locationId) {
-        this.locationId = locationId;
-    }
+        public void setLocationId(int locationId) {
+            this.locationId = locationId;
+        }
 
-    public double getLatitude() {
-        return latitude;
-    }
+        public double getLatitude() {
+            return latitude;
+        }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
+        public void setLatitude(double latitude) {
+            this.latitude = latitude;
+        }
 
-    public double getLongitude() {
-        return longitude;
-    }
+        public double getLongitude() {
+            return longitude;
+        }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
+        public void setLongitude(double longitude) {
+            this.longitude = longitude;
+        }
 
-    public boolean getIsDeleted() {
-        return isDeleted;
-    }
+        public boolean getIsDeleted() {
+            return isDeleted;
+        }
 
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
+        public void setIsDeleted(boolean isDeleted) {
+            this.isDeleted = isDeleted;
+        }
 
-    public boolean getIsActive() {
-        return this.isActive;
-    }
+        public boolean getIsActive() {
+            return isActive;
+        }
 
-    public void setIsActive(boolean isActive) {
-        this.isActive = isActive;
+        public void setIsActive(boolean isActive) {
+            this.isActive = isActive;
+        }
+
+        public AccountEntity getAccount() {
+            return account;
+        }
+
+        public void setAccount(AccountEntity account) {
+            this.account = account;
+        }
     }
-}

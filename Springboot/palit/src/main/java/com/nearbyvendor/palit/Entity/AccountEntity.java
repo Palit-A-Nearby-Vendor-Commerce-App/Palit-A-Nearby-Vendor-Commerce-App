@@ -41,7 +41,7 @@ public class AccountEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "account")
-    private Set<ChatEntity> chat;
+    private Set<ChatEntity> chats;
 
     @JsonIgnore
     @OneToMany(mappedBy = "customer")
@@ -53,7 +53,7 @@ public class AccountEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "account")
-    private List<ReportEntity> report;
+    private List<ReportEntity> reports;
 
     public AccountEntity() {
     }
@@ -94,30 +94,6 @@ public class AccountEntity {
         this.password = password;
     }
 
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public LocationEntity getLocation() {
-        return location;
-    }
-
-    public void setLocation(LocationEntity location) {
-        this.location = location;
-    }
-
-    public StoreEntity getStore() {
-        return store;
-    }
-
-    public void setStore(StoreEntity store) {
-        this.store = store;
-    }
-
     public boolean getIsVendor() {
         return isVendor;
     }
@@ -142,4 +118,67 @@ public class AccountEntity {
         this.isDeleted = isDeleted;
     }
 
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    public LocationEntity getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationEntity location) {
+        this.location = location;
+    }
+
+    public StoreEntity getStore() {
+        return store;
+    }
+
+    public void setStore(StoreEntity store) {
+        this.store = store;
+    }
+
+    public Set<TransactionEntity> getCustomerTransactions() {
+        return customerTransactions;
+    }
+
+    public void setCustomerTransactions(Set<TransactionEntity> customerTransactions) {
+        this.customerTransactions = customerTransactions;
+    }
+
+    public Set<ChatEntity> getChats() {
+        return chats;
+    }
+
+    public void setChats(Set<ChatEntity> chats) {
+        this.chats = chats;
+    }
+
+    public Set<ConversationEntity> getConversations() {
+        return conversations;
+    }
+
+    public void setConversations(Set<ConversationEntity> conversations) {
+        this.conversations = conversations;
+    }
+
+    public Set<TransactionEntity> getVendorTransactions() {
+        return vendorTransactions;
+    }
+
+    public void setVendorTransactions(Set<TransactionEntity> vendorTransactions) {
+        this.vendorTransactions = vendorTransactions;
+    }
+
+    public List<ReportEntity> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<ReportEntity> reports) {
+        this.reports = reports;
+    }
 }

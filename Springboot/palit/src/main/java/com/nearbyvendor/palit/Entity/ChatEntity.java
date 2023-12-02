@@ -46,6 +46,14 @@ public class ChatEntity {
         this.chatId = chatId;
     }
 
+    public AccountEntity getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountEntity account) {
+        this.account = account;
+    }
+
     public String getMessageContent() {
         return messageContent;
     }
@@ -62,14 +70,6 @@ public class ChatEntity {
         this.timestamp = timestamp;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
     public ConversationEntity getConversation() {
         return conversation;
     }
@@ -78,12 +78,11 @@ public class ChatEntity {
         this.conversation = conversation;
     }
 
-    public AccountEntity getAccount() {
-        return account;
+    public boolean getIsDeleted() {
+        return isDeleted;
     }
 
-    public void setAccount(AccountEntity account) {
-        this.account = account;
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
-
 }

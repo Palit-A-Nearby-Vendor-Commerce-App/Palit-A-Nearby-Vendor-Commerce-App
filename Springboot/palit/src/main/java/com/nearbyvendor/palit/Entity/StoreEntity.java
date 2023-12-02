@@ -34,7 +34,7 @@ public class StoreEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "store")
-    private List<ProductServiceEntity> productService;
+    private List<ProductServiceEntity> productServices;
 
     public StoreEntity() {
 
@@ -96,4 +96,11 @@ public class StoreEntity {
         this.account = account;
     }
 
+    public List<ProductServiceEntity> getProductServices() {
+        return productServices;
+    }
+
+    public void setProductServices(List<ProductServiceEntity> productServices) {
+        this.productServices = productServices;
+    }
 }

@@ -81,5 +81,4 @@ public class ProductServiceEntity {
     public void setStore(StoreEntity store) {
         this.store = store;
     }
-
 }

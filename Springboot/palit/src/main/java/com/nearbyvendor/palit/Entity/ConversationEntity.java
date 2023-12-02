@@ -22,8 +22,7 @@ public class ConversationEntity {
 
     @JsonIgnore
     @OneToMany(mappedBy = "conversation")
-    private Set<ChatEntity> chat;
-
+    private Set<ChatEntity> chats;
 
     private boolean isDeleted;
 
@@ -62,19 +61,18 @@ public class ConversationEntity {
     }
 
     public Set<ChatEntity> getChats() {
-        return chat;
+        return chats;
     }
 
     public void setChats(Set<ChatEntity> chats) {
-        this.chat = chats;
+        this.chats = chats;
     }
 
-    public boolean isDeleted() {
+    public boolean getIsDeleted() {
         return isDeleted;
     }
 
-    public void setIsDeleted(boolean deleted) {
-        isDeleted = deleted;
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
-
 }

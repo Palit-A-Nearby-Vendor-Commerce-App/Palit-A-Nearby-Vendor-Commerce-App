@@ -49,13 +49,19 @@ const ManageStore = () => {
                 console.error("Error fetching data: ", error);
             });
 
-        // Fetch products
         const fetchProducts = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/api/getAllProductServices');
+                const response = await axios.get(`http://localhost:8080/api/getProductServicesByStoreId/store/${user.account.store.storeId}`);
                 setProducts(response.data);
+                // Store the product data in local storage
+                localStorage.setItem('products', JSON.stringify(response.data));
             } catch (error) {
                 console.error('Error fetching products:', error);
+                // If there's an error, try to load the product data from local storage
+                const localData = localStorage.getItem('products');
+                if (localData) {
+                    setProducts(JSON.parse(localData));
+                }
             }
         };
 
@@ -188,14 +194,14 @@ const ManageStore = () => {
                     </div>
                 </div>
             </div>
-    
+
             {/* Store description */}
             <div className="p-2" style={{ height: "90px" }}>
                 <p className="text-sm" style={{ textAlign: "justify" }}>
                     {user.account.store ? user.account.store.description : "Loading..."}
                 </p>
             </div>
-    
+
             {/* Products section */}
             <h1
                 className="p-2 text-lg font-medium"
@@ -203,12 +209,13 @@ const ManageStore = () => {
             >
                 Products
             </h1>
-    
+
             {/* Edit mode */}
             {editMode ? (
                 <div
                     className="productscomponent"
-                    style={{ marginBottom: "20px", width: "95%", position: "relative"
+                    style={{
+                        marginBottom: "20px", width: "95%", position: "relative"
 
                     }}
                 >
@@ -287,9 +294,9 @@ const ManageStore = () => {
             ) : (
                 <div>{ }</div>
             )}
-    
+
             {/* Display products */}
-            <div style={{ maxHeight: "300px", display: "flex", flexWrap: "wrap", justifyContent: "space-between" , overflow: "auto", position: "relative"}}>
+            <div style={{ maxHeight: "300px", display: "flex", flexWrap: "wrap", justifyContent: "space-between", overflow: "auto", position: "relative" }}>
                 {products.map((product, index) => (
                     <div key={product.productId} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
                         <img
@@ -306,7 +313,7 @@ const ManageStore = () => {
                     </div>
                 ))}
             </div>
-    
+
             {/* Save/Edit button */}
             <div className="flex mt-4 absolute bottom-8 w-full">
                 {editMode ? (

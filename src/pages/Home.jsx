@@ -31,7 +31,9 @@ import { UserContext } from "../UserContext";
 import { mapContainerStyle, mapOptions } from "../assets/styles/styles";
 
 // Import utility function for calculating distance between two points
-import { getDistance } from "../utils/functions";
+import { getDistance, vendorIcons } from "../utils/functions";
+
+let markers = [];
 
 // Define the Home component
 function Home() {
@@ -156,7 +158,7 @@ function Home() {
   }, [showSlider, currentPosition]);
 
   // Define a function for handling the slider toggle
-  const handleSliderToggle = () => {
+  const handleSliderToggle = () => { 
     // Set the show slider state to the opposite of its current value
     setShowSlider(!showSlider);
   };
@@ -173,24 +175,20 @@ function Home() {
     axios
       .get("http://localhost:8080/api/getAllUsers")
       .then(({ data }) => {
-        // Log the distance between the current position and a sample point
-        console.log(
-          getDistance(
-            currentPosition.lat,
-            currentPosition.lng,
-            10.1381623,
-            123.6739757
-          ) <= 200
-        );
 
-        // Log the active status of a sample user
-        console.log(data[4].account.location.isActive);
+        // Log the users
+        console.log("Users:", data);
 
         // Filter out users who are vendors and within 200 meters of the current user
-        const usersNearby = data.filter((otherUser) => {
+        const getNearbyUsers = data.filter((otherUser) => {
+          console.log(getDistance(
+            currentPosition.lat,
+            currentPosition.lng,
+            otherUser.account.location.latitude,
+            otherUser.account.location.longitude
+          ))
           if (
-            user.account.isVendor &&
-            !otherUser.account.isVendor &&
+            user.account.isVendor == !otherUser.account.isVendor &&
             otherUser.account.location.isActive &&
             getDistance(
               currentPosition.lat,
@@ -204,9 +202,17 @@ function Home() {
           return false;
         });
 
-        console.log("Filtered vendors:", usersNearby);
-        // Mark the vendors on the map with markers
-        usersNearby.forEach((user) => {
+        console.log("Filtered users:", getNearbyUsers);
+
+        // Mark the users on the map with markers
+        getNearbyUsers.forEach((user) => {
+          console.log("markers: ", markers)
+
+          // If the marker already exists, remove it
+          if (markers[user.account.accountId]) {
+            markers[user.account.accountId].setMap(null);
+          }
+
           const userMarker = new window.google.maps.Marker({
             position: {
               lat: user.account.location.latitude,
@@ -220,6 +226,9 @@ function Home() {
               scaledSize: new window.google.maps.Size(30, 30),
             },
           });
+
+          // Add the marker to mapRef.current.markers
+          markers[user.account.accountId] = userMarker;
 
           // You can add click event handling for the markers if needed
           userMarker.addListener("click", () => {

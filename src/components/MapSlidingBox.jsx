@@ -11,7 +11,7 @@ const MapSlidingBox = ({
   handleSliderToggle,
   selectedVendor,
   user,
-}) => {  
+}) => {
   const { user } = React.useContext(UserContext);
   const sliderBoxStyle = {
     position: "absolute",

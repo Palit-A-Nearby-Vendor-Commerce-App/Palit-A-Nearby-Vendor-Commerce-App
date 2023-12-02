@@ -96,7 +96,7 @@ function Home() {
           .put(
             `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
             // { latitude, longitude }
-            { latitude: latitude, longitude: longitude }
+            { ...user.account.location, latitude: latitude, longitude: longitude }
           )
           .then((response) => {
             console.log("Location successfully updated: ", response.data);

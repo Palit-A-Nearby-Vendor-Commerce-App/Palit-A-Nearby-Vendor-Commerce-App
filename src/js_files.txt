@@ -1629,20 +1629,25 @@ const NavigationBar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleLogout = () => {
-    // Perform logout actions (e.g., clear user data)
-    setUser(null);
     // Additional logout actions can be added here
-    axios.put(`http://localhost:8080/api/updateLocationById/${user.id}`, {
-      // user user's location but update the isActive to true
-      ...user.account.location,
-      isActive: false,
-    })
-    .then(response => {
-      console.log(response.data);
-    })
-    .catch(error => {
-      console.error(error);
-    });
+    axios
+      .put(
+        `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
+        {
+          // user user's location but update the isActive to true
+          ...user.account.location,
+          isActive: false,
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        // Perform logout actions (e.g., clear user data)
+        setUser(null);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
     // Redirect to the default page ("/")
     history.push("/");
   };
@@ -1717,7 +1722,12 @@ const NavigationBar = () => {
             >
               <MenuItem
                 onClick={handleLogout}
-                style={{ display: "flex", gap: "10px", paddingLeft: "3px", paddingRight: "3px"}}
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  paddingLeft: "3px",
+                  paddingRight: "3px",
+                }}
               >
                 <LogoutIcon />
                 Logout
@@ -2255,7 +2265,7 @@ function Home() {
           .put(
             `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
             // { latitude, longitude }
-            { latitude: latitude, longitude: longitude }
+            { ...user.account.location, latitude: latitude, longitude: longitude }
           )
           .then((response) => {
             console.log("Location successfully updated: ", response.data);
@@ -3024,7 +3034,7 @@ import { UserContext } from "../UserContext";
 
 const Signin = () => {
   const history = useHistory();
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -3059,18 +3069,43 @@ const Signin = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    const user = userData.find(
+    const currentUser = userData.find(
       (user) =>
         user.account.email === email && user.account.password === password
     );
 
-    console.log("Ako si user", user);
+    const isActive = true;
 
-    if (user) {
-      console.log("Current user: ", user);
-      setUser(user);
-
-      history.push("/home");
+    if (currentUser) {
+      console.log("Current user: ", currentUser);
+      console.log(
+        "Location of user: ",
+        currentUser.account.location.locationId
+      );
+      // update users location to isactive
+      axios
+        .put(
+          `http://localhost:8080/api/updateLocationById/${currentUser.account.location.locationId}`,
+          { ...currentUser.account.location,
+            isActive: isActive }
+        )
+        .then((response) => {
+          console.log("User is now marked active, Location: ", response.data);
+          // get updated user data by getting user by id
+          axios
+            .get(`http://localhost:8080/api/getUserById/${currentUser.userId}`)
+            .then((response) => {
+              console.log("Updated user data: ", response);
+              setUser(response.data);
+              history.push("/home");
+            })
+            .catch((error) => {
+              console.log("Error getting updated user data.");
+            });
+        })
+        .catch((error) => {
+          console.log("Error updating user location to active.");
+        });
     } else {
       setError("Invalid email or password");
     }

@@ -84,46 +84,10 @@ const ManageStore = () => {
     };
 
     // Handle click on "Save" button
-    // Handle click on "Save" button
-    const handleSave = async () => {
+    const handleSave = () => {
         console.log("Save clicked", editedProduct);
         // Perform the save operation with editedProduct data
         // Update the user context or make an API call to save the changes
-
-        // Convert image to base64
-        function convertToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result.split(",")[1]);
-                reader.onerror = (error) => reject(error);
-            });
-        }
-
-        const imageBase64 = await convertToBase64(editedProduct.picture);
-
-        const productData = {
-            name: editedProduct.name,
-            price: editedProduct.price,
-            image: imageBase64,
-            store: { storeId: user.account.store.storeId }, // Add the storeId
-        };
-
-        // Make a PUT request to the ProductService API endpoint
-        axios
-            .put(`http://localhost:8080/api/updateProductServiceById/${editedProduct.productId}`, productData)
-            .then((response) => {
-                console.log("Product updated:", response.data);
-                // Update the products state
-                setProducts((prevProducts) =>
-                    prevProducts.map((product) =>
-                        product.productId === editedProduct.productId ? { ...product, ...productData } : product
-                    )
-                );
-            })
-            .catch((error) => {
-                console.error("Error updating product:", error);
-            });
 
         // Reset state after saving
         setEditMode(false);
@@ -133,6 +97,7 @@ const ManageStore = () => {
             price: "",
         });
     };
+
     // Handle input change for text fields
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -150,6 +115,20 @@ const ManageStore = () => {
         setImagePreview(
             e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null
         );
+    };
+
+    const handleProductImageChange = (e, index) => {
+        const newProducts = [...products];
+        newProducts[index].image = e.target.files[0];
+        newProducts[index].imagePreview = e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null;
+        setProducts(newProducts);
+    };
+
+    const handleProductInputChange = (e, index) => {
+        const { name, value } = e.target;
+        const newProducts = [...products];
+        newProducts[index][name] = value;
+        setProducts(newProducts);
     };
 
     // Handle click on "Choose File" button
@@ -201,18 +180,6 @@ const ManageStore = () => {
         });
 
         setImagePreview(null);
-    };
-
-    const handleNameChange = (e, index) => {
-        const newProducts = [...products];
-        newProducts[index].name = e.target.value;
-        setProducts(newProducts);
-    };
-
-    const handlePriceChange = (e, index) => {
-        const newProducts = [...products];
-        newProducts[index].price = e.target.value;
-        setProducts(newProducts);
     };
 
     return (
@@ -348,41 +315,82 @@ const ManageStore = () => {
                     <div key={product.productId} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
                         {editMode ? (
                             <>
-                                <div className="flex">
-                                    <label className="flex-1 justify-center items-center bg-primary rounded-[20px] cursor-pointer mx-auto flex " style ={{height:"140px"}}>
-                                        <input
-                                            name="image"
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleImageChange}
-                                            className="hidden"
-                                        />
-                                        {imagePreview ? (
-                                            <img
-                                                src={imagePreview}
-                                                alt="Preview"
-                                                className="w-full h-[136px] rounded-[20px] inline-block border-[3px] border-green-400 "
-                                            />
-                                        ) : (
-                                            <span className="text-lg font-semibold text-white inline-block">
-                                                Choose image
-                                            </span>
-                                        )}
-                                    </label>
-                                </div>
-                                <input
-                                    type="text"
-                                    placeholder="Product Name"
+                                <label
+                                    style={{
+                                        width: "100%",
+                                        height: "150px",
+                                        border: "1px solid black",
+                                        borderRadius: "15px",
+                                        backgroundImage: `url(${product.imagePreview || `data:image/png;base64,${product.image}`})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                        display: 'inline-block'
+                                    }}
+                                >
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleProductImageChange(e, index)}
+                                        style={{ display: 'none' }}
+                                    />
+                                </label>
+                                <TextField
+                                    name="name"
+                                    variant="outlined"
                                     value={product.name}
-                                    onChange={(e) => handleNameChange(e, index)}
-                                    style={{ position: "absolute", top: "1px", left: "49%", width: "100%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}
+                                    onChange={(e) => handleProductInputChange(e, index)}
+                                    margin="normal"
+                                    size="small"
+                                    InputProps={{
+                                        style: {
+                                            fontSize: 20,
+                                            height: 25,
+                                            paddingRight: '10px',
+                                            borderRadius: "15px",
+                                            color: "white",
+                                            fontWeight: "bold",
+                                        },
+                                    }}
+                                    style={{
+                                        position: "absolute",
+                                        top: "-15px",
+                                        left: "49%",
+                                        width: "100%",
+                                        transform: "translateX(-50%)",
+                                        color: "white",
+                                        fontWeight: "bold",
+                                        backgroundColor: "rgba(136, 170, 204, 0.7)",
+                                        borderRadius: "15px",
+                                    }}
                                 />
-                                <input
-                                    type="number"
-                                    placeholder="Product Price"
+                                <TextField
+                                    name="price"
+                                    variant="outlined"
                                     value={product.price}
-                                    onChange={(e) => handlePriceChange(e, index)}
-                                    style={{ position: "absolute",width: "50%", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}
+                                    onChange={(e) => handleProductInputChange(e, index)}
+                                    margin="normal"
+                                    size="small"
+                                    InputProps={{
+                                        style: {
+                                            fontSize: 15,
+                                            height: 20,
+                                            paddingRight: '5x',
+                                            borderRadius: "15px",
+                                            fontWeight: "bold",
+                                        },
+                                    }}
+                                    style={{
+                                        position: "absolute",
+                                        bottom: "0px",
+                                        left: "0%",
+                                        width: "50%",
+                                        textAlign: "left",
+                                        color: "black",
+                                        fontSize: "14px",
+                                        fontWeight: "bold",
+                                        backgroundColor: "#c0d8f0",
+                                        borderRadius: "10px"
+                                    }}
                                 />
                             </>
                         ) : (

@@ -39,7 +39,7 @@ const MapSlidingBox = ({
         ) : (
           <div>
             {user.account.isVendor ? (
-                <Queue />
+                <ManageStore></ManageStore>
             ) : (
               <p>Select A Vendor To See Their Store</p>
             )}

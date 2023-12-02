@@ -5,6 +5,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import SendIcon from "@mui/icons-material/Send";
+import { Link } from "react-router-dom";
 
 import {
   GRADIENT_BG,
@@ -86,11 +87,13 @@ const Chat = () => {
         style={isDarkMode ? GRADIENT_BG_DM : GRADIENT_BG}
       >
         <div className="h-full flex items-center gap-4">
-          <button>
-            <ArrowBackIcon
-              sx={{ color: isDarkMode ? "white" : "black", fontSize: 32 }}
-            />
-          </button>
+          <Link to="/home">
+            <button>
+              <ArrowBackIcon
+                sx={{ color: isDarkMode ? "white" : "black", fontSize: 32 }}
+              />
+            </button>
+          </Link>
           <div className="flex items-center gap-3">
             <StyledBadge
               overlap="circular"

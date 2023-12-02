@@ -67,6 +67,17 @@ public class AccountController {
         boolean isEmailTaken = accountService.checkEmail(account);
         return new ResponseEntity<>(isEmailTaken, HttpStatus.OK);
     }
+    
+    @GetMapping("/getAllAdminAccounts")
+    public ResponseEntity<List<AccountEntity>> getAllAdminAccounts() {
+        List<AccountEntity> adminAccounts = accountService.getAllAdminAccounts();
+
+        if (!adminAccounts.isEmpty()) {
+            return new ResponseEntity<>(adminAccounts, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
 
 ```
@@ -585,7 +596,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "account")
+@Table(name = "tblAccount")
 public class AccountEntity {
 
     @Id
@@ -733,7 +744,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "chat")
+@Table(name = "tblChat")
 public class ChatEntity {
 
     @Id
@@ -828,7 +839,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "conversation")
+@Table(name = "tblConversation")
 public class ConversationEntity {
 
     @Id
@@ -913,7 +924,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "location")
+@Table(name = "tblLocation")
 public class LocationEntity {
 
     @Id
@@ -994,7 +1005,7 @@ package com.nearbyvendor.palit.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "product_service")
+@Table(name = "tblProduct_service")
 public class ProductServiceEntity {
 
     @Id
@@ -1085,7 +1096,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "report")
+@Table(name = "tblReport")
 public class ReportEntity {
 
     @Id
@@ -1170,11 +1181,20 @@ StoreEntity.java:
 ```
 package com.nearbyvendor.palit.entity;
 
-import javax.persistence.*;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "store")
+@Table(name = "tblStore")
 public class StoreEntity {
 
     @Id
@@ -1194,8 +1214,8 @@ public class StoreEntity {
     private AccountEntity account;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "store")
-    private ProductServiceEntity productService;
+    @OneToMany(mappedBy = "store")
+    private List<ProductServiceEntity> productService;
 
     public StoreEntity() {
 
@@ -1257,7 +1277,6 @@ public class StoreEntity {
         this.account = account;
     }
 
-
 }
 
 ```
@@ -1269,7 +1288,7 @@ package com.nearbyvendor.palit.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "transaction")
+@Table(name = "tblTransaction")
 public class TransactionEntity {
 
     @Id
@@ -1348,7 +1367,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "users")
+@Table(name = "tblUser")
 public class UserEntity {
 
     @Id

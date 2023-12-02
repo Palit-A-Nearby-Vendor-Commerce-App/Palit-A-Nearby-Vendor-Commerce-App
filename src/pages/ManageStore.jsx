@@ -84,10 +84,46 @@ const ManageStore = () => {
     };
 
     // Handle click on "Save" button
-    const handleSave = () => {
+    // Handle click on "Save" button
+    const handleSave = async () => {
         console.log("Save clicked", editedProduct);
         // Perform the save operation with editedProduct data
         // Update the user context or make an API call to save the changes
+
+        // Convert image to base64
+        function convertToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(",")[1]);
+                reader.onerror = (error) => reject(error);
+            });
+        }
+
+        const imageBase64 = await convertToBase64(editedProduct.picture);
+
+        const productData = {
+            name: editedProduct.name,
+            price: editedProduct.price,
+            image: imageBase64,
+            store: { storeId: user.account.store.storeId }, // Add the storeId
+        };
+
+        // Make a PUT request to the ProductService API endpoint
+        axios
+            .put(`http://localhost:8080/api/updateProductServiceById/${editedProduct.productId}`, productData)
+            .then((response) => {
+                console.log("Product updated:", response.data);
+                // Update the products state
+                setProducts((prevProducts) =>
+                    prevProducts.map((product) =>
+                        product.productId === editedProduct.productId ? { ...product, ...productData } : product
+                    )
+                );
+            })
+            .catch((error) => {
+                console.error("Error updating product:", error);
+            });
 
         // Reset state after saving
         setEditMode(false);
@@ -97,7 +133,6 @@ const ManageStore = () => {
             price: "",
         });
     };
-
     // Handle input change for text fields
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -166,6 +201,18 @@ const ManageStore = () => {
         });
 
         setImagePreview(null);
+    };
+
+    const handleNameChange = (e, index) => {
+        const newProducts = [...products];
+        newProducts[index].name = e.target.value;
+        setProducts(newProducts);
+    };
+
+    const handlePriceChange = (e, index) => {
+        const newProducts = [...products];
+        newProducts[index].price = e.target.value;
+        setProducts(newProducts);
     };
 
     return (
@@ -296,20 +343,63 @@ const ManageStore = () => {
             )}
 
             {/* Display products */}
-            <div style={{ maxHeight: "300px", display: "flex", flexWrap: "wrap", justifyContent: "space-between", overflow: "auto", position: "relative" }}>
+            <div style={{ maxHeight: editMode ? "300px" : "450px", display: "flex", flexWrap: "wrap", justifyContent: "space-between", overflow: "auto", position: "relative" }}>
                 {products.map((product, index) => (
                     <div key={product.productId} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
-                        <img
-                            src={`data:image/png;base64,${product.image}`}
-                            alt={`Product ${index + 1}`}
-                            style={{ width: "100%", height: "150px", border: "1px solid black", borderRadius: "15px" }}
-                        />
-                        <p style={{ position: "absolute", top: "1px", left: "49%", width: "100%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}>
-                            {product.name}
-                        </p>
-                        <p style={{ position: "absolute", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
-                            ₱ {product.price}
-                        </p>
+                        {editMode ? (
+                            <>
+                                <div className="flex">
+                                    <label className="flex-1 justify-center items-center bg-primary rounded-[20px] cursor-pointer mx-auto flex " style ={{height:"140px"}}>
+                                        <input
+                                            name="image"
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                            className="hidden"
+                                        />
+                                        {imagePreview ? (
+                                            <img
+                                                src={imagePreview}
+                                                alt="Preview"
+                                                className="w-full h-[136px] rounded-[20px] inline-block border-[3px] border-green-400 "
+                                            />
+                                        ) : (
+                                            <span className="text-lg font-semibold text-white inline-block">
+                                                Choose image
+                                            </span>
+                                        )}
+                                    </label>
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="Product Name"
+                                    value={product.name}
+                                    onChange={(e) => handleNameChange(e, index)}
+                                    style={{ position: "absolute", top: "1px", left: "49%", width: "100%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}
+                                />
+                                <input
+                                    type="number"
+                                    placeholder="Product Price"
+                                    value={product.price}
+                                    onChange={(e) => handlePriceChange(e, index)}
+                                    style={{ position: "absolute", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <img
+                                    src={`data:image/png;base64,${product.image}`}
+                                    alt={`Product ${index + 1}`}
+                                    style={{ width: "100%", height: "150px", border: "1px solid black", borderRadius: "15px" }}
+                                />
+                                <p style={{ position: "absolute", top: "1px", left: "49%", width: "100%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}>
+                                    {product.name}
+                                </p>
+                                <p style={{ position: "absolute", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
+                                    ₱ {product.price}
+                                </p>
+                            </>
+                        )}
                     </div>
                 ))}
             </div>

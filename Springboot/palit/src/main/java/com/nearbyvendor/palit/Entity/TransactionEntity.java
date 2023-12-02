@@ -3,7 +3,7 @@ package com.nearbyvendor.palit.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "transaction")
+@Table(name = "tblTransaction")
 public class TransactionEntity {
 
     @Id

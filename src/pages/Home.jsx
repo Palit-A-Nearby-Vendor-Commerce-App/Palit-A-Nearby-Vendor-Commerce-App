@@ -171,7 +171,7 @@ function Home() {
     window.location.href = "/report";
   };
 
-// Define an effect hook for fetching the nearby users
+  // Define an effect hook for fetching the nearby users
   useEffect(() => {
     // Make a GET request to get all the users from the database
     axios
@@ -229,10 +229,11 @@ function Home() {
               scaledSize: new window.google.maps.Size(30, 30),
             },
             // Add a custom property to store the user id of the marker
-            owner: user
+            owner: user,
           });
 
           // Add the marker to mapRef.current.markers
+          console.log("OWNERRR: ", markers[ownerWindow.userId]);
           markers[ownerWindow.userId] = userMarker;
 
           // Add a click event listener for the markers to handle the vendor click
@@ -244,7 +245,7 @@ function Home() {
       .catch((error) => console.error("Error fetching users: ", error));
   }, [currentPosition, user.account]);
 
-// Define a function for handling the vendor marker click
+  // Define a function for handling the vendor marker click
   const handleMarkerClick = (owner) => {
     // If the user object has a property called isVendor that is true, set the selected vendor state to the user object
     if (owner && owner.account.isVendor) {
@@ -295,6 +296,7 @@ function Home() {
                 showSlider={showSlider}
                 handleSliderToggle={handleSliderToggle}
                 selectedVendor={selectedVendor}
+                user={user}
               />
             </GoogleMap>
             <button

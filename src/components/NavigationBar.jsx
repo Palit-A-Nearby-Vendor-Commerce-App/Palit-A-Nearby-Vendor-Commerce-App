@@ -40,7 +40,7 @@ const NavigationBar = () => {
       });
 
     // Redirect to the default page ("/")
-    history.push("/");
+    history.push("/landing");
   };
 
   const handleMenu = (event) => {
@@ -61,7 +61,7 @@ const NavigationBar = () => {
               loc.pathname === "/home" ? NAV_ACTIVE_STYLE : NAV_HOVER_STYLE
             }
           >
-            <Link to="/home">Home</Link>
+            <Link to={user == null ? "/landing" : "/home"}>Home</Link>
           </li>
           <li
             className={

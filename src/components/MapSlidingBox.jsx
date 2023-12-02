@@ -2,11 +2,16 @@ import React from "react";
 import { GoSidebarExpand, GoSidebarCollapse } from "react-icons/go";
 import stroke from "../assets/images/stroke.png";
 import ManageStore from "../pages/ManageStore";
+
 import CustomerQueue from "../pages/CustomerQueue";
 import { UserContext } from "../UserContext";
 
-const MapSlidingBox = ({ showSlider, handleSliderToggle, selectedVendor }) => {
-  
+const MapSlidingBox = ({
+  showSlider,
+  handleSliderToggle,
+  selectedVendor,
+  user,
+}) => {  
   const { user } = React.useContext(UserContext);
   const sliderBoxStyle = {
     position: "absolute",
@@ -34,13 +39,15 @@ const MapSlidingBox = ({ showSlider, handleSliderToggle, selectedVendor }) => {
           }}
         />
         {selectedVendor ? (
-          user.account.isVendor ? (
-            <ManageStore vendor={null} />
-          ) : (
-            <CustomerQueue />
-          )
+          <ManageStore vendor={selectedVendor} />
         ) : (
-          <p>Click a vendor to see their store details</p>
+          <div>
+            {user.account.isVendor ? (
+              <p>Waiting for customers...</p>
+            ) : (
+              <p>Select A Vendor To See Their Store</p>
+            )}
+          </div>
         )}
       </div>
       <button

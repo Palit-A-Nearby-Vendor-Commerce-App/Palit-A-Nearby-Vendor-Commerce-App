@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import moment from "moment";
 import logo from "../assets/images/logo.png";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import {
   useTheme,
   useMediaQuery,
@@ -318,6 +318,16 @@ function Signup() {
           </button>
         </form>
       </div>
+
+      <Link to="signin">
+          <div className="text-center mt-4 pb-6">
+            Already have a user?
+            <span className="text-primary underline cursor-pointer">
+              {" "}
+              Log in
+            </span>
+          </div>
+      </Link>
 
       {confirm && (
         <div

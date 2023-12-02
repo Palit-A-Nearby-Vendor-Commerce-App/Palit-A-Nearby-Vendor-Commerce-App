@@ -32,6 +32,7 @@ import { mapContainerStyle, mapOptions } from "../assets/styles/styles";
 
 // Import utility function for calculating distance between two points
 import { getDistance, vendorIcons } from "../utils/functions";
+import { ownerWindow } from "@mui/material";
 
 let markers = [];
 
@@ -40,10 +41,11 @@ function Home() {
   // Get the user and setUser function from the user context
   const { user, setUser } = useContext(UserContext);
 
-  // Define state variables for current position, nearby users, and show slider
+  // Define state variables for current position, nearby users, show slider, and selected vendor
   const [currentPosition, setCurrentPosition] = useState(null);
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [showSlider, setShowSlider] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState(null);
 
   // Define a ref variable for the map object
   const mapRef = useRef();
@@ -78,41 +80,41 @@ function Home() {
     return undefined;
   };
 
+  // Define a function for updating the location in the context
+  const updateLocationInContext = (position) => {
+    // Get the latitude and longitude from the position object
+    const { latitude, longitude } = position.coords;
+    // Create an updated location object with the latitude and longitude
+    const updatedLocation = { lat: latitude, lng: longitude };
+
+    // Set the current position state to the updated location
+    setCurrentPosition(updatedLocation);
+
+    // If the user and user location are available, make a PUT request to update the location in the database
+    if (user && user.account.location) {
+      axios
+        .put(
+          `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
+          // { latitude, longitude }
+          { ...user.account.location, latitude: latitude, longitude: longitude }
+        )
+        .then((response) => {
+          console.log("Location successfully updated: ", response.data);
+          // Set the current position state to the response data
+          setCurrentPosition({
+            lat: response.data.latitude,
+            lng: response.data.longitude,
+          });
+        })
+        .catch((error) => {
+          // Log the error to the console
+          console.error("Error updating location:", error);
+        });
+    }
+  };
+
   // Define an effect hook for updating the location in the context
   useEffect(() => {
-    // Define a function for updating the location in the context
-    const updateLocationInContext = (position) => {
-      // Get the latitude and longitude from the position object
-      const { latitude, longitude } = position.coords;
-      // Create an updated location object with the latitude and longitude
-      const updatedLocation = { lat: latitude, lng: longitude };
-
-      // Set the current position state to the updated location
-      setCurrentPosition(updatedLocation);
-
-      // If the user and user location are available, make a PUT request to update the location in the database
-      if (user && user.account.location) {
-        axios
-          .put(
-            `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
-            // { latitude, longitude }
-            { ...user.account.location, latitude: latitude, longitude: longitude }
-          )
-          .then((response) => {
-            console.log("Location successfully updated: ", response.data);
-            // Set the current position state to the response data
-            setCurrentPosition({
-              lat: response.data.latitude,
-              lng: response.data.longitude,
-            });
-          })
-          .catch((error) => {
-            // Log the error to the console
-            console.error("Error updating location:", error);
-          });
-      }
-    };
-
     // Use the navigator geolocation API to watch the position changes
     const watchId = navigator.geolocation.watchPosition(
       updateLocationInContext,
@@ -169,7 +171,7 @@ function Home() {
     window.location.href = "/report";
   };
 
-  // Define an effect hook for fetching the nearby users
+// Define an effect hook for fetching the nearby users
   useEffect(() => {
     // Make a GET request to get all the users from the database
     axios
@@ -226,19 +228,33 @@ function Home() {
                 : customerMarker,
               scaledSize: new window.google.maps.Size(30, 30),
             },
+            // Add a custom property to store the user id of the marker
+            owner: user
           });
 
           // Add the marker to mapRef.current.markers
-          markers[user.account.accountId] = userMarker;
+          markers[ownerWindow.userId] = userMarker;
 
-          // You can add click event handling for the markers if needed
+          // Add a click event listener for the markers to handle the vendor click
           userMarker.addListener("click", () => {
-            window.location.href = `/store/${user.accountId}`;
+            handleMarkerClick(userMarker.owner);
           });
         });
       })
       .catch((error) => console.error("Error fetching users: ", error));
   }, [currentPosition, user.account]);
+
+// Define a function for handling the vendor marker click
+  const handleMarkerClick = (owner) => {
+    // If the user object has a property called isVendor that is true, set the selected vendor state to the user object
+    if (owner && owner.account.isVendor) {
+      setSelectedVendor(owner);
+    }
+    // Show the slider if it is not already shown
+    if (!showSlider) {
+      setShowSlider(true);
+    }
+  };
 
   // Return the JSX element for rendering the component
   return (
@@ -278,6 +294,7 @@ function Home() {
               <MapSlidingBox
                 showSlider={showSlider}
                 handleSliderToggle={handleSliderToggle}
+                selectedVendor={selectedVendor}
               />
             </GoogleMap>
             <button

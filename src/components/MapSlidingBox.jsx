@@ -2,7 +2,7 @@ import React from "react";
 import { GoSidebarExpand, GoSidebarCollapse  } from "react-icons/go";
 import stroke from "../assets/images/stroke.png";
 import ManageStore from "../pages/ManageStore";
-const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
+const MapSlidingBox = ({ showSlider, handleSliderToggle, selectedVendor }) => {
   const sliderBoxStyle = {
     position: "absolute",
     top: 25,
@@ -28,7 +28,11 @@ const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
             position: "absolute",
           }}
         />
-        <ManageStore />
+        {selectedVendor ? (
+          <ManageStore vendor={selectedVendor} />
+        ) : (
+          <p>Click a vendor to see their store details</p>
+        )}
       </div>
       <button
         style={{

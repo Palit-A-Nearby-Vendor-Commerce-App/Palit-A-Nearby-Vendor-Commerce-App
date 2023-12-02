@@ -3,7 +3,7 @@ package com.nearbyvendor.palit.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "product_service")
+@Table(name = "tblProduct_service")
 public class ProductServiceEntity {
 
     @Id

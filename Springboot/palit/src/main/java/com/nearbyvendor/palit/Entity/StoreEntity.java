@@ -1,10 +1,19 @@
 package com.nearbyvendor.palit.entity;
 
-import javax.persistence.*;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "store")
+@Table(name = "tblStore")
 public class StoreEntity {
 
     @Id
@@ -24,8 +33,8 @@ public class StoreEntity {
     private AccountEntity account;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "store")
-    private ProductServiceEntity productService;
+    @OneToMany(mappedBy = "store")
+    private List<ProductServiceEntity> productService;
 
     public StoreEntity() {
 
@@ -86,6 +95,5 @@ public class StoreEntity {
     public void setAccount(AccountEntity account) {
         this.account = account;
     }
-
 
 }

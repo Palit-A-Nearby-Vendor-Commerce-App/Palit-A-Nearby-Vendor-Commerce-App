@@ -3,7 +3,6 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import redRating from "../assets/images/redRating.png";
-import { dataURItoBlob } from "../utils/functions";
 
 const ManageStore = () => {
   const { user, setUser } = useContext(UserContext);
@@ -49,6 +48,26 @@ const ManageStore = () => {
       .catch((error) => {
         console.error("Error fetching data: ", error);
       });
+
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/getProductServicesByStoreId/store/${user.account.store.storeId}`
+        );
+        setProducts(response.data);
+        // Store the product data in local storage
+        localStorage.setItem("products", JSON.stringify(response.data));
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        // If there's an error, try to load the product data from local storage
+        const localData = localStorage.getItem("products");
+        if (localData) {
+          setProducts(JSON.parse(localData));
+        }
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   // Handle click on user image
@@ -136,7 +155,6 @@ const ManageStore = () => {
       .post("http://localhost:8080/api/createProductService", productData)
       .then((response) => {
         console.log("Product created:", response.data);
-        alert("Product added successfully!");
       })
       .catch((error) => {
         console.error("Error creating product:", error);
@@ -148,19 +166,9 @@ const ManageStore = () => {
       name: "",
       price: "",
     });
+
+    setImagePreview(null);
   };
-
-  //   useEffect(() => {
-  //     const productApiEndpoint = `http://localhost:8080/api/getProductServiceById/${user.account.store.storeId}`;
-
-  //     axios
-  //       .get(productApiEndpoint)
-  //       .then((response) => console.log(response.data))
-  //       .catch((error) => {
-  //         // Handle errors
-  //         console.error("Error fetching product data:", error);
-  //       });
-  //   }, []);
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
@@ -209,9 +217,8 @@ const ManageStore = () => {
         <div
           className="productscomponent"
           style={{
-            maxHeight: "400px",
-            overflowY: "auto",
-            flex: "1",
+            marginBottom: "20px",
+            width: "95%",
             position: "relative",
           }}
         >
@@ -290,6 +297,71 @@ const ManageStore = () => {
       ) : (
         <div>{}</div>
       )}
+
+      {/* Display products */}
+      <div
+        style={{
+          maxHeight: "300px",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          overflow: "auto",
+          position: "relative",
+        }}
+      >
+        {products.map((product, index) => (
+          <div
+            key={product.productId}
+            style={{ marginBottom: "20px", width: "48%", position: "relative" }}
+          >
+            <img
+              src={`data:image/png;base64,${product.image}`}
+              alt={`Product ${index + 1}`}
+              style={{
+                width: "100%",
+                height: "150px",
+                border: "1px solid black",
+                borderRadius: "15px",
+              }}
+            />
+            <p
+              style={{
+                position: "absolute",
+                top: "1px",
+                left: "49%",
+                width: "100%",
+                transform: "translateX(-50%)",
+                paddingLeft: "10px",
+                paddingRight: "5px",
+                color: "white",
+                fontSize: "16px",
+                fontWeight: "bold",
+                backgroundColor: "rgba(136, 170, 204, 0.7)",
+                borderRadius: "15px",
+              }}
+            >
+              {product.name}
+            </p>
+            <p
+              style={{
+                position: "absolute",
+                bottom: "1px",
+                left: "3%",
+                textAlign: "left",
+                color: "black",
+                fontSize: "14px",
+                fontWeight: "bold",
+                backgroundColor: "#c0d8f0",
+                paddingLeft: "10px",
+                paddingRight: "5px",
+                borderRadius: "10px",
+              }}
+            >
+              ₱ {product.price}
+            </p>
+          </div>
+        ))}
+      </div>
 
       {/* Save/Edit button */}
       <div className="flex mt-4 absolute bottom-8 w-full">

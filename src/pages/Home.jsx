@@ -11,7 +11,7 @@ import React, {
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 
 // Import custom marker images for vendor and customer
-import customerMarker from "../assets/images/customer-map-icon.png";
+import customerMarker from "../assets/images/customerIcon.png";
 import marker from "../assets/images/vendor-self-pin.png";
 
 // Import axios library for making HTTP requests
@@ -158,7 +158,7 @@ function Home() {
   }, [showSlider, currentPosition]);
 
   // Define a function for handling the slider toggle
-  const handleSliderToggle = () => { 
+  const handleSliderToggle = () => {
     // Set the show slider state to the opposite of its current value
     setShowSlider(!showSlider);
   };
@@ -175,18 +175,19 @@ function Home() {
     axios
       .get("http://localhost:8080/api/getAllUsers")
       .then(({ data }) => {
-
         // Log the users
         console.log("Users:", data);
 
         // Filter out users who are vendors and within 200 meters of the current user
         const getNearbyUsers = data.filter((otherUser) => {
-          console.log(getDistance(
-            currentPosition.lat,
-            currentPosition.lng,
-            otherUser.account.location.latitude,
-            otherUser.account.location.longitude
-          ))
+          console.log(
+            getDistance(
+              currentPosition.lat,
+              currentPosition.lng,
+              otherUser.account.location.latitude,
+              otherUser.account.location.longitude
+            )
+          );
           if (
             user.account.isVendor == !otherUser.account.isVendor &&
             otherUser.account.location.isActive &&
@@ -206,7 +207,7 @@ function Home() {
 
         // Mark the users on the map with markers
         getNearbyUsers.forEach((user) => {
-          console.log("markers: ", markers)
+          console.log("markers: ", markers);
 
           // If the marker already exists, remove it
           if (markers[user.account.accountId]) {

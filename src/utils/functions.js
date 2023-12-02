@@ -1,7 +1,7 @@
-import fruits from "../assets/images/fruits_categ.png";
-import fish from "../assets/images/fish_categ.png";
-import assorted from "../assets/images/assorted_categ.png";
-import manicure from "../assets/images/manicure_categ.png";
+import fruits from "../assets/images/apple_.png";
+import fish from "../assets/images/fish_.png";
+import assorted from "../assets/images/assorted_.png";
+import manicure from "../assets/images/manicure_.png";
 
 const R = 6371;
 const deg2rad = (deg) => deg * (Math.PI / 180);

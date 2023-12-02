@@ -2,6 +2,7 @@ import React from "react";
 import { GoSidebarExpand, GoSidebarCollapse } from "react-icons/go";
 import stroke from "../assets/images/stroke.png";
 import ManageStore from "../pages/ManageStore";
+import Queue from "../pages/Queue";
 const MapSlidingBox = ({
   showSlider,
   handleSliderToggle,
@@ -38,7 +39,7 @@ const MapSlidingBox = ({
         ) : (
           <div>
             {user.account.isVendor ? (
-              <p>Waiting for customers...</p>
+                <Queue />
             ) : (
               <p>Select A Vendor To See Their Store</p>
             )}

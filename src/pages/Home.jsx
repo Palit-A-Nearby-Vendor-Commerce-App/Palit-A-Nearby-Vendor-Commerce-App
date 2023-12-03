@@ -162,7 +162,7 @@ function Home() {
   // Define a function for handling the slider toggle
   const handleSliderToggle = () => {
     // Set the show slider state to the opposite of its current value
-    setShowSlider(!showSlider);
+    setShowSlider((prevShowSlider) => !prevShowSlider);
   };
 
   // Define a function for handling the report button click

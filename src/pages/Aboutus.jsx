@@ -3,21 +3,24 @@ import { Link } from "react-router-dom";
 
 import NavigationBar from "../components/NavigationBar";
 import map from "../assets/images/citmap.png";
-import dogge from "../assets/images/dummy_prof.jpeg";
+import bardil from "../assets/images/bardil.png";
+import alice from "../assets/images/alice.png";
+import pri from "../assets/images/pri.png";
+import casea from "../assets/images/casea.png";
 
 const membersData = [
   {
     name: "Mark Kenneth Badilla",
     position: "Web Developer",
-    img: dogge,
+    img: bardil,
   },
   {
     name: "Alestair Cyril Coyoca",
     position: "Web Developer",
-    img: dogge,
+    img: alice,
   },
-  { name: "Kheisa Selma", position: "Web Developer", img: dogge },
-  { name: "Joshua Briones", position: "Web Developer", img: dogge },
+  { name: "Kheisa Selma", position: "Web Developer", img: casea },
+  { name: "Joshua Briones", position: "Web Developer", img: pri },
 ];
 
 const Aboutus = () => {
@@ -54,7 +57,7 @@ const Aboutus = () => {
           work.
         </p>
 
-        <div className="pt-16 flex gap-8 w-full">
+        <div className="pt-16 flex gap-8 w-auto">
           {membersData.map((member, index) => (
             <div className="w-full text-left" key={index}>
               <img

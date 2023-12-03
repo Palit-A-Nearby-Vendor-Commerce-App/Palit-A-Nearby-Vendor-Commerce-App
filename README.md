@@ -403,7 +403,7 @@ entity Report {
     isDeleted boolean
 }
 
-Account ||--|{ Report : sends
+Account ||--o{ Report : sends
 
 @enduml
 ```

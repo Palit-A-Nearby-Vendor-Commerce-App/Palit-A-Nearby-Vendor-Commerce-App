@@ -5,7 +5,7 @@ import { services } from "../data/dummy";
 
 const Services = () => {
   return (
-    <div className="w-full h-screen bg-slate-50 font-custom">
+    <div className="w-full bg-slate-50 font-custom">
       <NavigationBar />
       <div className="w-full font-custom text-center p-10 flex flex-col items-center justify-center gap-5">
         <div>

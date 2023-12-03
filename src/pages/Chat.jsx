@@ -16,59 +16,59 @@ import {
 } from "../assets/styles/styles";
 import dummyImg from "../assets/images/dummy_prof.jpeg";
 
-const conversation = [
-  {
-    conversation_id: 1,
-    is_deleted: 0,
-    receiver_id: 101,
-    sender_id: 100,
-  },
-  {
-    conversation_id: 2,
-    is_deleted: 0,
-    receiver_id: 201,
-    sender_id: 200,
-  },
-];
+// const conversation = [
+//   {
+//     conversation_id: 1,
+//     is_deleted: 0,
+//     receiver_id: 101,
+//     sender_id: 100,
+//   },
+//   {
+//     conversation_id: 2,
+//     is_deleted: 0,
+//     receiver_id: 201,
+//     sender_id: 200,
+//   },
+// ];
 
-const chats = [
-  {
-    chat_id: 1,
-    conversation_id: 1,
-    is_deleted: 0,
-    message_content: "Unsay baligya ninyo boss?",
-    receiver_id: 100,
-    sender_id: 101,
-    timestamp: "2023-11-22T10:35:00Z",
-  },
-  {
-    chat_id: 2,
-    conversation_id: 1,
-    is_deleted: 0,
-    message_content: "Pila nana ka adlaw sukad harvest inyong saging?",
-    receiver_id: 100,
-    sender_id: 101,
-    timestamp: "2023-11-22T11:00:00Z",
-  },
-  {
-    chat_id: 3,
-    conversation_id: 1,
-    is_deleted: 0,
-    message_content: "Naa tay saging, siomai, buko juice, og uban pa",
-    receiver_id: 101,
-    sender_id: 100,
-    timestamp: "2023-11-22T11:05:00Z",
-  },
-  {
-    chat_id: 4,
-    conversation_id: 1,
-    is_deleted: 0,
-    message_content: "Sige sige boss, papalita ko",
-    receiver_id: 100,
-    sender_id: 101,
-    timestamp: "2023-11-22T11:05:00Z",
-  },
-];
+// const chats = [
+//   {
+//     chat_id: 1,
+//     conversation_id: 1,
+//     is_deleted: 0,
+//     message_content: "Unsay baligya ninyo boss?",
+//     receiver_id: 100,
+//     sender_id: 101,
+//     timestamp: "2023-11-22T10:35:00Z",
+//   },
+//   {
+//     chat_id: 2,
+//     conversation_id: 1,
+//     is_deleted: 0,
+//     message_content: "Pila nana ka adlaw sukad harvest inyong saging?",
+//     receiver_id: 100,
+//     sender_id: 101,
+//     timestamp: "2023-11-22T11:00:00Z",
+//   },
+//   {
+//     chat_id: 3,
+//     conversation_id: 1,
+//     is_deleted: 0,
+//     message_content: "Naa tay saging, siomai, buko juice, og uban pa",
+//     receiver_id: 101,
+//     sender_id: 100,
+//     timestamp: "2023-11-22T11:05:00Z",
+//   },
+//   {
+//     chat_id: 4,
+//     conversation_id: 1,
+//     is_deleted: 0,
+//     message_content: "Sige sige boss, papalita ko",
+//     receiver_id: 100,
+//     sender_id: 101,
+//     timestamp: "2023-11-22T11:05:00Z",
+//   },
+// ];
 
 const Chat = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -76,119 +76,125 @@ const Chat = () => {
   const selectedVendor = location.state?.selectedVendor;
   const { user } = useContext(UserContext);
   const [chats, setChats] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
+
   const [selectedConversation, setSelectedConversation] = useState(null);
-  const selectedConversationRef = useRef(selectedConversation);
-  const selectedVendorRef = useRef();
-
-  console.log("Selected vendor id: ", selectedVendor.account.accountId);
-  console.log("Customer id: ", user.account.accountId);
-
-  // const fetchConversationById = async (conversationId) => {
-  //   try {
-  //     const response = await axios.get(
-  //       `http://localhost:8080/api/getConversationById/${conversationId}`
-  //     );
-
-  //     const conversation = response.data;
-  //     selectedConversationRef.current = conversation; // Update the ref value
-  //   } catch (error) {
-  //     console.error("Error fetching conversation:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   // When the component mounts, check if there is a stored conversationId
-  //   const storedConversationId = localStorage.getItem("selectedConversationId");
-
-  //   if (storedConversationId) {
-  //     // Fetch the conversation based on the stored id and set it in the state
-  //     console.log("Convo id: ", storedConversationId);
-  //     fetchConversationById(storedConversationId);
-  //   }
-  // }, []);
-
-  // useEffect(() => {
-  //   const createOrFetchConversation = async () => {
-  //     try {
-  //       if (selectedVendor && selectedVendor.account && user && user.account) {
-  //         console.log("Vendor Account ID:", selectedVendor.account.accountId);
-  //         console.log("User Account ID:", user.account.accountId);
-
-  //         // Check if the selectedVendor has changed
-  //         if (
-  //           selectedVendorRef.current &&
-  //           selectedVendorRef.current.account.accountId ===
-  //             selectedVendor.account.accountId
-  //         ) {
-  //           // If conversationId exists, fetch the conversation and set it in the state
-  //           if (selectedConversation && selectedConversation.conversationId) {
-  //             fetchConversationById(selectedConversation.conversationId);
-  //           } else {
-  //             // Otherwise, create a new conversation
-  //             const response = await axios.post(
-  //               "http://localhost:8080/api/createConversation",
-  //               {
-  //                 vendor: selectedVendor.account,
-  //                 customer: user.account,
-  //               }
-  //             );
-
-  //             console.log("success convo", response.data);
-  //             const newConversation = response.data;
-  //             setSelectedConversation(newConversation);
-  //             localStorage.setItem(
-  //               "selectedConversationId",
-  //               newConversation.conversationId
-  //             );
-  //           }
-  //         }
-
-  //         // Update the selectedVendorRef with the current selectedVendor
-  //         selectedVendorRef.current = selectedVendor;
-  //       } else {
-  //         console.error(
-  //           "selectedVendor, selectedVendor.account, user, or user.account is undefined or null"
-  //         );
-  //       }
-  //     } catch (error) {
-  //       console.error("Error creating or fetching conversation:", error);
-  //     }
-  //   };
-
-  //   createOrFetchConversation();
-  // }, [selectedVendor, user]);
+  const [conversations, setConversations] = useState(null);
 
   useEffect(() => {
-    const createConversation = async () => {
+    const fetchConversations = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/getAllConversations"
+        );
+        console.log("Mao ni convos: ", response.data);
+        setConversations(response.data);
+      } catch (error) {
+        console.error("Error fetching conversations:", error);
+      }
+    };
+
+    fetchConversations();
+  }, []);
+
+  useEffect(() => {
+    const checkAndCreateConversation = async () => {
       try {
         if (selectedVendor && selectedVendor.account && user && user.account) {
-          console.log("Vendor Account ID:", selectedVendor.account.accountId);
-          console.log("User Account ID:", user.account.accountId);
-
-          const response = await axios.post(
-            "http://localhost:8080/api/createConversation",
-            {
-              vendor: selectedVendor.account,
-              customer: user.account,
-            }
+          // Check if a conversation already exists with the selected vendor
+          const existingConversation = conversations.find(
+            (conv) =>
+              conv?.vendor?.accountId === selectedVendor?.account?.accountId &&
+              conv?.customer?.accountId === user?.account?.accountId
           );
 
-          console.log("sucess convo", response.data);
-          const newConversation = response.data;
-          setSelectedConversation(newConversation);
+          if (existingConversation) {
+            // If conversation exists, set it in the state
+            console.log("Conversation already exists!");
+            setSelectedConversation(existingConversation);
+          } else {
+            // Otherwise, create a new conversation
+            const response = await axios.post(
+              "http://localhost:8080/api/createConversation",
+              {
+                vendor: selectedVendor.account,
+                customer: user.account,
+              }
+            );
+
+            console.log("Success creating conversation", response.data);
+            const newConversation = response.data;
+            localStorage.setItem(
+              "selectedConversationId",
+              newConversation.conversationId
+            );
+            localStorage.setItem(
+              "selectedVendorId",
+              selectedVendor.account.accountId
+            );
+            setSelectedConversation(newConversation);
+          }
         } else {
           console.error(
             "selectedVendor, selectedVendor.account, user, or user.account is undefined or null"
           );
         }
       } catch (error) {
-        console.error("Error creating conversation:", error);
+        console.error("Error creating or checking conversation:", error);
       }
     };
 
-    createConversation();
-  }, [selectedVendor, user]);
+    // Call the function when the component mounts or when dependencies change
+    checkAndCreateConversation();
+  }, [conversations]);
 
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/getChatsByConversationId/${selectedConversation.conversationId}`
+        );
+        setChats(response.data);
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      }
+    };
+
+    fetchChats();
+  }, [selectedConversation]);
+
+  console.log("Chats,", chats);
+
+  const sendChat = async () => {
+    try {
+      // Replace with the actual account and conversation information
+
+      const currentTimestamp = new Date();
+
+      const newChat = {
+        account: user.account,
+        messageContent: newMessage,
+        timestamp: currentTimestamp.toISOString(),
+        conversation: {
+          conversationId: selectedConversation.conversationId,
+        },
+      };
+
+      const response = await axios.post(
+        "http://localhost:8080/api/createChat",
+        newChat
+      );
+      const createdChat = response.data;
+
+      // Update the local state with the new chat
+      setChats((prevChats) => [...prevChats, createdChat]);
+
+      // Clear the input field
+      setNewMessage("");
+    } catch (error) {
+      console.error("Error sending chat:", error);
+    }
+  };
   const toggleDarkmode = () => {
     setIsDarkMode(!isDarkMode);
   };
@@ -220,30 +226,31 @@ const Chat = () => {
               />
             </button>
           </Link>
-          <div className="flex items-center gap-3">
-            <StyledBadge
-              overlap="circular"
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              variant="dot"
-            >
-              <Avatar
-                alt="Remy Sharp"
-                src={`data:image/jpeg;base64,${selectedVendor.image}`}
-                style={{ height: "60px", width: "60px" }}
-              />
-            </StyledBadge>
-            <div>
-              <h2
-                className={`${
-                  isDarkMode ? "text-white" : "text-black"
-                } text-xl font-semibold`}
+          {selectedVendor && selectedVendor.account && (
+            <div className="flex items-center gap-3">
+              <StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                variant="dot"
               >
-                {selectedVendor.account.store.storeName}
-                {/* {conversation[0].receiver_id === 101 && "Gregorio Bainabai"} */}
-              </h2>
-              <p className="text-sm text-green-500">∙ Online</p>
+                <Avatar
+                  alt={selectedVendor.email}
+                  src={`data:image/jpeg;base64,${selectedVendor.image}`}
+                  style={{ height: "60px", width: "60px" }}
+                />
+              </StyledBadge>
+              <div>
+                <h2
+                  className={`${
+                    isDarkMode ? "text-white" : "text-black"
+                  } text-xl font-semibold`}
+                >
+                  {selectedVendor.account.store.storeName}
+                </h2>
+                <p className="text-sm text-green-500">∙ Online</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
         <div>
           <button onClick={toggleDarkmode}>
@@ -259,38 +266,47 @@ const Chat = () => {
         id="message-contents"
         className="w-full  flex flex-col flex-1 overflow-scroll py-4 px-10"
       >
-        {chats.map((chat) => (
-          <div
-            className={`${
-              chat.sender_id === 101 ? "self-start" : "self-end"
-            } mb-3 flex`}
-          >
-            {chat.sender_id === 101 ? (
-              <span className="flex items-center gap-2">
-                <Avatar
-                  alt="Dummy profile"
-                  src={dummyImg}
-                  style={{
-                    height: "42px",
-                    width: "42px",
-                    display: "inline-block",
-                  }}
-                />
-                <span className="bg-[#E3F1F3] p-3 text-left rounded-r-lg rounded-b-lg">
-                  {chat.message_content}
+        {selectedConversation &&
+          chats.map((chat) => (
+            <div
+              className={`${
+                chat?.account?.accountId ===
+                chat?.conversation?.vendor?.accountId
+                  ? "self-start"
+                  : "self-end"
+              } mb-3 flex`}
+            >
+              {chat?.account?.accountId ===
+              chat?.conversation?.vendor?.accountId ? (
+                <span className="flex items-center gap-2">
+                  <Avatar
+                    alt={chat?.conversation?.vendor?.email}
+                    src={`data:image/jpeg;base64,${selectedVendor.image}`}
+                    style={{
+                      height: "42px",
+                      width: "42px",
+                      display: "inline-block",
+                    }}
+                  />
+                  <span className="bg-[#E3F1F3] p-3 text-left rounded-r-lg rounded-b-lg">
+                    {chat?.messageContent}
+                  </span>
                 </span>
-              </span>
-            ) : (
-              <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg">
-                {chat.message_content}
-              </span>
-            )}
-          </div>
-        ))}
+              ) : (
+                <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg">
+                  {chat?.messageContent}
+                </span>
+              )}
+            </div>
+          ))}
       </div>
       <div id="input-chat" className="w-full h-20 flex gap-3 py-2 px-8 mb-4">
-        <textarea className="w-full h-full p-2 rounded-lg border border-gray-300"></textarea>
-        <button>
+        <textarea
+          className="w-full h-full p-2 rounded-lg border border-gray-300"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+        ></textarea>
+        <button onClick={sendChat}>
           <SendIcon
             sx={{
               fontSize: 60,

@@ -13,14 +13,28 @@ const membersData = [
     name: "Mark Kenneth Badilla",
     position: "Web Developer",
     img: bardil,
+    quote: '"I’m not lazy. I’m energy-efficient."',
   },
   {
     name: "Alestair Cyril Coyoca",
     position: "Web Developer",
     img: alice,
+    quote:
+      '"To live is to suffer, to survive is to find some meaning in the suffering."',
   },
-  { name: "Kheisa Selma", position: "Web Developer", img: casea },
-  { name: "Joshua Briones", position: "Web Developer", img: pri },
+  {
+    name: "Kheisa Selma",
+    position: "Web Developer",
+    img: casea,
+    quote:
+      '"The biggest risk is not taking any risk. In a world that’s changing really quickly, the only strategy that is guaranteed to fail is not taking risks"',
+  },
+  {
+    name: "Joshua Briones",
+    position: "Web Developer",
+    img: pri,
+    quote: '"Just wanna die ffs"',
+  },
 ];
 
 const Aboutus = () => {
@@ -59,16 +73,25 @@ const Aboutus = () => {
 
         <div className="pt-16 flex gap-8 w-auto">
           {membersData.map((member, index) => (
-            <div className="w-full text-left" key={index}>
-              <img
-                src={member.img}
-                alt={member.name}
-                className="w-full h-[300px] mb-6"
-              />
-              <h5 className="text-xl font-semibold text-grayy">
-                {member.name}
-              </h5>
-              <p className="text-lg text-primary">{member.position}</p>
+            <div className="w-full text-left bg-slate-50 shadow-md" key={index}>
+              <div className="relative">
+                <img
+                  src={member.img}
+                  alt={member.name}
+                  className="w-full h-[300px] mb-2 "
+                />
+                <marquee className="absolute bottom-[0px] p-1 bg-slate-800">
+                  <span className="text-sm italic text-white">
+                    {member.quote}
+                  </span>
+                </marquee>
+              </div>
+              <div className="px-4 py-2">
+                <h5 className="text-xl font-semibold text-grayy">
+                  {member.name}
+                </h5>
+                <p className="text-lg text-primary">{member.position}</p>
+              </div>
             </div>
           ))}
         </div>

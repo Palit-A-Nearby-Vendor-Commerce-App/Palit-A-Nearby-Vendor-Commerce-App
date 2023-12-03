@@ -4,6 +4,7 @@ import chat from "../assets/images/message.png";
 import report from "../assets/images/report.png";
 import cod from "../assets/images/cod.png";
 import queue from "../assets/images/queue.png";
+import purchase from "../assets/images/smartphone.png";
 
 export const services = [
   {
@@ -35,5 +36,11 @@ export const services = [
     description:
       "Enjoy a streamlined and organized customer experience with our efficient queue management system for seamless transactions.",
     logo: queue,
+  },
+  {
+    title: "In-app purchase",
+    description:
+      "Elevate your experience with seamless access to premium features and content directly within the app. Upgrade effortlessly today",
+    logo: purchase,
   },
 ];

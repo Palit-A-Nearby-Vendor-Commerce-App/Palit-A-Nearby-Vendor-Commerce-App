@@ -47,6 +47,7 @@ function Home() {
   const [nearbyUsers, setNearbyUsers] = useState([]);
   const [showSlider, setShowSlider] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   // Define a ref variable for the map object
   const mapRef = useRef();
@@ -251,6 +252,8 @@ function Home() {
     // If the user object has a property called isVendor that is true, set the selected vendor state to the user object
     if (owner && owner.account.isVendor) {
       setSelectedVendor(owner);
+    } else {
+      setSelectedCustomer(owner);
     }
 
     // Toggle the value of showSlider
@@ -321,6 +324,13 @@ function Home() {
                 </button>
               </Link>
             )}
+            {/* {selectedCustomer && (
+              <Link to={{ pathname: "/chat", state: { selectedCustomer } }}>
+                <button className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary">
+                  <QuestionAnswerIcon sx={{ color: "white" }} />
+                </button>
+              </Link>
+            )} */}
           </div>
         </LoadScript>
       </div>

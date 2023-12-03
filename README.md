@@ -443,7 +443,7 @@ rectangle Palit {
 ```
 - Specific use case diagrams:
 
-- Sign up:
+**Sign up:**
 
 ```
 @startuml
@@ -451,39 +451,61 @@ left to right direction
 actor Customer
 actor Vendor
 rectangle Palit {
-  Customer -- (Sign up)
-  Vendor -- (Sign up)
-  (Sign up) ..> (Enter email) : include
-  (Sign up) ..> (Enter name) : include
-  (Sign up) ..> (Enter birth date) : include
-  (Sign up) ..> (Choose role) : include
-  (Sign up) ..> (Create password) : include
-  (Sign up) ..> (Confirm password) : include
-  (Sign up) ..> (Submit) : include
+  Customer -- (Sign up as customer)
+  Vendor -- (Sign up as vendor)
+  (Sign up as customer) ..> (Enter email) : include
+  (Sign up as customer) ..> (Enter name) : include
+  (Sign up as customer) ..> (Enter birth date) : include
+  (Sign up as customer) ..> (Choose role "customer") : include
+  (Sign up as customer) ..> (Create password) : include
+  (Sign up as customer) ..> (Submit) : include
+  
+  (Sign up as vendor) ..> (Enter email) : include
+  (Sign up as vendor) ..> (Enter name) : include
+  (Sign up as vendor) ..> (Enter birth date) : include
+  (Sign up as vendor) ..> (Choose role "vendor") : include
+  (Sign up as vendor) ..> (Create password) : include
+  (Sign up as vendor) ..> (Enter store name) : include
+  (Sign up as vendor) ..> (Enter store description) : include
+  (Sign up as vendor) ..> (Choose store category) : include
+  (Sign up as vendor) ..> (Submit) : include
 }
 @enduml
 ```
 
-- Log in:
+**Log in as regular user:**
 
 ```
 @startuml
 left to right direction
 actor Customer
 actor Vendor
+rectangle Palit {
+  Customer -- (Log in as regular user)
+  Vendor -- (Log in as regular user)
+  (Log in as regular user) ..> (Enter email) : include
+  (Log in as regular user) ..> (Enter password) : include
+  (Log in as regular user) ..> (Submit) : include
+}
+@enduml
+```
+
+**Log in as admin:**
+
+```
+@startuml
+left to right direction
 actor Admin
 rectangle Palit {
-  Customer -- (Log in)
-  Vendor -- (Log in)
-  Admin -- (Log in)
-  (Log in) ..> (Enter email) : include
-  (Log in) ..> (Enter password) : include
-  (Log in) ..> (Submit) : include
+  Admin -- (Log in as admin)
+  (Log in as admin) ..> (Enter email) : include
+  (Log in as admin) ..> (Enter password) : include
+  (Log in as admin) ..> (Submit) : include
 }
 @enduml
 ```
 
-- View map:
+**View map:**
 
 ```
 @startuml
@@ -493,15 +515,15 @@ actor Vendor
 rectangle Palit {
   Customer -- (View map)
   Vendor -- (View map)
-  (View map) ..> (See own location) : extend
-  (View map) ..> (See nearby users) : extend
-  (View map) ..> (Tap on user icon) : extend
-  (View map) ..> (Report issue) : extend
+  (View map) ..> (See own location) : include
+  (View map) ..> (See nearby users) : include
+  (View map) <.. (Tap on user icon) : extend
+  (View map) <.. (Report issue) : extend
 }
 @enduml
 ```
 
-- View store:
+**View store:**
 
 ```
 @startuml
@@ -509,17 +531,18 @@ left to right direction
 actor Customer
 actor Vendor
 rectangle Palit {
-  Customer -- (View store)
-  Vendor -- (View store)
-  (View store) ..> (See store details) : include
-  (View store) ..> (See products/services) : include
-  Customer ..> (View store) : extends
-  Vendor ..> (Edit store) : extends
+  Customer -- (View store as viewer)
+  Vendor -- (View store as owner)
+  (View store as viewer) ..> (See store details) : include
+  (View store as owner) ..> (See store details) : include
+  (View store as viewer) ..> (See products/services) : include
+  (View store as owner) ..> (See products/services) : include
+  (View store as owner) ..> (Edit store) : extends
 }
 @enduml
 ```
 
-- Place order:
+**Place order as customer:**
 
 ```
 @startuml
@@ -527,15 +550,15 @@ left to right direction
 actor Customer
 rectangle Palit {
   Customer -- (Place order)
-  (Place order) ..> (Select quantity) : include
   (Place order) ..> (See total price) : include
-  (Place order) ..> (Tap order button) : include
-  (Place order) ..> (Send transaction in chat) : include
+  (Place order) ..> (Select quantity) : include
+  (Select quantity) ..> (Tap order button) : include
+  (Tap order button) ..> (Send transaction in chat) : include
 }
 @enduml
 ```
 
-- Cancel order:
+**Cancel order as customer:**
 
 ```
 @startuml
@@ -549,7 +572,7 @@ rectangle Palit {
 @enduml
 ```
 
-- Chat:
+**Chat:**
 
 ```
 @startuml
@@ -571,7 +594,7 @@ rectangle Palit {
 @enduml
 ```
 
-- Report issue:
+**Report issue:**
 
 ```
 @startuml
@@ -589,7 +612,7 @@ rectangle Palit {
 @enduml
 ```
 
-- Edit store:
+**Edit store as owner:**
 
 ```
 @startuml
@@ -598,19 +621,19 @@ actor Vendor
 rectangle Palit {
   Vendor -- (Edit store)
   (Edit store) ..> (Tap edit button) : include
-  (Edit store) ..> (Enter store name) : include
-  (Edit store) ..> (Enter store description) : include
-  (Edit store) ..> (Choose store category) : include
-  (Edit store) ..> (Manage product/service) : include
-  (Manage product/service) ..> (Enter product/service name) : include
-  (Manage product/service) ..> (Enter product/service price) : include
-  (Manage product/service) ..> (Upload product/service image) : include
-  (Edit store) ..> (Save changes) : include
+  (Tap edit button) <.. (Enter store name) : extend
+  (Tap edit button) <.. (Enter store description) : extend
+  (Tap edit button) <.. (Choose store category) : extend
+  (Tap edit button) <.. (Manage product/service) : extend
+  (Manage product/service) <.. (Enter product/service name) : extend
+  (Manage product/service) <.. (Enter product/service price) : extend
+  (Manage product/service) <.. (Upload product/service image) : extend
+  (Tap edit button) <.. (Save changes) : extend
 }
 @enduml
 ```
 
-- Accept order:
+**Accept order as vendor:**
 
 ```
 @startuml
@@ -619,13 +642,13 @@ actor Vendor
 rectangle Palit {
   Vendor -- (Accept order)
   (Accept order) ..> (Tap accept button) : include
-  (Accept order) ..> (Change transaction status in chat) : include
-  (Accept order) ..> (Update customer queue) : include
+  (Tap accept button) ..> (Change transaction status in chat) : include
+  (Tap accept button) ..> (Update customer queue) : include
 }
 @enduml
 ```
 
-- Complete order:
+**Complete order as vendor:**
 
 ```
 @startuml
@@ -634,28 +657,13 @@ actor Vendor
 rectangle Palit {
   Vendor -- (Complete order)
   (Complete order) ..> (Tap complete button) : include
-  (Complete order) ..> (Change transaction status in chat) : include
-  (Complete order) ..> (Update customer queue) : include
+  (Tap complete button) ..> (Change transaction status in chat) : include
+  (Tap complete button) ..> (Update customer queue) : include
 }
 @enduml
 ```
 
-- Log in (admin):
-
-```
-@startuml
-left to right direction
-actor Admin
-rectangle Palit {
-  Admin -- (Log in)
-  (Log in) ..> (Enter email) : include
-  (Log in) ..> (Enter password) : include
-  (Log in) ..> (Submit) : include
-}
-@enduml
-```
-
-- CRUD via dashboard (admin):
+**CRUD via dashboard as admin:**
 
 ```
 @startuml
@@ -671,348 +679,322 @@ rectangle Palit {
   (View dashboard) ..> (See stores) : include
   (View dashboard) ..> (See products/services) : include
   (View dashboard) ..> (See transactions) : include
-  (See reports) ..> (Create report) : extend
-  (See reports) ..> (Update report) : extend
-  (See reports) ..> (Delete report) : extend
-  (See users) ..> (Create user) : extend
-  (See users) ..> (Update user) : extend
-  (See users) ..> (Delete user) : extend
-  (See accounts) ..> (Create account) : extend
-  (See accounts) ..> (Update account) : extend
-  (See accounts) ..> (Delete account) : extend
-  (See conversations) ..> (Create conversation) : extend
-  (See conversations) ..> (Update conversation) : extend
-  (See conversations) ..> (Delete conversation) : extend
-  (See chats) ..> (Create chat) : extend
-  (See chats) ..> (Update chat) : extend
-  (See chats) ..> (Delete chat) : extend
-  (See stores) ..> (Create store) : extend
-  (See stores) ..> (Update store) : extend
-  (See stores) ..> (Delete store) : extend
-  (See products/services) ..> (Create product/service) : extend
-  (See products/services) ..> (Update product/service) : extend
-  (See products/services) ..> (Delete product/service) : extend
-  (See transactions) ..> (Create transaction) : extend
-  (See transactions) ..> (Update transaction) : extend
-  (See transactions) ..> (Delete transaction) : extend
+  (See reports) <.. (Create report) : extend
+  (See reports) <.. (Update report) : extend
+  (See reports) <.. (Delete report) : extend
+  (See users) <.. (Create user) : extend
+  (See users) <.. (Update user) : extend
+  (See users) <.. (Delete user) : extend
+  (See accounts) <.. (Create account) : extend
+  (See accounts) <.. (Update account) : extend
+  (See accounts) <.. (Delete account) : extend
+  (See conversations) <.. (Create conversation) : extend
+  (See conversations) <.. (Update conversation) : extend
+  (See conversations) <.. (Delete conversation) : extend
+  (See chats) <.. (Create chat) : extend
+  (See chats) <.. (Update chat) : extend
+  (See chats) <.. (Delete chat) : extend
+  (See stores) <.. (Create store) : extend
+  (See stores) <.. (Update store) : extend
+  (See stores) <.. (Delete store) : extend
+  (See products/services) <.. (Create product/service) : extend
+  (See products/services) <.. (Update product/service) : extend
+  (See products/services) <.. (Delete product/service) : extend
+  (See transactions) <.. (Create transaction) : extend
+  (See transactions) <.. (Update transaction) : extend
+  (See transactions) <.. (Delete transaction) : extend
 }
 @enduml
 ```
-- Activity Diagrams
 
-- Activity diagram for Customer:
+**Activity Diagrams**
 
+Sure, here are all the activity diagrams:
+
+**Sign Up Process:**
 ```
 @startuml
 start
-:Customer;
-:Log in;
-if (See nearby vendors?) then (yes)
-  :View map;
-  :Tap on vendor icon;
-  :View store;
-  if (Place order?) then (yes)
-    :Select quantity;
-    :See total price;
-    :Tap order button;
-    :Send transaction in chat;
-    if (Cancel order?) then (yes)
-      :Tap cancel button;
-      :Change transaction status;
-    else (no)
-      :Wait for vendor to accept;
-    endif
-  endif
-else (no)
-  stop
-endif
-if (Chat with vendor?) then (yes)
-  :Send message;
-  :Receive message;
-  :See transaction status;
-else (no)
-  stop
-endif
-if (Report issue?) then (yes)
-  :Tap report icon;
-  :Enter message;
-  :Submit report;
-else (no)
-  stop
-endif
-stop
-@enduml
-```
 
-- Activity diagram for Vendor:
-
-```
-@startuml
-start
-:Vendor;
-:Log in;
-if (See nearby customers?) then (yes)
-  :View map;
-  :Tap on customer icon;
-  :View order;
-  if (Accept order?) then (yes)
-    :Tap accept button;
-    :Change transaction status in chat;
-    :Update customer queue;
-    if (Complete order?) then (yes)
-      :Tap complete button;
-      :Change transaction status in chat;
-      :Update customer queue;
-    else (no)
-      stop
-    endif
-  endif
-else (no)
-  stop
-endif
-if (Chat with customer?) then (yes)
-  :Send message;
-  :Receive message;
-  :See transaction status;
-else (no)
-  stop
-endif
-if (Edit store?) then (yes)
-  :Tap edit button;
+:Choose role;
+if (Role is Customer) then (yes)
+  :Enter email;
+  :Enter name;
+  :Enter birth date;
+  :Create password;
+  :Submit;
+else (Vendor)
+  :Enter email;
+  :Enter name;
+  :Enter birth date;
+  :Create password;
   :Enter store name;
   :Enter store description;
   :Choose store category;
-  :Manage product/service;
-  :Save changes;
-else (no)
-  stop
+  :Submit;
 endif
-if (Report issue?) then (yes)
-  :Tap report icon;
-  :Enter message;
-  :Submit report;
-else (no)
-  stop
-endif
+
 stop
 @enduml
 ```
 
-- Activity diagram for Admin:
-
+**Log In as Regular User:**
 ```
 @startuml
 start
-:Admin;
-:Log in;
+
+:Enter email;
+:Enter password;
+:Submit;
+
+stop
+@enduml
+```
+
+**Log In as Admin:**
+```
+@startuml
+start
+
+:Enter email;
+:Enter password;
+:Submit;
+
+stop
+@enduml
+```
+
+**View Map:**
+```
+@startuml
+start
+
+:See own location;
+:See nearby users;
+if (Need to interact with user icon) then (yes)
+  :Tap on user icon;
+endif
+if (Need to report issue) then (yes)
+  :Report issue;
+endif
+
+stop
+@enduml
+```
+
+**View Store:**
+```
+@startuml
+start
+
+:See store details;
+:See products/services;
+if (User is Vendor) then (yes)
+  :Edit store;
+endif
+
+stop
+@enduml
+```
+
+**Place Order as Customer:**
+```
+@startuml
+start
+
+:See total price;
+:Select quantity;
+:Tap order button;
+:Send transaction in chat;
+
+stop
+@enduml
+```
+
+**Cancel Order as Customer:**
+```
+@startuml
+start
+
+:Tap cancel order button;
+:Change transaction status in chat;
+
+stop
+@enduml
+```
+
+**Chat:**
+```
+@startuml
+start
+
+:Send message;
+:Receive message;
+:See transaction status;
+if (User is Vendor) then (yes)
+  :Accept order;
+  :Complete order;
+endif
+
+stop
+@enduml
+```
+
+**Report Issue:**
+```
+@startuml
+start
+
+:Tap report icon;
+:Enter message;
+:Submit report;
+:Send report to admin;
+
+stop
+@enduml
+```
+
+**Edit Store as Owner:**
+```
+@startuml
+start
+
+:Tap edit button;
+if (Need to change store name) then (yes)
+  :Enter store name;
+endif
+if (Need to change store description) then (yes)
+  :Enter store description;
+endif
+if (Need to change store category) then (yes)
+  :Choose store category;
+endif
+if (Need to manage product/service) then (yes)
+  :Enter product/service name;
+  :Enter product/service price;
+  :Upload product/service image;
+endif
+:Save changes;
+
+stop
+@enduml
+```
+
+**Accept Order as Vendor:**
+```
+@startuml
+start
+
+:Tap accept button;
+:Change transaction status in chat;
+:Update customer queue;
+
+stop
+@enduml
+```
+
+**Complete Order as Vendor:**
+```
+@startuml
+start
+
+:Tap complete button;
+:Change transaction status in chat;
+:Update customer queue;
+
+stop
+@enduml
+```
+
+**CRUD via Dashboard as Admin:**
+```
+@startuml
+start
+
 :View dashboard;
-if (See reports?) then (yes)
-  :Choose report;
-  if (Create report?) then (yes)
-    :Enter message;
-    :Submit report;
-  else (no)
-    if (Update report?) then (yes)
-      :Edit message;
-      :Save changes;
-    else (no)
-      if (Delete report?) then (yes)
-        :Tap delete button;
-        :Confirm deletion;
-      else (no)
-        stop
-      endif
-    endif
+if (Interact with reports) then (yes)
+  :See reports;
+  if (Create report) then (yes)
+    :Create report;
+  elseif (Update report) then (yes)
+    :Update report;
+  elseif (Delete report) then (yes)
+    :Delete report;
   endif
-else (no)
-  stop
 endif
-if (See users?) then (yes)
-  :Choose user;
-  if (Create user?) then (yes)
-    :Enter email;
-    :Enter name;
-    :Enter birth date;
-    :Choose role;
-    :Create password;
-    :Confirm password;
-    :Submit;
-  else (no)
-    if (Update user?) then (yes)
-      :Edit email;
-      :Edit name;
-      :Edit birth date;
-      :Edit role;
-      :Edit password;
-      :Save changes;
-    else (no)
-      if (Delete user?) then (yes)
-        :Tap delete button;
-        :Confirm deletion;
-      else (no)
-        stop
-      endif
-    endif
+if (Interact with users) then (yes)
+  :See users;
+  if (Create user) then (yes)
+    :Create user;
+  elseif (Update user) then (yes)
+    :Update user;
+  elseif (Delete user) then (yes)
+    :Delete user;
   endif
-else (no)
-  stop
 endif
-if (See accounts?) then (yes)
-  :Choose account;
-  if (Create account?) then (yes)
-    :Enter email;
-    :Enter password;
-    :Choose role;
-    :Submit;
-  else (no)
-    if (Update account?) then (yes)
-      :Edit email;
-      :Edit password;
-      :Edit role;
-      :Save changes;
-    else (no)
-      if (Delete account?) then (yes)
-        :Tap delete button;
-        :Confirm deletion;
-      else (no)
-        stop
-      endif
-    endif
+if (Interact with accounts) then (yes)
+  :See accounts;
+  if (Create account) then (yes)
+    :Create account;
+  elseif (Update account) then (yes)
+    :Update account;
+  elseif (Delete account) then (yes)
+    :Delete account;
   endif
-else (no)
-  stop
 endif
-if (See conversations?) then (yes)
-  :Choose conversation;
-  if (Create conversation?) then (yes)
-    :Enter customer ID;
-    :Enter vendor ID;
-    :Submit;
-  else (no)
-    if (Update conversation?) then (yes)
-      :Edit customer ID;
-      :Edit vendor ID;
-      :Save changes;
-    else (no)
-      if (Delete conversation?) then (yes)
-        :Tap delete button;
-        :Confirm deletion;
-      else (no)
-        stop
-      endif
-    endif
+if (Interact with conversations) then (yes)
+  :See conversations;
+  if (Create conversation) then (yes)
+    :Create conversation;
+  elseif (Update conversation) then (yes)
+    :Update conversation;
+  elseif (Delete conversation) then (yes)
+    :Delete conversation;
   endif
-else (no)
-  stop
 endif
-if (See chats?) then (yes)
-  :Choose chat;
-  if (Create chat?) then (yes)
-    :Enter sender ID;
-    :Enter message content;
-    :Enter timestamp;
-    :Enter conversation ID;
-    :Submit;
-  else (no)
-    if (Update chat?) then (yes)
-      :Edit sender ID;
-      :Edit message content;
-      :Edit timestamp;
-      :Edit conversation ID;
-      :Save changes;
-    else (no)
-      if (Delete chat?) then (yes)
-        :Tap delete button;
-        :Confirm deletion;
-      else (no)
-        stop
-      endif
-    endif
+if (Interact with chats) then (yes)
+  :See chats;
+  if (Create chat) then (yes)
+    :Create chat;
+  elseif (Update chat) then (yes)
+    :Update chat;
+  elseif (Delete chat) then (yes)
+    :Delete chat;
+ 
+
+ endif
+endif
+if (Interact with stores) then (yes)
+  :See stores;
+  if (Create store) then (yes)
+    :Create store;
+  elseif (Update store) then (yes)
+    :Update store;
+  elseif (Delete store) then (yes)
+    :Delete store;
   endif
-else (no)
-  stop
 endif
-if (See stores?) then (yes)
-  :Choose store;
-  if (Create store?) then (yes)
-    :Enter store name;
-    :Enter store description;
-    :Enter store category;
-    :Submit;
-  else (no)
-    if (Update store?) then (yes)
-      :Edit store name;
-      :Edit store description;
-      :Edit store category;
-      :Save changes;
-    else (no)
-      if (Delete store?) then (yes)
-        :Tap delete button;
-        :Confirm deletion;
-      else (no)
-        stop
-      endif
-    endif
+if (Interact with products/services) then (yes)
+  :See products/services;
+  if (Create product/service) then (yes)
+    :Create product/service;
+  elseif (Update product/service) then (yes)
+    :Update product/service;
+  elseif (Delete product/service) then (yes)
+    :Delete product/service;
   endif
-else (no)
-  stop
 endif
-if (See products/services?) then (yes)
-  :Choose product/service;
-  if (Create product/service?) then (yes)
-    :Enter product/service name;
-    :Enter product/service price;
-    :Enter store ID;
-    :Upload product/service image;
-    :Submit;
-  else (no)
-    if (Update product/service?) then (yes)
-      :Edit product/service name;
-      :Edit product/service price;
-      :Edit store ID;
-      :Edit product/service image;
-      :Save changes;
-    else (no)
-      if (Delete product/service?) then (yes)
-        :Tap delete button;
-        :Confirm deletion;
-      else (no)
-        stop
-      endif
-    endif
+if (Interact with transactions) then (yes)
+  :See transactions;
+  if (Create transaction) then (yes)
+    :Create transaction;
+  elseif (Update transaction) then (yes)
+    :Update transaction;
+  elseif (Delete transaction) then (yes)
+    :Delete transaction;
   endif
-else (no)
-  stop
 endif
-if (See transactions?) then (yes)
-  :Choose transaction;
-  if (Create transaction?) then (yes)
-    :Enter customer ID;
-    :Enter vendor ID;
-    :Enter status;
-    :Enter details;
-    :Enter timestamp;
-    :Submit;
-  else (no)
-    if (Update transaction?) then (yes)
-      :Edit customer ID;
-      :Edit vendor ID;
-      :Edit status;
-      :Edit details;
-      :Edit timestamp;
-      :Save changes;
-    else (no)
-      if (Delete transaction?) then (yes)
-        :Tap delete button;
-        :Confirm deletion;
-      else (no)
-        stop
-      endif
-    endif
-  endif
-else (no)
-  stop
-endif
+
 stop
 @enduml
 ```

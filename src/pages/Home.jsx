@@ -9,11 +9,12 @@ import React, {
 
 // Import Google Maps components from react-google-maps library
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { Link } from "react-router-dom";
 
 // Import custom marker images for vendor and customer
 import customerMarker from "../assets/images/customerIcon.png";
 import marker from "../assets/images/vendor-self-pin.png";
-
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 // Import axios library for making HTTP requests
 import axios from "axios";
 
@@ -251,7 +252,7 @@ function Home() {
     if (owner && owner.account.isVendor) {
       setSelectedVendor(owner);
     }
-    
+
     // Toggle the value of showSlider
     setShowSlider((prevShowSlider) => !prevShowSlider);
   };
@@ -313,6 +314,13 @@ function Home() {
             >
               <MdOutlineReportGmailerrorred size={30} />
             </button>
+            {selectedVendor && (
+              <Link to={{ pathname: "/chat", state: { selectedVendor } }}>
+                <button className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary">
+                  <QuestionAnswerIcon sx={{ color: "white" }} />
+                </button>
+              </Link>
+            )}
           </div>
         </LoadScript>
       </div>

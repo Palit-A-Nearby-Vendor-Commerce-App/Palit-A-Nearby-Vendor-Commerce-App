@@ -1,11 +1,13 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Avatar } from "@material-ui/core";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import SendIcon from "@mui/icons-material/Send";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { UserContext } from "../UserContext";
+import axios from "axios";
 
 import {
   GRADIENT_BG,
@@ -70,6 +72,92 @@ const chats = [
 
 const Chat = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const location = useLocation();
+  const selectedVendor = location.state?.selectedVendor;
+  const { user } = useContext(UserContext);
+  const [chats, setChats] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+
+  console.log("Selected vendor id: ", selectedVendor.account.accountId);
+  console.log("Customer id: ", user.account.accountId);
+
+  // Fetch existing conversations when the component mounts
+  // const fetchConversations = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:8080/api/getAllConversations`
+  //     );
+
+  //     const conversations = response.data;
+  //     setChats(conversations);
+  //   } catch (error) {
+  //     console.error("Error fetching conversations:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   // fetchConversations();
+  //   const createConversation = async () => {
+  //     try {
+  //       if (selectedVendor && selectedVendor.account && user && user.account) {
+  //         const conversationData = {
+  //           vendorAccountId: selectedVendor.account.accountId,
+  //           customerAccountId: user.account.accountId,
+  //         };
+
+  //         // Use axios.post to send the request to the server
+  //         const response = await axios.post(
+  //           "http://localhost:8080/api/createConversation",
+  //           conversationData
+  //         );
+
+  //         const newConversation = response.data;
+
+  //         // Now, you can set the conversation data in the state or perform any other actions.
+  //         // For example:
+  //         setSelectedConversation(newConversation);
+  //       } else {
+  //         console.error(
+  //           "selectedVendor, selectedVendor.account, user, or user.account is undefined"
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Error creating conversation:", error);
+  //     }
+  //   };
+
+  //   createConversation();
+  // }, []);
+  useEffect(() => {
+    const createConversation = async () => {
+      try {
+        if (selectedVendor && selectedVendor.account && user && user.account) {
+          console.log("Vendor Account ID:", selectedVendor.account.accountId);
+          console.log("User Account ID:", user.account.accountId);
+
+          const response = await axios.post(
+            "http://localhost:8080/api/createConversation",
+            {
+              vendor: selectedVendor.account,
+              customer: user.account,
+            }
+          );
+
+          console.log("sucess convo", response.data);
+          const newConversation = response.data;
+          setSelectedConversation(newConversation);
+        } else {
+          console.error(
+            "selectedVendor, selectedVendor.account, user, or user.account is undefined or null"
+          );
+        }
+      } catch (error) {
+        console.error("Error creating conversation:", error);
+      }
+    };
+
+    createConversation();
+  }, [selectedVendor, user]); // Include dependencies in the dependency array if needed
 
   const toggleDarkmode = () => {
     setIsDarkMode(!isDarkMode);
@@ -102,7 +190,7 @@ const Chat = () => {
             >
               <Avatar
                 alt="Remy Sharp"
-                src={dummyImg}
+                src={`data:image/jpeg;base64,${selectedVendor.image}`}
                 style={{ height: "60px", width: "60px" }}
               />
             </StyledBadge>
@@ -112,7 +200,8 @@ const Chat = () => {
                   isDarkMode ? "text-white" : "text-black"
                 } text-xl font-semibold`}
               >
-                {conversation[0].receiver_id === 101 && "Gregorio Bainabai"}
+                {selectedVendor.account.store.storeName}
+                {/* {conversation[0].receiver_id === 101 && "Gregorio Bainabai"} */}
               </h2>
               <p className="text-sm text-green-500">∙ Online</p>
             </div>

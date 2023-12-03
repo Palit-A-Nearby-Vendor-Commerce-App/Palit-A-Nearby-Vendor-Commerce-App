@@ -59,4 +59,9 @@ public class ConversationService {
             throw new RuntimeException("ConversationEntity not found with id: " + id);
         }
     }
+    
+    public ConversationEntity getConversationByParticipants(int vendorAccountId, int customerAccountId) {
+        Optional<ConversationEntity> conversation = conversationRepository.findByVendor_AccountIdAndCustomer_AccountIdAndIsDeletedFalse(vendorAccountId, customerAccountId);
+        return conversation.orElse(null);
+    }
 }

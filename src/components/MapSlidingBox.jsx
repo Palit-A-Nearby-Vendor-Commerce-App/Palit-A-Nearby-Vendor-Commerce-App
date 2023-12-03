@@ -28,7 +28,6 @@ const MapSlidingBox = ({
 
   const handleStoreButton = () => {
     setSelectedButton("store");
-    handleSliderToggle();
   }
 
   const handleQueueButton = () => {
@@ -50,7 +49,7 @@ const MapSlidingBox = ({
         />
         {user.account.isVendor ? (
           selectedButton === "queue" ? (
-            <Queue />
+            <Queue showManageStore={handleStoreButton}  />
           ) : (
             <ManageStore
               user={user}

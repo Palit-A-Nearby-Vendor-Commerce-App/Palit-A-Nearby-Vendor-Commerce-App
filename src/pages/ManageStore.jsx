@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
@@ -21,6 +21,8 @@ const ManageStore = () => {
         category: "",
         description: "",
     });
+    const [openDialog, setOpenDialog] = useState(false);
+    const [confirmAction, setConfirmAction] = useState(null);
 
     useEffect(() => {
         // Replace with your actual API endpoints
@@ -107,7 +109,7 @@ const ManageStore = () => {
     };
 
     // Handle click on "Save" button
-    const handleSave = () => {
+    const handleSaveConfirm = () => {
         console.log("Save clicked", products);
         // Perform the save operation with products data
         // Update the user context or make an API call to save the changes
@@ -195,7 +197,7 @@ const ManageStore = () => {
     // Handle click on "Choose File" button
 
     // Handle click on "Add" button
-    const handleAdd = async () => {
+    const handleAddConfirm = async () => {
         // Validate that all required fields are filled
         if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
             alert("Please fill in all product details.");
@@ -243,39 +245,39 @@ const ManageStore = () => {
         setImagePreview(null);
     };
 
-    // return (
-    //     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-    //         {/* User details */}
-    //         <div style={{ display: "flex" }}>
-    //             <img
-    //                 src={`data:image/png;base64, ${user.image}`}
-    //                 alt="User"
-    //                 className="w-14 h-15 rounded-full border-2 border-black"
-    //                 style={{ width: "70px", height: "70px" }}
-    //                 onClick={handleMenu}
-    //             />
-    //             <div className="ml-3" style={{ flexDirection: "column" }}>
-    //                 {/* Store Name */}
-    //                 <h2 className="text-xl font-semibold">
-    //                     {user.account.store ? user.account.store.storeName : "Loading..."}
-    //                 </h2>
-    //                 {/* Category */}
-    //                 <p className="text-sm">
-    //                     {user.account.store ? user.account.store.category : "Loading..."}
-    //                 </p>
-    //                 <div className="flex">
-    //                     <img src={redRating} alt="Rating" className="w-5 h-5" />
-    //                     <p className="font-medium">4.8</p>
-    //                 </div>
-    //             </div>
-    //         </div>
+    const handleDeleteConfirm = (index) => {
+        const newProducts = [...products];
+        newProducts[index].isDeleted = 1;
+        setProducts(newProducts);
 
-    //         {/* Store description */}
-    //         <div className="p-2" style={{ height: "90px" }}>
-    //             <p className="text-sm" style={{ textAlign: "justify" }}>
-    //                 {user.account.store ? user.account.store.description : "Loading..."}
-    //             </p>
-    //         </div>
+        // Assuming your API endpoint for deleting a product is /api/deleteProductServiceById/{id}
+        // and the id of the product to be deleted is stored in product.productId
+        axios
+            .delete(`http://localhost:8080/api/deleteProductServiceById/${newProducts[index].productId}`)
+            .then((response) => {
+                console.log("Product deleted:", response.data);
+            })
+            .catch((error) => {
+                console.error("Error deleting product:", error);
+            });
+    };
+
+    const openConfirmationDialog = (action) => {
+        setConfirmAction(action);
+        setOpenDialog(true);
+    };
+
+    const handleSave = () => {
+        openConfirmationDialog(() => handleSaveConfirm);
+    };
+
+    const handleAdd = () => {
+        openConfirmationDialog(() => handleAddConfirm);
+    };
+
+    const handleDelete = (index) => {
+        openConfirmationDialog(() => () => handleDeleteConfirm(index));
+    };
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
             {/* User details */}
@@ -463,11 +465,18 @@ const ManageStore = () => {
             )}
 
             {/* Display products */}
-            <div style={{ maxHeight: editMode ? "300px" : "450px", display: "flex", flexWrap: "wrap", justifyContent: "space-between", overflow: "auto", position: "relative" }}>
+            <div style={{ maxHeight: editMode ? "350px" : "510px", display: "flex", flexWrap: "wrap", justifyContent: "space-between", overflow: "auto", position: "relative" }}>
                 {products.map((product, index) => (
                     <div key={product.productId} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
                         {editMode ? (
                             <>
+
+                                <button
+                                    style={{ position: 'absolute', top: 0, right: 0, fontWeight: 'bold', fontSize: '20px', color: 'red', backgroundColor: 'white', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer' }}
+                                    onClick={() => handleDelete(index)}
+                                >
+                                    X
+                                </button>
                                 <label
                                     style={{
                                         width: "100%",
@@ -502,13 +511,14 @@ const ManageStore = () => {
                                             borderRadius: "15px",
                                             color: "white",
                                             fontWeight: "bold",
+
                                         },
                                     }}
                                     style={{
                                         position: "absolute",
                                         top: "-15px",
-                                        left: "49%",
-                                        width: "100%",
+                                        left: "39%",
+                                        width: "79%",
                                         transform: "translateX(-50%)",
                                         color: "white",
                                         fontWeight: "bold",
@@ -564,7 +574,6 @@ const ManageStore = () => {
                     </div>
                 ))}
             </div>
-
             {/* Save/Edit button */}
             <div className="flex mt-4 absolute bottom-8 w-full">
                 {editMode ? (
@@ -587,6 +596,27 @@ const ManageStore = () => {
                     </Button>
                 )}
             </div>
+            <Dialog
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Confirm Action"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Are you sure you want to perform this action?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDialog(false)} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={() => { confirmAction(); setOpenDialog(false); }} color="primary" autoFocus>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

@@ -154,16 +154,19 @@ function Signup() {
         account: accountResponse.data,
       };
 
-      const userResponse = await axios.post(
-        "http://localhost:8080/api/createUser",
-        user
-      );
-
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(null);
-        history.push("/signin");
-      }, 3000);
+      await axios
+        .post("http://localhost:8080/api/createUser", user)
+        .then((res) => {
+          setSuccess(true);
+          setTimeout(() => {
+            setSuccess(null);
+            history.push("/signin");
+          }, 3000);
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (error) {
       console.error(error);
       setError(true);
@@ -320,13 +323,10 @@ function Signup() {
       </div>
 
       <Link to="signin">
-          <div className="text-center mt-4 pb-6">
-            Already have a user?
-            <span className="text-primary underline cursor-pointer">
-              {" "}
-              Log in
-            </span>
-          </div>
+        <div className="text-center mt-4 pb-6">
+          Already have a user?
+          <span className="text-primary underline cursor-pointer"> Log in</span>
+        </div>
       </Link>
 
       {confirm && (

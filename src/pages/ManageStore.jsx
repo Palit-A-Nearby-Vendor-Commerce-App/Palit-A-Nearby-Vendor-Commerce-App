@@ -85,9 +85,23 @@ const ManageStore = () => {
 
     // Handle click on "Save" button
     const handleSave = () => {
-        console.log("Save clicked", editedProduct);
-        // Perform the save operation with editedProduct data
+        console.log("Save clicked", products);
+        // Perform the save operation with products data
         // Update the user context or make an API call to save the changes
+
+        // Iterate over each product in the products state
+        products.forEach((product) => {
+            // Assuming your API endpoint for updating a product is /api/updateProductServiceById/{id}
+            // and the id of the product to be updated is stored in product.productId
+            axios
+                .put(`http://localhost:8080/api/updateProductServiceById/${product.productId}`, product)
+                .then((response) => {
+                    console.log("Product updated:", response.data);
+                })
+                .catch((error) => {
+                    console.error("Error updating product:", error);
+                });
+        });
 
         // Reset state after saving
         setEditMode(false);
@@ -98,6 +112,7 @@ const ManageStore = () => {
         });
     };
 
+    
     // Handle input change for text fields
     const handleInputChange = (event) => {
         const { name, value } = event.target;

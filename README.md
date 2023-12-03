@@ -294,22 +294,8 @@ Account "1" -- "*" Report : sends
 @enduml
 
 ```
-----------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-----------------------------------------------------
-
-- ERD:
+- Entity Relationship Diagram:
 ```
 @startuml
 entity User {
@@ -335,7 +321,7 @@ entity Account {
     isDeleted boolean
 }
 
-User ||--|| Account
+User ||--|| Account : has
 
 entity Store {
     storeId int [PK]
@@ -346,7 +332,7 @@ entity Store {
     isDeleted boolean
 }
 
-Account ||--|| Store
+Account ||--o| Store : owns
 
 entity ProductService {
     productId int [PK]
@@ -358,7 +344,7 @@ entity ProductService {
     isDeleted boolean
 }
 
-Store ||--|{ ProductService
+Store ||--o{ ProductService : offers
 
 entity Location {
     locationId int [PK]
@@ -369,7 +355,7 @@ entity Location {
     isActive boolean
 }
 
-Account ||--|| Location
+Account ||--|| Location : has
 
 entity Conversation {
     conversationId int [PK]
@@ -379,7 +365,7 @@ entity Conversation {
     isDeleted boolean
 }
 
-Account }|..|{ Conversation
+Account }|--o{ Conversation : participates in
 
 entity Chat {
     chatId int [PK]
@@ -391,8 +377,8 @@ entity Chat {
     isDeleted boolean
 }
 
-Account ||--|{ Chat
-Chat }|..|| Conversation
+Account ||--o{ Chat : sends
+Chat }|..|| Conversation : belongs to
 
 entity Transaction {
     int transactionId [PK]
@@ -405,7 +391,7 @@ entity Transaction {
     isDeleted boolean
 }
 
-Account }|..|{ Transaction
+Account }|..|{ Transaction : involves
 
 entity Report {
     reportId int [PK]
@@ -417,27 +403,12 @@ entity Report {
     isDeleted boolean
 }
 
-Account ||--|{ Report
+Account ||--|{ Report : sends
 
 @enduml
 ```
------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
------------------------------------------------------
-Here is the generic system wide use case diagram:
+- Generic system wide use case diagram:
 
 ```
 @startuml
@@ -470,8 +441,7 @@ rectangle Palit {
 }
 @enduml
 ```
-
-Here are the specific use case diagrams for each use case in the generic system wide use case diagram:
+- Specific use case diagrams:
 
 - Sign up:
 
@@ -728,5 +698,321 @@ rectangle Palit {
 }
 @enduml
 ```
+- Activity Diagrams
 
-----------------------------------------------------
+- Activity diagram for Customer:
+
+```
+@startuml
+start
+:Customer;
+:Log in;
+if (See nearby vendors?) then (yes)
+  :View map;
+  :Tap on vendor icon;
+  :View store;
+  if (Place order?) then (yes)
+    :Select quantity;
+    :See total price;
+    :Tap order button;
+    :Send transaction in chat;
+    if (Cancel order?) then (yes)
+      :Tap cancel button;
+      :Change transaction status;
+    else (no)
+      :Wait for vendor to accept;
+    endif
+  endif
+else (no)
+  stop
+endif
+if (Chat with vendor?) then (yes)
+  :Send message;
+  :Receive message;
+  :See transaction status;
+else (no)
+  stop
+endif
+if (Report issue?) then (yes)
+  :Tap report icon;
+  :Enter message;
+  :Submit report;
+else (no)
+  stop
+endif
+stop
+@enduml
+```
+
+- Activity diagram for Vendor:
+
+```
+@startuml
+start
+:Vendor;
+:Log in;
+if (See nearby customers?) then (yes)
+  :View map;
+  :Tap on customer icon;
+  :View order;
+  if (Accept order?) then (yes)
+    :Tap accept button;
+    :Change transaction status in chat;
+    :Update customer queue;
+    if (Complete order?) then (yes)
+      :Tap complete button;
+      :Change transaction status in chat;
+      :Update customer queue;
+    else (no)
+      stop
+    endif
+  endif
+else (no)
+  stop
+endif
+if (Chat with customer?) then (yes)
+  :Send message;
+  :Receive message;
+  :See transaction status;
+else (no)
+  stop
+endif
+if (Edit store?) then (yes)
+  :Tap edit button;
+  :Enter store name;
+  :Enter store description;
+  :Choose store category;
+  :Manage product/service;
+  :Save changes;
+else (no)
+  stop
+endif
+if (Report issue?) then (yes)
+  :Tap report icon;
+  :Enter message;
+  :Submit report;
+else (no)
+  stop
+endif
+stop
+@enduml
+```
+
+- Activity diagram for Admin:
+
+```
+@startuml
+start
+:Admin;
+:Log in;
+:View dashboard;
+if (See reports?) then (yes)
+  :Choose report;
+  if (Create report?) then (yes)
+    :Enter message;
+    :Submit report;
+  else (no)
+    if (Update report?) then (yes)
+      :Edit message;
+      :Save changes;
+    else (no)
+      if (Delete report?) then (yes)
+        :Tap delete button;
+        :Confirm deletion;
+      else (no)
+        stop
+      endif
+    endif
+  endif
+else (no)
+  stop
+endif
+if (See users?) then (yes)
+  :Choose user;
+  if (Create user?) then (yes)
+    :Enter email;
+    :Enter name;
+    :Enter birth date;
+    :Choose role;
+    :Create password;
+    :Confirm password;
+    :Submit;
+  else (no)
+    if (Update user?) then (yes)
+      :Edit email;
+      :Edit name;
+      :Edit birth date;
+      :Edit role;
+      :Edit password;
+      :Save changes;
+    else (no)
+      if (Delete user?) then (yes)
+        :Tap delete button;
+        :Confirm deletion;
+      else (no)
+        stop
+      endif
+    endif
+  endif
+else (no)
+  stop
+endif
+if (See accounts?) then (yes)
+  :Choose account;
+  if (Create account?) then (yes)
+    :Enter email;
+    :Enter password;
+    :Choose role;
+    :Submit;
+  else (no)
+    if (Update account?) then (yes)
+      :Edit email;
+      :Edit password;
+      :Edit role;
+      :Save changes;
+    else (no)
+      if (Delete account?) then (yes)
+        :Tap delete button;
+        :Confirm deletion;
+      else (no)
+        stop
+      endif
+    endif
+  endif
+else (no)
+  stop
+endif
+if (See conversations?) then (yes)
+  :Choose conversation;
+  if (Create conversation?) then (yes)
+    :Enter customer ID;
+    :Enter vendor ID;
+    :Submit;
+  else (no)
+    if (Update conversation?) then (yes)
+      :Edit customer ID;
+      :Edit vendor ID;
+      :Save changes;
+    else (no)
+      if (Delete conversation?) then (yes)
+        :Tap delete button;
+        :Confirm deletion;
+      else (no)
+        stop
+      endif
+    endif
+  endif
+else (no)
+  stop
+endif
+if (See chats?) then (yes)
+  :Choose chat;
+  if (Create chat?) then (yes)
+    :Enter sender ID;
+    :Enter message content;
+    :Enter timestamp;
+    :Enter conversation ID;
+    :Submit;
+  else (no)
+    if (Update chat?) then (yes)
+      :Edit sender ID;
+      :Edit message content;
+      :Edit timestamp;
+      :Edit conversation ID;
+      :Save changes;
+    else (no)
+      if (Delete chat?) then (yes)
+        :Tap delete button;
+        :Confirm deletion;
+      else (no)
+        stop
+      endif
+    endif
+  endif
+else (no)
+  stop
+endif
+if (See stores?) then (yes)
+  :Choose store;
+  if (Create store?) then (yes)
+    :Enter store name;
+    :Enter store description;
+    :Enter store category;
+    :Submit;
+  else (no)
+    if (Update store?) then (yes)
+      :Edit store name;
+      :Edit store description;
+      :Edit store category;
+      :Save changes;
+    else (no)
+      if (Delete store?) then (yes)
+        :Tap delete button;
+        :Confirm deletion;
+      else (no)
+        stop
+      endif
+    endif
+  endif
+else (no)
+  stop
+endif
+if (See products/services?) then (yes)
+  :Choose product/service;
+  if (Create product/service?) then (yes)
+    :Enter product/service name;
+    :Enter product/service price;
+    :Enter store ID;
+    :Upload product/service image;
+    :Submit;
+  else (no)
+    if (Update product/service?) then (yes)
+      :Edit product/service name;
+      :Edit product/service price;
+      :Edit store ID;
+      :Edit product/service image;
+      :Save changes;
+    else (no)
+      if (Delete product/service?) then (yes)
+        :Tap delete button;
+        :Confirm deletion;
+      else (no)
+        stop
+      endif
+    endif
+  endif
+else (no)
+  stop
+endif
+if (See transactions?) then (yes)
+  :Choose transaction;
+  if (Create transaction?) then (yes)
+    :Enter customer ID;
+    :Enter vendor ID;
+    :Enter status;
+    :Enter details;
+    :Enter timestamp;
+    :Submit;
+  else (no)
+    if (Update transaction?) then (yes)
+      :Edit customer ID;
+      :Edit vendor ID;
+      :Edit status;
+      :Edit details;
+      :Edit timestamp;
+      :Save changes;
+    else (no)
+      if (Delete transaction?) then (yes)
+        :Tap delete button;
+        :Confirm deletion;
+      else (no)
+        stop
+      endif
+    endif
+  endif
+else (no)
+  stop
+endif
+stop
+@enduml
+```

@@ -83,79 +83,110 @@ const Chat = () => {
   console.log("Selected vendor id: ", selectedVendor.account.accountId);
   console.log("Customer id: ", user.account.accountId);
 
-  const fetchConversationById = async (conversationId) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8080/api/getConversationById/${conversationId}`
-      );
+  // const fetchConversationById = async (conversationId) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:8080/api/getConversationById/${conversationId}`
+  //     );
 
-      const conversation = response.data;
-      selectedConversationRef.current = conversation; // Update the ref value
-    } catch (error) {
-      console.error("Error fetching conversation:", error);
-    }
-  };
+  //     const conversation = response.data;
+  //     selectedConversationRef.current = conversation; // Update the ref value
+  //   } catch (error) {
+  //     console.error("Error fetching conversation:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   // When the component mounts, check if there is a stored conversationId
+  //   const storedConversationId = localStorage.getItem("selectedConversationId");
+
+  //   if (storedConversationId) {
+  //     // Fetch the conversation based on the stored id and set it in the state
+  //     console.log("Convo id: ", storedConversationId);
+  //     fetchConversationById(storedConversationId);
+  //   }
+  // }, []);
+
+  // useEffect(() => {
+  //   const createOrFetchConversation = async () => {
+  //     try {
+  //       if (selectedVendor && selectedVendor.account && user && user.account) {
+  //         console.log("Vendor Account ID:", selectedVendor.account.accountId);
+  //         console.log("User Account ID:", user.account.accountId);
+
+  //         // Check if the selectedVendor has changed
+  //         if (
+  //           selectedVendorRef.current &&
+  //           selectedVendorRef.current.account.accountId ===
+  //             selectedVendor.account.accountId
+  //         ) {
+  //           // If conversationId exists, fetch the conversation and set it in the state
+  //           if (selectedConversation && selectedConversation.conversationId) {
+  //             fetchConversationById(selectedConversation.conversationId);
+  //           } else {
+  //             // Otherwise, create a new conversation
+  //             const response = await axios.post(
+  //               "http://localhost:8080/api/createConversation",
+  //               {
+  //                 vendor: selectedVendor.account,
+  //                 customer: user.account,
+  //               }
+  //             );
+
+  //             console.log("success convo", response.data);
+  //             const newConversation = response.data;
+  //             setSelectedConversation(newConversation);
+  //             localStorage.setItem(
+  //               "selectedConversationId",
+  //               newConversation.conversationId
+  //             );
+  //           }
+  //         }
+
+  //         // Update the selectedVendorRef with the current selectedVendor
+  //         selectedVendorRef.current = selectedVendor;
+  //       } else {
+  //         console.error(
+  //           "selectedVendor, selectedVendor.account, user, or user.account is undefined or null"
+  //         );
+  //       }
+  //     } catch (error) {
+  //       console.error("Error creating or fetching conversation:", error);
+  //     }
+  //   };
+
+  //   createOrFetchConversation();
+  // }, [selectedVendor, user]);
 
   useEffect(() => {
-    // When the component mounts, check if there is a stored conversationId
-    const storedConversationId = localStorage.getItem("selectedConversationId");
-
-    if (storedConversationId) {
-      // Fetch the conversation based on the stored id and set it in the state
-      console.log("Convo id: ", storedConversationId);
-      fetchConversationById(storedConversationId);
-    }
-  }, []);
-
-  useEffect(() => {
-    const createOrFetchConversation = async () => {
+    const createConversation = async () => {
       try {
         if (selectedVendor && selectedVendor.account && user && user.account) {
           console.log("Vendor Account ID:", selectedVendor.account.accountId);
           console.log("User Account ID:", user.account.accountId);
 
-          // Check if the selectedVendor has changed
-          if (
-            selectedVendorRef.current &&
-            selectedVendorRef.current.account.accountId ===
-              selectedVendor.account.accountId
-          ) {
-            // If conversationId exists, fetch the conversation and set it in the state
-            if (selectedConversation && selectedConversation.conversationId) {
-              fetchConversationById(selectedConversation.conversationId);
-            } else {
-              // Otherwise, create a new conversation
-              const response = await axios.post(
-                "http://localhost:8080/api/createConversation",
-                {
-                  vendor: selectedVendor.account,
-                  customer: user.account,
-                }
-              );
-
-              console.log("success convo", response.data);
-              const newConversation = response.data;
-              setSelectedConversation(newConversation);
-              localStorage.setItem(
-                "selectedConversationId",
-                newConversation.conversationId
-              );
+          const response = await axios.post(
+            "http://localhost:8080/api/createConversation",
+            {
+              vendor: selectedVendor.account,
+              customer: user.account,
             }
-          }
+          );
 
-          // Update the selectedVendorRef with the current selectedVendor
-          selectedVendorRef.current = selectedVendor;
+          console.log("sucess convo", response.data);
+          const newConversation = response.data;
+          setSelectedConversation(newConversation);
         } else {
           console.error(
             "selectedVendor, selectedVendor.account, user, or user.account is undefined or null"
           );
         }
       } catch (error) {
-        console.error("Error creating or fetching conversation:", error);
+        console.error("Error creating conversation:", error);
       }
     };
 
-    createOrFetchConversation();
+    createConversation();
   }, [selectedVendor, user]);
 
   const toggleDarkmode = () => {

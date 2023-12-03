@@ -58,4 +58,20 @@ public class ConversationController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+    
+    @GetMapping("/getConversationByParticipants/{vendorId}/{customerId}")
+    public ResponseEntity<?> getConversationByParticipants(
+            @PathVariable("vendorId") int vendorId,
+            @PathVariable("customerId") int customerId) {
+        try {
+            ConversationEntity conversation = conversationService.getConversationByParticipants(vendorId, customerId);
+            if (conversation != null) {
+                return new ResponseEntity<>(conversation, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Conversation not found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error fetching conversation: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

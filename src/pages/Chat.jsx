@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import { Avatar } from "@material-ui/core";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -77,90 +77,97 @@ const Chat = () => {
   const { user } = useContext(UserContext);
   const [chats, setChats] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
+  const selectedConversationRef = useRef(selectedConversation);
+  const selectedVendorRef = useRef();
 
   console.log("Selected vendor id: ", selectedVendor.account.accountId);
   console.log("Customer id: ", user.account.accountId);
 
-  // Fetch existing conversations when the component mounts
-  // const fetchConversations = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       `http://localhost:8080/api/getAllConversations`
-  //     );
+  const fetchConversationById = async (conversationId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/getConversationById/${conversationId}`
+      );
 
-  //     const conversations = response.data;
-  //     setChats(conversations);
-  //   } catch (error) {
-  //     console.error("Error fetching conversations:", error);
-  //   }
-  // };
+      const conversation = response.data;
+      selectedConversationRef.current = conversation; // Update the ref value
+    } catch (error) {
+      console.error("Error fetching conversation:", error);
+    }
+  };
 
-  // useEffect(() => {
-  //   // fetchConversations();
-  //   const createConversation = async () => {
-  //     try {
-  //       if (selectedVendor && selectedVendor.account && user && user.account) {
-  //         const conversationData = {
-  //           vendorAccountId: selectedVendor.account.accountId,
-  //           customerAccountId: user.account.accountId,
-  //         };
-
-  //         // Use axios.post to send the request to the server
-  //         const response = await axios.post(
-  //           "http://localhost:8080/api/createConversation",
-  //           conversationData
-  //         );
-
-  //         const newConversation = response.data;
-
-  //         // Now, you can set the conversation data in the state or perform any other actions.
-  //         // For example:
-  //         setSelectedConversation(newConversation);
-  //       } else {
-  //         console.error(
-  //           "selectedVendor, selectedVendor.account, user, or user.account is undefined"
-  //         );
-  //       }
-  //     } catch (error) {
-  //       console.error("Error creating conversation:", error);
-  //     }
-  //   };
-
-  //   createConversation();
-  // }, []);
   useEffect(() => {
-    const createConversation = async () => {
+    // When the component mounts, check if there is a stored conversationId
+    const storedConversationId = localStorage.getItem("selectedConversationId");
+
+    if (storedConversationId) {
+      // Fetch the conversation based on the stored id and set it in the state
+      console.log("Convo id: ", storedConversationId);
+      fetchConversationById(storedConversationId);
+    }
+  }, []);
+
+  useEffect(() => {
+    const createOrFetchConversation = async () => {
       try {
         if (selectedVendor && selectedVendor.account && user && user.account) {
           console.log("Vendor Account ID:", selectedVendor.account.accountId);
           console.log("User Account ID:", user.account.accountId);
 
-          const response = await axios.post(
-            "http://localhost:8080/api/createConversation",
-            {
-              vendor: selectedVendor.account,
-              customer: user.account,
-            }
-          );
+          // Check if the selectedVendor has changed
+          if (
+            selectedVendorRef.current &&
+            selectedVendorRef.current.account.accountId ===
+              selectedVendor.account.accountId
+          ) {
+            // If conversationId exists, fetch the conversation and set it in the state
+            if (selectedConversation && selectedConversation.conversationId) {
+              fetchConversationById(selectedConversation.conversationId);
+            } else {
+              // Otherwise, create a new conversation
+              const response = await axios.post(
+                "http://localhost:8080/api/createConversation",
+                {
+                  vendor: selectedVendor.account,
+                  customer: user.account,
+                }
+              );
 
-          console.log("sucess convo", response.data);
-          const newConversation = response.data;
-          setSelectedConversation(newConversation);
+              console.log("success convo", response.data);
+              const newConversation = response.data;
+              setSelectedConversation(newConversation);
+              localStorage.setItem(
+                "selectedConversationId",
+                newConversation.conversationId
+              );
+            }
+          }
+
+          // Update the selectedVendorRef with the current selectedVendor
+          selectedVendorRef.current = selectedVendor;
         } else {
           console.error(
             "selectedVendor, selectedVendor.account, user, or user.account is undefined or null"
           );
         }
       } catch (error) {
-        console.error("Error creating conversation:", error);
+        console.error("Error creating or fetching conversation:", error);
       }
     };
 
-    createConversation();
-  }, [selectedVendor, user]); // Include dependencies in the dependency array if needed
+    createOrFetchConversation();
+  }, [selectedVendor, user]);
 
   const toggleDarkmode = () => {
     setIsDarkMode(!isDarkMode);
+  };
+
+  const handleBackButtonClick = () => {
+    // Set selectedConversationId to null in local storage
+    localStorage.setItem("selectedConversationId", null);
+
+    // Optionally, you can also reset the selectedConversation state
+    setSelectedConversation(null);
   };
 
   return (
@@ -176,7 +183,7 @@ const Chat = () => {
       >
         <div className="h-full flex items-center gap-4">
           <Link to="/home">
-            <button>
+            <button onClick={handleBackButtonClick}>
               <ArrowBackIcon
                 sx={{ color: isDarkMode ? "white" : "black", fontSize: 32 }}
               />

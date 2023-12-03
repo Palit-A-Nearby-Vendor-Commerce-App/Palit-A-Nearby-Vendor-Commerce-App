@@ -31,12 +31,6 @@ export const services = [
     logo: report,
   },
   {
-    title: "Rating",
-    description:
-      "Share your valuable insights through our comprehensive rating and review system, enhancing user satisfaction and refining experiences.",
-    logo: rating,
-  },
-  {
     title: "Customer queue",
     description:
       "Enjoy a streamlined and organized customer experience with our efficient queue management system for seamless transactions.",

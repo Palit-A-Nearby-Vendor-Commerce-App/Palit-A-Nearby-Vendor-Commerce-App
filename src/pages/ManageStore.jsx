@@ -23,6 +23,8 @@ const ManageStore = () => {
     });
     const [openDialog, setOpenDialog] = useState(false);
     const [confirmAction, setConfirmAction] = useState(null);
+    const [actionType, setActionType] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
     useEffect(() => {
         // Replace with your actual API endpoints
@@ -145,6 +147,7 @@ const ManageStore = () => {
                         store: response.data,
                     },
                 }));
+                setSuccessMessage('Successfully saved.');
             })
             .catch((error) => {
                 console.error("Error updating store:", error);
@@ -158,6 +161,7 @@ const ManageStore = () => {
             name: "",
             price: "",
         });
+
     };
 
 
@@ -230,6 +234,7 @@ const ManageStore = () => {
             .post("http://localhost:8080/api/createProductService", productData)
             .then((response) => {
                 console.log("Product created:", response.data);
+                setSuccessMessage('Successfully added.');
             })
             .catch((error) => {
                 console.error("Error creating product:", error);
@@ -256,28 +261,31 @@ const ManageStore = () => {
             .delete(`http://localhost:8080/api/deleteProductServiceById/${newProducts[index].productId}`)
             .then((response) => {
                 console.log("Product deleted:", response.data);
+                setSuccessMessage('Successfully deleted.');
             })
             .catch((error) => {
                 console.error("Error deleting product:", error);
             });
     };
 
-    const openConfirmationDialog = (action) => {
+    const openConfirmationDialog = (action, actionType) => {
         setConfirmAction(action);
+        setActionType(actionType); // Set the action type
         setOpenDialog(true);
     };
 
     const handleSave = () => {
-        openConfirmationDialog(() => handleSaveConfirm);
+        openConfirmationDialog(() => handleSaveConfirm, 'save');
     };
 
     const handleAdd = () => {
-        openConfirmationDialog(() => handleAddConfirm);
+        openConfirmationDialog(() => handleAddConfirm, 'add');
     };
 
     const handleDelete = (index) => {
-        openConfirmationDialog(() => () => handleDeleteConfirm(index));
+        openConfirmationDialog(() => () => handleDeleteConfirm(index), 'delete');
     };
+
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
             {/* User details */}
@@ -605,15 +613,35 @@ const ManageStore = () => {
                 <DialogTitle id="alert-dialog-title">{"Confirm Action"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                        Are you sure you want to perform this action?
+                        {actionType === 'delete' && 'Are you sure you want to delete this?'}
+                        {actionType === 'save' && 'Are you sure you want to save this?'}
+                        {actionType === 'add' && 'Are you sure you want to add this?'}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)} color="primary">
+                    <Button onClick={() => setOpenDialog(false)} color="primary" style={{ backgroundColor: "#E8594F", color: "white" }}>
                         Cancel
                     </Button>
-                    <Button onClick={() => { confirmAction(); setOpenDialog(false); }} color="primary" autoFocus>
+                    <Button onClick={() => { confirmAction(); setOpenDialog(false); }} color="primary" autoFocus style={{ backgroundColor: "#0575B4", color: "white" }}>
                         Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                open={!!successMessage}
+                onClose={() => setSuccessMessage(null)}
+                aria-labelledby="success-dialog-title"
+                aria-describedby="success-dialog-description"
+            >
+                <DialogTitle id="success-dialog-title">{"Success"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="success-dialog-description">
+                        {successMessage}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setSuccessMessage(null)} color="primary" autoFocus style={{ backgroundColor: "#0575B4", color: "white" }}>
+                        OK
                     </Button>
                 </DialogActions>
             </Dialog>

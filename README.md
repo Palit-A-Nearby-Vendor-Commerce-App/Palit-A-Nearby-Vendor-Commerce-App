@@ -40,7 +40,7 @@ Palit is a web app that connects nearby vendors and customers who want to buy or
 - **Selection and Ordering**: Customers select a vendor to view and order from their store, with the ability to cancel orders.
 
 #### Chat System
-- **Communication**: Customers and vendors negotiate and give feedback. Includes transaction status updates and a rating system post-completion.
+- **Communication**: Customers and vendors negotiate and give feedback. Includes transaction status updates.
 
 #### Customer Queue Management
 - **Vendor View**: A list of customers ordering, with current serving status highlighted and an easy transition to chat for order acceptance.
@@ -53,10 +53,6 @@ Palit is a web app that connects nearby vendors and customers who want to buy or
 - **Contact Us**: A form for reaching out to developers.
 - **Services**: A summary of app offerings.
 
-### Limitations
-- **No In-App Payment**: Excluded due to time constraints and security concerns.
-- **Developer Experience**: The team is composed of students learning necessary frameworks and technologies, with a focus on React for front-end development.
-
 # Diagrams in PlantUML:
 
 - Class diagram:
@@ -68,8 +64,8 @@ class User {
     - String lastName
     - Date birthDate
     - byte[] image
-    - int accountId
     - boolean isDeleted
+    - AccountEntity account
     + int getUserId()
     + void setUserId(int userId)
     + String getFirstName()
@@ -80,10 +76,10 @@ class User {
     + void setBirthDate(Date birthDate)
     + byte[] getImage()
     + void setImage(byte[] image)
-    + int getAccountId()
-    + void setAccountId(int accountId)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
 }
 
 class Account {
@@ -92,9 +88,15 @@ class Account {
     - String password
     - boolean isVendor
     - boolean isAdmin
-    - int locationId
-    - int storeId
     - boolean isDeleted
+    - UserEntity user
+    - LocationEntity location
+    - StoreEntity store
+    - Set<TransactionEntity> customerTransactions
+    - Set<ChatEntity> chats
+    - Set<ConversationEntity> conversations
+    - Set<TransactionEntity> vendorTransactions
+    - List<ReportEntity> reports
     + int getAccountId()
     + void setAccountId(int accountId)
     + String getEmail()
@@ -105,12 +107,24 @@ class Account {
     + void setIsVendor(boolean isVendor)
     + boolean getIsAdmin()
     + void setIsAdmin(boolean isAdmin)
-    + int getLocationId()
-    + void setLocationId(int locationId)
-    + int getStoreId()
-    + void setStoreId(int storeId)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
+    + UserEntity getUser()
+    + void setUser(UserEntity user)
+    + LocationEntity getLocation()
+    + void setLocation(LocationEntity location)
+    + StoreEntity getStore()
+    + void setStore(StoreEntity store)
+    + Set<TransactionEntity> getCustomerTransactions()
+    + void setCustomerTransactions(Set<TransactionEntity> customerTransactions)
+    + Set<ChatEntity> getChats()
+    + void setChats(Set<ChatEntity> chats)
+    + Set<ConversationEntity> getConversations()
+    + void setConversations(Set<ConversationEntity> conversations)
+    + Set<TransactionEntity> getVendorTransactions()
+    + void setVendorTransactions(Set<TransactionEntity> vendorTransactions)
+    + List<ReportEntity> getReports()
+    + void setReports(List<ReportEntity> reports)
 }
 
 User "1" -- "1" Account : has
@@ -121,6 +135,8 @@ class Store {
     - String description
     - String category
     - boolean isDeleted
+    - AccountEntity account
+    - List<ProductServiceEntity> productServices
     + int getStoreId()
     + void setStoreId(int storeId)
     + String getStoreName()
@@ -131,6 +147,10 @@ class Store {
     + void setCategory(String category)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
+    + List<ProductServiceEntity> getProductServices()
+    + void setProductServices(List<ProductServiceEntity> productServices)
 }
 
 Account "1" -- "1" Store : owns
@@ -139,21 +159,21 @@ class ProductService {
     - int productId
     - String name
     - double price
-    - int storeId
     - byte[] image
     - boolean isDeleted
+    - StoreEntity store
     + int getProductId()
     + void setProductId(int productId)
     + String getName()
     + void setName(String name)
     + double getPrice()
     + void setPrice(double price)
-    + int getStoreId()
-    + void setStoreId(int storeId)
     + byte[] getImage()
     + void setImage(byte[] image)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
+    + StoreEntity getStore()
+    + void setStore(StoreEntity store)
 }
 
 Store "1" -- "*" ProductService : offers
@@ -164,6 +184,7 @@ class Location {
     - double longitude
     - boolean isDeleted
     - boolean isActive
+    - AccountEntity account
     + int getLocationId()
     + void setLocationId(int locationId)
     + double getLatitude()
@@ -174,23 +195,28 @@ class Location {
     + void setIsActive(boolean isActive)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
 }
 
 Account "1" -- "1" Location : has
 
 class Conversation {
     - int conversationId
-    - int customerAccountId
-    - int vendorAccountId
     - boolean isDeleted
+    - AccountEntity vendor
+    - AccountEntity customer
+    - Set<ChatEntity> chats
     + int getConversationId()
     + void setConversationId(int conversationId)
-    + int getCustomerAccountId()
-    + void setCustomerAccountId(int customerAccountId)
-    + int getVendorAccountId()
-    + void setVendorAccountId(int vendorAccountId)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getVendor()
+    + void setVendor(AccountEntity vendor)
+    + AccountEntity getCustomer()
+    + void setCustomer(AccountEntity customer)
+    + Set<ChatEntity> getChats()
+    + void setChats(Set<ChatEntity> chats)
 }
 
 Account "*" -- "*" Conversation : participates in
@@ -198,61 +224,59 @@ Account "1" -- "*" Chat : sends
 
 class Chat {
     - int chatId
-    - int senderId
     - String messageContent
     - Timestamp timestamp
-    - int conversationId
     - boolean isDeleted
+    - AccountEntity account
+    - ConversationEntity conversation
     + int getChatId()
     + void setChatId(int chatId)
-    + int getSenderId()
-    + void setSenderId(int senderId)
     + String getMessageContent()
     + void setMessageContent(String messageContent)
     + Timestamp getTimestamp()
     + void setTimestamp(Timestamp timestamp)
-    + int getConversationId()
-    + void setConversationId(int conversationId)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
+    + ConversationEntity getConversation()
+    + void setConversation(ConversationEntity conversation)
 }
 
 Chat "*" -- "1" Conversation : belongs to
 
 class Transaction {
     - int transactionId
-    - int accountCustomerId
-    - int accountVendorId
     - String status
-    - Timestamp timestamp
+    - String details
     - boolean isDeleted
+    - AccountEntity customer
+    - AccountEntity vendor
     + int getTransactionId()
     + void setTransactionId(int transactionId)
-    + int getAccountCustomerId()
-    + void setAccountCustomerId(int accountCustomerId)
-    + int getAccountVendorId()
-    + void setAccountVendorId(int accountVendorId)
     + String getStatus()
     + void setStatus(String status)
-    + Timestamp getTimestamp()
-    + void setTimestamp(Timestamp timestamp)
+    + String getDetails()
+    + void setDetails(String details)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getCustomer()
+    + void setCustomer(AccountEntity customer)
+    + AccountEntity getVendor()
+    + void setVendor(AccountEntity vendor)
 }
 
 Account "*" -- "*" Transaction : involves
 
 class Report {
     - int reportId
-    - int senderId
     - String messageContent
     - Timestamp timestamp
     - boolean isResolved
     - boolean isDeleted
+    - AccountEntity account
     + int getReportId()
     + void setReportId(int reportId)
-    + int getSenderId()
-    + void setSenderId(int senderId)
     + String getMessageContent()
     + void setMessageContent(String messageContent)
     + Timestamp getTimestamp()
@@ -261,6 +285,8 @@ class Report {
     + void setIsResolved(boolean isResolved)
     + boolean getIsDeleted()
     + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
 }
 
 Account "1" -- "*" Report : sends
@@ -374,6 +400,7 @@ entity Transaction {
     accountCustomerId int [FK]
     accountVendorId int [FK]
     status varchar(255)
+    details varchar(255)
     timestamp timestamp
     isDeleted boolean
 }
@@ -427,7 +454,6 @@ rectangle Palit {
   Customer -- (Place order)
   Customer -- (Cancel order)
   Customer -- (Chat with vendor)
-  Customer -- (Rate vendor)
   Customer -- (Report issue)
   Vendor -- (Sign up)
   Vendor -- (Log in)
@@ -500,7 +526,6 @@ rectangle Palit {
   (View map) ..> (See own location) : extend
   (View map) ..> (See nearby users) : extend
   (View map) ..> (Tap on user icon) : extend
-  (View map) ..> (Refresh map) : extend
   (View map) ..> (Report issue) : extend
 }
 @enduml
@@ -567,27 +592,11 @@ rectangle Palit {
   (Chat with vendor) ..> (Send message) : include
   (Chat with vendor) ..> (Receive message) : include
   (Chat with vendor) ..> (See transaction status) : include
-  (Chat with vendor) ..> (Rate vendor) : extend
   (Chat with customer) ..> (Send message) : include
   (Chat with customer) ..> (Receive message) : include
   (Chat with customer) ..> (See transaction status) : include
   (Chat with customer) ..> (Accept order) : extend
   (Chat with customer) ..> (Complete order) : include
-}
-@enduml
-```
-
-- Rate vendor:
-
-```
-@startuml
-left to right direction
-actor Customer
-rectangle Palit {
-  Customer -- (Rate vendor)
-  (Rate vendor) ..> (Fill out 5 star form) : include
-  (Rate vendor) ..> (Submit rating) : include
-  (Rate vendor) ..> (Update vendor rating) : include
 }
 @enduml
 ```
@@ -676,7 +685,7 @@ rectangle Palit {
 @enduml
 ```
 
-- View dashboard (admin):
+- CRUD via dashboard (admin):
 
 ```
 @startuml
@@ -686,26 +695,38 @@ rectangle Palit {
   Admin -- (View dashboard)
   (View dashboard) ..> (See reports) : include
   (View dashboard) ..> (See users) : include
+  (View dashboard) ..> (See accounts) : include
+  (View dashboard) ..> (See conversations) : include
+  (View dashboard) ..> (See chats) : include
   (View dashboard) ..> (See stores) : include
   (View dashboard) ..> (See products/services) : include
   (View dashboard) ..> (See transactions) : include
+  (See reports) ..> (Create report) : extend
+  (See reports) ..> (Update report) : extend
+  (See reports) ..> (Delete report) : extend
+  (See users) ..> (Create user) : extend
+  (See users) ..> (Update user) : extend
+  (See users) ..> (Delete user) : extend
+  (See accounts) ..> (Create account) : extend
+  (See accounts) ..> (Update account) : extend
+  (See accounts) ..> (Delete account) : extend
+  (See conversations) ..> (Create conversation) : extend
+  (See conversations) ..> (Update conversation) : extend
+  (See conversations) ..> (Delete conversation) : extend
+  (See chats) ..> (Create chat) : extend
+  (See chats) ..> (Update chat) : extend
+  (See chats) ..> (Delete chat) : extend
+  (See stores) ..> (Create store) : extend
+  (See stores) ..> (Update store) : extend
+  (See stores) ..> (Delete store) : extend
+  (See products/services) ..> (Create product/service) : extend
+  (See products/services) ..> (Update product/service) : extend
+  (See products/services) ..> (Delete product/service) : extend
+  (See transactions) ..> (Create transaction) : extend
+  (See transactions) ..> (Update transaction) : extend
+  (See transactions) ..> (Delete transaction) : extend
 }
 @enduml
 ```
 
-- Manage database (admin):
-
-```
-@startuml
-left to right direction
-actor Admin
-rectangle Palit {
-  Admin -- (Manage database)
-  (Manage database) ..> (Create record) : extend
-  (Manage database) ..> (Read record) : extend
-  (Manage database) ..> (Update record) : extend
-  (Manage database) ..> (Delete record) : extend
-}
-@enduml
-```
 ----------------------------------------------------

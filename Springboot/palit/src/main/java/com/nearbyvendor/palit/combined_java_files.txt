@@ -1,1596 +1,1635 @@
 
-AccountService.java:
+AccountController.java:
 ```
-package com.nearbyvendor.palit.service;
+package com.nearbyvendor.palit.controller;
 
 import com.nearbyvendor.palit.entity.AccountEntity;
-import com.nearbyvendor.palit.repository.AccountRepository;
-import com.nearbyvendor.palit.repository.LocationRepository;
-import com.nearbyvendor.palit.entity.LocationEntity;
-
+import com.nearbyvendor.palit.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Service
-@Transactional
-public class AccountService {
+@CrossOrigin
+@RestController
+@RequestMapping("/api")
+public class AccountController {
 
     @Autowired
-    private AccountRepository accountRepository;
-    
-    @Autowired
-    private LocationRepository locationRepository;
-    
-    public List<AccountEntity> getAllAccounts() {
-        return accountRepository.findByIsDeletedFalse();
+    private AccountService accountService;
+
+    @GetMapping("/getAllAccounts")
+    public ResponseEntity<List<AccountEntity>> getAllAccounts() {
+        List<AccountEntity> accounts = accountService.getAllAccounts();
+        return new ResponseEntity<>(accounts, HttpStatus.OK);
     }
 
-    public AccountEntity getAccountById(int accountId) {
-        AccountEntity account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
-        if (account == null) {
-
-            System.err.println("Account not found with ID: " + accountId);
-        }
-        return account;
-    }
-
-    public AccountEntity createAccount(AccountEntity account) {
-        LocationEntity location = locationRepository.findById(account.getLocation().getLocationId()).orElse(null);
-        if (location == null) {
-            throw new RuntimeException("Location not found for ID: " + account.getLocation().getLocationId());
-        }
-        account.setLocation(location);
-        return accountRepository.save(account);
-    }
-
-    public AccountEntity updateAccountById(int accountId, AccountEntity account) {
-        AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
-        if (existingAccount != null) {
-            existingAccount.setEmail(account.getEmail());
-            existingAccount.setPassword(account.getPassword());
-            existingAccount.setIsVendor(account.getIsVendor());
-            existingAccount.setIsAdmin(account.getIsAdmin());
-            existingAccount.setUser(account.getUser());
-            existingAccount.setLocation(account.getLocation());
-            existingAccount.setStore(account.getStore());
-            return accountRepository.save(existingAccount);
+    @GetMapping("/getAccountById/{id}")
+    public ResponseEntity<AccountEntity> getAccountById(@PathVariable int id) {
+        AccountEntity account = accountService.getAccountById(id);
+        if (account != null) {
+            return new ResponseEntity<>(account, HttpStatus.OK);
         } else {
-
-            System.err.println("Invalid account ID for update: " + accountId);
-            throw new RuntimeException("Invalid account ID for update: " + accountId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public boolean deleteAccountById(int accountId) {
-        AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
-        if (existingAccount != null) {
-            existingAccount.setIsDeleted(true);
-            accountRepository.save(existingAccount);
-            return true;
+    @PostMapping("/createAccount")
+    public ResponseEntity<AccountEntity> createAccount(@RequestBody AccountEntity account) {
+        AccountEntity createdAccount = accountService.createAccount(account);
+        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/editAccountById/{id}")
+    public ResponseEntity<AccountEntity> editAccountById(@PathVariable int id, @RequestBody AccountEntity account) {
+        AccountEntity updatedAccount = accountService.updateAccountById(id, account);
+        if (updatedAccount != null) {
+            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
         } else {
-
-            System.err.println("Invalid account ID for deletion: " + accountId);
-            return false;
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public boolean checkEmail(AccountEntity account) {
-
-        List<AccountEntity> accounts = getAllAccounts();
-
-        for (AccountEntity a : accounts) {
-
-            if (a.getEmail().equals(account.getEmail())) {
-
-                System.err.println("Email already exists: " + account.getEmail());
-                return true;
-            }
+    @DeleteMapping("/deleteAccountById/{id}")
+    public ResponseEntity<Void> deleteAccountById(@PathVariable int id) {
+        boolean deleted = accountService.deleteAccountById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return false;
     }
 
-    public List<AccountEntity> getAllAdminAccounts() {
-    	return accountRepository.findByIsAdminAndIsDeletedFalse(true);
+    @PostMapping("/isEmailTaken")
+    public ResponseEntity<Boolean> checkEmail(@RequestBody AccountEntity account) {
+        boolean isEmailTaken = accountService.checkEmail(account);
+        return new ResponseEntity<>(isEmailTaken, HttpStatus.OK);
+    }
+    
+    @GetMapping("/getAllAdminAccounts")
+    public ResponseEntity<List<AccountEntity>> getAllAdminAccounts() {
+        List<AccountEntity> adminAccounts = accountService.getAllAdminAccounts();
+
+        if (!adminAccounts.isEmpty()) {
+            return new ResponseEntity<>(adminAccounts, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
 
 ```
 
-ChatService.java:
+ChatController.java:
 ```
-package com.nearbyvendor.palit.service;
+package com.nearbyvendor.palit.controller;
 
 import com.nearbyvendor.palit.entity.ChatEntity;
-import com.nearbyvendor.palit.repository.ChatRepository;
+import com.nearbyvendor.palit.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@Service
-@Transactional
-public class ChatService {
+@RestController
+@RequestMapping("/api")
+public class ChatController {
 
     @Autowired
-    private ChatRepository chatRepository;
+    private ChatService chatService;
 
-    public List<ChatEntity> getChatsByConversationId(int conversationId) {
-        return chatRepository.findByConversation_ConversationIdAndIsDeletedFalse(conversationId);
+    @GetMapping("getChatsByConversationId/{conversationId}")
+    public ResponseEntity<List<ChatEntity>> getChatsByConversationId(@PathVariable int conversationId) {
+        List<ChatEntity> chats = chatService.getChatsByConversationId(conversationId);
+        return new ResponseEntity<>(chats, HttpStatus.OK);
     }
 
-    public ChatEntity createChat(ChatEntity chat) {
-        return chatRepository.save(chat);
+    @PostMapping("/createChat")
+    public ResponseEntity<Object> createChat(@RequestBody ChatEntity chat) {
+
+        if (chat.getAccount() == null) {
+            return new ResponseEntity<>("Account information is required for creating a chat.", HttpStatus.BAD_REQUEST);
+        }
+
+        ChatEntity createdChat = chatService.createChat(chat);
+        return new ResponseEntity<>(createdChat, HttpStatus.CREATED);
     }
 
-    public ChatEntity updateChatById(int chatId, ChatEntity chat) {
-        Optional<ChatEntity> chatOptional = chatRepository.findByChatIdAndIsDeletedFalse(chatId);
-        if (chatOptional.isPresent()) {
-            ChatEntity existingChat = chatOptional.get();
-
-            if (chat.getAccount() != null) {
-                existingChat.setAccount(chat.getAccount());
-            }
-            existingChat.setMessageContent(chat.getMessageContent());
-            existingChat.setTimestamp(chat.getTimestamp());
-            existingChat.setConversation(chat.getConversation());
-
-            return chatRepository.save(existingChat);
+    @PutMapping("updateChatById/{chatId}")
+    public ResponseEntity<ChatEntity> updateChatById(@PathVariable int chatId, @RequestBody ChatEntity chat) {
+        ChatEntity updatedChat = chatService.updateChatById(chatId, chat);
+        if (updatedChat != null) {
+            return new ResponseEntity<>(updatedChat, HttpStatus.OK);
         } else {
-
-            System.err.println("ChatEntity not found with id: " + chatId);
-            throw new RuntimeException("ChatEntity not found with id: " + chatId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public boolean deleteChatById(int chatId) {
-        Optional<ChatEntity> chatOptional = chatRepository.findByChatIdAndIsDeletedFalse(chatId);
-        if (chatOptional.isPresent()) {
-            ChatEntity chat = chatOptional.get();
-            chat.setIsDeleted(true);
-            chatRepository.save(chat);
-            return true;
+    @DeleteMapping("deleteChatById/{chatId}")
+    public ResponseEntity<Void> deleteChatById(@PathVariable int chatId) {
+        boolean deleted = chatService.deleteChatById(chatId);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-
-            System.err.println("ChatEntity not found with id: " + chatId);
-            throw new RuntimeException("ChatEntity not found with id: " + chatId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
 
 ```
 
-ConversationService.java:
+ConversationController.java:
 ```
-package com.nearbyvendor.palit.service;
+package com.nearbyvendor.palit.controller;
 
 import com.nearbyvendor.palit.entity.ConversationEntity;
-import com.nearbyvendor.palit.repository.ConversationRepository;
+import com.nearbyvendor.palit.service.ConversationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@Service
-@Transactional
-public class ConversationService {
+@RestController
+@RequestMapping("/api")
+public class ConversationController {
 
     @Autowired
-    private ConversationRepository conversationRepository;
+    private ConversationService conversationService;
 
-    public List<ConversationEntity> getAllConversations() {
-        return conversationRepository.findByIsDeletedFalse();
+    @GetMapping("/getAllConversations")
+    public ResponseEntity<List<ConversationEntity>> getAllConversations() {
+        List<ConversationEntity> conversations = conversationService.getAllConversations();
+        return new ResponseEntity<>(conversations, HttpStatus.OK);
     }
 
-    public ConversationEntity getConversationById(int id) {
-        Optional<ConversationEntity> conversation = conversationRepository.findByConversationIdAndIsDeletedFalse(id);
-        if (conversation.isPresent()) {
-            return conversation.get();
+    @GetMapping("/getConversationById/{id}")
+    public ResponseEntity<ConversationEntity> getConversationById(@PathVariable("id") int id) {
+        ConversationEntity conversation = conversationService.getConversationById(id);
+        if (conversation != null) {
+            return new ResponseEntity<>(conversation, HttpStatus.OK);
         } else {
-
-            System.err.println("ConversationEntity not found with id: " + id);
-            throw new RuntimeException("ConversationEntity not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public ConversationEntity createConversation(ConversationEntity conversation) {
-        return conversationRepository.save(conversation);
+    @PostMapping("/createConversation")
+    public ResponseEntity<ConversationEntity> createConversation(@RequestBody ConversationEntity conversation) {
+        ConversationEntity newConversation = conversationService.createConversation(conversation);
+        return new ResponseEntity<>(newConversation, HttpStatus.CREATED);
     }
 
-    public ConversationEntity updateConversationById(int id, ConversationEntity conversation) {
-        Optional<ConversationEntity> existingConversation = conversationRepository
-                .findByConversationIdAndIsDeletedFalse(id);
-        if (existingConversation.isPresent()) {
-            existingConversation.get().setVendor(conversation.getVendor());
-            existingConversation.get().setCustomer(conversation.getCustomer());
-            return conversationRepository.save(existingConversation.get());
+    @PutMapping("/updateConversationById/{id}")
+    public ResponseEntity<ConversationEntity> updateConversationById(@PathVariable("id") int id,
+                                                                     @RequestBody ConversationEntity conversation) {
+        ConversationEntity updatedConversation = conversationService.updateConversationById(id, conversation);
+        if (updatedConversation != null) {
+            return new ResponseEntity<>(updatedConversation, HttpStatus.OK);
         } else {
-
-            System.err.println("ConversationEntity not found with id: " + id);
-            throw new RuntimeException("ConversationEntity not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public boolean deleteConversationById(int id) {
-        Optional<ConversationEntity> conversation = conversationRepository.findByConversationIdAndIsDeletedFalse(id);
-        if (conversation.isPresent()) {
-            conversation.get().setIsDeleted(true);
-            conversationRepository.save(conversation.get());
-            return true;
+    @DeleteMapping("/deleteConversationById/{id}")
+    public ResponseEntity<Void> deleteConversationById(@PathVariable("id") int id) {
+        boolean deleted = conversationService.deleteConversationById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-
-            System.err.println("ConversationEntity not found with id: " + id);
-            throw new RuntimeException("ConversationEntity not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
 
 ```
 
-LocationService.java:
+LocationController.java:
 ```
-package com.nearbyvendor.palit.service;
+package com.nearbyvendor.palit.controller;
 
 import com.nearbyvendor.palit.entity.LocationEntity;
-import com.nearbyvendor.palit.repository.LocationRepository;
+import com.nearbyvendor.palit.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Service
-@Transactional
-public class LocationService {
+@RestController
+@RequestMapping("/api")
+public class LocationController {
 
     @Autowired
-    private LocationRepository locationRepository;
+    private LocationService locationService;
 
-    public List<LocationEntity> getAllLocations() {
-        return locationRepository.findByIsDeletedFalse();
+    @GetMapping("/getAllLocations")
+    public ResponseEntity<List<LocationEntity>> getAllLocations() {
+        List<LocationEntity> locations = locationService.getAllLocations();
+        return new ResponseEntity<>(locations, HttpStatus.OK);
     }
 
-    public LocationEntity getLocationById(int id) {
-        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+    @GetMapping("/getLocationById/{id}")
+    public ResponseEntity<LocationEntity> getLocationById(@PathVariable("id") int id) {
+        LocationEntity location = locationService.getLocationById(id);
         if (location != null) {
-            return location;
+            return new ResponseEntity<>(location, HttpStatus.OK);
         } else {
-
-            System.err.println("LocationEntity not found with id: " + id);
-            throw new RuntimeException("LocationEntity not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public LocationEntity createLocation(LocationEntity location) {
-        return locationRepository.save(location);
+    @PostMapping("/createLocation")
+    public ResponseEntity<LocationEntity> createLocation(@RequestBody LocationEntity location) {
+        LocationEntity newLocation = locationService.createLocation(location);
+        return new ResponseEntity<>(newLocation, HttpStatus.CREATED);
     }
 
-    public LocationEntity updateLocationById(int id, LocationEntity location) {
-        LocationEntity existingLocation = locationRepository.findByLocationIdAndIsDeletedFalse(id);
-        if (existingLocation != null) {
-            existingLocation.setIsActive(location.getIsActive());
-            existingLocation.setLatitude(location.getLatitude());
-            existingLocation.setLongitude(location.getLongitude());
-            return locationRepository.save(existingLocation);
+    @PutMapping("/updateLocationById/{id}")
+    public ResponseEntity<LocationEntity> updateLocationById(@PathVariable("id") int id,
+                                                             @RequestBody LocationEntity location) {
+        LocationEntity updatedLocation = locationService.updateLocationById(id, location);
+        if (updatedLocation != null) {
+            return new ResponseEntity<>(updatedLocation, HttpStatus.OK);
         } else {
-
-            System.err.println("LocationEntity not found with id: " + id);
-            throw new RuntimeException("LocationEntity not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public boolean deleteLocationById(int id) {
-        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
-        if (location != null) {
-            location.setIsDeleted(true);
-            locationRepository.save(location);
-            return true;
+    @DeleteMapping("/deleteLocationById/{id}")
+    public ResponseEntity<Void> deleteLocationById(@PathVariable("id") int id) {
+        boolean deleted = locationService.deleteLocationById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-
-            System.err.println("LocationEntity not found with id: " + id);
-            throw new RuntimeException("LocationEntity not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
 
 ```
 
-ProductServiceService.java:
+ProductServiceController.java:
 ```
-package com.nearbyvendor.palit.service;
+package com.nearbyvendor.palit.controller;
 
 import com.nearbyvendor.palit.entity.ProductServiceEntity;
-import com.nearbyvendor.palit.repository.ProductServiceRepository;
+import com.nearbyvendor.palit.service.ProductServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
-@Service
-@Transactional
-public class ProductServiceService {
+@RestController
+@RequestMapping("/api")
+public class ProductServiceController {
 
     @Autowired
-    private ProductServiceRepository productServiceRepository;
+    private ProductServiceService productServiceService;
 
-    public List<ProductServiceEntity> getAllProductServices() {
-        return productServiceRepository.findByIsDeletedFalse();
+    @GetMapping("/getAllProductServices")
+    public ResponseEntity<List<ProductServiceEntity>> getAllProductServices() {
+        List<ProductServiceEntity> productServices = productServiceService.getAllProductServices();
+        return new ResponseEntity<>(productServices, HttpStatus.OK);
     }
 
-    public ProductServiceEntity getProductServiceById(int id) {
-        Optional<ProductServiceEntity> productService = productServiceRepository.findByProductIdAndIsDeletedFalse(id);
-        if (productService.isPresent()) {
-            return productService.get();
+    @GetMapping("/getProductServiceById/{id}")
+    public ResponseEntity<ProductServiceEntity> getProductServiceById(@PathVariable int id) {
+        ProductServiceEntity productService = productServiceService.getProductServiceById(id);
+        if (productService != null) {
+            return new ResponseEntity<>(productService, HttpStatus.OK);
         } else {
-
-            System.err.println("Product service not found with id: " + id);
-            throw new RuntimeException("Product service not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public List<ProductServiceEntity> getProductServicesByStoreId(int storeId) {
-        return productServiceRepository.findByStore_StoreIdAndIsDeletedFalse(storeId);
+    @GetMapping("/getProductServicesByStoreId/store/{storeId}")
+    public ResponseEntity<List<ProductServiceEntity>> getProductServicesByStoreId(@PathVariable int storeId) {
+        List<ProductServiceEntity> productServices = productServiceService.getProductServicesByStoreId(storeId);
+        return new ResponseEntity<>(productServices, HttpStatus.OK);
     }
 
-    public ProductServiceEntity createProductService(ProductServiceEntity productService) {
-        return productServiceRepository.save(productService);
+    @PostMapping("/createProductService")
+    public ResponseEntity<ProductServiceEntity> createProductService(@RequestBody ProductServiceEntity productService) {
+        ProductServiceEntity newProductService = productServiceService.createProductService(productService);
+        return new ResponseEntity<>(newProductService, HttpStatus.CREATED);
     }
 
-    public ProductServiceEntity updateProductServiceById(int id, ProductServiceEntity productService) {
-        Optional<ProductServiceEntity> existingProductService = productServiceRepository
-                .findByProductIdAndIsDeletedFalse(id);
-        if (existingProductService.isPresent()) {
-            existingProductService.get().setName(productService.getName());
-            existingProductService.get().setPrice(productService.getPrice());
-            existingProductService.get().setStore(productService.getStore());
-            existingProductService.get().setImage(productService.getImage());
-            return productServiceRepository.save(existingProductService.get());
+    @PutMapping("/updateProductServiceById/{id}")
+    public ResponseEntity<ProductServiceEntity> updateProductService(@PathVariable int id,
+                                                                     @RequestBody ProductServiceEntity productService) {
+        ProductServiceEntity updatedProductService = productServiceService.updateProductServiceById(id, productService);
+        if (updatedProductService != null) {
+            return new ResponseEntity<>(updatedProductService, HttpStatus.OK);
         } else {
-
-            System.err.println("Product service not found with id: " + id);
-            throw new RuntimeException("Product service not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public boolean deleteProductServiceById(int id) {
-        Optional<ProductServiceEntity> existingProductService = productServiceRepository
-                .findByProductIdAndIsDeletedFalse(id);
-        if (existingProductService.isPresent()) {
-            existingProductService.get().setIsDeleted(true);
-            productServiceRepository.save(existingProductService.get());
-            return true;
+    @DeleteMapping("/deleteProductServiceById/{id}")
+    public ResponseEntity<Void> deleteProductServiceById(@PathVariable int id) {
+        boolean deleted = productServiceService.deleteProductServiceById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-
-            System.err.println("Product service not found with id: " + id);
-            throw new RuntimeException("Product service not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
 
 ```
 
-ReportService.java:
+ReportController.java:
 ```
-package com.nearbyvendor.palit.service;
+package com.nearbyvendor.palit.controller;
 
 import com.nearbyvendor.palit.entity.ReportEntity;
-import com.nearbyvendor.palit.repository.ReportRepository;
+import com.nearbyvendor.palit.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Service
-@Transactional
-public class ReportService {
+@RestController
+@RequestMapping("/api")
+public class ReportController {
 
     @Autowired
-    private ReportRepository reportRepository;
+    private ReportService reportService;
 
-    public List<ReportEntity> getAllReports() {
-        return reportRepository.findAllByIsDeletedFalse();
+    @GetMapping("/getAllReports")
+    public ResponseEntity<List<ReportEntity>> getAllReports() {
+        List<ReportEntity> reports = reportService.getAllReports();
+        return new ResponseEntity<>(reports, HttpStatus.OK);
     }
 
-    public ReportEntity getReportById(int id) {
-        ReportEntity report = reportRepository.findByReportIdAndIsDeletedFalse(id);
+    @GetMapping("/getReportById/{id}")
+    public ResponseEntity<ReportEntity> getReportById(@PathVariable int id) {
+        ReportEntity report = reportService.getReportById(id);
         if (report != null) {
-            return report;
+            return new ResponseEntity<>(report, HttpStatus.OK);
         } else {
-
-            System.err.println("ReportEntity not found with id: " + id);
-            throw new RuntimeException("ReportEntity not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public ReportEntity createReport(ReportEntity report) {
-        return reportRepository.save(report);
+    @PostMapping("/createReport")
+    public ResponseEntity<ReportEntity> createReport(@RequestBody ReportEntity report) {
+        ReportEntity newReport = reportService.createReport(report);
+        return new ResponseEntity<>(newReport, HttpStatus.CREATED);
     }
 
-    public ReportEntity updateReportById(int id, ReportEntity report) {
-        ReportEntity existingReport = reportRepository.findByReportIdAndIsDeletedFalse(id);
-        if (existingReport != null) {
-            report.setReportId(id);
-            return reportRepository.save(report);
+    @PutMapping("/updateReportById/{id}")
+    public ResponseEntity<ReportEntity> updateReportById(@PathVariable int id, @RequestBody ReportEntity report) {
+        ReportEntity updatedReport = reportService.updateReportById(id, report);
+        if (updatedReport != null) {
+            return new ResponseEntity<>(updatedReport, HttpStatus.OK);
         } else {
-
-            System.err.println("Invalid report ID for updating: " + id);
-            throw new IllegalArgumentException("Invalid report ID");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public boolean deleteReportById(int id) {
-        ReportEntity existingReport = reportRepository.findByReportIdAndIsDeletedFalse(id);
-        if (existingReport != null) {
-            existingReport.setIsDeleted(true);
-            reportRepository.save(existingReport);
-            return true;
+    @DeleteMapping("/deleteReportById/{id}")
+    public ResponseEntity<Void> deleteReportById(@PathVariable int id) {
+        boolean deleted = reportService.deleteReportById(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-
-            System.err.println("Invalid report ID for deletion: " + id);
-            throw new IllegalArgumentException("Invalid report ID");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
 
 ```
 
-StoreService.java:
+StoreController.java:
 ```
-package com.nearbyvendor.palit.service;
+package com.nearbyvendor.palit.controller;
 
 import com.nearbyvendor.palit.entity.StoreEntity;
-import com.nearbyvendor.palit.repository.StoreRepository;
+import com.nearbyvendor.palit.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Service
-@Transactional
-public class StoreService {
+@RestController
+@RequestMapping("/api")
+public class StoreController {
 
     @Autowired
-    private StoreRepository storeRepository;
+    private StoreService storeService;
 
-    public List<StoreEntity> getAllStores() {
-        return storeRepository.findAllByIsDeletedFalse();
+    @GetMapping("/getAllStores")
+    public ResponseEntity<List<StoreEntity>> getAllStores() {
+        List<StoreEntity> stores = storeService.getAllStores();
+        return new ResponseEntity<>(stores, HttpStatus.OK);
     }
 
-    public StoreEntity getStoreById(int storeId) {
-        StoreEntity store = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
+    @GetMapping("/getStoreById/{id}")
+    public ResponseEntity<StoreEntity> getStoreById(@PathVariable("id") int id) {
+        StoreEntity store = storeService.getStoreById(id);
         if (store != null) {
-            return store;
+            return new ResponseEntity<>(store, HttpStatus.OK);
         } else {
-
-            System.err.println("StoreEntity not found with id: " + storeId);
-            throw new RuntimeException("StoreEntity not found with id: " + storeId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public StoreEntity createStore(StoreEntity store) {
-        return storeRepository.save(store);
+    @PostMapping("/createStore")
+    public ResponseEntity<StoreEntity> createStore(@RequestBody StoreEntity store) {
+        StoreEntity newStore = storeService.createStore(store);
+        return new ResponseEntity<>(newStore, HttpStatus.CREATED);
     }
 
-    public StoreEntity updateStoreById(int storeId, StoreEntity store) {
-        StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
-        if (existingStore != null) {
-            store.setStoreId(storeId);
-            return storeRepository.save(store);
+    @PutMapping("/updateStoreById/{id}")
+    public ResponseEntity<StoreEntity> updateStore(@PathVariable("id") int id, @RequestBody StoreEntity store) {
+        StoreEntity updatedStore = storeService.updateStoreById(id, store);
+        if (updatedStore != null) {
+            return new ResponseEntity<>(updatedStore, HttpStatus.OK);
         } else {
-
-            System.err.println("Invalid store ID for updating: " + storeId);
-            throw new IllegalArgumentException("Invalid store ID");
-        }
-    }
-
-    public boolean deleteStoreById(int storeId) {
-        StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
-        if (existingStore != null) {
-            existingStore.setIsDeleted(true);
-            storeRepository.save(existingStore);
-            return true;
-        } else {
-
-            System.err.println("Invalid store ID for deletion: " + storeId);
-            throw new IllegalArgumentException("Invalid store ID");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
 
 ```
 
-TransactionService.java:
+TransactionController.java:
 ```
-package com.nearbyvendor.palit.service;
+package com.nearbyvendor.palit.controller;
 
 import com.nearbyvendor.palit.entity.TransactionEntity;
-import com.nearbyvendor.palit.repository.TransactionRepository;
+import com.nearbyvendor.palit.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Service
-@Transactional
-public class TransactionService {
+@RestController
+@RequestMapping("/api")
+public class TransactionController {
 
     @Autowired
-    private TransactionRepository transactionRepository;
+    private TransactionService transactionService;
 
-    public List<TransactionEntity> getAllTransactions() {
-        return transactionRepository.findAllByIsDeletedFalse();
+    @GetMapping("/getAllTransactions")
+    public ResponseEntity<List<TransactionEntity>> getTransactions() {
+        List<TransactionEntity> transactions = transactionService.getAllTransactions();
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
-    public TransactionEntity getTransactionById(int id) {
-        TransactionEntity transaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
+    @GetMapping("/getTransactionById/{id}")
+    public ResponseEntity<TransactionEntity> getTransactionById(@PathVariable int id) {
+        TransactionEntity transaction = transactionService.getTransactionById(id);
         if (transaction != null) {
-            return transaction;
+            return new ResponseEntity<>(transaction, HttpStatus.OK);
         } else {
-            System.err.println("TransactionEntity not found with id: " + id);
-            throw new RuntimeException("TransactionEntity not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public TransactionEntity createTransaction(TransactionEntity transaction) {
-        return transactionRepository.save(transaction);
+    @PostMapping("/createTransaction")
+    public ResponseEntity<TransactionEntity> createTransaction(@RequestBody TransactionEntity transaction) {
+        TransactionEntity newTransaction = transactionService.createTransaction(transaction);
+        return new ResponseEntity<>(newTransaction, HttpStatus.CREATED);
     }
 
-    public TransactionEntity updateTransactionById(int id, TransactionEntity transaction, String details) {
-        TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
-        if (existingTransaction != null) {
-            transaction.setTransactionId(existingTransaction.getTransactionId());
-            transaction.setDetails(details); // Add the details to the transaction
-            return transactionRepository.save(transaction);
+    @PutMapping("updateTransactionById/{id}")
+    public ResponseEntity<TransactionEntity> updateTransactionById(@PathVariable int id,
+                                                                   @RequestBody TransactionEntity transaction) {
+        TransactionEntity updatedTransaction = transactionService.updateTransactionById(id, transaction);
+        if (updatedTransaction != null) {
+            return new ResponseEntity<>(updatedTransaction, HttpStatus.OK);
         } else {
-            System.err.println("Invalid transaction ID for updating: " + id);
-            throw new IllegalArgumentException("Invalid transaction ID");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public boolean deleteTransactionById(int id) {
-        TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
-        if (existingTransaction != null) {
-            existingTransaction.setIsDeleted(true);
-            transactionRepository.save(existingTransaction);
-            return true;
-        } else {
-            System.err.println("Invalid transaction ID for deletion: " + id);
-            throw new IllegalArgumentException("Invalid transaction ID");
-        }
+    @DeleteMapping("deleteTransactionById/{id}")
+    public ResponseEntity<Void> deleteTransactionById(@PathVariable int id) {
+        transactionService.deleteTransactionById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 
 ```
 
-UserService.java:
+UserController.java:
 ```
-package com.nearbyvendor.palit.service;
+package com.nearbyvendor.palit.controller;
 
 import com.nearbyvendor.palit.entity.UserEntity;
-import com.nearbyvendor.palit.repository.UserRepository;
+import com.nearbyvendor.palit.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Service
-@Transactional
-public class UserService {
+@RestController
+@RequestMapping("/api")
+public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findByIsDeletedFalse();
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
+        List<UserEntity> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    public UserEntity getUserById(int id) {
-        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
+    @GetMapping("/getUserById/{id}")
+    public ResponseEntity<UserEntity> getUserById(@PathVariable int id) {
+        UserEntity user = userService.getUserById(id);
         if (user != null) {
-            return user;
+            return new ResponseEntity<>(user, HttpStatus.OK);
         } else {
-
-            System.err.println("UserEntity not found with id: " + id);
-            throw new RuntimeException("UserEntity not found with id: " + id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    public UserEntity createUser(UserEntity newUserEntity) {
-        return userRepository.save(newUserEntity);
+    @PostMapping(value = "/createUser")
+    public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity newUserEntity) {
+        UserEntity user = userService.createUser(newUserEntity);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    public UserEntity updateUserById(int id, UserEntity updatedUserEntity) {
-
-        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
-        if (user != null) {
-
-            user.setFirstName(updatedUserEntity.getFirstName());
-            user.setLastName(updatedUserEntity.getLastName());
-            user.setBirthDate(updatedUserEntity.getBirthDate());
-            user.setAccount(updatedUserEntity.getAccount());
-
-            userRepository.save(user);
-            return user;
-        } else {
-
-            System.err.println("Invalid user ID for update: " + id);
-            throw new IllegalArgumentException("Invalid user ID");
-        }
+    @PutMapping(value = "/updateUserById/{id}")
+    public ResponseEntity<UserEntity> updateUser(@PathVariable("id") int id,
+                                                 @RequestBody UserEntity updatedUserEntity) {
+        UserEntity user = userService.updateUserById(id, updatedUserEntity);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    public boolean deleteUserById(int id) {
-        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
-        if (user != null) {
-            user.setIsDeleted(true);
-            userRepository.save(user);
-            return true;
-        } else {
-
-            System.err.println("Invalid user ID for deletion: " + id);
-            throw new IllegalArgumentException("Invalid user ID");
-        }
+    @DeleteMapping("/deleteUserById/{id}")
+    public ResponseEntity<Void> deleteUserById(@PathVariable int id) {
+        userService.deleteUserById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
 
 ```
 
-AccountEntity.java:
+# Palit-A-Nearby-Vendor-Commerce-App
+# App Development Plan
+
+## Developers:<br/>
+Badilla, Mark Kenneth<br/>
+Briones, Joshua<br/>
+Coyoca, Alestair Cyril<br/>
+Selma, Kheisa
+
+## Overview
+Palit is a web app that connects nearby vendors and customers who want to buy or sell goods or services in a convenient and cash-based way. The app uses realtime geolocation to show the users' locations on a map and allows them to chat and transact with each other.
+
+## Features Overview
+#### User Categories
+- **Customers**: Order from vendors.
+- **Vendors**: Sell goods/services and manage their stores.
+- **Admins**: Access the database with CRUD capabilities.
+
+#### Account Registration
+- **Sign Up**: Users provide their email, name, and birthdate, and choose to register as a customer or vendor.
+- **Admin Login**: Separate login at `/adminsignin` for predefined admin accounts; admins are not created through the signup process.
+
+#### Admin Dashboard
+- **Interface**: A sidebar for navigation, with a default dashboard showing statistics and table headers.
+
+#### Map Functionality
+- **User Locations**: Displays user locations within a 200-meter radius, excluding admins. Different icons represent different user types and states.
+
+#### Icons
+- **Vendor Icons**: Vary based on the store's category.
+- **Customer Icons**: Light or dark blue to indicate order status.
+
+#### Reporting System
+- **Function**: Users report issues or provide feedback via a report icon, with admins responding through email.
+
+#### Store Management
+- **Floating Window**: A sidebar for vendors to manage their store details and products/services. New vendors see a placeholder store setup.
+
+#### Customer Store Interaction
+- **Selection and Ordering**: Customers select a vendor to view and order from their store, with the ability to cancel orders.
+
+#### Chat System
+- **Communication**: Customers and vendors negotiate and give feedback. Includes transaction status updates.
+
+#### Customer Queue Management
+- **Vendor View**: A list of customers ordering, with current serving status highlighted and an easy transition to chat for order acceptance.
+
+#### Payment System
+- **Cash on Delivery**: Customers pay upon receipt of goods/services, no in-app payment due to limitations.
+
+#### Additional Pages
+- **About Us**: Information about the development team.
+- **Contact Us**: A form for reaching out to developers.
+- **Services**: A summary of app offerings.
+
+# Diagrams in PlantUML:
+
+- Class diagram:
 ```
-package com.nearbyvendor.palit.entity;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
-import java.util.List;
-import java.util.Set;
-
-@Entity
-@Table(name = "tblAccount")
-public class AccountEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer accountId;
-
-    private String email;
-
-    private String password;
-
-    private boolean isVendor;
-
-    private boolean isAdmin;
-
-    private boolean isDeleted;
-
-    @JsonIgnore
-    @OneToOne(mappedBy = "account")
-    private UserEntity user;
-
-    @OneToOne
-    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
-    private LocationEntity location;
-
-    @OneToOne
-    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
-    private StoreEntity store;
-    
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer")
-    private Set<TransactionEntity> customerTransactions;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "account")
-    private Set<ChatEntity> chats;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer")
-    private Set<ConversationEntity> conversations;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "vendor")
-    private Set<TransactionEntity> vendorTransactions;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "account")
-    private List<ReportEntity> reports;
-
-    public AccountEntity() {
-    }
-
-    public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store,
-                         boolean isVendor, boolean isAdmin) {
-        this.accountId = accountId;
-        this.email = email;
-        this.password = password;
-        this.location = location;
-        this.store = store;
-        this.isVendor = isVendor;
-        this.isAdmin = isAdmin;
-        this.isDeleted = false;
-    }
-
-    public Integer getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(Integer accountId) {
-        this.accountId = accountId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean getIsVendor() {
-        return isVendor;
-    }
-
-    public void setIsVendor(boolean isVendor) {
-        this.isVendor = isVendor;
-    }
-
-    public boolean getIsAdmin() {
-        return isAdmin;
-    }
-
-    public void setIsAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
-    }
-
-    public boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public LocationEntity getLocation() {
-        return location;
-    }
-
-    public void setLocation(LocationEntity location) {
-        this.location = location;
-    }
-
-    public StoreEntity getStore() {
-        return store;
-    }
-
-    public void setStore(StoreEntity store) {
-        this.store = store;
-    }
-
-    public Set<TransactionEntity> getCustomerTransactions() {
-        return customerTransactions;
-    }
-
-    public void setCustomerTransactions(Set<TransactionEntity> customerTransactions) {
-        this.customerTransactions = customerTransactions;
-    }
-
-    public Set<ChatEntity> getChats() {
-        return chats;
-    }
-
-    public void setChats(Set<ChatEntity> chats) {
-        this.chats = chats;
-    }
-
-    public Set<ConversationEntity> getConversations() {
-        return conversations;
-    }
-
-    public void setConversations(Set<ConversationEntity> conversations) {
-        this.conversations = conversations;
-    }
-
-    public Set<TransactionEntity> getVendorTransactions() {
-        return vendorTransactions;
-    }
-
-    public void setVendorTransactions(Set<TransactionEntity> vendorTransactions) {
-        this.vendorTransactions = vendorTransactions;
-    }
-
-    public List<ReportEntity> getReports() {
-        return reports;
-    }
-
-    public void setReports(List<ReportEntity> reports) {
-        this.reports = reports;
-    }
+@startuml
+class User {
+    - int userId
+    - String firstName
+    - String lastName
+    - Date birthDate
+    - byte[] image
+    - boolean isDeleted
+    - AccountEntity account
+    + int getUserId()
+    + void setUserId(int userId)
+    + String getFirstName()
+    + void setFirstName(String firstName)
+    + String getLastName()
+    + void setLastName(String lastName)
+    + Date getBirthDate()
+    + void setBirthDate(Date birthDate)
+    + byte[] getImage()
+    + void setImage(byte[] image)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
 }
 
-```
-
-ChatEntity.java:
-```
-package com.nearbyvendor.palit.entity;
-
-import javax.persistence.*;
-import java.sql.Timestamp;
-
-@Entity
-@Table(name = "tblChat")
-public class ChatEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int chatId;
-
-    @ManyToOne
-    @JoinColumn(name = "senderId", referencedColumnName = "accountId")
-    private AccountEntity account;
-
-    private String messageContent;
-
-    private Timestamp timestamp;
-
-    @ManyToOne
-    @JoinColumn(name = "conversationId", referencedColumnName = "conversationId")
-    private ConversationEntity conversation;
-
-    private boolean isDeleted;
-
-    public ChatEntity() {
-    }
-
-    public ChatEntity(int chatId, AccountEntity account, String messageContent, Timestamp timestamp,
-                      ConversationEntity conversation) {
-        this.chatId = chatId;
-        this.account = account;
-        this.messageContent = messageContent;
-        this.timestamp = timestamp;
-        this.conversation = conversation;
-        this.isDeleted = false;
-    }
-
-    public int getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(int chatId) {
-        this.chatId = chatId;
-    }
-
-    public AccountEntity getAccount() {
-        return account;
-    }
-
-    public void setAccount(AccountEntity account) {
-        this.account = account;
-    }
-
-    public String getMessageContent() {
-        return messageContent;
-    }
-
-    public void setMessageContent(String messageContent) {
-        this.messageContent = messageContent;
-    }
-
-    public Timestamp getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public ConversationEntity getConversation() {
-        return conversation;
-    }
-
-    public void setConversation(ConversationEntity conversation) {
-        this.conversation = conversation;
-    }
-
-    public boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
+class Account {
+    - int accountId
+    - String email
+    - String password
+    - boolean isVendor
+    - boolean isAdmin
+    - boolean isDeleted
+    - UserEntity user
+    - LocationEntity location
+    - StoreEntity store
+    - Set<TransactionEntity> customerTransactions
+    - Set<ChatEntity> chats
+    - Set<ConversationEntity> conversations
+    - Set<TransactionEntity> vendorTransactions
+    - List<ReportEntity> reports
+    + int getAccountId()
+    + void setAccountId(int accountId)
+    + String getEmail()
+    + void setEmail(String email)
+    + String getPassword()
+    + void setPassword(String password)
+    + boolean getIsVendor()
+    + void setIsVendor(boolean isVendor)
+    + boolean getIsAdmin()
+    + void setIsAdmin(boolean isAdmin)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + UserEntity getUser()
+    + void setUser(UserEntity user)
+    + LocationEntity getLocation()
+    + void setLocation(LocationEntity location)
+    + StoreEntity getStore()
+    + void setStore(StoreEntity store)
+    + Set<TransactionEntity> getCustomerTransactions()
+    + void setCustomerTransactions(Set<TransactionEntity> customerTransactions)
+    + Set<ChatEntity> getChats()
+    + void setChats(Set<ChatEntity> chats)
+    + Set<ConversationEntity> getConversations()
+    + void setConversations(Set<ConversationEntity> conversations)
+    + Set<TransactionEntity> getVendorTransactions()
+    + void setVendorTransactions(Set<TransactionEntity> vendorTransactions)
+    + List<ReportEntity> getReports()
+    + void setReports(List<ReportEntity> reports)
 }
 
-```
-
-ConversationEntity.java:
-```
-package com.nearbyvendor.palit.entity;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import javax.persistence.*;
-import java.util.Set;
-
-@Entity
-@Table(name = "tblConversation")
-public class ConversationEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int conversationId;
-
-    @ManyToOne
-    @JoinColumn(name = "vendorAccountId", referencedColumnName = "accountId")
-    private AccountEntity vendor;
-
-    @ManyToOne
-    @JoinColumn(name = "customerAccountId", referencedColumnName = "accountId")
-    private AccountEntity customer;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "conversation")
-    private Set<ChatEntity> chats;
-
-    private boolean isDeleted;
-
-    public ConversationEntity() {
-    }
-
-    public ConversationEntity(int conversationId, AccountEntity vendor, AccountEntity customer) {
-        this.conversationId = conversationId;
-        this.vendor = vendor;
-        this.customer = customer;
-        this.isDeleted = false;
-    }
-
-    public int getConversationId() {
-        return conversationId;
-    }
-
-    public void setConversationId(int conversationId) {
-        this.conversationId = conversationId;
-    }
-
-    public AccountEntity getVendor() {
-        return vendor;
-    }
-
-    public void setVendor(AccountEntity vendor) {
-        this.vendor = vendor;
-    }
-
-    public AccountEntity getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(AccountEntity customer) {
-        this.customer = customer;
-    }
-
-    public Set<ChatEntity> getChats() {
-        return chats;
-    }
-
-    public void setChats(Set<ChatEntity> chats) {
-        this.chats = chats;
-    }
-
-    public boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-}
-```
-
-LocationEntity.java:
-```
-package com.nearbyvendor.palit.entity;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
-
-@Entity
-@Table(name = "tblLocation")
-public class LocationEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int locationId;
-
-    private double latitude;
-
-    private double longitude;
-
-    private boolean isDeleted;
-
-    private boolean isActive;
-
-    @JsonIgnore
-    @OneToOne(mappedBy = "location")
-    private AccountEntity account;
-
-    public LocationEntity() {
-    }
-
-        public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account) {
-            this.locationId = locationId;
-            this.latitude = latitude;
-            this.longitude = longitude;
-            this.isActive = isActive;
-            this.account = account;
-            this.isDeleted = false;
-        }
-
-        public int getLocationId() {
-            return locationId;
-        }
-
-        public void setLocationId(int locationId) {
-            this.locationId = locationId;
-        }
-
-        public double getLatitude() {
-            return latitude;
-        }
-
-        public void setLatitude(double latitude) {
-            this.latitude = latitude;
-        }
-
-        public double getLongitude() {
-            return longitude;
-        }
-
-        public void setLongitude(double longitude) {
-            this.longitude = longitude;
-        }
-
-        public boolean getIsDeleted() {
-            return isDeleted;
-        }
-
-        public void setIsDeleted(boolean isDeleted) {
-            this.isDeleted = isDeleted;
-        }
-
-        public boolean getIsActive() {
-            return isActive;
-        }
-
-        public void setIsActive(boolean isActive) {
-            this.isActive = isActive;
-        }
-
-        public AccountEntity getAccount() {
-            return account;
-        }
-
-        public void setAccount(AccountEntity account) {
-            this.account = account;
-        }
-    }
-
-```
-
-ProductServiceEntity.java:
-```
-package com.nearbyvendor.palit.entity;
-
-import javax.persistence.*;
-
-@Entity
-@Table(name = "tblProduct_service")
-public class ProductServiceEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int productId;
-
-    private String name;
-
-    private double price;
-
-    @Lob
-    private byte[] image;
-
-    private boolean isDeleted;
-
-    @ManyToOne
-    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
-    private StoreEntity store;
-
-    public ProductServiceEntity() {
-    }
-
-    public ProductServiceEntity(String name, double price, byte[] image, StoreEntity store) {
-        this.name = name;
-        this.price = price;
-        this.store = store;
-        this.image = image;
-        this.isDeleted = false;
-    }
-
-    public int getProductId() {
-        return productId;
-    }
-
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
-
-    public boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
-    public StoreEntity getStore() {
-        return store;
-    }
-
-    public void setStore(StoreEntity store) {
-        this.store = store;
-    }
+User "1" -- "1" Account : has
+
+class Store {
+    - int storeId
+    - String storeName
+    - String description
+    - String category
+    - boolean isDeleted
+    - AccountEntity account
+    - List<ProductServiceEntity> productServices
+    + int getStoreId()
+    + void setStoreId(int storeId)
+    + String getStoreName()
+    + void setStoreName(String storeName)
+    + String getDescription()
+    + void setDescription(String description)
+    + String getCategory()
+    + void setCategory(String category)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
+    + List<ProductServiceEntity> getProductServices()
+    + void setProductServices(List<ProductServiceEntity> productServices)
 }
 
-```
+Account "1" -- "1" Store : owns
 
-ReportEntity.java:
-```
-package com.nearbyvendor.palit.entity;
-
-import javax.persistence.*;
-import java.sql.Timestamp;
-
-@Entity
-@Table(name = "tblReport")
-public class ReportEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int reportId;
-
-    @ManyToOne
-    @JoinColumn(name = "senderId")
-    private AccountEntity account;
-
-    private String messageContent;
-
-    private Timestamp timestamp;
-
-    private boolean isResolved;
-
-    private boolean isDeleted;
-
-    public ReportEntity() {
-    }
-
-    public ReportEntity(AccountEntity account, String messageContent, Timestamp timestamp, boolean isResolved) {
-        this.account = account;
-        this.messageContent = messageContent;
-        this.timestamp = timestamp;
-        this.isResolved = isResolved;
-        this.isDeleted = false;
-    }
-
-    public int getReportId() {
-        return reportId;
-    }
-
-    public void setReportId(int reportId) {
-        this.reportId = reportId;
-    }
-
-    public AccountEntity getSenderId() {
-        return account;
-    }
-
-    public void setSenderId(AccountEntity account) {
-        this.account = account;
-    }
-
-    public String getMessageContent() {
-        return messageContent;
-    }
-
-    public void setMessageContent(String messageContent) {
-        this.messageContent = messageContent;
-    }
-
-    public Timestamp getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public boolean getIsResolved() {
-        return isResolved;
-    }
-
-    public void setIsResolved(boolean isResolved) {
-        this.isResolved = isResolved;
-    }
-
-    public boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
+class ProductService {
+    - int productId
+    - String name
+    - double price
+    - byte[] image
+    - boolean isDeleted
+    - StoreEntity store
+    + int getProductId()
+    + void setProductId(int productId)
+    + String getName()
+    + void setName(String name)
+    + double getPrice()
+    + void setPrice(double price)
+    + byte[] getImage()
+    + void setImage(byte[] image)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + StoreEntity getStore()
+    + void setStore(StoreEntity store)
 }
 
-```
+Store "1" -- "*" ProductService : offers
 
-StoreEntity.java:
-```
-package com.nearbyvendor.palit.entity;
-
-import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-@Entity
-@Table(name = "tblStore")
-public class StoreEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int storeId;
-
-    private String storeName;
-
-    private String description;
-
-    private String category;
-
-    private boolean isDeleted;
-
-    @JsonIgnore
-    @OneToOne(mappedBy = "store")
-    private AccountEntity account;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "store")
-    private List<ProductServiceEntity> productServices;
-
-    public StoreEntity() {
-
-    }
-
-    public StoreEntity(String storeName, String description, String category, AccountEntity account) {
-        this.storeName = storeName;
-        this.description = description;
-        this.category = category;
-        this.account = account;
-        this.isDeleted = false;
-    }
-
-    public int getStoreId() {
-        return storeId;
-    }
-
-    public void setStoreId(int storeId) {
-        this.storeId = storeId;
-    }
-
-    public String getStoreName() {
-        return storeName;
-    }
-
-    public void setStoreName(String storeName) {
-        this.storeName = storeName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
-    public AccountEntity getAccount() {
-        return account;
-    }
-
-    public void setAccount(AccountEntity account) {
-        this.account = account;
-    }
-
-    public List<ProductServiceEntity> getProductServices() {
-        return productServices;
-    }
-
-    public void setProductServices(List<ProductServiceEntity> productServices) {
-        this.productServices = productServices;
-    }
+class Location {
+    - int locationId
+    - double latitude
+    - double longitude
+    - boolean isDeleted
+    - boolean isActive
+    - AccountEntity account
+    + int getLocationId()
+    + void setLocationId(int locationId)
+    + double getLatitude()
+    + void setLatitude(double latitude)
+    + double getLongitude()
+    + void setLongitude(double longitude)
+    + boolean getIsActive()
+    + void setIsActive(boolean isActive)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
 }
 
-```
+Account "1" -- "1" Location : has
 
-TransactionEntity.java:
-```
-package com.nearbyvendor.palit.entity;
-
-import javax.persistence.*;
-
-@Entity
-@Table(name = "tblTransaction")
-public class TransactionEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int transactionId;
-
-    private String status;
-
-    private boolean isDeleted;
-
-    private String details; // Added string details
-
-    @ManyToOne
-    @JoinColumn(name = "accountCustomerId", referencedColumnName = "accountId")
-    private AccountEntity customer;
-
-    @ManyToOne
-    @JoinColumn(name = "accountVendorId", referencedColumnName = "accountId")
-    private AccountEntity vendor;
-
-    public TransactionEntity() {
-    }
-
-    public TransactionEntity(AccountEntity customer, AccountEntity vendor, String status, String details) { // Updated constructor
-        this.customer = customer;
-        this.vendor = vendor;
-        this.status = status;
-        this.details = details;
-        this.isDeleted = false;
-    }
-
-    public int getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(int transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public AccountEntity getAccountCustomerId() {
-        return customer;
-    }
-
-    public void setAccountCustomerId(AccountEntity customer) {
-        this.customer = customer;
-    }
-
-    public AccountEntity getAccountVendorId() {
-        return vendor;
-    }
-
-    public void setAccountVendorId(AccountEntity vendor) {
-        this.vendor = vendor;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-}
-```
-
-UserEntity.java:
-```
-package com.nearbyvendor.palit.entity;
-
-import javax.persistence.*;
-import java.util.Date;
-
-@Entity
-@Table(name = "tblUser")
-public class UserEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userId;
-
-    private String firstName;
-
-    private String lastName;
-
-    @Temporal(TemporalType.DATE)
-    private Date birthDate;
-
-    private boolean isDeleted;
-
-    @Lob
-    private byte[] image;
-
-    @OneToOne
-    @JoinColumn(name = "accountId", referencedColumnName = "accountId")
-    private AccountEntity account;
-
-    public UserEntity() {
-    }
-
-    public UserEntity(int userId, String firstName, String lastName, Date birthDate, boolean isDeleted, byte[] image,
-                      AccountEntity account) {
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthDate = birthDate;
-        this.isDeleted = isDeleted;
-        this.image = image;
-        this.account = account;
-        this.isDeleted = false;
-    }
-
-    public UserEntity(int userId, String firstName, String lastName, Date birthDate, byte[] image,
-                      AccountEntity account) {
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthDate = birthDate;
-        this.isDeleted = false;
-        this.image = image;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public Date getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
-
-    public boolean getIsDeleted() {
-        return isDeleted;
-    }
-
-    public void setIsDeleted(boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
-
-    public AccountEntity getAccount() {
-        return this.account;
-    }
-
-    public void setAccount(AccountEntity account) {
-        this.account = account;
-    }
-
+class Conversation {
+    - int conversationId
+    - boolean isDeleted
+    - AccountEntity vendor
+    - AccountEntity customer
+    - Set<ChatEntity> chats
+    + int getConversationId()
+    + void setConversationId(int conversationId)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getVendor()
+    + void setVendor(AccountEntity vendor)
+    + AccountEntity getCustomer()
+    + void setCustomer(AccountEntity customer)
+    + Set<ChatEntity> getChats()
+    + void setChats(Set<ChatEntity> chats)
 }
 
+Account "*" -- "*" Conversation : participates in
+Account "1" -- "*" Chat : sends
+
+class Chat {
+    - int chatId
+    - String messageContent
+    - Timestamp timestamp
+    - boolean isDeleted
+    - AccountEntity account
+    - ConversationEntity conversation
+    + int getChatId()
+    + void setChatId(int chatId)
+    + String getMessageContent()
+    + void setMessageContent(String messageContent)
+    + Timestamp getTimestamp()
+    + void setTimestamp(Timestamp timestamp)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
+    + ConversationEntity getConversation()
+    + void setConversation(ConversationEntity conversation)
+}
+
+Chat "*" -- "1" Conversation : belongs to
+
+class Transaction {
+    - int transactionId
+    - String status
+    - String details
+    - boolean isDeleted
+    - AccountEntity customer
+    - AccountEntity vendor
+    + int getTransactionId()
+    + void setTransactionId(int transactionId)
+    + String getStatus()
+    + void setStatus(String status)
+    + String getDetails()
+    + void setDetails(String details)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getCustomer()
+    + void setCustomer(AccountEntity customer)
+    + AccountEntity getVendor()
+    + void setVendor(AccountEntity vendor)
+}
+
+Account "*" -- "*" Transaction : involves
+
+class Report {
+    - int reportId
+    - String messageContent
+    - Timestamp timestamp
+    - boolean isResolved
+    - boolean isDeleted
+    - AccountEntity account
+    + int getReportId()
+    + void setReportId(int reportId)
+    + String getMessageContent()
+    + void setMessageContent(String messageContent)
+    + Timestamp getTimestamp()
+    + void setTimestamp(Timestamp timestamp)
+    + boolean getIsResolved()
+    + void setIsResolved(boolean isResolved)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
+}
+
+Account "1" -- "*" Report : sends
+
+@enduml
+
 ```
+
+# Palit-A-Nearby-Vendor-Commerce-App
+# App Development Plan
+
+## Developers:<br/>
+Badilla, Mark Kenneth<br/>
+Briones, Joshua<br/>
+Coyoca, Alestair Cyril<br/>
+Selma, Kheisa
+
+## Overview
+Palit is a web app that connects nearby vendors and customers who want to buy or sell goods or services in a convenient and cash-based way. The app uses realtime geolocation to show the users' locations on a map and allows them to chat and transact with each other.
+
+## Features Overview
+#### User Categories
+- **Customers**: Order from vendors.
+- **Vendors**: Sell goods/services and manage their stores.
+- **Admins**: Access the database with CRUD capabilities.
+
+#### Account Registration
+- **Sign Up**: Users provide their email, name, and birthdate, and choose to register as a customer or vendor.
+- **Admin Login**: Separate login at `/adminsignin` for predefined admin accounts; admins are not created through the signup process.
+
+#### Admin Dashboard
+- **Interface**: A sidebar for navigation, with a default dashboard showing statistics and table headers.
+
+#### Map Functionality
+- **User Locations**: Displays user locations within a 200-meter radius, excluding admins. Different icons represent different user types and states.
+
+#### Icons
+- **Vendor Icons**: Vary based on the store's category.
+- **Customer Icons**: Light or dark blue to indicate order status.
+
+#### Reporting System
+- **Function**: Users report issues or provide feedback via a report icon, with admins responding through email.
+
+#### Store Management
+- **Floating Window**: A sidebar for vendors to manage their store details and products/services. New vendors see a placeholder store setup.
+
+#### Customer Store Interaction
+- **Selection and Ordering**: Customers select a vendor to view and order from their store, with the ability to cancel orders.
+
+#### Chat System
+- **Communication**: Customers and vendors negotiate and give feedback. Includes transaction status updates.
+
+#### Customer Queue Management
+- **Vendor View**: A list of customers ordering, with current serving status highlighted and an easy transition to chat for order acceptance.
+
+#### Payment System
+- **Cash on Delivery**: Customers pay upon receipt of goods/services, no in-app payment due to limitations.
+
+#### Additional Pages
+- **About Us**: Information about the development team.
+- **Contact Us**: A form for reaching out to developers.
+- **Services**: A summary of app offerings.
+
+# Diagrams in PlantUML:
+
+- Class diagram:
+```
+@startuml
+class User {
+    - int userId
+    - String firstName
+    - String lastName
+    - Date birthDate
+    - byte[] image
+    - boolean isDeleted
+    - AccountEntity account
+    + int getUserId()
+    + void setUserId(int userId)
+    + String getFirstName()
+    + void setFirstName(String firstName)
+    + String getLastName()
+    + void setLastName(String lastName)
+    + Date getBirthDate()
+    + void setBirthDate(Date birthDate)
+    + byte[] getImage()
+    + void setImage(byte[] image)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
+}
+
+class Account {
+    - int accountId
+    - String email
+    - String password
+    - boolean isVendor
+    - boolean isAdmin
+    - boolean isDeleted
+    - UserEntity user
+    - LocationEntity location
+    - StoreEntity store
+    - Set<TransactionEntity> customerTransactions
+    - Set<ChatEntity> chats
+    - Set<ConversationEntity> conversations
+    - Set<TransactionEntity> vendorTransactions
+    - List<ReportEntity> reports
+    + int getAccountId()
+    + void setAccountId(int accountId)
+    + String getEmail()
+    + void setEmail(String email)
+    + String getPassword()
+    + void setPassword(String password)
+    + boolean getIsVendor()
+    + void setIsVendor(boolean isVendor)
+    + boolean getIsAdmin()
+    + void setIsAdmin(boolean isAdmin)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + UserEntity getUser()
+    + void setUser(UserEntity user)
+    + LocationEntity getLocation()
+    + void setLocation(LocationEntity location)
+    + StoreEntity getStore()
+    + void setStore(StoreEntity store)
+    + Set<TransactionEntity> getCustomerTransactions()
+    + void setCustomerTransactions(Set<TransactionEntity> customerTransactions)
+    + Set<ChatEntity> getChats()
+    + void setChats(Set<ChatEntity> chats)
+    + Set<ConversationEntity> getConversations()
+    + void setConversations(Set<ConversationEntity> conversations)
+    + Set<TransactionEntity> getVendorTransactions()
+    + void setVendorTransactions(Set<TransactionEntity> vendorTransactions)
+    + List<ReportEntity> getReports()
+    + void setReports(List<ReportEntity> reports)
+}
+
+User "1" -- "1" Account : has
+
+class Store {
+    - int storeId
+    - String storeName
+    - String description
+    - String category
+    - boolean isDeleted
+    - AccountEntity account
+    - List<ProductServiceEntity> productServices
+    + int getStoreId()
+    + void setStoreId(int storeId)
+    + String getStoreName()
+    + void setStoreName(String storeName)
+    + String getDescription()
+    + void setDescription(String description)
+    + String getCategory()
+    + void setCategory(String category)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
+    + List<ProductServiceEntity> getProductServices()
+    + void setProductServices(List<ProductServiceEntity> productServices)
+}
+
+Account "1" -- "1" Store : owns
+
+class ProductService {
+    - int productId
+    - String name
+    - double price
+    - byte[] image
+    - boolean isDeleted
+    - StoreEntity store
+    + int getProductId()
+    + void setProductId(int productId)
+    + String getName()
+    + void setName(String name)
+    + double getPrice()
+    + void setPrice(double price)
+    + byte[] getImage()
+    + void setImage(byte[] image)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + StoreEntity getStore()
+    + void setStore(StoreEntity store)
+}
+
+Store "1" -- "*" ProductService : offers
+
+class Location {
+    - int locationId
+    - double latitude
+    - double longitude
+    - boolean isDeleted
+    - boolean isActive
+    - AccountEntity account
+    + int getLocationId()
+    + void setLocationId(int locationId)
+    + double getLatitude()
+    + void setLatitude(double latitude)
+    + double getLongitude()
+    + void setLongitude(double longitude)
+    + boolean getIsActive()
+    + void setIsActive(boolean isActive)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
+}
+
+Account "1" -- "1" Location : has
+
+class Conversation {
+    - int conversationId
+    - boolean isDeleted
+    - AccountEntity vendor
+    - AccountEntity customer
+    - Set<ChatEntity> chats
+    + int getConversationId()
+    + void setConversationId(int conversationId)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getVendor()
+    + void setVendor(AccountEntity vendor)
+    + AccountEntity getCustomer()
+    + void setCustomer(AccountEntity customer)
+    + Set<ChatEntity> getChats()
+    + void setChats(Set<ChatEntity> chats)
+}
+
+Account "*" -- "*" Conversation : participates in
+Account "1" -- "*" Chat : sends
+
+class Chat {
+    - int chatId
+    - String messageContent
+    - Timestamp timestamp
+    - boolean isDeleted
+    - AccountEntity account
+    - ConversationEntity conversation
+    + int getChatId()
+    + void setChatId(int chatId)
+    + String getMessageContent()
+    + void setMessageContent(String messageContent)
+    + Timestamp getTimestamp()
+    + void setTimestamp(Timestamp timestamp)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
+    + ConversationEntity getConversation()
+    + void setConversation(ConversationEntity conversation)
+}
+
+Chat "*" -- "1" Conversation : belongs to
+
+class Transaction {
+    - int transactionId
+    - String status
+    - String details
+    - boolean isDeleted
+    - AccountEntity customer
+    - AccountEntity vendor
+    + int getTransactionId()
+    + void setTransactionId(int transactionId)
+    + String getStatus()
+    + void setStatus(String status)
+    + String getDetails()
+    + void setDetails(String details)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getCustomer()
+    + void setCustomer(AccountEntity customer)
+    + AccountEntity getVendor()
+    + void setVendor(AccountEntity vendor)
+}
+
+Account "*" -- "*" Transaction : involves
+
+class Report {
+    - int reportId
+    - String messageContent
+    - Timestamp timestamp
+    - boolean isResolved
+    - boolean isDeleted
+    - AccountEntity account
+    + int getReportId()
+    + void setReportId(int reportId)
+    + String getMessageContent()
+    + void setMessageContent(String messageContent)
+    + Timestamp getTimestamp()
+    + void setTimestamp(Timestamp timestamp)
+    + boolean getIsResolved()
+    + void setIsResolved(boolean isResolved)
+    + boolean getIsDeleted()
+    + void setIsDeleted(boolean isDeleted)
+    + AccountEntity getAccount()
+    + void setAccount(AccountEntity account)
+}
+
+Account "1" -- "*" Report : sends
+
+@enduml
+
+```
+----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------
+
+- ERD:
+```
+@startuml
+entity User {
+    userId int [PK]
+    --
+    firstName varchar(255)
+    lastName varchar(255)
+    birthDate date
+    image blob
+    accountId int [FK]
+    isDeleted boolean
+}
+
+entity Account {
+    accountId int [PK]
+    --
+    email varchar(255)
+    password varchar(255)
+    isVendor boolean
+    isAdmin boolean
+    locationId int [FK]
+    storeId int [FK]
+    isDeleted boolean
+}
+
+User ||--|| Account
+
+entity Store {
+    storeId int [PK]
+    --
+    storeName varchar(255)
+    description text
+    category varchar(255)
+    isDeleted boolean
+}
+
+Account ||--|| Store
+
+entity ProductService {
+    productId int [PK]
+    --
+    name varchar(255)
+    price decimal(10,2)
+    storeId int [FK]
+    image blob
+    isDeleted boolean
+}
+
+Store ||--|{ ProductService
+
+entity Location {
+    locationId int [PK]
+    --
+    latitude double
+    longitude double
+    isDeleted boolean
+    isActive boolean
+}
+
+Account ||--|| Location
+
+entity Conversation {
+    conversationId int [PK]
+    --
+    customerAccountId int [FK]
+    vendorAccountId int [FK]
+    isDeleted boolean
+}
+
+Account }|..|{ Conversation
+
+entity Chat {
+    chatId int [PK]
+    --
+    senderId int [FK]
+    messageContent text
+    timestamp timestamp
+    conversationId int [FK]
+    isDeleted boolean
+}
+
+Account ||--|{ Chat
+Chat }|..|| Conversation
+
+entity Transaction {
+    int transactionId [PK]
+    --
+    accountCustomerId int [FK]
+    accountVendorId int [FK]
+    status varchar(255)
+    details varchar(255)
+    timestamp timestamp
+    isDeleted boolean
+}
+
+Account }|..|{ Transaction
+
+entity Report {
+    reportId int [PK]
+    --
+    senderId int [FK]
+    messageContent text
+    timestamp timestamp
+    isResolved boolean
+    isDeleted boolean
+}
+
+Account ||--|{ Report
+
+@enduml
+```
+-----------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------------------------------------------
+Here is the generic system wide use case diagram:
+
+```
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+actor Customer
+actor Vendor
+actor Admin
+rectangle Palit {
+  Customer -- (Sign up)
+  Customer -- (Log in)
+  Customer -- (View map)
+  Customer -- (View store)
+  Customer -- (Place order)
+  Customer -- (Cancel order)
+  Customer -- (Chat with vendor)
+  Customer -- (Report issue)
+  Vendor -- (Sign up)
+  Vendor -- (Log in)
+  Vendor -- (View map)
+  Vendor -- (View store)
+  Vendor -- (Edit store)
+  Vendor -- (Accept order)
+  Vendor -- (Complete order)
+  Vendor -- (Chat with customer)
+  Vendor -- (Report issue)
+  Admin -- (Log in)
+  Admin -- (View dashboard)
+  Admin -- (Manage database)
+}
+@enduml
+```
+
+Here are the specific use case diagrams for each use case in the generic system wide use case diagram:
+
+- Sign up:
+
+```
+@startuml
+left to right direction
+actor Customer
+actor Vendor
+rectangle Palit {
+  Customer -- (Sign up)
+  Vendor -- (Sign up)
+  (Sign up) ..> (Enter email) : include
+  (Sign up) ..> (Enter name) : include
+  (Sign up) ..> (Enter birth date) : include
+  (Sign up) ..> (Choose role) : include
+  (Sign up) ..> (Create password) : include
+  (Sign up) ..> (Confirm password) : include
+  (Sign up) ..> (Submit) : include
+}
+@enduml
+```
+
+- Log in:
+
+```
+@startuml
+left to right direction
+actor Customer
+actor Vendor
+actor Admin
+rectangle Palit {
+  Customer -- (Log in)
+  Vendor -- (Log in)
+  Admin -- (Log in)
+  (Log in) ..> (Enter email) : include
+  (Log in) ..> (Enter password) : include
+  (Log in) ..> (Submit) : include
+}
+@enduml
+```
+
+- View map:
+
+```
+@startuml
+left to right direction
+actor Customer
+actor Vendor
+rectangle Palit {
+  Customer -- (View map)
+  Vendor -- (View map)
+  (View map) ..> (See own location) : extend
+  (View map) ..> (See nearby users) : extend
+  (View map) ..> (Tap on user icon) : extend
+  (View map) ..> (Report issue) : extend
+}
+@enduml
+```
+
+- View store:
+
+```
+@startuml
+left to right direction
+actor Customer
+actor Vendor
+rectangle Palit {
+  Customer -- (View store)
+  Vendor -- (View store)
+  (View store) ..> (See store details) : include
+  (View store) ..> (See products/services) : include
+  Customer ..> (View store) : extends
+  Vendor ..> (Edit store) : extends
+}
+@enduml
+```
+
+- Place order:
+
+```
+@startuml
+left to right direction
+actor Customer
+rectangle Palit {
+  Customer -- (Place order)
+  (Place order) ..> (Select quantity) : include
+  (Place order) ..> (See total price) : include
+  (Place order) ..> (Tap order button) : include
+  (Place order) ..> (Send transaction in chat) : include
+}
+@enduml
+```
+
+- Cancel order:
+
+```
+@startuml
+left to right direction
+actor Customer
+rectangle Palit {
+  Customer -- (Cancel order)
+  (Cancel order) ..> (Tap cancel order button) : include
+  (Cancel order) ..> (Change transaction status in chat) : include
+}
+@enduml
+```
+
+- Chat:
+
+```
+@startuml
+left to right direction
+actor Customer
+actor Vendor
+rectangle Palit {
+  Customer -- (Chat with vendor)
+  Vendor -- (Chat with customer)
+  (Chat with vendor) ..> (Send message) : include
+  (Chat with vendor) ..> (Receive message) : include
+  (Chat with vendor) ..> (See transaction status) : include
+  (Chat with customer) ..> (Send message) : include
+  (Chat with customer) ..> (Receive message) : include
+  (Chat with customer) ..> (See transaction status) : include
+  (Chat with customer) ..> (Accept order) : extend
+  (Chat with customer) ..> (Complete order) : include
+}
+@enduml
+```
+
+- Report issue:
+
+```
+@startuml
+left to right direction
+actor Customer
+actor Vendor
+rectangle Palit {
+  Customer -- (Report issue)
+  Vendor -- (Report issue)
+  (Report issue) ..> (Tap report icon) : include
+  (Report issue) ..> (Enter message) : include
+  (Report issue) ..> (Submit report) : include
+  (Report issue) ..> (Send report to admin) : include
+}
+@enduml
+```
+
+- Edit store:
+
+```
+@startuml
+left to right direction
+actor Vendor
+rectangle Palit {
+  Vendor -- (Edit store)
+  (Edit store) ..> (Tap edit button) : include
+  (Edit store) ..> (Enter store name) : include
+  (Edit store) ..> (Enter store description) : include
+  (Edit store) ..> (Choose store category) : include
+  (Edit store) ..> (Manage product/service) : include
+  (Manage product/service) ..> (Enter product/service name) : include
+  (Manage product/service) ..> (Enter product/service price) : include
+  (Manage product/service) ..> (Upload product/service image) : include
+  (Edit store) ..> (Save changes) : include
+}
+@enduml
+```
+
+- Accept order:
+
+```
+@startuml
+left to right direction
+actor Vendor
+rectangle Palit {
+  Vendor -- (Accept order)
+  (Accept order) ..> (Tap accept button) : include
+  (Accept order) ..> (Change transaction status in chat) : include
+  (Accept order) ..> (Update customer queue) : include
+}
+@enduml
+```
+
+- Complete order:
+
+```
+@startuml
+left to right direction
+actor Vendor
+rectangle Palit {
+  Vendor -- (Complete order)
+  (Complete order) ..> (Tap complete button) : include
+  (Complete order) ..> (Change transaction status in chat) : include
+  (Complete order) ..> (Update customer queue) : include
+}
+@enduml
+```
+
+- Log in (admin):
+
+```
+@startuml
+left to right direction
+actor Admin
+rectangle Palit {
+  Admin -- (Log in)
+  (Log in) ..> (Enter email) : include
+  (Log in) ..> (Enter password) : include
+  (Log in) ..> (Submit) : include
+}
+@enduml
+```
+
+- CRUD via dashboard (admin):
+
+```
+@startuml
+left to right direction
+actor Admin
+rectangle Palit {
+  Admin -- (View dashboard)
+  (View dashboard) ..> (See reports) : include
+  (View dashboard) ..> (See users) : include
+  (View dashboard) ..> (See accounts) : include
+  (View dashboard) ..> (See conversations) : include
+  (View dashboard) ..> (See chats) : include
+  (View dashboard) ..> (See stores) : include
+  (View dashboard) ..> (See products/services) : include
+  (View dashboard) ..> (See transactions) : include
+  (See reports) ..> (Create report) : extend
+  (See reports) ..> (Update report) : extend
+  (See reports) ..> (Delete report) : extend
+  (See users) ..> (Create user) : extend
+  (See users) ..> (Update user) : extend
+  (See users) ..> (Delete user) : extend
+  (See accounts) ..> (Create account) : extend
+  (See accounts) ..> (Update account) : extend
+  (See accounts) ..> (Delete account) : extend
+  (See conversations) ..> (Create conversation) : extend
+  (See conversations) ..> (Update conversation) : extend
+  (See conversations) ..> (Delete conversation) : extend
+  (See chats) ..> (Create chat) : extend
+  (See chats) ..> (Update chat) : extend
+  (See chats) ..> (Delete chat) : extend
+  (See stores) ..> (Create store) : extend
+  (See stores) ..> (Update store) : extend
+  (See stores) ..> (Delete store) : extend
+  (See products/services) ..> (Create product/service) : extend
+  (See products/services) ..> (Update product/service) : extend
+  (See products/services) ..> (Delete product/service) : extend
+  (See transactions) ..> (Create transaction) : extend
+  (See transactions) ..> (Update transaction) : extend
+  (See transactions) ..> (Delete transaction) : extend
+}
+@enduml
+```
+
+----------------------------------------------------
+----------------------------------------------------
+
+write the business rules based on the ff springboot backend and the app dev plan. divide the number evenly among theses members: Mark Kenneth Badilla, Alestair Cyril Coyoca, Kheisa Selma, Joshua Briones. Business rules are the policies, constraints, or conditions that define the operations, goals, and structure of the app. Keep it simple without regard for complex backend things. keep every rule atomic.
+
+For example:
+
+Customers can
+Vendors should
+Admins can
+
+use the ff format:
+Title
+Member 1:
+  //list the business rules to implemented by this member
+Member 2:
+  //list the business rules to implemented by this member
+Member 3:
+  //list the business rules to implemented by this member

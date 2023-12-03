@@ -16,6 +16,11 @@ const ManageStore = () => {
     const [products, setProducts] = useState([]);
     const [store, setStore] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+    const [editedStore, setEditedStore] = useState({
+        storeName: "",
+        category: "",
+        description: "",
+    });
 
     useEffect(() => {
         // Replace with your actual API endpoints
@@ -83,6 +88,24 @@ const ManageStore = () => {
         setEditMode(true);
     };
 
+    useEffect(() => {
+        if (user.account.store) {
+            setEditedStore({
+                storeName: user.account.store.storeName,
+                category: user.account.store.category,
+                description: user.account.store.description,
+            });
+        }
+    }, [user.account.store]);
+
+    const handleStoreInputChange = (event) => {
+        const { name, value } = event.target;
+        setEditedStore({
+            ...editedStore,
+            [name]: value,
+        });
+    };
+
     // Handle click on "Save" button
     const handleSave = () => {
         console.log("Save clicked", products);
@@ -103,6 +126,29 @@ const ManageStore = () => {
                 });
         });
 
+        // Assuming your API endpoint for updating a store is /api/updateStore/{id}
+        // and the id of the store to be updated is stored in user.account.store.storeId
+        axios
+            .put(`http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`, editedStore)
+            .then((response) => {
+                console.log("Store updated:", response.data);
+                // Update store state with new data
+                setStore(response.data);
+
+                // Update user context with new store data
+                setUser((prevUser) => ({
+                    ...prevUser,
+                    account: {
+                        ...prevUser.account,
+                        store: response.data,
+                    },
+                }));
+            })
+            .catch((error) => {
+                console.error("Error updating store:", error);
+            });
+
+
         // Reset state after saving
         setEditMode(false);
         setEditedProduct({
@@ -112,7 +158,7 @@ const ManageStore = () => {
         });
     };
 
-    
+
     // Handle input change for text fields
     const handleInputChange = (event) => {
         const { name, value } = event.target;
@@ -197,6 +243,39 @@ const ManageStore = () => {
         setImagePreview(null);
     };
 
+    // return (
+    //     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+    //         {/* User details */}
+    //         <div style={{ display: "flex" }}>
+    //             <img
+    //                 src={`data:image/png;base64, ${user.image}`}
+    //                 alt="User"
+    //                 className="w-14 h-15 rounded-full border-2 border-black"
+    //                 style={{ width: "70px", height: "70px" }}
+    //                 onClick={handleMenu}
+    //             />
+    //             <div className="ml-3" style={{ flexDirection: "column" }}>
+    //                 {/* Store Name */}
+    //                 <h2 className="text-xl font-semibold">
+    //                     {user.account.store ? user.account.store.storeName : "Loading..."}
+    //                 </h2>
+    //                 {/* Category */}
+    //                 <p className="text-sm">
+    //                     {user.account.store ? user.account.store.category : "Loading..."}
+    //                 </p>
+    //                 <div className="flex">
+    //                     <img src={redRating} alt="Rating" className="w-5 h-5" />
+    //                     <p className="font-medium">4.8</p>
+    //                 </div>
+    //             </div>
+    //         </div>
+
+    //         {/* Store description */}
+    //         <div className="p-2" style={{ height: "90px" }}>
+    //             <p className="text-sm" style={{ textAlign: "justify" }}>
+    //                 {user.account.store ? user.account.store.description : "Loading..."}
+    //             </p>
+    //         </div>
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
             {/* User details */}
@@ -210,13 +289,51 @@ const ManageStore = () => {
                 />
                 <div className="ml-3" style={{ flexDirection: "column" }}>
                     {/* Store Name */}
-                    <h2 className="text-xl font-semibold">
-                        {user.account.store ? user.account.store.storeName : "Loading..."}
-                    </h2>
+                    {editMode ? (
+                        <TextField
+                            name="storeName"
+                            variant="outlined"
+                            InputProps={{
+                                style: {
+                                    fontSize: 15,
+                                    height: 25,
+                                    width: "267px",
+                                    paddingRight: '10px',
+                                    color: "black",
+                                    fontWeight: "bold",
+                                },
+                            }}
+                            value={editedStore.storeName}
+                            onChange={handleStoreInputChange}
+                        />
+                    ) : (
+                        <h2 className="text-xl font-semibold">
+                            {editedStore.storeName ? editedStore.storeName : "Loading..."}
+                        </h2>
+                    )}
                     {/* Category */}
-                    <p className="text-sm">
-                        {user.account.store ? user.account.store.category : "Loading..."}
-                    </p>
+                    {editMode ? (
+                        <TextField
+                            name="category"
+                            variant="outlined"
+                            InputProps={{
+                                style: {
+                                    fontSize: 15,
+                                    height: 20,
+                                    marginTop: "5px",
+                                    width: "267px",
+                                    paddingRight: '10px',
+                                    color: "black",
+                                },
+                            }}
+                            value={editedStore.category}
+                            onChange={handleStoreInputChange}
+                        />
+                    ) : (
+                        <p className="text-sm">
+                            {editedStore.category ? editedStore.category : "Loading..."}
+                        </p>
+                    )}
                     <div className="flex">
                         <img src={redRating} alt="Rating" className="w-5 h-5" />
                         <p className="font-medium">4.8</p>
@@ -226,9 +343,30 @@ const ManageStore = () => {
 
             {/* Store description */}
             <div className="p-2" style={{ height: "90px" }}>
-                <p className="text-sm" style={{ textAlign: "justify" }}>
-                    {user.account.store ? user.account.store.description : "Loading..."}
-                </p>
+                {editMode ? (
+                    <TextField
+                        name="description"
+                        variant="outlined"
+                        multiline
+                        rows={4}
+                        InputProps={{
+                            style: {
+                                fontSize: 15,
+                                height: 85,
+                                width: "340px",
+                                color: "black",
+                                paddingBottom: "10px",
+                                textAlign: "justify"
+                            },
+                        }}
+                        value={editedStore.description}
+                        onChange={handleStoreInputChange}
+                    />
+                ) : (
+                    <p className="text-sm" style={{ textAlign: "justify" }}>
+                        {editedStore.description ? editedStore.description : "Loading..."}
+                    </p>
+                )}
             </div>
 
             {/* Products section */}

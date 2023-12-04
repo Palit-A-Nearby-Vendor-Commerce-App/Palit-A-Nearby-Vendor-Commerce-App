@@ -10,7 +10,7 @@ const ReportsData = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3008/reports")
+      .get("http://localhost:8080/api/getAllReports")
       .then((response) => {
         setReportData(response.data);
         const initialCheckboxes = {};

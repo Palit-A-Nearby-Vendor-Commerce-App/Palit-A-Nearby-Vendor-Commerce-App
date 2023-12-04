@@ -6,7 +6,7 @@ const StoreData = ()=> {
     const [storeData, setStoreData] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:3006/store')
+        axios.get('http://localhost:8080/api/getAllStores')
           .then(response => setStoreData(response.data))
           .catch(error => console.error('Error fetching store data:', error));
     }, []);
@@ -28,7 +28,7 @@ const StoreData = ()=> {
                     {storeData.map(store => (
                     <tr key={store.id}>
                         <td className="py-2">{store.storeName}</td>
-                        <td className="py-2">{store.storeDescription}</td>
+                        <td className="py-2">{store.description}</td>
                         <td className="py-2">{store.category}</td>
                         <td className="py-2">{store.imagePath}</td>
                     </tr>

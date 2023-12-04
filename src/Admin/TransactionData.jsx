@@ -6,7 +6,7 @@ const TransactionData = () => {
     const [transactionData, setTransactionData] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:3007/transactions')
+        axios.get('http://localhost:8080/api/getAllTransactions')
             .then(response => setTransactionData(response.data))
             .catch(error => console.error('Error fetching transaction data:', error));
     }, []);

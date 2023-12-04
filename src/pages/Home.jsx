@@ -44,7 +44,6 @@ function Home() {
 
   // Define state variables for current position, nearby users, show slider, and selected vendor
   const [currentPosition, setCurrentPosition] = useState(null);
-  const [nearbyUsers, setNearbyUsers] = useState([]);
   const [showSlider, setShowSlider] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -263,7 +262,7 @@ function Home() {
   // Return the JSX element for rendering the component
   return (
     <>
-      <div className="w-full font-custom">
+      <div className="w-full h-70vh font-custom">
         <NavigationBar />
         <LoadScript googleMapsApiKey="AIzaSyBNM-CYx7dA0gckgBmybtovang7Bvp8lK0">
           <div>
@@ -297,8 +296,8 @@ function Home() {
               )}
               <MapSlidingBox
                 showSlider={showSlider}
-                handleSliderToggle={handleSliderToggle}
                 selectedVendor={selectedVendor}
+                handleSliderToggle={handleSliderToggle}
                 user={user}
               />
             </GoogleMap>

@@ -1,8 +1,6 @@
 package com.nearbyvendor.palit.service;
 
-import com.nearbyvendor.palit.entity.AccountEntity;
 import com.nearbyvendor.palit.entity.TransactionEntity;
-import com.nearbyvendor.palit.repository.AccountRepository;
 import com.nearbyvendor.palit.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,9 +14,6 @@ public class TransactionService {
 
     @Autowired
     private TransactionRepository transactionRepository;
-
-    @Autowired
-    private AccountRepository accountRepository;
 
     public List<TransactionEntity> getAllTransactions() {
         return transactionRepository.findAllByIsDeletedFalse();
@@ -35,12 +30,6 @@ public class TransactionService {
     }
 
     public TransactionEntity createTransaction(TransactionEntity transaction) {
-        // get a fresh copy of the vendor and customer and assign it to transaction
-        // AccountEntity vendor = accountRepository.findByAccountIdAndIsDeletedFalse(transaction.getVendor().getAccountId());
-        // AccountEntity customer = accountRepository.findByAccountIdAndIsDeletedFalse(transaction.getCustomer().getAccountId());
-        // transaction.setCustomer(customer);
-        // transaction.setVendor(vendor);
-
         return transactionRepository.save(transaction);
     }
 

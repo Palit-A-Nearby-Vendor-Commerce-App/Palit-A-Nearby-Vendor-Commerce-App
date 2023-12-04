@@ -426,7 +426,7 @@ const Store = ({ vendor }) => {
       <button
         type="button"
         className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
-        onClick={handleOrder("TEST", vendor, user)}
+        onClick={() => handleOrder("TEST", vendor, user)}
       >
         <span className="text-lg  ">Order</span>
       </button>

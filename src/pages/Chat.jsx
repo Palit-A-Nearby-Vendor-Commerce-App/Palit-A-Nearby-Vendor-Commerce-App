@@ -16,70 +16,19 @@ import {
 } from "../assets/styles/styles";
 import dummyImg from "../assets/images/dummy_prof.jpeg";
 
-// const conversation = [
-//   {
-//     conversation_id: 1,
-//     is_deleted: 0,
-//     receiver_id: 101,
-//     sender_id: 100,
-//   },
-//   {
-//     conversation_id: 2,
-//     is_deleted: 0,
-//     receiver_id: 201,
-//     sender_id: 200,
-//   },
-// ];
-
-// const chats = [
-//   {
-//     chat_id: 1,
-//     conversation_id: 1,
-//     is_deleted: 0,
-//     message_content: "Unsay baligya ninyo boss?",
-//     receiver_id: 100,
-//     sender_id: 101,
-//     timestamp: "2023-11-22T10:35:00Z",
-//   },
-//   {
-//     chat_id: 2,
-//     conversation_id: 1,
-//     is_deleted: 0,
-//     message_content: "Pila nana ka adlaw sukad harvest inyong saging?",
-//     receiver_id: 100,
-//     sender_id: 101,
-//     timestamp: "2023-11-22T11:00:00Z",
-//   },
-//   {
-//     chat_id: 3,
-//     conversation_id: 1,
-//     is_deleted: 0,
-//     message_content: "Naa tay saging, siomai, buko juice, og uban pa",
-//     receiver_id: 101,
-//     sender_id: 100,
-//     timestamp: "2023-11-22T11:05:00Z",
-//   },
-//   {
-//     chat_id: 4,
-//     conversation_id: 1,
-//     is_deleted: 0,
-//     message_content: "Sige sige boss, papalita ko",
-//     receiver_id: 100,
-//     sender_id: 101,
-//     timestamp: "2023-11-22T11:05:00Z",
-//   },
-// ];
-
 const Chat = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const location = useLocation();
   const selectedVendor = location.state?.selectedVendor;
+  const selectedCustomer = location.state?.selectedCustomer;
   const { user } = useContext(UserContext);
   const [chats, setChats] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [conversations, setConversations] = useState(null);
+
+  console.log("Selected Customer: ", selectedCustomer);
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -133,6 +82,24 @@ const Chat = () => {
               selectedVendor.account.accountId
             );
             setSelectedConversation(newConversation);
+          }
+        } else if (
+          selectedCustomer &&
+          selectedCustomer.account &&
+          user &&
+          user.account
+        ) {
+          const existingConversation = conversations.find(
+            (conv) =>
+              conv?.customer?.accountId ===
+                selectedCustomer?.account?.accountId &&
+              conv?.vendor?.accountId === user?.account?.accountId
+          );
+
+          if (existingConversation) {
+            // If conversation exists, set it in the state
+            console.log("Conversation already exists!");
+            setSelectedConversation(existingConversation);
           }
         } else {
           console.error(
@@ -226,7 +193,7 @@ const Chat = () => {
               />
             </button>
           </Link>
-          {selectedVendor && selectedVendor.account && (
+          {selectedVendor && selectedVendor.account ? (
             <div className="flex items-center gap-3">
               <StyledBadge
                 overlap="circular"
@@ -250,6 +217,30 @@ const Chat = () => {
                 <p className="text-sm text-green-500">∙ Online</p>
               </div>
             </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <StyledBadge
+                overlap="circular"
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                variant="dot"
+              >
+                <Avatar
+                  alt={selectedCustomer.email}
+                  src={`data:image/jpeg;base64,${selectedCustomer.image}`}
+                  style={{ height: "60px", width: "60px" }}
+                />
+              </StyledBadge>
+              <div>
+                <h2
+                  className={`${
+                    isDarkMode ? "text-white" : "text-black"
+                  } text-xl font-semibold`}
+                >
+                  {selectedCustomer.firstName + " " + selectedCustomer.lastName}
+                </h2>
+                <p className="text-sm text-green-500">∙ Online</p>
+              </div>
+            </div>
           )}
         </div>
         <div>
@@ -267,6 +258,7 @@ const Chat = () => {
         className="w-full  flex flex-col flex-1 overflow-scroll py-4 px-10"
       >
         {selectedConversation &&
+          selectedVendor &&
           chats.map((chat) => (
             <div
               className={`${
@@ -282,6 +274,41 @@ const Chat = () => {
                   <Avatar
                     alt={chat?.conversation?.vendor?.email}
                     src={`data:image/jpeg;base64,${selectedVendor.image}`}
+                    style={{
+                      height: "42px",
+                      width: "42px",
+                      display: "inline-block",
+                    }}
+                  />
+                  <span className="bg-[#E3F1F3] p-3 text-left rounded-r-lg rounded-b-lg">
+                    {chat?.messageContent}
+                  </span>
+                </span>
+              ) : (
+                <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg">
+                  {chat?.messageContent}
+                </span>
+              )}
+            </div>
+          ))}
+
+        {selectedConversation &&
+          selectedCustomer &&
+          chats.map((chat) => (
+            <div
+              className={`${
+                chat?.account?.accountId ===
+                chat?.conversation?.customer?.accountId
+                  ? "self-start"
+                  : "self-end"
+              } mb-3 flex`}
+            >
+              {chat?.account?.accountId ===
+              chat?.conversation?.customer?.accountId ? (
+                <span className="flex items-center gap-2">
+                  <Avatar
+                    alt={chat?.conversation?.customer?.email}
+                    src={`data:image/jpeg;base64,${selectedCustomer.image}`}
                     style={{
                       height: "42px",
                       width: "42px",

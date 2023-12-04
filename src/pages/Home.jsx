@@ -323,13 +323,13 @@ function Home() {
                 </button>
               </Link>
             )}
-            {/* {selectedCustomer && (
+            {selectedCustomer && (
               <Link to={{ pathname: "/chat", state: { selectedCustomer } }}>
                 <button className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary">
                   <QuestionAnswerIcon sx={{ color: "white" }} />
                 </button>
               </Link>
-            )} */}
+            )}
           </div>
         </LoadScript>
       </div>

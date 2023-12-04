@@ -38,6 +38,7 @@ const MapSlidingBox = ({
 
   const handleQueueButton = () => {
     setSelectedButton("queue");
+    handleSliderToggle(true);
   };
 
   return (
@@ -69,8 +70,10 @@ const MapSlidingBox = ({
             </>
           )
         ) : selectedVendor ? (
-          <Store vendor={selectedVendor} />
-        ) : <p>Select a store to view</p>}
+            <Store vendor={selectedVendor} />
+        ) : (
+          <p>Select a store to view</p>
+        )}
       </div>
       {user.account.isVendor ? (
         <div>

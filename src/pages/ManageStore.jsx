@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import redRating from "../assets/images/redRating.png";
+import editStore from "../assets/images/editStore.png";
 
 const ManageStore = () => {
     const { user, setUser } = useContext(UserContext);
@@ -11,7 +12,7 @@ const ManageStore = () => {
     const [editedProduct, setEditedProduct] = useState({
         picture: "",
         name: "",
-        price: "",
+        price: " 0.00",
     });
     const [products, setProducts] = useState([]);
     const [store, setStore] = useState(null);
@@ -27,7 +28,6 @@ const ManageStore = () => {
     const [successMessage, setSuccessMessage] = useState(null);
 
     useEffect(() => {
-        // Replace with your actual API endpoints
         const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.id}`;
         const accountApiEndpoint = "http://localhost:8080/api/getAccountById/";
         const storeApiEndpoint = "http://localhost:8080/api/getStoreById/";
@@ -50,8 +50,8 @@ const ManageStore = () => {
             })
             .then((response) => {
                 if (response.data) {
-                    setStore(response.data); // Set the store state
-                    console.log("Store data:", response.data); // Log the store data
+                    setStore(response.data);
+                    console.log("Store data:", response.data);
                 }
             })
             .catch((error) => {
@@ -62,11 +62,9 @@ const ManageStore = () => {
             try {
                 const response = await axios.get(`http://localhost:8080/api/getProductServicesByStoreId/store/${user.account.store.storeId}`);
                 setProducts(response.data);
-                // Store the product data in local storage
                 localStorage.setItem('products', JSON.stringify(response.data));
             } catch (error) {
                 console.error('Error fetching products:', error);
-                // If there's an error, try to load the product data from local storage
                 const localData = localStorage.getItem('products');
                 if (localData) {
                     setProducts(JSON.parse(localData));
@@ -77,17 +75,14 @@ const ManageStore = () => {
         fetchProducts();
     }, []);
 
-    // Handle click on user image
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
-    // Close menu
     const handleClose = () => {
         setAnchorEl(null);
     };
 
-    // Handle click on "Edit" button
     const handleEdit = () => {
         setEditMode(true);
     };
@@ -110,16 +105,10 @@ const ManageStore = () => {
         });
     };
 
-    // Handle click on "Save" button
     const handleSaveConfirm = () => {
         console.log("Save clicked", products);
-        // Perform the save operation with products data
-        // Update the user context or make an API call to save the changes
 
-        // Iterate over each product in the products state
         products.forEach((product) => {
-            // Assuming your API endpoint for updating a product is /api/updateProductServiceById/{id}
-            // and the id of the product to be updated is stored in product.productId
             axios
                 .put(`http://localhost:8080/api/updateProductServiceById/${product.productId}`, product)
                 .then((response) => {
@@ -130,16 +119,12 @@ const ManageStore = () => {
                 });
         });
 
-        // Assuming your API endpoint for updating a store is /api/updateStore/{id}
-        // and the id of the store to be updated is stored in user.account.store.storeId
         axios
             .put(`http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`, editedStore)
             .then((response) => {
                 console.log("Store updated:", response.data);
-                // Update store state with new data
                 setStore(response.data);
 
-                // Update user context with new store data
                 setUser((prevUser) => ({
                     ...prevUser,
                     account: {
@@ -153,8 +138,6 @@ const ManageStore = () => {
                 console.error("Error updating store:", error);
             });
 
-
-        // Reset state after saving
         setEditMode(false);
         setEditedProduct({
             picture: "",
@@ -164,14 +147,19 @@ const ManageStore = () => {
 
     };
 
-
-    // Handle input change for text fields
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setEditedProduct({
-            ...editedProduct,
-            [name]: value,
-        });
+        if (name === 'price') {
+            setEditedProduct({
+                ...editedProduct,
+                [name]: value,
+            });
+        } else {
+            setEditedProduct({
+                ...editedProduct,
+                [name]: value,
+            });
+        }
     };
 
     const handleImageChange = (e) => {
@@ -194,15 +182,17 @@ const ManageStore = () => {
     const handleProductInputChange = (e, index) => {
         const { name, value } = e.target;
         const newProducts = [...products];
-        newProducts[index][name] = value;
+        if (name === 'price') {
+            newProducts[index][name] = value;
+        } else {
+            newProducts[index][name] = value;
+        }
         setProducts(newProducts);
     };
 
-    // Handle click on "Choose File" button
 
-    // Handle click on "Add" button
+
     const handleAddConfirm = async () => {
-        // Validate that all required fields are filled
         if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
             alert("Please fill in all product details.");
             return;
@@ -223,13 +213,11 @@ const ManageStore = () => {
             name: editedProduct.name,
             price: editedProduct.price,
             image: imageBase64,
-            store: { storeId: user.account.store.storeId }, // Add the storeId
+            store: { storeId: user.account.store.storeId },
         };
 
-        // Add the edited product to the list of products
         setProducts((prevProducts) => [...prevProducts, productData]);
 
-        // Make a POST request to the ProductService API endpoint
         axios
             .post("http://localhost:8080/api/createProductService", productData)
             .then((response) => {
@@ -240,7 +228,6 @@ const ManageStore = () => {
                 console.error("Error creating product:", error);
             });
 
-        // Clear the edited product state
         setEditedProduct({
             picture: "",
             name: "",
@@ -255,8 +242,6 @@ const ManageStore = () => {
         newProducts[index].isDeleted = 1;
         setProducts(newProducts);
 
-        // Assuming your API endpoint for deleting a product is /api/deleteProductServiceById/{id}
-        // and the id of the product to be deleted is stored in product.productId
         axios
             .delete(`http://localhost:8080/api/deleteProductServiceById/${newProducts[index].productId}`)
             .then((response) => {
@@ -270,7 +255,7 @@ const ManageStore = () => {
 
     const openConfirmationDialog = (action, actionType) => {
         setConfirmAction(action);
-        setActionType(actionType); // Set the action type
+        setActionType(actionType);
         setOpenDialog(true);
     };
 
@@ -298,7 +283,6 @@ const ManageStore = () => {
                     onClick={handleMenu}
                 />
                 <div className="ml-3" style={{ flexDirection: "column" }}>
-                    {/* Store Name */}
                     {editMode ? (
                         <TextField
                             name="storeName"
@@ -321,7 +305,6 @@ const ManageStore = () => {
                             {editedStore.storeName ? editedStore.storeName : "Loading..."}
                         </h2>
                     )}
-                    {/* Category */}
                     {editMode ? (
                         <TextField
                             name="category"
@@ -346,8 +329,6 @@ const ManageStore = () => {
                     )}
                 </div>
             </div>
-
-            {/* Store description */}
             <div className="p-2" style={{ height: "90px" }}>
                 {editMode ? (
                     <TextField
@@ -374,16 +355,12 @@ const ManageStore = () => {
                     </p>
                 )}
             </div>
-
-            {/* Products section */}
             <h1
                 className="p-2 text-lg font-medium"
                 style={{ fontSize: "25px", color: "#0071B3" }}
             >
                 Products
             </h1>
-
-            {/* Edit mode */}
             {editMode ? (
                 <div
                     className="productscomponent"
@@ -435,7 +412,7 @@ const ManageStore = () => {
                                 label="Product Price"
                                 name="price"
                                 variant="outlined"
-                                placeholder="Enter product price"
+                                type="text"
                                 value={editedProduct.price}
                                 onChange={handleInputChange}
                                 margin="normal"
@@ -467,8 +444,6 @@ const ManageStore = () => {
             ) : (
                 <div>{ }</div>
             )}
-
-            {/* Display products */}
             <div style={{ maxHeight: editMode ? "350px" : "510px", display: "flex", flexWrap: "wrap", justifyContent: "space-between", overflow: "auto", position: "relative" }}>
                 {products.map((product, index) => (
                     <div key={product.productId} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
@@ -533,6 +508,7 @@ const ManageStore = () => {
                                 <TextField
                                     name="price"
                                     variant="outlined"
+                                    type="text"
                                     value={product.price}
                                     onChange={(e) => handleProductInputChange(e, index)}
                                     margin="normal"
@@ -571,14 +547,13 @@ const ManageStore = () => {
                                     {product.name}
                                 </p>
                                 <p style={{ position: "absolute", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
-                                    ₱ {product.price}
+                                    ₱{product.price}
                                 </p>
                             </>
                         )}
                     </div>
                 ))}
             </div>
-            {/* Save/Edit button */}
             <div className="flex mt-4 absolute bottom-8 w-full">
                 {editMode ? (
                     <Button

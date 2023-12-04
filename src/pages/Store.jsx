@@ -264,10 +264,6 @@ const Store = ({vendor}) => {
     //                 <p className="text-sm">
     //                     {user.account.store ? user.account.store.category : "Loading..."}
     //                 </p>
-    //                 <div className="flex">
-    //                     <img src={redRating} alt="Rating" className="w-5 h-5" />
-    //                     <p className="font-medium">4.8</p>
-    //                 </div>
     //             </div>
     //         </div>
 
@@ -295,10 +291,6 @@ const Store = ({vendor}) => {
               </h2>
               {/* Category */}
               {vendor?.category}
-              <div className="flex">
-                <img src={redRating} alt="Rating" className="w-5 h-5" />
-                <p className="font-medium">4.8</p>
-              </div>
             </div>
           </div>
       
@@ -338,7 +330,7 @@ const Store = ({vendor}) => {
             ))}
           </div>
       
-          {/* Save/Edit button */}
+          {/* Save/Edit button
           <div className="flex mt-4 absolute bottom-8 w-full">
             <Button
               variant="contained"
@@ -348,7 +340,7 @@ const Store = ({vendor}) => {
             >
               Save
             </Button>
-          </div>
+          </div> */}
         </div>
       );
 };

@@ -1,50 +1,31 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Link } from "react-router-dom";
-
 import customerMarker from "../assets/images/customerIcon.png";
 import marker from "../assets/images/vendor-self-pin.png";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
-
 import axios from "axios";
-
 import MapSlidingBox from "../components/MapSlidingBox";
 import NavigationBar from "../components/NavigationBar";
-
 import { MdOutlineReportGmailerrorred } from "react-icons/md";
-
 import { UserContext } from "../UserContext";
-
 import { mapContainerStyle, mapOptions } from "../assets/styles/styles";
-
 import { getDistance, vendorIcons } from "../utils/functions";
 import { ownerWindow } from "@mui/material";
 
 let markers = [];
 
-const API_BASE_URL = "http://localhost:8080/api/";
-
 function Home() {
   const { user, setUser } = useContext(UserContext);
-
   const [currentPosition, setCurrentPosition] = useState(null);
   const [showSlider, setShowSlider] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-
   const mapRef = useRef();
 
   const onMapLoad = useCallback(
     (map) => {
       mapRef.current = map;
-
       if (currentPosition) {
         mapRef.current.setCenter(currentPosition);
       }
@@ -53,22 +34,17 @@ function Home() {
   );
 
   const renderVendorMarkerIcon = () => {
-    if (
-      typeof window.google === "object" &&
-      typeof window.google.maps === "object"
-    ) {
+    if (typeof window.google === "object" && typeof window.google.maps === "object") {
       return {
         url: marker,
         scaledSize: new window.google.maps.Size(40, 40),
       };
     }
-
     return undefined;
   };
 
   const updateLocationInContext = (position) => {
     const { latitude, longitude } = position.coords;
-
     const updatedLocation = { lat: latitude, lng: longitude };
 
     setCurrentPosition(updatedLocation);
@@ -76,13 +52,11 @@ function Home() {
     if (user && user.account.location) {
       axios
         .put(
-          `${API_BASE_URL}updateLocationById/${user.account.location.locationId}`,
-
+          `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
           { ...user.account.location, latitude: latitude, longitude: longitude }
         )
         .then((response) => {
           console.log("Location successfully updated: ", response.data);
-
           setCurrentPosition({
             lat: response.data.latitude,
             lng: response.data.longitude,
@@ -107,22 +81,18 @@ function Home() {
   const calculateOffset = () => {
     if (mapRef.current) {
       const zoomLevel = mapRef.current.getZoom();
-
       return 0.02 / Math.pow(2, zoomLevel - 14);
     }
-
     return 0;
   };
 
   const panAndZoomMap = () => {
     if (mapRef.current && currentPosition) {
       const offset = calculateOffset();
-
       const newCenter = {
         lat: currentPosition.lat,
         lng: currentPosition.lng + (showSlider ? offset : 0),
       };
-
       mapRef.current.panTo(newCenter);
     }
   };
@@ -141,7 +111,7 @@ function Home() {
 
   useEffect(() => {
     axios
-      .get(`${API_BASE_URL}getAllUsers`)
+      .get("http://localhost:8080/api/getAllUsers")
       .then(({ data }) => {
         console.log("Users:", data);
 
@@ -185,12 +155,9 @@ function Home() {
             },
             map: mapRef.current,
             icon: {
-              url: user.account.isVendor
-                ? vendorIcons(user.account.store.category)
-                : customerMarker,
+              url: user.account.isVendor ? vendorIcons(user.account.store.category) : customerMarker,
               scaledSize: new window.google.maps.Size(30, 30),
             },
-
             owner: user,
           });
 

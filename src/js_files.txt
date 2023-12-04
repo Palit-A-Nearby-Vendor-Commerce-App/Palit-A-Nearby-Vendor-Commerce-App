@@ -1,61 +1,129 @@
-d:\Users\Mark\Documents\GitHub\react-projects\Palit-A-Nearby-Vendor-Commerce-App\src\components\MapSlidingBox.jsx:
-```
-import React from "react";
-import { GoSidebarExpand, GoSidebarCollapse  } from "react-icons/go";
+import { React, useState } from "react";
+import { GoSidebarExpand, GoSidebarCollapse } from "react-icons/go";
 import stroke from "../assets/images/stroke.png";
 import ManageStore from "../pages/ManageStore";
-const MapSlidingBox = ({ showSlider, handleSliderToggle }) => {
+import Queue from "../pages/Queue";
+import Store from "../pages/Store";
+
+import { FaStore } from "react-icons/fa";
+
+const MapSlidingBox = ({
+  showSlider,
+  handleSliderToggle,
+  selectedVendor,
+  user,
+}) => {
+  const [selectedButton, setSelectedButton] = useState("queue");
   const sliderBoxStyle = {
     position: "absolute",
-    top: 25,
+    bottom: "20px",
     right: showSlider ? "30px" : "-410px",
     width: "400px",
-    height: "90%",
+    height: "95%",
     backgroundColor: "#fff",
     borderRadius: "5px",
     boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
     transition: "right 0.3s ease",
     overflow: "hidden",
     padding: "20px",
+    backgroundImage: `url(${stroke})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
   };
+
+  const handleStoreButton = () => {
+    setSelectedButton("store");
+  };
+
+  const handleQueueButton = () => {
+    setSelectedButton("queue");
+    handleSliderToggle(true);
+  };
+
   return (
     <div>
       <div style={sliderBoxStyle}>
-        <img
-          src={stroke}
-          alt="Stroke"
-          style={{
-            width: "auto",
-            height: "100%",
-            position: "absolute",
-          }}
-        />
-        <ManageStore />
+        {user.account.isVendor ? (
+          selectedButton === "queue" ? (
+            <>
+              <Queue />
+              <button
+                type="button"
+                onClick={handleStoreButton}
+                className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
+              >
+                <FaStore size={30} className="mr-2" />
+                <span className="text-lg  ">My Store</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <ManageStore user={user} showQueue={handleQueueButton} />
+              <button
+                type="button"
+                onClick={handleQueueButton}
+                className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
+              >
+                <span className="text-lg  ">My Store</span>
+              </button>
+            </>
+          )
+        ) : selectedVendor ? (
+            <Store vendor={selectedVendor} />
+        ) : (
+          <p>Select a store to view</p>
+        )}
       </div>
-      <button
-        style={{
-          backgroundColor: "white",
-          position: "absolute",
-          right: showSlider ? "440px" : "80px",
-          bottom: "20px",
-          padding: "10px",
-          borderRadius: "5px",
-          boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
-          marginBottom: "10px",
-          transition: "right 0.3s ease", // Add a transition to make the movement smooth
-        }}
-        onClick={handleSliderToggle}
-      >
-        {showSlider ? <GoSidebarCollapse size={30} /> : <GoSidebarExpand size={30} />}
-      </button>
+      {user.account.isVendor ? (
+        <div>
+          <button
+            style={{
+              backgroundColor: "white",
+              position: "absolute",
+              right: showSlider ? "440px" : "80px",
+              bottom: "20px",
+              padding: "10px",
+              borderRadius: "5px",
+              boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
+              transition: "right 0.3s ease", // Add a transition to make the movement smooth
+            }}
+            onClick={handleQueueButton}
+          >
+            {showSlider ? (
+              <GoSidebarCollapse size={30} />
+            ) : (
+              <GoSidebarExpand size={30} />
+            )}
+          </button>
+        </div>
+      ) : (
+        <button
+          style={{
+            backgroundColor: "white",
+            position: "absolute",
+            right: showSlider ? "440px" : "80px",
+            bottom: "20px",
+            padding: "10px",
+            borderRadius: "5px",
+            boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
+            transition: "right 0.3s ease", // Add a transition to make the movement smooth
+          }}
+          onClick={handleSliderToggle}
+        >
+          {showSlider ? (
+            <GoSidebarCollapse size={30} />
+          ) : (
+            <GoSidebarExpand size={30} />
+          )}
+        </button>
+      )}
     </div>
   );
 };
 export default MapSlidingBox;
-```
 
-d:\Users\Mark\Documents\GitHub\react-projects\Palit-A-Nearby-Vendor-Commerce-App\src\pages\Home.jsx:
-```
+
 // Import React and its hooks
 import React, {
   useCallback,
@@ -67,11 +135,12 @@ import React, {
 
 // Import Google Maps components from react-google-maps library
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { Link } from "react-router-dom";
 
 // Import custom marker images for vendor and customer
 import customerMarker from "../assets/images/customerIcon.png";
 import marker from "../assets/images/vendor-self-pin.png";
-
+import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 // Import axios library for making HTTP requests
 import axios from "axios";
 
@@ -90,6 +159,7 @@ import { mapContainerStyle, mapOptions } from "../assets/styles/styles";
 
 // Import utility function for calculating distance between two points
 import { getDistance, vendorIcons } from "../utils/functions";
+import { ownerWindow } from "@mui/material";
 
 let markers = [];
 
@@ -98,10 +168,11 @@ function Home() {
   // Get the user and setUser function from the user context
   const { user, setUser } = useContext(UserContext);
 
-  // Define state variables for current position, nearby users, and show slider
+  // Define state variables for current position, nearby users, show slider, and selected vendor
   const [currentPosition, setCurrentPosition] = useState(null);
-  const [nearbyUsers, setNearbyUsers] = useState([]);
   const [showSlider, setShowSlider] = useState(false);
+  const [selectedVendor, setSelectedVendor] = useState(null);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
 
   // Define a ref variable for the map object
   const mapRef = useRef();
@@ -136,41 +207,41 @@ function Home() {
     return undefined;
   };
 
+  // Define a function for updating the location in the context
+  const updateLocationInContext = (position) => {
+    // Get the latitude and longitude from the position object
+    const { latitude, longitude } = position.coords;
+    // Create an updated location object with the latitude and longitude
+    const updatedLocation = { lat: latitude, lng: longitude };
+
+    // Set the current position state to the updated location
+    setCurrentPosition(updatedLocation);
+
+    // If the user and user location are available, make a PUT request to update the location in the database
+    if (user && user.account.location) {
+      axios
+        .put(
+          `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
+          // { latitude, longitude }
+          { ...user.account.location, latitude: latitude, longitude: longitude }
+        )
+        .then((response) => {
+          console.log("Location successfully updated: ", response.data);
+          // Set the current position state to the response data
+          setCurrentPosition({
+            lat: response.data.latitude,
+            lng: response.data.longitude,
+          });
+        })
+        .catch((error) => {
+          // Log the error to the console
+          console.error("Error updating location:", error);
+        });
+    }
+  };
+
   // Define an effect hook for updating the location in the context
   useEffect(() => {
-    // Define a function for updating the location in the context
-    const updateLocationInContext = (position) => {
-      // Get the latitude and longitude from the position object
-      const { latitude, longitude } = position.coords;
-      // Create an updated location object with the latitude and longitude
-      const updatedLocation = { lat: latitude, lng: longitude };
-
-      // Set the current position state to the updated location
-      setCurrentPosition(updatedLocation);
-
-      // If the user and user location are available, make a PUT request to update the location in the database
-      if (user && user.account.location) {
-        axios
-          .put(
-            `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
-            // { latitude, longitude }
-            { ...user.account.location, latitude: latitude, longitude: longitude }
-          )
-          .then((response) => {
-            console.log("Location successfully updated: ", response.data);
-            // Set the current position state to the response data
-            setCurrentPosition({
-              lat: response.data.latitude,
-              lng: response.data.longitude,
-            });
-          })
-          .catch((error) => {
-            // Log the error to the console
-            console.error("Error updating location:", error);
-          });
-      }
-    };
-
     // Use the navigator geolocation API to watch the position changes
     const watchId = navigator.geolocation.watchPosition(
       updateLocationInContext,
@@ -218,7 +289,7 @@ function Home() {
   // Define a function for handling the slider toggle
   const handleSliderToggle = () => {
     // Set the show slider state to the opposite of its current value
-    setShowSlider(!showSlider);
+    setShowSlider((prevShowSlider) => !prevShowSlider);
   };
 
   // Define a function for handling the report button click
@@ -284,24 +355,40 @@ function Home() {
                 : customerMarker,
               scaledSize: new window.google.maps.Size(30, 30),
             },
+            // Add a custom property to store the user id of the marker
+            owner: user,
           });
 
           // Add the marker to mapRef.current.markers
-          markers[user.account.accountId] = userMarker;
+          console.log("OWNERRR: ", markers[ownerWindow.userId]);
+          markers[ownerWindow.userId] = userMarker;
 
-          // You can add click event handling for the markers if needed
+          // Add a click event listener for the markers to handle the vendor click
           userMarker.addListener("click", () => {
-            window.location.href = `/store/${user.accountId}`;
+            handleMarkerClick(userMarker.owner);
           });
         });
       })
       .catch((error) => console.error("Error fetching users: ", error));
   }, [currentPosition, user.account]);
 
+  // Define a function for handling the vendor marker click
+  const handleMarkerClick = (owner) => {
+    // If the user object has a property called isVendor that is true, set the selected vendor state to the user object
+    if (owner && owner.account.isVendor) {
+      setSelectedVendor(owner);
+    } else {
+      setSelectedCustomer(owner);
+    }
+
+    // Toggle the value of showSlider
+    setShowSlider(true);
+  };
+
   // Return the JSX element for rendering the component
   return (
     <>
-      <div className="w-full font-custom">
+      <div className="w-full h-70vh font-custom">
         <NavigationBar />
         <LoadScript googleMapsApiKey="AIzaSyBNM-CYx7dA0gckgBmybtovang7Bvp8lK0">
           <div>
@@ -335,7 +422,9 @@ function Home() {
               )}
               <MapSlidingBox
                 showSlider={showSlider}
+                selectedVendor={selectedVendor}
                 handleSliderToggle={handleSliderToggle}
+                user={user}
               />
             </GoogleMap>
             <button
@@ -353,6 +442,20 @@ function Home() {
             >
               <MdOutlineReportGmailerrorred size={30} />
             </button>
+            {selectedVendor && (
+              <Link to={{ pathname: "/chat", state: { selectedVendor } }}>
+                <button className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary">
+                  <QuestionAnswerIcon sx={{ color: "white" }} />
+                </button>
+              </Link>
+            )}
+            {selectedCustomer && (
+              <Link to={{ pathname: "/chat", state: { selectedCustomer } }}>
+                <button className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary">
+                  <QuestionAnswerIcon sx={{ color: "white" }} />
+                </button>
+              </Link>
+            )}
           </div>
         </LoadScript>
       </div>
@@ -363,40 +466,4 @@ function Home() {
 // Export the Home component
 export default Home;
 
-```
-
-d:\Users\Mark\Documents\GitHub\react-projects\Palit-A-Nearby-Vendor-Commerce-App\src\utils\functions.js:
-```
-import fruits from "../assets/images/apple_.png";
-import fish from "../assets/images/fish_.png";
-import assorted from "../assets/images/assorted_.png";
-import manicure from "../assets/images/manicure_.png";
-
-const R = 6371;
-const deg2rad = (deg) => deg * (Math.PI / 180);
-export const getDistance = (lat1, lon1, lat2, lon2) => {
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) ** 2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 1000;
-};
-
-export const vendorIcons = (category) => {
-  switch (category) {
-    case "fruits":
-      return fruits;
-    case "fish":
-      return fish;
-    case "manicure":
-      return manicure;
-    case "assorted":
-      return assorted;
-    default:
-      return fruits;
-  }
-};
-
-```
 

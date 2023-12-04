@@ -26,8 +26,8 @@ const Store = ({ vendor }) => {
   const handleOrder = (details, vendor, customer) => {
     axios
       .post("http://localhost:8080/api/createTransaction", {
-        vendor: vendor,
-        customer: customer,
+        vendor: vendor.account,
+        customer: customer.account,
         details: details,
         status: "In Queue",
       })

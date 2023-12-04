@@ -12,7 +12,6 @@ const Queue = () => {
       .get("http://localhost:8080/api/getAllTransactions")
       .then((response) => {
         setQueue(response.data);
-        console.log("queue ", response.data);
       })
       .catch((error) => {
         console.error("Error fetching data: ", error);
@@ -22,7 +21,6 @@ const Queue = () => {
       .get("http://localhost:8080/api/getAllUsers")
       .then((response) => {
         setUsers(response.data);
-        console.log("users ", response.data);
       })
       .catch((error) => {
         console.error("Error fetching data: ", error);
@@ -47,7 +45,6 @@ const Queue = () => {
       <h3>Now Serving</h3>
       {queue.length > 0 &&
         queue.map((item) => {
-          console.log("item ", item.status === "Now Serving");
           if (item.status === "Now Serving") {
             // Find the user object that matches the account id
             const u = users.find(

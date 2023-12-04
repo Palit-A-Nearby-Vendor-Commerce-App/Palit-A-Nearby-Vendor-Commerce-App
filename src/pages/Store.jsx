@@ -33,14 +33,10 @@ const Store = ({ vendor }) => {
         details: details,
         status: "In Queue",
       })
-      .then((response) => {
-        console.log("Transaction created successfully");
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log("Error creating transaction");
-        console.log(error);
-      });
+      .then((response) =>
+        console.log("Transaction created successfully", response)
+      )
+      .catch((error) => console.error("Error creating transaction", error));
   };
 
   useEffect(() => {
@@ -70,9 +66,7 @@ const Store = ({ vendor }) => {
           console.log("Store data:", response.data);
         }
       })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-      });
+      .catch((error) => console.error("Error fetching data: ", error));
 
     const fetchProducts = async () => {
       try {
@@ -96,17 +90,11 @@ const Store = ({ vendor }) => {
     fetchProducts();
   }, []);
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const handleMenu = (event) => setAnchorEl(event.currentTarget);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleClose = () => setAnchorEl(null);
 
-  const handleEdit = () => {
-    setEditMode(true);
-  };
+  const handleEdit = () => setEditMode(true);
 
   useEffect(() => {
     if (user.account.store) {
@@ -135,12 +123,8 @@ const Store = ({ vendor }) => {
           `http://localhost:8080/api/updateProductServiceById/${product.productId}`,
           product
         )
-        .then((response) => {
-          console.log("Product updated:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error updating product:", error);
-        });
+        .then((response) => console.log("Product updated:", response.data))
+        .catch((error) => console.error("Error updating product:", error));
     });
 
     axios
@@ -159,9 +143,7 @@ const Store = ({ vendor }) => {
           },
         }));
       })
-      .catch((error) => {
-        console.error("Error updating store:", error);
-      });
+      .catch((error) => console.error("Error updating store:", error));
 
     setEditMode(false);
     setEditedProduct({
@@ -233,12 +215,8 @@ const Store = ({ vendor }) => {
 
     axios
       .post("http://localhost:8080/api/createProductService", productData)
-      .then((response) => {
-        console.log("Product created:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error creating product:", error);
-      });
+      .then((response) => console.log("Product created:", response.data))
+      .catch((error) => console.error("Error creating product:", error));
 
     setEditedProduct({
       picture: "",
@@ -283,22 +261,20 @@ const Store = ({ vendor }) => {
     handleOrder(orderedListString, vendor, user);
   };
 
-  const OrderDetails = () => {
-    return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: "100%",
-        }}
-      >
-        <h2>Order Details</h2>
-        <p>{details}</p>
-      </div>
-    );
-  };
+  const OrderDetails = () => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+      }}
+    >
+      <h2>Order Details</h2>
+      <p>{details}</p>
+    </div>
+  );
 
   return (
     <>
@@ -453,4 +429,3 @@ const Store = ({ vendor }) => {
 };
 
 export default Store;
-

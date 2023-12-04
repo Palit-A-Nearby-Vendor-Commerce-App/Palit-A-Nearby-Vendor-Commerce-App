@@ -7,6 +7,7 @@ import ProductData from "./ProductData";
 import StatisticsData from "./StatisticsData";
 import AccountData from "./AccountData";
 import TransactionData from "./TransactionData";
+import ChatData from "./ChatData"
 
 const marginBottomStyle = {
   marginBottom: "2rem", // You can adjust the margin size as needed
@@ -43,6 +44,10 @@ const Dashboard = () => {
 
       <div style={marginBottomStyle}>
         <ProductData />
+      </div>
+
+      <div style={marginBottomStyle}>
+        <ChatData />
       </div>
     </div>
   );

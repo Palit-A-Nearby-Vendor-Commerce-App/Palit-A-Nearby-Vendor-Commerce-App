@@ -6,7 +6,7 @@ const ProductData = () => {
     const [productData, setProductData] = useState([]);
 
     useEffect(() => {
-        axios.get('http://localhost:3003/products')
+        axios.get('http://localhost:8080/api/getAllProductServices')
             .then(response => setProductData(response.data))
             .catch(error => console.error('Error fetching product data:', error));
     }, []);
@@ -18,20 +18,18 @@ const ProductData = () => {
                 <table className="w-full">
                     <thead className="text-left border-b border-[#0071B3] text-slate-500">
                         <tr>
+                            <th className="w-1/5 pb-2" >Store Id</th>
                             <th className="w-1/5 pb-2" >Name</th>
-                            <th className="w-1/5 pb-2" >Description</th>
                             <th className="w-1/5 pb-2" >Price</th>
-                            <th className="w-1/10 pb-2" >Store ID</th>
                             <th className="w-3/10 pb-2" >Image</th>
                         </tr>
                     </thead>
                     <tbody>
                         {productData.map(product => (
                             <tr key={product.productId}>
+                                <td className="py-2">{product.store.storeId}</td>
                                 <td className="py-2">{product.name}</td>
-                                <td className="py-2">{product.description}</td>
                                 <td className="py-2">{product.price}</td>
-                                <td className="py-2">{product.storeId}</td>
                                 <td className="py-2">{product.imagePath && <img src={product.imagePath} alt={`Image for ${product.name}`} />}</td>
                             </tr>
                         ))}

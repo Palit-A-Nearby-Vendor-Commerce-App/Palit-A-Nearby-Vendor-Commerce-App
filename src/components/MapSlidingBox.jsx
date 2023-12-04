@@ -5,6 +5,8 @@ import ManageStore from "../pages/ManageStore";
 import Queue from "../pages/Queue";
 import Store from "../pages/Store";
 
+import { FaStore } from "react-icons/fa";
+
 const MapSlidingBox = ({
   showSlider,
   handleSliderToggle,
@@ -24,66 +26,95 @@ const MapSlidingBox = ({
     transition: "right 0.3s ease",
     overflow: "hidden",
     padding: "20px",
+    backgroundImage: `url(${stroke})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
   };
 
   const handleStoreButton = () => {
     setSelectedButton("store");
-  }
+  };
 
   const handleQueueButton = () => {
     setSelectedButton("queue");
-    handleSliderToggle();
-  }
+  };
 
   return (
     <div>
       <div style={sliderBoxStyle}>
-        <img
-          src={stroke}
-          alt="Stroke"
-          style={{
-            width: "auto",
-            height: "100%",
-            position: "absolute",
-          }}
-        />
         {user.account.isVendor ? (
           selectedButton === "queue" ? (
-            <Queue showManageStore={handleStoreButton}  />
+            <>
+              <Queue />
+              <button
+                type="button"
+                onClick={handleStoreButton}
+                className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
+              >
+                <FaStore size={30} className="mr-2" />
+                <span className="text-lg  ">My Store</span>
+              </button>
+            </>
           ) : (
-            <ManageStore
-              user={user}
-              showQueue={handleQueueButton}
-            />
+            <>
+              <ManageStore user={user} showQueue={handleQueueButton} />
+              <button
+                type="button"
+                onClick={handleQueueButton}
+                className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
+              >
+                <span className="text-lg  ">My Store</span>
+              </button>
+            </>
           )
-        ): (
-        <Store vendor={selectedVendor} />
-        )}
+        ) : selectedVendor ? (
+          <Store vendor={selectedVendor} />
+        ) : <p>Select a store to view</p>}
       </div>
       {user.account.isVendor ? (
         <div>
-
-              <button
-              style={{
-                backgroundColor: "white",
-                position: "absolute",
-                right: showSlider ? "440px" : "80px",
-                bottom: "20px",
-                padding: "10px",
-                borderRadius: "5px",
-                boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
-                transition: "right 0.3s ease", // Add a transition to make the movement smooth
-              }}
-              onClick={handleQueueButton}
-            >
-              {showSlider ? (
-                <GoSidebarCollapse size={30} />
-              ) : (
-                <GoSidebarExpand size={30} />
-              )}
-            </button>
-            </div>
-      ) : null}
+          <button
+            style={{
+              backgroundColor: "white",
+              position: "absolute",
+              right: showSlider ? "440px" : "80px",
+              bottom: "20px",
+              padding: "10px",
+              borderRadius: "5px",
+              boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
+              transition: "right 0.3s ease", // Add a transition to make the movement smooth
+            }}
+            onClick={handleQueueButton}
+          >
+            {showSlider ? (
+              <GoSidebarCollapse size={30} />
+            ) : (
+              <GoSidebarExpand size={30} />
+            )}
+          </button>
+        </div>
+      ) : (
+        <button
+          style={{
+            backgroundColor: "white",
+            position: "absolute",
+            right: showSlider ? "440px" : "80px",
+            bottom: "20px",
+            padding: "10px",
+            borderRadius: "5px",
+            boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
+            transition: "right 0.3s ease", // Add a transition to make the movement smooth
+          }}
+          onClick={handleSliderToggle}
+        >
+          {showSlider ? (
+            <GoSidebarCollapse size={30} />
+          ) : (
+            <GoSidebarExpand size={30} />
+          )}
+        </button>
+      )}
     </div>
   );
 };

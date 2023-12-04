@@ -327,10 +327,6 @@ const ManageStore = () => {
                             {editedStore.category ? editedStore.category : "Loading..."}
                         </p>
                     )}
-                    <div className="flex">
-                        <img src={redRating} alt="Rating" className="w-5 h-5" />
-                        <p className="font-medium">4.8</p>
-                    </div>
                 </div>
             </div>
             <div className="p-2" style={{ height: "90px" }}>

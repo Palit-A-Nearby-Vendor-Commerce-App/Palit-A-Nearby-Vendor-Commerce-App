@@ -51,7 +51,7 @@ const Queue = () => {
               (u) => u.account.accountId === item.customer.accountId
             );
             if (u) {
-              return <div>{u.firstName}</div>;
+              return <div key={u.accountId}>{u.firstName}</div>;
             }
           }
         })}
@@ -65,7 +65,7 @@ const Queue = () => {
               (u) => u.account.accountId === item.customer.accountId
             );
             if (u) {
-              return <div>{u.firstName}</div>;
+              return <div key={u.accountId}>{u.firstName}</div>;
             }
           } else {
             return <div>Waiting for customers...</div>;

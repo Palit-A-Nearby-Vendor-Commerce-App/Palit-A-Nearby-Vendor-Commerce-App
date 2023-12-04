@@ -36,10 +36,10 @@ public class TransactionService {
 
     public TransactionEntity createTransaction(TransactionEntity transaction) {
         // get a fresh copy of the vendor and customer and assign it to transaction
-        AccountEntity vendor = accountRepository.findByAccountIdAndIsDeletedFalse(transaction.getVendor().getAccountId());
-        AccountEntity customer = accountRepository.findByAccountIdAndIsDeletedFalse(transaction.getCustomer().getAccountId());
-        transaction.setCustomer(customer);
-        transaction.setVendor(vendor);
+        // AccountEntity vendor = accountRepository.findByAccountIdAndIsDeletedFalse(transaction.getVendor().getAccountId());
+        // AccountEntity customer = accountRepository.findByAccountIdAndIsDeletedFalse(transaction.getCustomer().getAccountId());
+        // transaction.setCustomer(customer);
+        // transaction.setVendor(vendor);
 
         return transactionRepository.save(transaction);
     }

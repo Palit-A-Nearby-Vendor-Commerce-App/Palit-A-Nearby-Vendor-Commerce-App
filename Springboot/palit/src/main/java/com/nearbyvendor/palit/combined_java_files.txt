@@ -1573,3 +1573,19 @@ public class UserController {
 }
 
 ```
+
+{
+  "customer": 1
+  "vendor": 2
+  "status": "test"
+  "details": "test"
+}
+
+returns
+{
+    "timestamp": "2023-12-04T02:31:46.515+00:00",
+    "status": 400,
+    "error": "Bad Request",
+    "message": "JSON parse error: Cannot construct instance of `com.nearbyvendor.palit.entity.AccountEntity` (although at least one Creator exists): no int/Int-argument constructor/factory method to deserialize from Number value (1); nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot construct instance of `com.nearbyvendor.palit.entity.AccountEntity` (although at least one Creator exists): no int/Int-argument constructor/factory method to deserialize from Number value (1)\n at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 2, column: 15] (through reference chain: com.nearbyvendor.palit.entity.TransactionEntity[\"customer\"])",
+    "path": "/api/createTransaction"
+}

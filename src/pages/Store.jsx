@@ -21,6 +21,27 @@ const Store = ({ vendor }) => {
     category: "",
     description: "",
   });
+  const [details, setDetails] = useState("null");
+
+  const handleOrder = (details, vendor, customer) => {
+    axios
+      .post("http://localhost:8080/api/createTransaction", {
+        vendor: vendor,
+        customer: customer,
+        details: details,
+        status: "In Queue",
+      })
+      .then((response) => {
+        // Handle the response
+        console.log("Transaction created successfully");
+        console.log(response); // The created transaction entity
+      })
+      .catch((error) => {
+        // Handle the error
+        console.log("Error creating transaction");
+        console.log(error); // The error message
+      });
+  };
 
   useEffect(() => {
     // Replace with your actual API endpoints
@@ -53,13 +74,6 @@ const Store = ({ vendor }) => {
       .catch((error) => {
         console.error("Error fetching data: ", error);
       });
-
-    //   const handleOrder = (description, vendor, user) => {
-    //     axios
-    //     .post(
-    //         "localhost:8080/api/createTransaction", {}
-    //     )
-    //   }
 
     const fetchProducts = async () => {
       try {
@@ -412,6 +426,7 @@ const Store = ({ vendor }) => {
       <button
         type="button"
         className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
+        onClick={handleOrder("TEST", vendor, user)}
       >
         <span className="text-lg  ">Order</span>
       </button>

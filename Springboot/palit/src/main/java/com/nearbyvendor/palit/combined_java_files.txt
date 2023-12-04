@@ -1,4 +1,977 @@
 
+AccountEntity.java:
+```
+package com.nearbyvendor.palit.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.*;
+import java.util.List;
+import java.util.Set;
+
+@Entity
+@Table(name = "tblAccount")
+public class AccountEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer accountId;
+
+    private String email;
+
+    private String password;
+
+    private boolean isVendor;
+
+    private boolean isAdmin;
+
+    private boolean isDeleted;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "account")
+    private UserEntity user;
+
+    @OneToOne
+    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
+    private LocationEntity location;
+
+    @OneToOne
+    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
+    private StoreEntity store;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer")
+    private Set<TransactionEntity> customerTransactions;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "account")
+    private Set<ChatEntity> chats;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer")
+    private Set<ConversationEntity> conversations;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "vendor")
+    private Set<TransactionEntity> vendorTransactions;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "account")
+    private List<ReportEntity> reports;
+
+    public AccountEntity() {
+    }
+
+    public AccountEntity(int accountId, String email, String password, LocationEntity location, StoreEntity store,
+                         boolean isVendor, boolean isAdmin) {
+        this.accountId = accountId;
+        this.email = email;
+        this.password = password;
+        this.location = location;
+        this.store = store;
+        this.isVendor = isVendor;
+        this.isAdmin = isAdmin;
+        this.isDeleted = false;
+    }
+
+    public Integer getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean getIsVendor() {
+        return isVendor;
+    }
+
+    public void setIsVendor(boolean isVendor) {
+        this.isVendor = isVendor;
+    }
+
+    public boolean getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    public LocationEntity getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationEntity location) {
+        this.location = location;
+    }
+
+    public StoreEntity getStore() {
+        return store;
+    }
+
+    public void setStore(StoreEntity store) {
+        this.store = store;
+    }
+
+    public Set<TransactionEntity> getCustomerTransactions() {
+        return customerTransactions;
+    }
+
+    public void setCustomerTransactions(Set<TransactionEntity> customerTransactions) {
+        this.customerTransactions = customerTransactions;
+    }
+
+    public Set<ChatEntity> getChats() {
+        return chats;
+    }
+
+    public void setChats(Set<ChatEntity> chats) {
+        this.chats = chats;
+    }
+
+    public Set<ConversationEntity> getConversations() {
+        return conversations;
+    }
+
+    public void setConversations(Set<ConversationEntity> conversations) {
+        this.conversations = conversations;
+    }
+
+    public Set<TransactionEntity> getVendorTransactions() {
+        return vendorTransactions;
+    }
+
+    public void setVendorTransactions(Set<TransactionEntity> vendorTransactions) {
+        this.vendorTransactions = vendorTransactions;
+    }
+
+    public List<ReportEntity> getReports() {
+        return reports;
+    }
+
+    public void setReports(List<ReportEntity> reports) {
+        this.reports = reports;
+    }
+}
+
+```
+
+ChatEntity.java:
+```
+package com.nearbyvendor.palit.entity;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
+
+@Entity
+@Table(name = "tblChat")
+public class ChatEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int chatId;
+
+    @ManyToOne
+    @JoinColumn(name = "senderId", referencedColumnName = "accountId")
+    private AccountEntity account;
+
+    private String messageContent;
+
+    private Timestamp timestamp;
+
+    @ManyToOne
+    @JoinColumn(name = "conversationId", referencedColumnName = "conversationId")
+    private ConversationEntity conversation;
+
+    private boolean isDeleted;
+
+    public ChatEntity() {
+    }
+
+    public ChatEntity(int chatId, AccountEntity account, String messageContent, Timestamp timestamp,
+                      ConversationEntity conversation) {
+        this.chatId = chatId;
+        this.account = account;
+        this.messageContent = messageContent;
+        this.timestamp = timestamp;
+        this.conversation = conversation;
+        this.isDeleted = false;
+    }
+
+    public int getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(int chatId) {
+        this.chatId = chatId;
+    }
+
+    public AccountEntity getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountEntity account) {
+        this.account = account;
+    }
+
+    public String getMessageContent() {
+        return messageContent;
+    }
+
+    public void setMessageContent(String messageContent) {
+        this.messageContent = messageContent;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public ConversationEntity getConversation() {
+        return conversation;
+    }
+
+    public void setConversation(ConversationEntity conversation) {
+        this.conversation = conversation;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+}
+
+```
+
+ConversationEntity.java:
+```
+package com.nearbyvendor.palit.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.persistence.*;
+import java.util.Set;
+
+@Entity
+@Table(name = "tblConversation")
+public class ConversationEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int conversationId;
+
+    @ManyToOne
+    @JoinColumn(name = "vendorAccountId", referencedColumnName = "accountId")
+    private AccountEntity vendor;
+
+    @ManyToOne
+    @JoinColumn(name = "customerAccountId", referencedColumnName = "accountId")
+    private AccountEntity customer;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "conversation")
+    private Set<ChatEntity> chats;
+
+    private boolean isDeleted;
+
+    public ConversationEntity() {
+    }
+
+    public ConversationEntity(int conversationId, AccountEntity vendor, AccountEntity customer) {
+        this.conversationId = conversationId;
+        this.vendor = vendor;
+        this.customer = customer;
+        this.isDeleted = false;
+    }
+
+    public int getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(int conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public AccountEntity getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(AccountEntity vendor) {
+        this.vendor = vendor;
+    }
+
+    public AccountEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(AccountEntity customer) {
+        this.customer = customer;
+    }
+
+    public Set<ChatEntity> getChats() {
+        return chats;
+    }
+
+    public void setChats(Set<ChatEntity> chats) {
+        this.chats = chats;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+}
+```
+
+LocationEntity.java:
+```
+package com.nearbyvendor.palit.entity;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "tblLocation")
+public class LocationEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int locationId;
+
+    private double latitude;
+
+    private double longitude;
+
+    private boolean isDeleted;
+
+    private boolean isActive;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "location")
+    private AccountEntity account;
+
+    public LocationEntity() {
+    }
+
+        public LocationEntity(int locationId, double latitude, double longitude, boolean isActive, AccountEntity account) {
+            this.locationId = locationId;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.isActive = isActive;
+            this.account = account;
+            this.isDeleted = false;
+        }
+
+        public int getLocationId() {
+            return locationId;
+        }
+
+        public void setLocationId(int locationId) {
+            this.locationId = locationId;
+        }
+
+        public double getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(double latitude) {
+            this.latitude = latitude;
+        }
+
+        public double getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(double longitude) {
+            this.longitude = longitude;
+        }
+
+        public boolean getIsDeleted() {
+            return isDeleted;
+        }
+
+        public void setIsDeleted(boolean isDeleted) {
+            this.isDeleted = isDeleted;
+        }
+
+        public boolean getIsActive() {
+            return isActive;
+        }
+
+        public void setIsActive(boolean isActive) {
+            this.isActive = isActive;
+        }
+
+        public AccountEntity getAccount() {
+            return account;
+        }
+
+        public void setAccount(AccountEntity account) {
+            this.account = account;
+        }
+    }
+
+```
+
+ProductServiceEntity.java:
+```
+package com.nearbyvendor.palit.entity;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "tblProduct_service")
+public class ProductServiceEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int productId;
+
+    private String name;
+
+    private double price;
+
+    @Lob
+    private byte[] image;
+
+    private boolean isDeleted;
+
+    @ManyToOne
+    @JoinColumn(name = "storeId", referencedColumnName = "storeId")
+    private StoreEntity store;
+
+    public ProductServiceEntity() {
+    }
+
+    public ProductServiceEntity(String name, double price, byte[] image, StoreEntity store) {
+        this.name = name;
+        this.price = price;
+        this.store = store;
+        this.image = image;
+        this.isDeleted = false;
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public StoreEntity getStore() {
+        return store;
+    }
+
+    public void setStore(StoreEntity store) {
+        this.store = store;
+    }
+}
+
+```
+
+ReportEntity.java:
+```
+package com.nearbyvendor.palit.entity;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
+
+@Entity
+@Table(name = "tblReport")
+public class ReportEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int reportId;
+
+    @ManyToOne
+    @JoinColumn(name = "senderId")
+    private AccountEntity account;
+
+    private String messageContent;
+
+    private Timestamp timestamp;
+
+    private boolean isResolved;
+
+    private boolean isDeleted;
+
+    public ReportEntity() {
+    }
+
+    public ReportEntity(AccountEntity account, String messageContent, Timestamp timestamp, boolean isResolved) {
+        this.account = account;
+        this.messageContent = messageContent;
+        this.timestamp = timestamp;
+        this.isResolved = isResolved;
+        this.isDeleted = false;
+    }
+
+    public int getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(int reportId) {
+        this.reportId = reportId;
+    }
+
+    public AccountEntity getSenderId() {
+        return account;
+    }
+
+    public void setSenderId(AccountEntity account) {
+        this.account = account;
+    }
+
+    public String getMessageContent() {
+        return messageContent;
+    }
+
+    public void setMessageContent(String messageContent) {
+        this.messageContent = messageContent;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public boolean getIsResolved() {
+        return isResolved;
+    }
+
+    public void setIsResolved(boolean isResolved) {
+        this.isResolved = isResolved;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public AccountEntity getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountEntity account) {
+        this.account = account;
+    }
+}
+
+```
+
+StoreEntity.java:
+```
+package com.nearbyvendor.palit.entity;
+
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+@Entity
+@Table(name = "tblStore")
+public class StoreEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int storeId;
+
+    private String storeName;
+
+    private String description;
+
+    private String category;
+
+    private boolean isDeleted;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "store")
+    private AccountEntity account;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "store")
+    private List<ProductServiceEntity> productServices;
+
+    public StoreEntity() {
+
+    }
+
+    public StoreEntity(String storeName, String description, String category, AccountEntity account) {
+        this.storeName = storeName;
+        this.description = description;
+        this.category = category;
+        this.account = account;
+        this.isDeleted = false;
+    }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
+    }
+
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public AccountEntity getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountEntity account) {
+        this.account = account;
+    }
+
+    public List<ProductServiceEntity> getProductServices() {
+        return productServices;
+    }
+
+    public void setProductServices(List<ProductServiceEntity> productServices) {
+        this.productServices = productServices;
+    }
+}
+
+```
+
+TransactionEntity.java:
+```
+package com.nearbyvendor.palit.entity;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "tblTransaction")
+public class TransactionEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int transactionId;
+
+    private String status;
+
+    private boolean isDeleted;
+
+    private String details; // Added string details
+
+    @ManyToOne
+    @JoinColumn(name = "accountCustomerId", referencedColumnName = "accountId")
+    private AccountEntity customer;
+
+    @ManyToOne
+    @JoinColumn(name = "accountVendorId", referencedColumnName = "accountId")
+    private AccountEntity vendor;
+
+    public TransactionEntity() {
+    }
+
+    public TransactionEntity(AccountEntity customer, AccountEntity vendor, String status, String details) { // Updated constructor
+        this.customer = customer;
+        this.vendor = vendor;
+        this.status = status;
+        this.details = details;
+        this.isDeleted = false;
+    }
+
+    public int getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(int transactionId) {
+        this.transactionId = transactionId;
+    }
+
+    public AccountEntity getAccountCustomerId() {
+        return customer;
+    }
+
+    public void setAccountCustomerId(AccountEntity customer) {
+        this.customer = customer;
+    }
+
+    public AccountEntity getAccountVendorId() {
+        return vendor;
+    }
+
+    public void setAccountVendorId(AccountEntity vendor) {
+        this.vendor = vendor;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public AccountEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(AccountEntity customer) {
+        this.customer = customer;
+    }
+
+    public AccountEntity getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(AccountEntity vendor) {
+        this.vendor = vendor;
+    }
+}
+```
+
+UserEntity.java:
+```
+package com.nearbyvendor.palit.entity;
+
+import javax.persistence.*;
+import java.util.Date;
+
+@Entity
+@Table(name = "tblUser")
+public class UserEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int userId;
+
+    private String firstName;
+
+    private String lastName;
+
+    @Temporal(TemporalType.DATE)
+    private Date birthDate;
+
+    private boolean isDeleted;
+
+    @Lob
+    private byte[] image;
+
+    @OneToOne
+    @JoinColumn(name = "accountId", referencedColumnName = "accountId")
+    private AccountEntity account;
+
+    public UserEntity() {
+    }
+
+    public UserEntity(int userId, String firstName, String lastName, Date birthDate, boolean isDeleted, byte[] image,
+                      AccountEntity account) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.isDeleted = isDeleted;
+        this.image = image;
+        this.account = account;
+        this.isDeleted = false;
+    }
+
+    public UserEntity(int userId, String firstName, String lastName, Date birthDate, byte[] image,
+                      AccountEntity account) {
+        this.userId = userId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.isDeleted = false;
+        this.image = image;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public AccountEntity getAccount() {
+        return this.account;
+    }
+
+    public void setAccount(AccountEntity account) {
+        this.account = account;
+    }
+
+}
+
+```
+
 AccountController.java:
 ```
 package com.nearbyvendor.palit.controller;
@@ -12,7 +985,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/api")
 public class AccountController {
@@ -202,6 +1174,22 @@ public class ConversationController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    
+    @GetMapping("/getConversationByParticipants/{vendorId}/{customerId}")
+    public ResponseEntity<?> getConversationByParticipants(
+            @PathVariable("vendorId") int vendorId,
+            @PathVariable("customerId") int customerId) {
+        try {
+            ConversationEntity conversation = conversationService.getConversationByParticipants(vendorId, customerId);
+            if (conversation != null) {
+                return new ResponseEntity<>(conversation, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Conversation not found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error fetching conversation: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
@@ -585,1051 +1573,3 @@ public class UserController {
 }
 
 ```
-
-# Palit-A-Nearby-Vendor-Commerce-App
-# App Development Plan
-
-## Developers:<br/>
-Badilla, Mark Kenneth<br/>
-Briones, Joshua<br/>
-Coyoca, Alestair Cyril<br/>
-Selma, Kheisa
-
-## Overview
-Palit is a web app that connects nearby vendors and customers who want to buy or sell goods or services in a convenient and cash-based way. The app uses realtime geolocation to show the users' locations on a map and allows them to chat and transact with each other.
-
-## Features Overview
-#### User Categories
-- **Customers**: Order from vendors.
-- **Vendors**: Sell goods/services and manage their stores.
-- **Admins**: Access the database with CRUD capabilities.
-
-#### Account Registration
-- **Sign Up**: Users provide their email, name, and birthdate, and choose to register as a customer or vendor.
-- **Admin Login**: Separate login at `/adminsignin` for predefined admin accounts; admins are not created through the signup process.
-
-#### Admin Dashboard
-- **Interface**: A sidebar for navigation, with a default dashboard showing statistics and table headers.
-
-#### Map Functionality
-- **User Locations**: Displays user locations within a 200-meter radius, excluding admins. Different icons represent different user types and states.
-
-#### Icons
-- **Vendor Icons**: Vary based on the store's category.
-- **Customer Icons**: Light or dark blue to indicate order status.
-
-#### Reporting System
-- **Function**: Users report issues or provide feedback via a report icon, with admins responding through email.
-
-#### Store Management
-- **Floating Window**: A sidebar for vendors to manage their store details and products/services. New vendors see a placeholder store setup.
-
-#### Customer Store Interaction
-- **Selection and Ordering**: Customers select a vendor to view and order from their store, with the ability to cancel orders.
-
-#### Chat System
-- **Communication**: Customers and vendors negotiate and give feedback. Includes transaction status updates.
-
-#### Customer Queue Management
-- **Vendor View**: A list of customers ordering, with current serving status highlighted and an easy transition to chat for order acceptance.
-
-#### Payment System
-- **Cash on Delivery**: Customers pay upon receipt of goods/services, no in-app payment due to limitations.
-
-#### Additional Pages
-- **About Us**: Information about the development team.
-- **Contact Us**: A form for reaching out to developers.
-- **Services**: A summary of app offerings.
-
-# Diagrams in PlantUML:
-
-- Class diagram:
-```
-@startuml
-class User {
-    - int userId
-    - String firstName
-    - String lastName
-    - Date birthDate
-    - byte[] image
-    - boolean isDeleted
-    - AccountEntity account
-    + int getUserId()
-    + void setUserId(int userId)
-    + String getFirstName()
-    + void setFirstName(String firstName)
-    + String getLastName()
-    + void setLastName(String lastName)
-    + Date getBirthDate()
-    + void setBirthDate(Date birthDate)
-    + byte[] getImage()
-    + void setImage(byte[] image)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getAccount()
-    + void setAccount(AccountEntity account)
-}
-
-class Account {
-    - int accountId
-    - String email
-    - String password
-    - boolean isVendor
-    - boolean isAdmin
-    - boolean isDeleted
-    - UserEntity user
-    - LocationEntity location
-    - StoreEntity store
-    - Set<TransactionEntity> customerTransactions
-    - Set<ChatEntity> chats
-    - Set<ConversationEntity> conversations
-    - Set<TransactionEntity> vendorTransactions
-    - List<ReportEntity> reports
-    + int getAccountId()
-    + void setAccountId(int accountId)
-    + String getEmail()
-    + void setEmail(String email)
-    + String getPassword()
-    + void setPassword(String password)
-    + boolean getIsVendor()
-    + void setIsVendor(boolean isVendor)
-    + boolean getIsAdmin()
-    + void setIsAdmin(boolean isAdmin)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + UserEntity getUser()
-    + void setUser(UserEntity user)
-    + LocationEntity getLocation()
-    + void setLocation(LocationEntity location)
-    + StoreEntity getStore()
-    + void setStore(StoreEntity store)
-    + Set<TransactionEntity> getCustomerTransactions()
-    + void setCustomerTransactions(Set<TransactionEntity> customerTransactions)
-    + Set<ChatEntity> getChats()
-    + void setChats(Set<ChatEntity> chats)
-    + Set<ConversationEntity> getConversations()
-    + void setConversations(Set<ConversationEntity> conversations)
-    + Set<TransactionEntity> getVendorTransactions()
-    + void setVendorTransactions(Set<TransactionEntity> vendorTransactions)
-    + List<ReportEntity> getReports()
-    + void setReports(List<ReportEntity> reports)
-}
-
-User "1" -- "1" Account : has
-
-class Store {
-    - int storeId
-    - String storeName
-    - String description
-    - String category
-    - boolean isDeleted
-    - AccountEntity account
-    - List<ProductServiceEntity> productServices
-    + int getStoreId()
-    + void setStoreId(int storeId)
-    + String getStoreName()
-    + void setStoreName(String storeName)
-    + String getDescription()
-    + void setDescription(String description)
-    + String getCategory()
-    + void setCategory(String category)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getAccount()
-    + void setAccount(AccountEntity account)
-    + List<ProductServiceEntity> getProductServices()
-    + void setProductServices(List<ProductServiceEntity> productServices)
-}
-
-Account "1" -- "1" Store : owns
-
-class ProductService {
-    - int productId
-    - String name
-    - double price
-    - byte[] image
-    - boolean isDeleted
-    - StoreEntity store
-    + int getProductId()
-    + void setProductId(int productId)
-    + String getName()
-    + void setName(String name)
-    + double getPrice()
-    + void setPrice(double price)
-    + byte[] getImage()
-    + void setImage(byte[] image)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + StoreEntity getStore()
-    + void setStore(StoreEntity store)
-}
-
-Store "1" -- "*" ProductService : offers
-
-class Location {
-    - int locationId
-    - double latitude
-    - double longitude
-    - boolean isDeleted
-    - boolean isActive
-    - AccountEntity account
-    + int getLocationId()
-    + void setLocationId(int locationId)
-    + double getLatitude()
-    + void setLatitude(double latitude)
-    + double getLongitude()
-    + void setLongitude(double longitude)
-    + boolean getIsActive()
-    + void setIsActive(boolean isActive)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getAccount()
-    + void setAccount(AccountEntity account)
-}
-
-Account "1" -- "1" Location : has
-
-class Conversation {
-    - int conversationId
-    - boolean isDeleted
-    - AccountEntity vendor
-    - AccountEntity customer
-    - Set<ChatEntity> chats
-    + int getConversationId()
-    + void setConversationId(int conversationId)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getVendor()
-    + void setVendor(AccountEntity vendor)
-    + AccountEntity getCustomer()
-    + void setCustomer(AccountEntity customer)
-    + Set<ChatEntity> getChats()
-    + void setChats(Set<ChatEntity> chats)
-}
-
-Account "*" -- "*" Conversation : participates in
-Account "1" -- "*" Chat : sends
-
-class Chat {
-    - int chatId
-    - String messageContent
-    - Timestamp timestamp
-    - boolean isDeleted
-    - AccountEntity account
-    - ConversationEntity conversation
-    + int getChatId()
-    + void setChatId(int chatId)
-    + String getMessageContent()
-    + void setMessageContent(String messageContent)
-    + Timestamp getTimestamp()
-    + void setTimestamp(Timestamp timestamp)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getAccount()
-    + void setAccount(AccountEntity account)
-    + ConversationEntity getConversation()
-    + void setConversation(ConversationEntity conversation)
-}
-
-Chat "*" -- "1" Conversation : belongs to
-
-class Transaction {
-    - int transactionId
-    - String status
-    - String details
-    - boolean isDeleted
-    - AccountEntity customer
-    - AccountEntity vendor
-    + int getTransactionId()
-    + void setTransactionId(int transactionId)
-    + String getStatus()
-    + void setStatus(String status)
-    + String getDetails()
-    + void setDetails(String details)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getCustomer()
-    + void setCustomer(AccountEntity customer)
-    + AccountEntity getVendor()
-    + void setVendor(AccountEntity vendor)
-}
-
-Account "*" -- "*" Transaction : involves
-
-class Report {
-    - int reportId
-    - String messageContent
-    - Timestamp timestamp
-    - boolean isResolved
-    - boolean isDeleted
-    - AccountEntity account
-    + int getReportId()
-    + void setReportId(int reportId)
-    + String getMessageContent()
-    + void setMessageContent(String messageContent)
-    + Timestamp getTimestamp()
-    + void setTimestamp(Timestamp timestamp)
-    + boolean getIsResolved()
-    + void setIsResolved(boolean isResolved)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getAccount()
-    + void setAccount(AccountEntity account)
-}
-
-Account "1" -- "*" Report : sends
-
-@enduml
-
-```
-
-# Palit-A-Nearby-Vendor-Commerce-App
-# App Development Plan
-
-## Developers:<br/>
-Badilla, Mark Kenneth<br/>
-Briones, Joshua<br/>
-Coyoca, Alestair Cyril<br/>
-Selma, Kheisa
-
-## Overview
-Palit is a web app that connects nearby vendors and customers who want to buy or sell goods or services in a convenient and cash-based way. The app uses realtime geolocation to show the users' locations on a map and allows them to chat and transact with each other.
-
-## Features Overview
-#### User Categories
-- **Customers**: Order from vendors.
-- **Vendors**: Sell goods/services and manage their stores.
-- **Admins**: Access the database with CRUD capabilities.
-
-#### Account Registration
-- **Sign Up**: Users provide their email, name, and birthdate, and choose to register as a customer or vendor.
-- **Admin Login**: Separate login at `/adminsignin` for predefined admin accounts; admins are not created through the signup process.
-
-#### Admin Dashboard
-- **Interface**: A sidebar for navigation, with a default dashboard showing statistics and table headers.
-
-#### Map Functionality
-- **User Locations**: Displays user locations within a 200-meter radius, excluding admins. Different icons represent different user types and states.
-
-#### Icons
-- **Vendor Icons**: Vary based on the store's category.
-- **Customer Icons**: Light or dark blue to indicate order status.
-
-#### Reporting System
-- **Function**: Users report issues or provide feedback via a report icon, with admins responding through email.
-
-#### Store Management
-- **Floating Window**: A sidebar for vendors to manage their store details and products/services. New vendors see a placeholder store setup.
-
-#### Customer Store Interaction
-- **Selection and Ordering**: Customers select a vendor to view and order from their store, with the ability to cancel orders.
-
-#### Chat System
-- **Communication**: Customers and vendors negotiate and give feedback. Includes transaction status updates.
-
-#### Customer Queue Management
-- **Vendor View**: A list of customers ordering, with current serving status highlighted and an easy transition to chat for order acceptance.
-
-#### Payment System
-- **Cash on Delivery**: Customers pay upon receipt of goods/services, no in-app payment due to limitations.
-
-#### Additional Pages
-- **About Us**: Information about the development team.
-- **Contact Us**: A form for reaching out to developers.
-- **Services**: A summary of app offerings.
-
-# Diagrams in PlantUML:
-
-- Class diagram:
-```
-@startuml
-class User {
-    - int userId
-    - String firstName
-    - String lastName
-    - Date birthDate
-    - byte[] image
-    - boolean isDeleted
-    - AccountEntity account
-    + int getUserId()
-    + void setUserId(int userId)
-    + String getFirstName()
-    + void setFirstName(String firstName)
-    + String getLastName()
-    + void setLastName(String lastName)
-    + Date getBirthDate()
-    + void setBirthDate(Date birthDate)
-    + byte[] getImage()
-    + void setImage(byte[] image)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getAccount()
-    + void setAccount(AccountEntity account)
-}
-
-class Account {
-    - int accountId
-    - String email
-    - String password
-    - boolean isVendor
-    - boolean isAdmin
-    - boolean isDeleted
-    - UserEntity user
-    - LocationEntity location
-    - StoreEntity store
-    - Set<TransactionEntity> customerTransactions
-    - Set<ChatEntity> chats
-    - Set<ConversationEntity> conversations
-    - Set<TransactionEntity> vendorTransactions
-    - List<ReportEntity> reports
-    + int getAccountId()
-    + void setAccountId(int accountId)
-    + String getEmail()
-    + void setEmail(String email)
-    + String getPassword()
-    + void setPassword(String password)
-    + boolean getIsVendor()
-    + void setIsVendor(boolean isVendor)
-    + boolean getIsAdmin()
-    + void setIsAdmin(boolean isAdmin)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + UserEntity getUser()
-    + void setUser(UserEntity user)
-    + LocationEntity getLocation()
-    + void setLocation(LocationEntity location)
-    + StoreEntity getStore()
-    + void setStore(StoreEntity store)
-    + Set<TransactionEntity> getCustomerTransactions()
-    + void setCustomerTransactions(Set<TransactionEntity> customerTransactions)
-    + Set<ChatEntity> getChats()
-    + void setChats(Set<ChatEntity> chats)
-    + Set<ConversationEntity> getConversations()
-    + void setConversations(Set<ConversationEntity> conversations)
-    + Set<TransactionEntity> getVendorTransactions()
-    + void setVendorTransactions(Set<TransactionEntity> vendorTransactions)
-    + List<ReportEntity> getReports()
-    + void setReports(List<ReportEntity> reports)
-}
-
-User "1" -- "1" Account : has
-
-class Store {
-    - int storeId
-    - String storeName
-    - String description
-    - String category
-    - boolean isDeleted
-    - AccountEntity account
-    - List<ProductServiceEntity> productServices
-    + int getStoreId()
-    + void setStoreId(int storeId)
-    + String getStoreName()
-    + void setStoreName(String storeName)
-    + String getDescription()
-    + void setDescription(String description)
-    + String getCategory()
-    + void setCategory(String category)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getAccount()
-    + void setAccount(AccountEntity account)
-    + List<ProductServiceEntity> getProductServices()
-    + void setProductServices(List<ProductServiceEntity> productServices)
-}
-
-Account "1" -- "1" Store : owns
-
-class ProductService {
-    - int productId
-    - String name
-    - double price
-    - byte[] image
-    - boolean isDeleted
-    - StoreEntity store
-    + int getProductId()
-    + void setProductId(int productId)
-    + String getName()
-    + void setName(String name)
-    + double getPrice()
-    + void setPrice(double price)
-    + byte[] getImage()
-    + void setImage(byte[] image)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + StoreEntity getStore()
-    + void setStore(StoreEntity store)
-}
-
-Store "1" -- "*" ProductService : offers
-
-class Location {
-    - int locationId
-    - double latitude
-    - double longitude
-    - boolean isDeleted
-    - boolean isActive
-    - AccountEntity account
-    + int getLocationId()
-    + void setLocationId(int locationId)
-    + double getLatitude()
-    + void setLatitude(double latitude)
-    + double getLongitude()
-    + void setLongitude(double longitude)
-    + boolean getIsActive()
-    + void setIsActive(boolean isActive)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getAccount()
-    + void setAccount(AccountEntity account)
-}
-
-Account "1" -- "1" Location : has
-
-class Conversation {
-    - int conversationId
-    - boolean isDeleted
-    - AccountEntity vendor
-    - AccountEntity customer
-    - Set<ChatEntity> chats
-    + int getConversationId()
-    + void setConversationId(int conversationId)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getVendor()
-    + void setVendor(AccountEntity vendor)
-    + AccountEntity getCustomer()
-    + void setCustomer(AccountEntity customer)
-    + Set<ChatEntity> getChats()
-    + void setChats(Set<ChatEntity> chats)
-}
-
-Account "*" -- "*" Conversation : participates in
-Account "1" -- "*" Chat : sends
-
-class Chat {
-    - int chatId
-    - String messageContent
-    - Timestamp timestamp
-    - boolean isDeleted
-    - AccountEntity account
-    - ConversationEntity conversation
-    + int getChatId()
-    + void setChatId(int chatId)
-    + String getMessageContent()
-    + void setMessageContent(String messageContent)
-    + Timestamp getTimestamp()
-    + void setTimestamp(Timestamp timestamp)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getAccount()
-    + void setAccount(AccountEntity account)
-    + ConversationEntity getConversation()
-    + void setConversation(ConversationEntity conversation)
-}
-
-Chat "*" -- "1" Conversation : belongs to
-
-class Transaction {
-    - int transactionId
-    - String status
-    - String details
-    - boolean isDeleted
-    - AccountEntity customer
-    - AccountEntity vendor
-    + int getTransactionId()
-    + void setTransactionId(int transactionId)
-    + String getStatus()
-    + void setStatus(String status)
-    + String getDetails()
-    + void setDetails(String details)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getCustomer()
-    + void setCustomer(AccountEntity customer)
-    + AccountEntity getVendor()
-    + void setVendor(AccountEntity vendor)
-}
-
-Account "*" -- "*" Transaction : involves
-
-class Report {
-    - int reportId
-    - String messageContent
-    - Timestamp timestamp
-    - boolean isResolved
-    - boolean isDeleted
-    - AccountEntity account
-    + int getReportId()
-    + void setReportId(int reportId)
-    + String getMessageContent()
-    + void setMessageContent(String messageContent)
-    + Timestamp getTimestamp()
-    + void setTimestamp(Timestamp timestamp)
-    + boolean getIsResolved()
-    + void setIsResolved(boolean isResolved)
-    + boolean getIsDeleted()
-    + void setIsDeleted(boolean isDeleted)
-    + AccountEntity getAccount()
-    + void setAccount(AccountEntity account)
-}
-
-Account "1" -- "*" Report : sends
-
-@enduml
-
-```
-----------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-----------------------------------------------------
-
-- ERD:
-```
-@startuml
-entity User {
-    userId int [PK]
-    --
-    firstName varchar(255)
-    lastName varchar(255)
-    birthDate date
-    image blob
-    accountId int [FK]
-    isDeleted boolean
-}
-
-entity Account {
-    accountId int [PK]
-    --
-    email varchar(255)
-    password varchar(255)
-    isVendor boolean
-    isAdmin boolean
-    locationId int [FK]
-    storeId int [FK]
-    isDeleted boolean
-}
-
-User ||--|| Account
-
-entity Store {
-    storeId int [PK]
-    --
-    storeName varchar(255)
-    description text
-    category varchar(255)
-    isDeleted boolean
-}
-
-Account ||--|| Store
-
-entity ProductService {
-    productId int [PK]
-    --
-    name varchar(255)
-    price decimal(10,2)
-    storeId int [FK]
-    image blob
-    isDeleted boolean
-}
-
-Store ||--|{ ProductService
-
-entity Location {
-    locationId int [PK]
-    --
-    latitude double
-    longitude double
-    isDeleted boolean
-    isActive boolean
-}
-
-Account ||--|| Location
-
-entity Conversation {
-    conversationId int [PK]
-    --
-    customerAccountId int [FK]
-    vendorAccountId int [FK]
-    isDeleted boolean
-}
-
-Account }|..|{ Conversation
-
-entity Chat {
-    chatId int [PK]
-    --
-    senderId int [FK]
-    messageContent text
-    timestamp timestamp
-    conversationId int [FK]
-    isDeleted boolean
-}
-
-Account ||--|{ Chat
-Chat }|..|| Conversation
-
-entity Transaction {
-    int transactionId [PK]
-    --
-    accountCustomerId int [FK]
-    accountVendorId int [FK]
-    status varchar(255)
-    details varchar(255)
-    timestamp timestamp
-    isDeleted boolean
-}
-
-Account }|..|{ Transaction
-
-entity Report {
-    reportId int [PK]
-    --
-    senderId int [FK]
-    messageContent text
-    timestamp timestamp
-    isResolved boolean
-    isDeleted boolean
-}
-
-Account ||--|{ Report
-
-@enduml
-```
------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
------------------------------------------------------
-Here is the generic system wide use case diagram:
-
-```
-@startuml
-left to right direction
-skinparam packageStyle rectangle
-actor Customer
-actor Vendor
-actor Admin
-rectangle Palit {
-  Customer -- (Sign up)
-  Customer -- (Log in)
-  Customer -- (View map)
-  Customer -- (View store)
-  Customer -- (Place order)
-  Customer -- (Cancel order)
-  Customer -- (Chat with vendor)
-  Customer -- (Report issue)
-  Vendor -- (Sign up)
-  Vendor -- (Log in)
-  Vendor -- (View map)
-  Vendor -- (View store)
-  Vendor -- (Edit store)
-  Vendor -- (Accept order)
-  Vendor -- (Complete order)
-  Vendor -- (Chat with customer)
-  Vendor -- (Report issue)
-  Admin -- (Log in)
-  Admin -- (View dashboard)
-  Admin -- (Manage database)
-}
-@enduml
-```
-
-Here are the specific use case diagrams for each use case in the generic system wide use case diagram:
-
-- Sign up:
-
-```
-@startuml
-left to right direction
-actor Customer
-actor Vendor
-rectangle Palit {
-  Customer -- (Sign up)
-  Vendor -- (Sign up)
-  (Sign up) ..> (Enter email) : include
-  (Sign up) ..> (Enter name) : include
-  (Sign up) ..> (Enter birth date) : include
-  (Sign up) ..> (Choose role) : include
-  (Sign up) ..> (Create password) : include
-  (Sign up) ..> (Confirm password) : include
-  (Sign up) ..> (Submit) : include
-}
-@enduml
-```
-
-- Log in:
-
-```
-@startuml
-left to right direction
-actor Customer
-actor Vendor
-actor Admin
-rectangle Palit {
-  Customer -- (Log in)
-  Vendor -- (Log in)
-  Admin -- (Log in)
-  (Log in) ..> (Enter email) : include
-  (Log in) ..> (Enter password) : include
-  (Log in) ..> (Submit) : include
-}
-@enduml
-```
-
-- View map:
-
-```
-@startuml
-left to right direction
-actor Customer
-actor Vendor
-rectangle Palit {
-  Customer -- (View map)
-  Vendor -- (View map)
-  (View map) ..> (See own location) : extend
-  (View map) ..> (See nearby users) : extend
-  (View map) ..> (Tap on user icon) : extend
-  (View map) ..> (Report issue) : extend
-}
-@enduml
-```
-
-- View store:
-
-```
-@startuml
-left to right direction
-actor Customer
-actor Vendor
-rectangle Palit {
-  Customer -- (View store)
-  Vendor -- (View store)
-  (View store) ..> (See store details) : include
-  (View store) ..> (See products/services) : include
-  Customer ..> (View store) : extends
-  Vendor ..> (Edit store) : extends
-}
-@enduml
-```
-
-- Place order:
-
-```
-@startuml
-left to right direction
-actor Customer
-rectangle Palit {
-  Customer -- (Place order)
-  (Place order) ..> (Select quantity) : include
-  (Place order) ..> (See total price) : include
-  (Place order) ..> (Tap order button) : include
-  (Place order) ..> (Send transaction in chat) : include
-}
-@enduml
-```
-
-- Cancel order:
-
-```
-@startuml
-left to right direction
-actor Customer
-rectangle Palit {
-  Customer -- (Cancel order)
-  (Cancel order) ..> (Tap cancel order button) : include
-  (Cancel order) ..> (Change transaction status in chat) : include
-}
-@enduml
-```
-
-- Chat:
-
-```
-@startuml
-left to right direction
-actor Customer
-actor Vendor
-rectangle Palit {
-  Customer -- (Chat with vendor)
-  Vendor -- (Chat with customer)
-  (Chat with vendor) ..> (Send message) : include
-  (Chat with vendor) ..> (Receive message) : include
-  (Chat with vendor) ..> (See transaction status) : include
-  (Chat with customer) ..> (Send message) : include
-  (Chat with customer) ..> (Receive message) : include
-  (Chat with customer) ..> (See transaction status) : include
-  (Chat with customer) ..> (Accept order) : extend
-  (Chat with customer) ..> (Complete order) : include
-}
-@enduml
-```
-
-- Report issue:
-
-```
-@startuml
-left to right direction
-actor Customer
-actor Vendor
-rectangle Palit {
-  Customer -- (Report issue)
-  Vendor -- (Report issue)
-  (Report issue) ..> (Tap report icon) : include
-  (Report issue) ..> (Enter message) : include
-  (Report issue) ..> (Submit report) : include
-  (Report issue) ..> (Send report to admin) : include
-}
-@enduml
-```
-
-- Edit store:
-
-```
-@startuml
-left to right direction
-actor Vendor
-rectangle Palit {
-  Vendor -- (Edit store)
-  (Edit store) ..> (Tap edit button) : include
-  (Edit store) ..> (Enter store name) : include
-  (Edit store) ..> (Enter store description) : include
-  (Edit store) ..> (Choose store category) : include
-  (Edit store) ..> (Manage product/service) : include
-  (Manage product/service) ..> (Enter product/service name) : include
-  (Manage product/service) ..> (Enter product/service price) : include
-  (Manage product/service) ..> (Upload product/service image) : include
-  (Edit store) ..> (Save changes) : include
-}
-@enduml
-```
-
-- Accept order:
-
-```
-@startuml
-left to right direction
-actor Vendor
-rectangle Palit {
-  Vendor -- (Accept order)
-  (Accept order) ..> (Tap accept button) : include
-  (Accept order) ..> (Change transaction status in chat) : include
-  (Accept order) ..> (Update customer queue) : include
-}
-@enduml
-```
-
-- Complete order:
-
-```
-@startuml
-left to right direction
-actor Vendor
-rectangle Palit {
-  Vendor -- (Complete order)
-  (Complete order) ..> (Tap complete button) : include
-  (Complete order) ..> (Change transaction status in chat) : include
-  (Complete order) ..> (Update customer queue) : include
-}
-@enduml
-```
-
-- Log in (admin):
-
-```
-@startuml
-left to right direction
-actor Admin
-rectangle Palit {
-  Admin -- (Log in)
-  (Log in) ..> (Enter email) : include
-  (Log in) ..> (Enter password) : include
-  (Log in) ..> (Submit) : include
-}
-@enduml
-```
-
-- CRUD via dashboard (admin):
-
-```
-@startuml
-left to right direction
-actor Admin
-rectangle Palit {
-  Admin -- (View dashboard)
-  (View dashboard) ..> (See reports) : include
-  (View dashboard) ..> (See users) : include
-  (View dashboard) ..> (See accounts) : include
-  (View dashboard) ..> (See conversations) : include
-  (View dashboard) ..> (See chats) : include
-  (View dashboard) ..> (See stores) : include
-  (View dashboard) ..> (See products/services) : include
-  (View dashboard) ..> (See transactions) : include
-  (See reports) ..> (Create report) : extend
-  (See reports) ..> (Update report) : extend
-  (See reports) ..> (Delete report) : extend
-  (See users) ..> (Create user) : extend
-  (See users) ..> (Update user) : extend
-  (See users) ..> (Delete user) : extend
-  (See accounts) ..> (Create account) : extend
-  (See accounts) ..> (Update account) : extend
-  (See accounts) ..> (Delete account) : extend
-  (See conversations) ..> (Create conversation) : extend
-  (See conversations) ..> (Update conversation) : extend
-  (See conversations) ..> (Delete conversation) : extend
-  (See chats) ..> (Create chat) : extend
-  (See chats) ..> (Update chat) : extend
-  (See chats) ..> (Delete chat) : extend
-  (See stores) ..> (Create store) : extend
-  (See stores) ..> (Update store) : extend
-  (See stores) ..> (Delete store) : extend
-  (See products/services) ..> (Create product/service) : extend
-  (See products/services) ..> (Update product/service) : extend
-  (See products/services) ..> (Delete product/service) : extend
-  (See transactions) ..> (Create transaction) : extend
-  (See transactions) ..> (Update transaction) : extend
-  (See transactions) ..> (Delete transaction) : extend
-}
-@enduml
-```
-
-----------------------------------------------------
-----------------------------------------------------
-
-write the business rules based on the ff springboot backend and the app dev plan. divide the number evenly among theses members: Mark Kenneth Badilla, Alestair Cyril Coyoca, Kheisa Selma, Joshua Briones. Business rules are the policies, constraints, or conditions that define the operations, goals, and structure of the app. Keep it simple without regard for complex backend things. keep every rule atomic.
-
-For example:
-
-Customers can
-Vendors should
-Admins can
-
-use the ff format:
-Title
-Member 1:
-  //list the business rules to implemented by this member
-Member 2:
-  //list the business rules to implemented by this member
-Member 3:
-  //list the business rules to implemented by this member

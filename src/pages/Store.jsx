@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import redRating from "../assets/images/redRating.png";
 
-const Store = () => {
+const Store = ({vendor}) => {
     const { user, setUser } = useContext(UserContext);
     const [anchorEl, setAnchorEl] = useState(null);
     const [editMode, setEditMode] = useState(false);
@@ -56,8 +56,9 @@ const Store = () => {
 
         const fetchProducts = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/api/getProductServicesByStoreId/store/${user.account.store.storeId}`);
+                const response = await axios.get(`http://localhost:8080/api/getProductServicesByStoreId/store/${vendor.account.store.storeId}`);
                 setProducts(response.data);
+                console.log("dwfsadgfgProducts:", response.data);
                 // Store the product data in local storage
                 localStorage.setItem('products', JSON.stringify(response.data));
             } catch (error) {
@@ -278,317 +279,78 @@ const Store = () => {
     //         </div>
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-            {/* User details */}
-            <div style={{ display: "flex" }}>
-                <img
-                    src={`data:image/png;base64, ${user.image}`}
-                    alt="User"
-                    className="w-14 h-15 rounded-full border-2 border-black"
-                    style={{ width: "70px", height: "70px" }}
-                    onClick={handleMenu}
-                />
-                <div className="ml-3" style={{ flexDirection: "column" }}>
-                    {/* Store Name */}
-                    {editMode ? (
-                        <TextField
-                            name="storeName"
-                            variant="outlined"
-                            InputProps={{
-                                style: {
-                                    fontSize: 15,
-                                    height: 25,
-                                    width: "267px",
-                                    paddingRight: '10px',
-                                    color: "black",
-                                    fontWeight: "bold",
-                                },
-                            }}
-                            value={editedStore.storeName}
-                            onChange={handleStoreInputChange}
-                        />
-                    ) : (
-                        <h2 className="text-xl font-semibold">
-                            {editedStore.storeName ? editedStore.storeName : "Loading..."}
-                        </h2>
-                    )}
-                    {/* Category */}
-                    {editMode ? (
-                        <TextField
-                            name="category"
-                            variant="outlined"
-                            InputProps={{
-                                style: {
-                                    fontSize: 15,
-                                    height: 20,
-                                    marginTop: "5px",
-                                    width: "267px",
-                                    paddingRight: '10px',
-                                    color: "black",
-                                },
-                            }}
-                            value={editedStore.category}
-                            onChange={handleStoreInputChange}
-                        />
-                    ) : (
-                        <p className="text-sm">
-                            {editedStore.category ? editedStore.category : "Loading..."}
-                        </p>
-                    )}
-                    <div className="flex">
-                        <img src={redRating} alt="Rating" className="w-5 h-5" />
-                        <p className="font-medium">4.8</p>
-                    </div>
-                </div>
+          {/* User details */}
+          <div style={{ display: "flex" }}>
+            <img
+              src={`data:image/png;base64, ${vendor?.image || ''}`}
+              alt="User"
+              className="w-14 h-15 rounded-full border-2 border-black"
+              style={{ width: "70px", height: "70px" }}
+              onClick={handleMenu}
+            />
+            <div className="ml-3" style={{ flexDirection: "column" }}>
+              {/* Store Name */}
+              <h2 className="text-xl font-semibold">
+                {vendor?.firstName || "Loading..."}
+              </h2>
+              {/* Category */}
+              {vendor?.category}
+              <div className="flex">
+                <img src={redRating} alt="Rating" className="w-5 h-5" />
+                <p className="font-medium">4.8</p>
+              </div>
             </div>
-
-            {/* Store description */}
-            <div className="p-2" style={{ height: "90px" }}>
-                {editMode ? (
-                    <TextField
-                        name="description"
-                        variant="outlined"
-                        multiline
-                        rows={4}
-                        InputProps={{
-                            style: {
-                                fontSize: 15,
-                                height: 85,
-                                width: "340px",
-                                color: "black",
-                                paddingBottom: "10px",
-                                textAlign: "justify"
-                            },
-                        }}
-                        value={editedStore.description}
-                        onChange={handleStoreInputChange}
-                    />
-                ) : (
-                    <p className="text-sm" style={{ textAlign: "justify" }}>
-                        {editedStore.description ? editedStore.description : "Loading..."}
-                    </p>
-                )}
-            </div>
-
-            {/* Products section */}
-            <h1
-                className="p-2 text-lg font-medium"
-                style={{ fontSize: "25px", color: "#0071B3" }}
+          </div>
+      
+          {/* Store description */}
+          <div className="p-2" style={{ height: "90px" }}>
+            <p className="text-sm" style={{ textAlign: "justify" }}>
+              {vendor?.account?.store?.description || "Loading..."}
+            </p>
+          </div>
+      
+          {/* Products section */}
+          <h1
+            className="p-2 text-lg font-medium"
+            style={{ fontSize: "25px", color: "#0071B3" }}
+          >
+            Products
+          </h1>
+      
+          {/* Display products */}
+          <div style={{ maxHeight: "450px", display: "flex", flexWrap: "wrap", justifyContent: "space-between", overflow: "auto", position: "relative" }}>
+            {products.map((product, index) => (
+              <div key={product.productId} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
+                <>
+                  <img
+                    src={`data:image/png;base64,${product.image}`}
+                    alt={`Product ${index + 1}`}
+                    style={{ width: "100%", height: "150px", border: "1px solid black", borderRadius: "15px" }}
+                  />
+                  <p style={{ position: "absolute", top: "1px", left: "49%", width: "100%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}>
+                    {product.name}
+                  </p>
+                  <p style={{ position: "absolute", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
+                    ₱ {product.price}
+                  </p>
+                </>
+              </div>
+            ))}
+          </div>
+      
+          {/* Save/Edit button */}
+          <div className="flex mt-4 absolute bottom-8 w-full">
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ borderRadius: "15px", width: "90%" }}
+              onClick={handleSave}
             >
-                Products
-            </h1>
-
-            {/* Edit mode */}
-            {editMode ? (
-                <div
-                    className="productscomponent"
-                    style={{
-                        marginBottom: "20px", width: "95%", position: "relative"
-
-                    }}
-                >
-                    <div className="flex">
-                        <label className="flex-1  justify-center items-center bg-primary rounded-[20px] cursor-pointer mx-auto flex">
-                            <input
-                                name="image"
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageChange}
-                                className="hidden"
-                            />
-                            {imagePreview ? (
-                                <img
-                                    src={imagePreview}
-                                    alt="Preview"
-                                    className="w-full h-[136px] rounded-[20px] inline-block border-[3px] border-green-400 "
-                                />
-                            ) : (
-                                <span className="text-lg font-semibold` text-white inline-block">
-                                    Choose image
-                                </span>
-                            )}
-                        </label>
-                        <div className="flex-1">
-                            <TextField
-                                label="Product Name"
-                                name="name"
-                                variant="outlined"
-                                placeholder="Enter product name"
-                                value={editedProduct.name}
-                                onChange={handleInputChange}
-                                margin="normal"
-                                size="small"
-                                style={{
-                                    width: "40%",
-                                    fontSize: "12px",
-                                    position: "absolute",
-                                    marginTop: "5px",
-                                    marginLeft: "10px",
-                                }}
-                            />
-                            <TextField
-                                label="Product Price"
-                                name="price"
-                                variant="outlined"
-                                placeholder="Enter product price"
-                                value={editedProduct.price}
-                                onChange={handleInputChange}
-                                margin="normal"
-                                size="small"
-                                style={{
-                                    width: "40%",
-                                    fontSize: "12px",
-                                    marginTop: "50px",
-                                    position: "absolute",
-                                    marginLeft: "10px",
-                                }}
-                            />
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                style={{
-                                    borderRadius: "15px",
-                                    width: "80%",
-                                    marginTop: "100px",
-                                    marginLeft: "10px",
-                                }}
-                                onClick={handleAdd}
-                            >
-                                Add
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                <div>{ }</div>
-            )}
-
-            {/* Display products */}
-            <div style={{ maxHeight: editMode ? "300px" : "450px", display: "flex", flexWrap: "wrap", justifyContent: "space-between", overflow: "auto", position: "relative" }}>
-                {products.map((product, index) => (
-                    <div key={product.productId} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
-                        {editMode ? (
-                            <>
-                                <label
-                                    style={{
-                                        width: "100%",
-                                        height: "150px",
-                                        border: "1px solid black",
-                                        borderRadius: "15px",
-                                        backgroundImage: `url(${product.imagePreview || `data:image/png;base64,${product.image}`})`,
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center',
-                                        display: 'inline-block'
-                                    }}
-                                >
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => handleProductImageChange(e, index)}
-                                        style={{ display: 'none' }}
-                                    />
-                                </label>
-                                <TextField
-                                    name="name"
-                                    variant="outlined"
-                                    value={product.name}
-                                    onChange={(e) => handleProductInputChange(e, index)}
-                                    margin="normal"
-                                    size="small"
-                                    InputProps={{
-                                        style: {
-                                            fontSize: 20,
-                                            height: 25,
-                                            paddingRight: '10px',
-                                            borderRadius: "15px",
-                                            color: "white",
-                                            fontWeight: "bold",
-                                        },
-                                    }}
-                                    style={{
-                                        position: "absolute",
-                                        top: "-15px",
-                                        left: "49%",
-                                        width: "100%",
-                                        transform: "translateX(-50%)",
-                                        color: "white",
-                                        fontWeight: "bold",
-                                        backgroundColor: "rgba(136, 170, 204, 0.7)",
-                                        borderRadius: "15px",
-                                    }}
-                                />
-                                <TextField
-                                    name="price"
-                                    variant="outlined"
-                                    value={product.price}
-                                    onChange={(e) => handleProductInputChange(e, index)}
-                                    margin="normal"
-                                    size="small"
-                                    InputProps={{
-                                        style: {
-                                            fontSize: 15,
-                                            height: 20,
-                                            paddingRight: '5x',
-                                            borderRadius: "15px",
-                                            fontWeight: "bold",
-                                        },
-                                    }}
-                                    style={{
-                                        position: "absolute",
-                                        bottom: "0px",
-                                        left: "0%",
-                                        width: "50%",
-                                        textAlign: "left",
-                                        color: "black",
-                                        fontSize: "14px",
-                                        fontWeight: "bold",
-                                        backgroundColor: "#c0d8f0",
-                                        borderRadius: "10px"
-                                    }}
-                                />
-                            </>
-                        ) : (
-                            <>
-                                <img
-                                    src={`data:image/png;base64,${product.image}`}
-                                    alt={`Product ${index + 1}`}
-                                    style={{ width: "100%", height: "150px", border: "1px solid black", borderRadius: "15px" }}
-                                />
-                                <p style={{ position: "absolute", top: "1px", left: "49%", width: "100%", transform: "translateX(-50%)", paddingLeft: "10px", paddingRight: "5px", color: "white", fontSize: "16px", fontWeight: "bold", backgroundColor: "rgba(136, 170, 204, 0.7)", borderRadius: "15px" }}>
-                                    {product.name}
-                                </p>
-                                <p style={{ position: "absolute", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
-                                    ₱ {product.price}
-                                </p>
-                            </>
-                        )}
-                    </div>
-                ))}
-            </div>
-
-            {/* Save/Edit button */}
-            <div className="flex mt-4 absolute bottom-8 w-full">
-                {editMode ? (
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        style={{ borderRadius: "15px", width: "90%" }}
-                        onClick={handleSave}
-                    >
-                        Save
-                    </Button>
-                ) : (
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        style={{ borderRadius: "15px", width: "90%" }}
-                        onClick={handleEdit}
-                    >
-                        Edit Store and Products
-                    </Button>
-                )}
-            </div>
+              Save
+            </Button>
+          </div>
         </div>
-    );
+      );
 };
 
 export default Store;

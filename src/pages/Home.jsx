@@ -256,7 +256,7 @@ function Home() {
     }
 
     // Toggle the value of showSlider
-    setShowSlider((prevShowSlider) => !prevShowSlider);
+    setShowSlider(true);
   };
 
   // Return the JSX element for rendering the component

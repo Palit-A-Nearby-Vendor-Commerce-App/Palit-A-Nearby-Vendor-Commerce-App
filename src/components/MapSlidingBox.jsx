@@ -38,7 +38,6 @@ const MapSlidingBox = ({
 
   const handleQueueButton = () => {
     setSelectedButton("queue");
-    handleSliderToggle();
   };
 
   return (

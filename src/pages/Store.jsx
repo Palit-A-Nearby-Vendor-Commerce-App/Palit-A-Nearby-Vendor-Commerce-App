@@ -27,30 +27,36 @@ const Store = ({ vendor }) => {
   const [orderStatus, setOrderStatus] = useState(false);
   const [activeTransaction, setActiveTransaction] = useState(null);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      //refresh transaction
-      axios
-        .get("http://localhost:8080/api/getAllTransactions")
-        .then((response) => {
-          const activeTransactions = response.data.filter((transaction) => {
-            return (
-              transaction.customer.accountId === user.account.accountId &&
-              (transaction.status === "In Queue" ||
-                transaction.status === "Now Serving")
-            );
-          });
-          if (activeTransactions.length === 0) {
-            setOrderStatus(false);
-            return;
-          }
-          setActiveTransaction(activeTransactions[0]);
-          setOrderStatus(true);
-          console.log("Active transaction:", activeTransactions[0]);
-        })
-        .catch((error) => {
-          console.error("Error fetching transaction data:", error);
+  const refreshActiveTransaction = () => {
+    //refresh transaction
+    axios
+      .get("http://localhost:8080/api/getAllTransactions")
+      .then((response) => {
+        const activeTransactions = response.data.filter((transaction) => {
+          return (
+            transaction.customer.accountId === user.account.accountId &&
+            (transaction.status === "In Queue" ||
+              transaction.status === "Now Serving")
+          );
         });
+        if (activeTransactions.length === 0) {
+          setOrderStatus(false);
+          return;
+        }
+        setActiveTransaction(activeTransactions[0]);
+        setOrderStatus(true);
+        console.log("Active transaction:", activeTransactions[0]);
+      })
+      .catch((error) => {
+        console.error("Error fetching transaction data:", error);
+      });
+  };
+
+  useEffect(() => {
+    
+    refreshActiveTransaction();
+    const interval = setInterval(() => {
+      refreshActiveTransaction();
     }, 3000); // 3000 milliseconds = 3 seconds
 
     // Clear interval on component unmount
@@ -66,7 +72,8 @@ const Store = ({ vendor }) => {
         status: "In Queue",
       })
       .then((response) => {
-        setActiveTransaction(response.data);
+        refreshActiveTransaction();
+        setOrderStatus(true);
         console.log("Transaction created successfully", response);
       })
       .catch((error) => console.error("Error creating transaction", error));
@@ -300,27 +307,31 @@ const Store = ({ vendor }) => {
 
   const OrderDetails = (activeTransaction) => {
     const handleCancelOrder = () => {
-      axios.put(`http://localhost:8080/api/updateTransactionById/${activeTransaction.activeTransaction.transactionId}`, {status: "Cancelled"})    
-      .then(response => {
-        console.log("Transaction cancelled:", response.data);
-        setOrderStatus(false);
-      })
-    }
+      axios
+        .put(
+          `http://localhost:8080/api/updateTransactionById/${activeTransaction.activeTransaction.transactionId}`,
+          { status: "Cancelled" }
+        )
+        .then((response) => {
+          console.log("Transaction cancelled:", response.data);
+          setOrderStatus(false);
+        });
+    };
 
     return (
       <>
-      <div>
-        <h2>Active Order</h2>
-        {activeTransaction.activeTransaction.details
-          .split(";")
-          .map((line, index) => (
-            <span key={index}>
-              {line}
-              <br />
-            </span>
-          ))}
-      </div>
-      <button onClick={handleCancelOrder}>Cancel Order</button>
+        <div>
+          <h2>Active Order</h2>
+          {activeTransaction.activeTransaction.details
+            .split(";")
+            .map((line, index) => (
+              <span key={index}>
+                {line}
+                <br />
+              </span>
+            ))}
+        </div>
+        <button onClick={handleCancelOrder}>Cancel Order</button>
       </>
     );
   };

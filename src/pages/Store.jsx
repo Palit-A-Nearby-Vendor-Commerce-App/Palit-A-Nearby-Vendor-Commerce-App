@@ -168,7 +168,7 @@ const Store = ({ vendor }) => {
       }
     }
     let orderedListString = orderedList.join("; ");
-    orderedListString += `;; Total: Php${calculateTotalPrice()}`;
+    orderedListString += `; Total: Php${calculateTotalPrice()}`;
     setDetails(orderedListString);
     handleOrder(orderedListString, vendor, user);
   };

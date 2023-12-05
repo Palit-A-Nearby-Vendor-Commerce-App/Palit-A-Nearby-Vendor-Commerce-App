@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface ChatRepository extends JpaRepository<ChatEntity, Integer> {
 
+    List<ChatEntity> findAllByIsDeletedFalse();
+
     List<ChatEntity> findByConversation_ConversationId(int conversationId);
 
     List<ChatEntity> findByConversation_ConversationIdAndIsDeletedFalse(int conversationId);

@@ -26,7 +26,7 @@ const StoreData = ()=> {
                 </thead>
                 <tbody>
                     {storeData.map(store => (
-                    <tr key={store.id}>
+                    <tr key={store.id + store.storeName}>
                         <td className="py-2">{store.storeName}</td>
                         <td className="py-2">{store.description}</td>
                         <td className="py-2">{store.category}</td>

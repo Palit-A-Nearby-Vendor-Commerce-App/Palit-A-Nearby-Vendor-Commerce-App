@@ -26,9 +26,9 @@ const TransactionData = () => {
                     </thead>
                     <tbody>
                         {transactionData.map(transaction => (
-                            <tr key={`${transaction.accountCustomerId}-${transaction.accountVendorId}`}>
-                                <td className="py-2">{transaction.accountCustomerId}</td>
-                                <td className="py-2">{transaction.accountVendorId}</td>
+                            <tr key={transaction.customer.accountId + transaction.vendor.accountId + transaction.transactionId}>
+                                <td className="py-2">{transaction.customer.accountId}</td>
+                                <td className="py-2">{transaction.vendor.accountId}</td>
                                 <td className="py-2">{transaction.status}</td>
                                 <td className="py-2">{transaction.rating}</td>
                             </tr>

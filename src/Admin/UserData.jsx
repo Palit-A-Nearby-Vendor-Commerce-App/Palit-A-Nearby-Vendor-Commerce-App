@@ -25,7 +25,7 @@ const UserData = () => {
                     </thead>
                     <tbody>
                         {userData.map(user => (
-                            <tr key={user.id}>
+                            <tr key={user.id + user.firstName}>
                                 <td className="py-2">{user.firstName} {user.lastName}</td>
                                 <td className="py-2">{user.birthDate}</td>
                                 <td className="py-2">{user.image && <img src={user.image} alt={`Profile for ${user.fullname}`} />}</td>

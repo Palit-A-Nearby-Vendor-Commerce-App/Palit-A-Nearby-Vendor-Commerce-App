@@ -20,7 +20,8 @@ const Chat = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const location = useLocation();
   const selectedVendor = location.state?.selectedVendor;
-  const selectedCustomer = location.state?.selectedCustomer;
+  // const selectedCustomer = location.state?.selectedCustomer;
+  const selectedCustomer = location.state?.u;
   const { user } = useContext(UserContext);
   const [chats, setChats] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -115,19 +116,23 @@ const Chat = () => {
     checkAndCreateConversation();
   }, [conversations]);
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/getChatsByConversationId/${selectedConversation.conversationId}`
-        );
-        setChats(response.data);
-      } catch (error) {
-        console.error("Error fetching chats:", error);
-      }
-    };
+  const fetchChats = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/getChatsByConversationId/${selectedConversation.conversationId}`
+      );
+      setChats(response.data);
+    } catch (error) {
+      console.error("Error fetching chats:", error);
+    }
+  };
 
+  useEffect(() => {
     fetchChats();
+
+    const intervalId = setInterval(fetchChats, 3000); // Fetch data every 3 seconds
+
+    return () => clearInterval(intervalId);
   }, [selectedConversation]);
 
   console.log("Chats,", chats);
@@ -201,8 +206,8 @@ const Chat = () => {
                 variant="dot"
               >
                 <Avatar
-                  alt={selectedVendor.email}
-                  src={`data:image/jpeg;base64,${selectedVendor.image}`}
+                  // alt={selectedVendor.email}
+                  src={`data:image/jpeg;base64,${selectedVendor?.image}`}
                   style={{ height: "60px", width: "60px" }}
                 />
               </StyledBadge>
@@ -225,7 +230,7 @@ const Chat = () => {
                 variant="dot"
               >
                 <Avatar
-                  alt={selectedCustomer.email}
+                  // alt={selectedCustomer.email}
                   src={`data:image/jpeg;base64,${selectedCustomer.image}`}
                   style={{ height: "60px", width: "60px" }}
                 />
@@ -272,7 +277,7 @@ const Chat = () => {
               chat?.conversation?.vendor?.accountId ? (
                 <span className="flex items-center gap-2">
                   <Avatar
-                    alt={chat?.conversation?.vendor?.email}
+                    // alt={chat?.conversation?.vendor?.email}
                     src={`data:image/jpeg;base64,${selectedVendor.image}`}
                     style={{
                       height: "42px",
@@ -307,7 +312,7 @@ const Chat = () => {
               chat?.conversation?.customer?.accountId ? (
                 <span className="flex items-center gap-2">
                   <Avatar
-                    alt={chat?.conversation?.customer?.email}
+                    // alt={chat?.conversation?.customer?.email}
                     src={`data:image/jpeg;base64,${selectedCustomer.image}`}
                     style={{
                       height: "42px",

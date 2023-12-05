@@ -27,6 +27,7 @@ const Store = ({ vendor }) => {
   const [quantity, setQuantity] = useState([]);
   const [orderStatus, setOrderStatus] = useState(false);
   const [activeTransaction, setActiveTransaction] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const totalItems = () => quantity.reduce((a, b) => a + b, 0);
 
@@ -82,37 +83,21 @@ const Store = ({ vendor }) => {
   };
 
   useEffect(() => {
-    const userApiEndpoint = `http://localhost:8080/api/getUserById/${vendor.userId}`;
-    const accountApiEndpoint = "http://localhost:8080/api/getAccountById/";
-    const storeApiEndpoint = "http://localhost:8080/api/getStoreById/";
-
-    console.log("YOU ARE IN STORE USER:", user);
-
-    axios
-      .get(userApiEndpoint)
-      .then((response) => {
-        if (response.data && response.data.account.accountId) {
-          return axios.get(
-            accountApiEndpoint + response.data.account.accountId
-          );
-        } else {
-          throw new Error("Account ID not found in user data");
-        }
-      })
-      .then((response) => {
-        if (response.data && response.data.store) {
-          return axios.get(storeApiEndpoint + response.data.store.storeId);
-        } else {
-          throw new Error("Store ID not found in account data");
-        }
-      })
-      .then((response) => {
-        if (response.data) {
+    const fetchStore = async () => {
+      try {
+          const response = await axios.get(`http://localhost:8080/api/getStoreById/${vendor.account.store.storeId}`);
           setStore(response.data);
-          console.log("Store data:", response.data);
-        }
-      })
-      .catch((error) => console.error("Error fetching data: ", error));
+          setEditedStore({
+              storeName: response.data.storeName,
+              category: response.data.category,
+              description: response.data.description,
+          });
+          setLoading(false);
+      } catch (error) {
+          console.error('Error fetching store:', error);
+      }
+  };
+
 
     const fetchProducts = async () => {
       try {
@@ -133,6 +118,7 @@ const Store = ({ vendor }) => {
       }
     };
 
+    fetchStore();
     fetchProducts();
   }, []);
 
@@ -143,135 +129,16 @@ const Store = ({ vendor }) => {
   const handleEdit = () => setEditMode(true);
 
   useEffect(() => {
-    if (user.account.store) {
+    if (vendor && vendor.account && vendor.account.store) {
       setEditedStore({
-        storeName: user.account.store.storeName,
-        category: user.account.store.category,
-        description: user.account.store.description,
+        storeName: vendor.account.store.storeName,
+        category: vendor.account.store.category,
+        description: vendor.account.store.description,
       });
     }
-  }, [user.account.store]);
+  }, [vendor, vendor?.account]);
 
-  const handleStoreInputChange = (event) => {
-    const { name, value } = event.target;
-    setEditedStore({
-      ...editedStore,
-      [name]: value,
-    });
-  };
 
-  const handleSave = () => {
-    console.log("Save clicked", products);
-
-    products.forEach((product) => {
-      axios
-        .put(
-          `http://localhost:8080/api/updateProductServiceById/${product.productId}`,
-          product
-        )
-        .then((response) => console.log("Product updated:", response.data))
-        .catch((error) => console.error("Error updating product:", error));
-    });
-
-    axios
-      .put(
-        `http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`,
-        editedStore
-      )
-      .then((response) => {
-        console.log("Store updated:", response.data);
-        setStore(response.data);
-        setUser((prevUser) => ({
-          ...prevUser,
-          account: {
-            ...prevUser.account,
-            store: response.data,
-          },
-        }));
-      })
-      .catch((error) => console.error("Error updating store:", error));
-
-    setEditMode(false);
-    setEditedProduct({
-      picture: "",
-      name: "",
-      price: "",
-    });
-  };
-
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setEditedProduct({
-      ...editedProduct,
-      [name]: value,
-    });
-  };
-
-  const handleImageChange = (e) => {
-    setEditedProduct({
-      ...editedProduct,
-      picture: e.target.files[0],
-    });
-    setImagePreview(
-      e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null
-    );
-  };
-
-  const handleProductImageChange = (e, index) => {
-    const newProducts = [...products];
-    newProducts[index].image = e.target.files[0];
-    newProducts[index].imagePreview = e.target.files[0]
-      ? URL.createObjectURL(e.target.files[0])
-      : null;
-    setProducts(newProducts);
-  };
-
-  const handleProductInputChange = (e, index) => {
-    const { name, value } = e.target;
-    const newProducts = [...products];
-    newProducts[index][name] = value;
-    setProducts(newProducts);
-  };
-
-  const handleAdd = async () => {
-    if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
-      alert("Please fill in all product details.");
-      return;
-    }
-
-    function convertToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result.split(",")[1]);
-        reader.onerror = (error) => reject(error);
-      });
-    }
-
-    const imageBase64 = await convertToBase64(editedProduct.picture);
-
-    const productData = {
-      name: editedProduct.name,
-      price: editedProduct.price,
-      image: imageBase64,
-      store: { storeId: user.account.store.storeId },
-    };
-
-    setProducts((prevProducts) => [...prevProducts, productData]);
-
-    axios
-      .post("http://localhost:8080/api/createProductService", productData)
-      .then((response) => console.log("Product created:", response.data))
-      .catch((error) => console.error("Error creating product:", error));
-
-    setEditedProduct({
-      picture: "",
-      name: "",
-      price: "",
-    });
-
-    setImagePreview(null);
-  };
 
   const handleQuantityChange = (index, operation) => {
     const newQuantity = [...quantity];
@@ -301,7 +168,7 @@ const Store = ({ vendor }) => {
       }
     }
     let orderedListString = orderedList.join("; ");
-    orderedListString += `;; Total: Php${calculateTotalPrice()}`;
+    orderedListString += `; Total: Php${calculateTotalPrice()}`;
     setDetails(orderedListString);
     handleOrder(orderedListString, vendor, user);
   };
@@ -359,9 +226,9 @@ const Store = ({ vendor }) => {
           />
           <div className="ml-3" style={{ flexDirection: "column" }}>
             <h2 className="text-xl font-semibold">
-              {vendor?.firstName || "Loading..."}
+              {vendor?.account.store.storeName || "Loading..."}
             </h2>
-            {vendor?.category}
+            {vendor?.account.store.category}
           </div>
         </div>
         <div className="p-2" style={{ height: "90px" }}>

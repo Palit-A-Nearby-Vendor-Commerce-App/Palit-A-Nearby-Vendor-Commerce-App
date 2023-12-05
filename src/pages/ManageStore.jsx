@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Select, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
@@ -25,7 +25,7 @@ const ManageStore = () => {
     const [actionType, setActionType] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
     const [loading, setLoading] = useState(true);
-    
+
     useEffect(() => {
         const fetchStore = async () => {
             try {
@@ -75,13 +75,13 @@ const ManageStore = () => {
 
     useEffect(() => {
         if (user && user.account && user.account.store) {
-          setEditedStore({
-            storeName: user.account.store.storeName,
-            category: user.account.store.category,
-            description: user.account.store.description,
-          });
+            setEditedStore({
+                storeName: user.account.store.storeName,
+                category: user.account.store.category,
+                description: user.account.store.description,
+            });
         }
-      }, [user, user?.account]);
+    }, [user, user?.account]);
 
     const handleStoreInputChange = (event) => {
         const { name, value } = event.target;
@@ -93,7 +93,7 @@ const ManageStore = () => {
 
     const handleSaveConfirm = () => {
         console.log("Save clicked", products);
-    
+
         products.forEach((product) => {
             axios
                 .put(`http://localhost:8080/api/updateProductServiceById/${product.productId}`, product)
@@ -104,7 +104,7 @@ const ManageStore = () => {
                     console.error("Error updating product:", error);
                 });
         });
-    
+
         if (user && user.account && user.account.store) {
             axios
                 .put(`http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`, editedStore)
@@ -117,7 +117,7 @@ const ManageStore = () => {
                     console.error("Error updating store:", error);
                 });
         }
-    
+
         setEditMode(false);
         setEditedProduct({
             picture: "",
@@ -284,22 +284,26 @@ const ManageStore = () => {
                         </h2>
                     )}
                     {editMode ? (
-                        <TextField
+                        <Select
                             name="category"
                             variant="outlined"
-                            InputProps={{
-                                style: {
-                                    fontSize: 15,
-                                    height: 20,
-                                    marginTop: "5px",
-                                    width: "267px",
-                                    paddingRight: '10px',
-                                    color: "black",
-                                },
-                            }}
                             value={editedStore.category}
                             onChange={handleStoreInputChange}
-                        />
+                            style={{
+                                fontSize: 15,
+                                height: 20,
+                                marginTop: "5px",
+                                width: "267px",
+                                paddingRight: '10px',
+                                color: "black",
+                            }}
+                        >
+                            <MenuItem value="" style={{ fontSize: 12, height: 18 }}><em>Select category</em></MenuItem>
+                            <MenuItem value="fish" style={{ fontSize: 12, height: 18 }}>Fish</MenuItem>
+                            <MenuItem value="fruits" style={{ fontSize: 12, height: 18 }}>Fruits</MenuItem>
+                            <MenuItem value="assorted" style={{ fontSize: 12, height: 18 }}>Assorted</MenuItem>
+                            <MenuItem value="manicure" style={{ fontSize: 12, height: 18 }}>Manicure</MenuItem>
+                        </Select>
                     ) : (
                         <p className="text-sm">
                             {editedStore.category ? editedStore.category : "Loading..."}

@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import redRating from "../assets/images/redRating.png";
+import { act } from "react-dom/test-utils";
 
 const Store = ({ vendor }) => {
   const { user, setUser } = useContext(UserContext);
@@ -24,6 +25,37 @@ const Store = ({ vendor }) => {
   const [details, setDetails] = useState("");
   const [quantity, setQuantity] = useState([]);
   const [orderStatus, setOrderStatus] = useState(false);
+  const [activeTransaction, setActiveTransaction] = useState(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      //refresh transaction
+      axios
+        .get("http://localhost:8080/api/getAllTransactions")
+        .then((response) => {
+          const activeTransactions = response.data.filter((transaction) => {
+            return (
+              transaction.customer.accountId === user.account.accountId &&
+              (transaction.status === "In Queue" ||
+                transaction.status === "Now Serving")
+            );
+          });
+          if (activeTransactions.length === 0) {
+            setOrderStatus(false);
+            return;
+          }
+          setActiveTransaction(activeTransactions[0]);
+          setOrderStatus(true);
+          console.log("Active transaction:", activeTransactions[0]);
+        })
+        .catch((error) => {
+          console.error("Error fetching transaction data:", error);
+        });
+    }, 3000); // 3000 milliseconds = 3 seconds
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
 
   const handleOrder = (details, vendor, customer) => {
     axios
@@ -33,22 +65,27 @@ const Store = ({ vendor }) => {
         details: details,
         status: "In Queue",
       })
-      .then((response) =>
-        console.log("Transaction created successfully", response)
-      )
+      .then((response) => {
+        setActiveTransaction(response.data);
+        console.log("Transaction created successfully", response);
+      })
       .catch((error) => console.error("Error creating transaction", error));
   };
 
   useEffect(() => {
-    const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.id}`;
+    const userApiEndpoint = `http://localhost:8080/api/getUserById/${vendor.userId}`;
     const accountApiEndpoint = "http://localhost:8080/api/getAccountById/";
     const storeApiEndpoint = "http://localhost:8080/api/getStoreById/";
+
+    console.log("YOU ARE IN STORE USER:", user);
 
     axios
       .get(userApiEndpoint)
       .then((response) => {
-        if (response.data && response.data.accountId) {
-          return axios.get(accountApiEndpoint + response.data.accountId);
+        if (response.data && response.data.account.accountId) {
+          return axios.get(
+            accountApiEndpoint + response.data.account.accountId
+          );
         } else {
           throw new Error("Account ID not found in user data");
         }
@@ -256,25 +293,37 @@ const Store = ({ vendor }) => {
       }
     }
     let orderedListString = orderedList.join("; ");
-    orderedListString += `; Total: Php${calculateTotalPrice()}`;
+    orderedListString += `;; Total: Php${calculateTotalPrice()}`;
     setDetails(orderedListString);
     handleOrder(orderedListString, vendor, user);
   };
 
-  const OrderDetails = () => (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%",
-      }}
-    >
-      <h2>Order Details</h2>
-      <p>{details}</p>
-    </div>
-  );
+  const OrderDetails = (activeTransaction) => {
+    const handleCancelOrder = () => {
+      axios.put(`http://localhost:8080/api/updateTransactionById/${activeTransaction.activeTransaction.transactionId}`, {status: "Cancelled"})    
+      .then(response => {
+        console.log("Transaction cancelled:", response.data);
+        setOrderStatus(false);
+      })
+    }
+
+    return (
+      <>
+      <div>
+        <h2>Active Order</h2>
+        {activeTransaction.activeTransaction.details
+          .split(";")
+          .map((line, index) => (
+            <span key={index}>
+              {line}
+              <br />
+            </span>
+          ))}
+      </div>
+      <button onClick={handleCancelOrder}>Cancel Order</button>
+      </>
+    );
+  };
 
   return (
     <>
@@ -310,9 +359,7 @@ const Store = ({ vendor }) => {
             maxHeight: "450px",
             display: "flex",
             flexWrap: "wrap",
-            justifyContent: "space-between",
             overflow: "auto",
-            position: "relative",
           }}
         >
           {products.map((product, index) => (
@@ -413,7 +460,7 @@ const Store = ({ vendor }) => {
         </div>
       </div>
       {orderStatus ? (
-        <OrderDetails />
+        <OrderDetails activeTransaction={activeTransaction} />
       ) : (
         <button
           type="button"

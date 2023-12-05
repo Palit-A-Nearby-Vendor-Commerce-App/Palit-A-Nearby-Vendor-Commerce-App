@@ -70,7 +70,7 @@ const MapSlidingBox = ({
             </>
           )
         ) : selectedVendor ? (
-            <Store vendor={selectedVendor} />
+          <Store vendor={selectedVendor} />
         ) : (
           <p>Select a store to view</p>
         )}

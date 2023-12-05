@@ -93,6 +93,15 @@ const ManageStore = () => {
       });
     }
   }, [user, user?.account]);
+  useEffect(() => {
+    if (user && user.account && user.account.store) {
+      setEditedStore({
+        storeName: user.account.store.storeName,
+        category: user.account.store.category,
+        description: user.account.store.description,
+      });
+    }
+  }, [user, user?.account]);
 
   const handleStoreInputChange = (event) => {
     const { name, value } = event.target;
@@ -102,6 +111,60 @@ const ManageStore = () => {
     });
   };
 
+  const handleSaveConfirm = () => {
+    console.log("Save clicked", products);
+
+    products.forEach((product) => {
+      axios
+        .put(
+          `http://localhost:8080/api/updateProductServiceById/${product.productId}`,
+          product
+        )
+        .then((response) => {
+          console.log("Product updated:", response.data);
+        })
+        .catch((error) => {
+          console.error("Error updating product:", error);
+        });
+    });
+
+    if (user && user.account && user.account.store) {
+      axios
+        .put(
+          `http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`,
+          editedStore
+        )
+        .then((response) => {
+          console.log("Store updated:", response.data);
+          setStore(response.data);
+          setSuccessMessage("Successfully saved.");
+        })
+        .catch((error) => {
+          console.error("Error updating store:", error);
+        });
+    }
+
+    setEditMode(false);
+    setEditedProduct({
+      picture: "",
+      name: "",
+      price: "",
+    });
+  };
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    if (name === "price") {
+      setEditedProduct({
+        ...editedProduct,
+        [name]: value,
+      });
+    } else {
+      setEditedProduct({
+        ...editedProduct,
+        [name]: value,
+      });
+    }
+  };
   const handleSaveConfirm = () => {
     console.log("Save clicked", products);
 

@@ -256,22 +256,3 @@ const Queue = () => {
 };
 
 export default Queue;
-
-{
-  /* <Link to={{ pathname: "/chat", state: { u } }}><div
-                    key={u.accountId}
-                    className="w-full flex justify-between border-2 border-green-400 items-center bg-[#5FB4B8] text-white p-3 rounded-xl hover:bg-[#56a2a6] transition-all duration-300 ease-in "
-                  >
-                    <div className="flex items-center">
-                      <img
-                        src={`data:image/jpeg;base64,${u.image}`}
-                        className="h-full w-[32px] rounded-full border-2 border-green-400 mr-2"
-                      />
-                      {u.firstName + " " + u.lastName}
-                    </div>
-                    <span>
-                      <DoubleArrowIcon />
-                    </span>
-                  </div>
-                  </Link> */
-}

@@ -32,12 +32,13 @@ const Store = ({ vendor }) => {
     axios
       .get("http://localhost:8080/api/getAllTransactions")
       .then((response) => {
+        console.log("All transactions:", response.data);
         const activeTransactions = response.data.filter((transaction) => {
-          return (
-            transaction.customer.accountId === user.account.accountId &&
-            (transaction.status === "In Queue" ||
-              transaction.status === "Now Serving")
-          );
+            return (
+              (transaction.customer.accountId === user.account.accountId) &&
+              (transaction.status === "In Queue" ||
+                transaction.status === "Now Serving")
+            );
         });
         if (activeTransactions.length === 0) {
           setOrderStatus(false);
@@ -73,7 +74,6 @@ const Store = ({ vendor }) => {
       })
       .then((response) => {
         refreshActiveTransaction();
-        setOrderStatus(true);
         console.log("Transaction created successfully", response);
       })
       .catch((error) => console.error("Error creating transaction", error));
@@ -290,7 +290,6 @@ const Store = ({ vendor }) => {
   };
 
   const handleOrderClick = () => {
-    setOrderStatus(true);
     let orderedList = [];
     for (let i = 0; i < products.length; i++) {
       if (quantity[i] > 0) {
@@ -310,7 +309,7 @@ const Store = ({ vendor }) => {
       axios
         .put(
           `http://localhost:8080/api/updateTransactionById/${activeTransaction.activeTransaction.transactionId}`,
-          { status: "Cancelled" }
+          { ...activeTransaction.activeTransaction, status: "Cancelled" }
         )
         .then((response) => {
           console.log("Transaction cancelled:", response.data);

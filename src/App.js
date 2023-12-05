@@ -34,7 +34,7 @@ function App() {
           <Route path="/home" exact component={Home} />
           <Route path="/chat" exact component={Chat} />
 
-          <Route path="/adminlogin3x8Yz7!qA" exact component={Admin} />
+          <Route path="/admin" exact component={Admin} />
           <Route
             path="/admindashboard/dashboard"
             exact

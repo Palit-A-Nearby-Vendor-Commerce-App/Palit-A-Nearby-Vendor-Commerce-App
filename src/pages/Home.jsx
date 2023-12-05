@@ -312,20 +312,27 @@ function Home() {
                 boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
                 transition: "left 0.3s ease, bottom 0.3s ease",
               }}
+              title="Report"
               onClick={handleReport}
             >
               <MdOutlineReportGmailerrorred size={30} />
             </button>
             {selectedVendor && (
               <Link to={{ pathname: "/chat", state: { selectedVendor } }}>
-                <button className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary">
+                <button
+                  className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary"
+                  title="Chat"
+                >
                   <QuestionAnswerIcon sx={{ color: "white" }} />
                 </button>
               </Link>
             )}
             {selectedCustomer && (
               <Link to={{ pathname: "/chat", state: { selectedCustomer } }}>
-                <button className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary">
+                <button
+                  className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary"
+                  title="Chat"
+                >
                   <QuestionAnswerIcon sx={{ color: "white" }} />
                 </button>
               </Link>

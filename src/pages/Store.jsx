@@ -120,7 +120,7 @@ const Store = ({ vendor }) => {
 
     fetchStore();
     fetchProducts();
-  }, []);
+  }, [vendor]);
 
   const handleMenu = (event) => setAnchorEl(event.currentTarget);
 

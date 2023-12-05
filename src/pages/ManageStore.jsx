@@ -2,8 +2,6 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
-import redRating from "../assets/images/redRating.png";
-import editStore from "../assets/images/editStore.png";
 
 const ManageStore = () => {
     const { user, setUser } = useContext(UserContext);
@@ -26,37 +24,23 @@ const ManageStore = () => {
     const [confirmAction, setConfirmAction] = useState(null);
     const [actionType, setActionType] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-
+    const [loading, setLoading] = useState(true);
+    
     useEffect(() => {
-        const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.id}`;
-        const accountApiEndpoint = "http://localhost:8080/api/getAccountById/";
-        const storeApiEndpoint = "http://localhost:8080/api/getStoreById/";
-
-        axios
-            .get(userApiEndpoint)
-            .then((response) => {
-                if (response.data && response.data.accountId) {
-                    return axios.get(accountApiEndpoint + response.data.accountId);
-                } else {
-                    throw new Error("Account ID not found in user data");
-                }
-            })
-            .then((response) => {
-                if (response.data && response.data.store) {
-                    return axios.get(storeApiEndpoint + response.data.store.storeId);
-                } else {
-                    throw new Error("Store ID not found in account data");
-                }
-            })
-            .then((response) => {
-                if (response.data) {
-                    setStore(response.data);
-                    console.log("Store data:", response.data);
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching data: ", error);
-            });
+        const fetchStore = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/getStoreById/${user.account.store.storeId}`);
+                setStore(response.data);
+                setEditedStore({
+                    storeName: response.data.storeName,
+                    category: response.data.category,
+                    description: response.data.description,
+                });
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching store:', error);
+            }
+        };
 
         const fetchProducts = async () => {
             try {
@@ -72,8 +56,10 @@ const ManageStore = () => {
             }
         };
 
+        fetchStore();
         fetchProducts();
     }, []);
+
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -88,14 +74,14 @@ const ManageStore = () => {
     };
 
     useEffect(() => {
-        if (user.account.store) {
-            setEditedStore({
-                storeName: user.account.store.storeName,
-                category: user.account.store.category,
-                description: user.account.store.description,
-            });
+        if (user && user.account && user.account.store) {
+          setEditedStore({
+            storeName: user.account.store.storeName,
+            category: user.account.store.category,
+            description: user.account.store.description,
+          });
         }
-    }, [user.account.store]);
+      }, [user, user?.account]);
 
     const handleStoreInputChange = (event) => {
         const { name, value } = event.target;
@@ -107,7 +93,7 @@ const ManageStore = () => {
 
     const handleSaveConfirm = () => {
         console.log("Save clicked", products);
-
+    
         products.forEach((product) => {
             axios
                 .put(`http://localhost:8080/api/updateProductServiceById/${product.productId}`, product)
@@ -118,35 +104,27 @@ const ManageStore = () => {
                     console.error("Error updating product:", error);
                 });
         });
-
-        axios
-            .put(`http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`, editedStore)
-            .then((response) => {
-                console.log("Store updated:", response.data);
-                setStore(response.data);
-
-                setUser((prevUser) => ({
-                    ...prevUser,
-                    account: {
-                        ...prevUser.account,
-                        store: response.data,
-                    },
-                }));
-                setSuccessMessage('Successfully saved.');
-            })
-            .catch((error) => {
-                console.error("Error updating store:", error);
-            });
-
+    
+        if (user && user.account && user.account.store) {
+            axios
+                .put(`http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`, editedStore)
+                .then((response) => {
+                    console.log("Store updated:", response.data);
+                    setStore(response.data);
+                    setSuccessMessage('Successfully saved.');
+                })
+                .catch((error) => {
+                    console.error("Error updating store:", error);
+                });
+        }
+    
         setEditMode(false);
         setEditedProduct({
             picture: "",
             name: "",
             price: "",
         });
-
     };
-
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         if (name === 'price') {
@@ -385,8 +363,7 @@ const ManageStore = () => {
                                     className="w-full h-[136px] rounded-[20px] inline-block border-[3px] border-green-400 "
                                 />
                             ) : (
-                                <span className="text-lg font-semibold` text-white inline-block">
-                                    Choose image
+                                <span className="text-lg font-semibold` text-white inline-block">   Choose image
                                 </span>
                             )}
                         </label>

@@ -147,10 +147,10 @@ export default function NavigationBarAdmin() {
         {/* <Toolbar /> */}
         <section id="dashboard" className="font-custom">
           <div className="flex justify-between items-center ">
-            <di>
+            <div>
               <h1 className="text-4xl font-bold ">Dashboard</h1>
-              <p class="text-sm text-slate-400">{formattedDate}</p>
-            </di>
+              <p className="text-sm text-slate-400">{formattedDate}</p>
+            </div>
             <div className="w-[250px]">
               <CustomInput
                 type="text"

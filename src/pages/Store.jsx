@@ -3,6 +3,8 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import redRating from "../assets/images/redRating.png";
+import { act } from "react-dom/test-utils";
+import CustomButton from "../components/CustomButton";
 
 const Store = ({ vendor }) => {
   const { user, setUser } = useContext(UserContext);
@@ -21,45 +23,82 @@ const Store = ({ vendor }) => {
     category: "",
     description: "",
   });
+  const [details, setDetails] = useState("");
+  const [quantity, setQuantity] = useState([]);
+  const [orderStatus, setOrderStatus] = useState(false);
+  const [activeTransaction, setActiveTransaction] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Replace with your actual API endpoints
-    const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.id}`;
-    const accountApiEndpoint = "http://localhost:8080/api/getAccountById/";
-    const storeApiEndpoint = "http://localhost:8080/api/getStoreById/";
+  const totalItems = () => quantity.reduce((a, b) => a + b, 0);
 
+  const refreshActiveTransaction = () => {
+    //refresh transaction
     axios
-      .get(userApiEndpoint)
+      .get("http://localhost:8080/api/getAllTransactions")
       .then((response) => {
-        if (response.data && response.data.accountId) {
-          return axios.get(accountApiEndpoint + response.data.accountId);
-        } else {
-          throw new Error("Account ID not found in user data");
+        console.log("All transactions:", response.data);
+        const activeTransactions = response.data.filter((transaction) => {
+          return (
+            transaction.customer.accountId === user.account.accountId &&
+            (transaction.status === "In Queue" ||
+              transaction.status === "Now Serving")
+          );
+        });
+        if (activeTransactions.length === 0) {
+          setOrderStatus(false);
+          return;
         }
-      })
-      .then((response) => {
-        if (response.data && response.data.store) {
-          return axios.get(storeApiEndpoint + response.data.store.storeId);
-        } else {
-          throw new Error("Store ID not found in account data");
-        }
-      })
-      .then((response) => {
-        if (response.data) {
-          setStore(response.data); // Set the store state
-          console.log("Store data:", response.data); // Log the store data
-        }
+        setActiveTransaction(activeTransactions[0]);
+        setOrderStatus(true);
+        console.log("Active transaction:", activeTransactions[0]);
       })
       .catch((error) => {
-        console.error("Error fetching data: ", error);
+        console.error("Error fetching transaction data:", error);
       });
+  };
 
-    //   const handleOrder = (description, vendor, user) => {
-    //     axios
-    //     .post(
-    //         "localhost:8080/api/createTransaction", {}
-    //     )
-    //   }
+  useEffect(() => {
+    refreshActiveTransaction();
+    const interval = setInterval(() => {
+      refreshActiveTransaction();
+    }, 3000); // 3000 milliseconds = 3 seconds
+
+    // Clear interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleOrder = (details, vendor, customer) => {
+    axios
+      .post("http://localhost:8080/api/createTransaction", {
+        vendor: vendor.account,
+        customer: customer.account,
+        details: details,
+        status: "In Queue",
+      })
+      .then((response) => {
+        refreshActiveTransaction();
+        console.log("Transaction created successfully", response);
+      })
+      .catch((error) => console.error("Error creating transaction", error));
+  };
+
+  useEffect(() => {
+    const fetchStore = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/getStoreById/${vendor.account.store.storeId}`
+        );
+        setStore(response.data);
+        setEditedStore({
+          storeName: response.data.storeName,
+          category: response.data.category,
+          description: response.data.description,
+        });
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching store:", error);
+      }
+    };
 
     const fetchProducts = async () => {
       try {
@@ -67,231 +106,116 @@ const Store = ({ vendor }) => {
           `http://localhost:8080/api/getProductServicesByStoreId/store/${vendor.account.store.storeId}`
         );
         setProducts(response.data);
-        console.log("dwfsadgfgProducts:", response.data);
-        // Store the product data in local storage
+        console.log("Products:", response.data);
         localStorage.setItem("products", JSON.stringify(response.data));
+        setQuantity(new Array(response.data.length).fill(0));
       } catch (error) {
         console.error("Error fetching products:", error);
-        // If there's an error, try to load the product data from local storage
         const localData = localStorage.getItem("products");
         if (localData) {
           setProducts(JSON.parse(localData));
+          setQuantity(new Array(JSON.parse(localData).length).fill(0));
         }
       }
     };
 
+    fetchStore();
     fetchProducts();
   }, []);
 
-  // Handle click on user image
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const handleMenu = (event) => setAnchorEl(event.currentTarget);
 
-  // Close menu
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleClose = () => setAnchorEl(null);
 
-  // Handle click on "Edit" button
-  const handleEdit = () => {
-    setEditMode(true);
-  };
+  const handleEdit = () => setEditMode(true);
 
   useEffect(() => {
-    if (user.account.store) {
+    if (vendor && vendor.account && vendor.account.store) {
       setEditedStore({
-        storeName: user.account.store.storeName,
-        category: user.account.store.category,
-        description: user.account.store.description,
+        storeName: vendor.account.store.storeName,
+        category: vendor.account.store.category,
+        description: vendor.account.store.description,
       });
     }
-  }, [user.account.store]);
+  }, [vendor, vendor?.account]);
 
-  const handleStoreInputChange = (event) => {
-    const { name, value } = event.target;
-    setEditedStore({
-      ...editedStore,
-      [name]: value,
-    });
+  const handleQuantityChange = (index, operation) => {
+    const newQuantity = [...quantity];
+    if (operation === "+") {
+      newQuantity[index]++;
+    } else if (operation === "-") {
+      newQuantity[index] = Math.max(0, newQuantity[index] - 1);
+    }
+    setQuantity(newQuantity);
   };
 
-  // Handle click on "Save" button
-  const handleSave = () => {
-    console.log("Save clicked", products);
-    // Perform the save operation with products data
-    // Update the user context or make an API call to save the changes
+  const calculateTotalPrice = () => {
+    let totalPrice = 0;
+    for (let i = 0; i < products.length; i++) {
+      totalPrice += products[i].price * quantity[i];
+    }
+    return totalPrice;
+  };
 
-    // Iterate over each product in the products state
-    products.forEach((product) => {
-      // Assuming your API endpoint for updating a product is /api/updateProductServiceById/{id}
-      // and the id of the product to be updated is stored in product.productId
+  const handleOrderClick = () => {
+    let orderedList = [];
+    for (let i = 0; i < products.length; i++) {
+      if (quantity[i] > 0) {
+        orderedList.push(
+          `${products[i].name} Php${products[i].price} x${quantity[i]}`
+        );
+      }
+    }
+    let orderedListString = orderedList.join("; ");
+    orderedListString += `; Total: Php${calculateTotalPrice()}`;
+    setDetails(orderedListString);
+    handleOrder(orderedListString, vendor, user);
+  };
+
+  const OrderDetails = (activeTransaction) => {
+    const handleCancelOrder = () => {
       axios
         .put(
-          `http://localhost:8080/api/updateProductServiceById/${product.productId}`,
-          product
+          `http://localhost:8080/api/updateTransactionById/${activeTransaction.activeTransaction.transactionId}`,
+          { ...activeTransaction.activeTransaction, status: "Cancelled" }
         )
         .then((response) => {
-          console.log("Product updated:", response.data);
-        })
-        .catch((error) => {
-          console.error("Error updating product:", error);
+          console.log("Transaction cancelled:", response.data);
+          setOrderStatus(false);
         });
-    });
+    };
 
-    // Assuming your API endpoint for updating a store is /api/updateStore/{id}
-    // and the id of the store to be updated is stored in user.account.store.storeId
-    axios
-      .put(
-        `http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`,
-        editedStore
-      )
-      .then((response) => {
-        console.log("Store updated:", response.data);
-        // Update store state with new data
-        setStore(response.data);
-
-        // Update user context with new store data
-        setUser((prevUser) => ({
-          ...prevUser,
-          account: {
-            ...prevUser.account,
-            store: response.data,
-          },
-        }));
-      })
-      .catch((error) => {
-        console.error("Error updating store:", error);
-      });
-
-    // Reset state after saving
-    setEditMode(false);
-    setEditedProduct({
-      picture: "",
-      name: "",
-      price: "",
-    });
-  };
-
-  // Handle input change for text fields
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setEditedProduct({
-      ...editedProduct,
-      [name]: value,
-    });
-  };
-
-  const handleImageChange = (e) => {
-    setEditedProduct({
-      ...editedProduct,
-      picture: e.target.files[0],
-    });
-    setImagePreview(
-      e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null
+    return (
+      <>
+        <div>
+          {/* {activeTransaction.activeTransaction.details
+            .split(";")
+            .map((line, index) => (
+              <span key={index}>
+                {line}
+                <br />
+              </span>
+            ))} */}
+          <CustomButton
+            btnStyle="w-full bg-tertiary p-3 text-white rounded-[20px] mt-3"
+            label="Cancel Order"
+            type="submit"
+            onClick={handleCancelOrder}
+          />
+        </div>
+      </>
     );
   };
 
-  const handleProductImageChange = (e, index) => {
-    const newProducts = [...products];
-    newProducts[index].image = e.target.files[0];
-    newProducts[index].imagePreview = e.target.files[0]
-      ? URL.createObjectURL(e.target.files[0])
-      : null;
-    setProducts(newProducts);
-  };
-
-  const handleProductInputChange = (e, index) => {
-    const { name, value } = e.target;
-    const newProducts = [...products];
-    newProducts[index][name] = value;
-    setProducts(newProducts);
-  };
-
-  // Handle click on "Choose File" button
-
-  // Handle click on "Add" button
-  const handleAdd = async () => {
-    // Validate that all required fields are filled
-    if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
-      alert("Please fill in all product details.");
-      return;
-    }
-
-    function convertToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result.split(",")[1]);
-        reader.onerror = (error) => reject(error);
-      });
-    }
-
-    const imageBase64 = await convertToBase64(editedProduct.picture);
-
-    const productData = {
-      name: editedProduct.name,
-      price: editedProduct.price,
-      image: imageBase64,
-      store: { storeId: user.account.store.storeId }, // Add the storeId
-    };
-
-    // Add the edited product to the list of products
-    setProducts((prevProducts) => [...prevProducts, productData]);
-
-    // Make a POST request to the ProductService API endpoint
-    axios
-      .post("http://localhost:8080/api/createProductService", productData)
-      .then((response) => {
-        console.log("Product created:", response.data);
-      })
-      .catch((error) => {
-        console.error("Error creating product:", error);
-      });
-
-    // Clear the edited product state
-    setEditedProduct({
-      picture: "",
-      name: "",
-      price: "",
-    });
-
-    setImagePreview(null);
-  };
-
-  // return (
-  //     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-  //         {/* User details */}
-  //         <div style={{ display: "flex" }}>
-  //             <img
-  //                 src={`data:image/png;base64, ${user.image}`}
-  //                 alt="User"
-  //                 className="w-14 h-15 rounded-full border-2 border-black"
-  //                 style={{ width: "70px", height: "70px" }}
-  //                 onClick={handleMenu}
-  //             />
-  //             <div className="ml-3" style={{ flexDirection: "column" }}>
-  //                 {/* Store Name */}
-  //                 <h2 className="text-xl font-semibold">
-  //                     {user.account.store ? user.account.store.storeName : "Loading..."}
-  //                 </h2>
-  //                 {/* Category */}
-  //                 <p className="text-sm">
-  //                     {user.account.store ? user.account.store.category : "Loading..."}
-  //                 </p>
-  //             </div>
-  //         </div>
-
-  //         {/* Store description */}
-  //         <div className="p-2" style={{ height: "90px" }}>
-  //             <p className="text-sm" style={{ textAlign: "justify" }}>
-  //                 {user.account.store ? user.account.store.description : "Loading..."}
-  //             </p>
-  //         </div>
   return (
     <>
-      <div style={{ height: "70vh", display: "flex", flexDirection: "column" }}>
-        {/* User details */}
+      <div
+        style={{
+          height: "70vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <div style={{ display: "flex" }}>
           <img
             src={`data:image/png;base64, ${vendor?.image || ""}`}
@@ -301,39 +225,29 @@ const Store = ({ vendor }) => {
             onClick={handleMenu}
           />
           <div className="ml-3" style={{ flexDirection: "column" }}>
-            {/* Store Name */}
             <h2 className="text-xl font-semibold">
-              {vendor?.firstName || "Loading..."}
+              {vendor?.account.store.storeName || "Loading..."}
             </h2>
-            {/* Category */}
-            {vendor?.category}
+            {vendor?.account.store.category}
           </div>
         </div>
-
-        {/* Store description */}
         <div className="p-2" style={{ height: "90px" }}>
           <p className="text-sm" style={{ textAlign: "justify" }}>
             {vendor?.account?.store?.description || "Loading..."}
           </p>
         </div>
-
-        {/* Products section */}
         <h1
           className="p-2 text-lg font-medium"
           style={{ fontSize: "25px", color: "#0071B3" }}
         >
           Products
         </h1>
-
-        {/* Display products */}
         <div
           style={{
             maxHeight: "450px",
             display: "flex",
             flexWrap: "wrap",
-            justifyContent: "space-between",
             overflow: "auto",
-            position: "relative",
           }}
         >
           {products.map((product, index) => (
@@ -391,30 +305,75 @@ const Store = ({ vendor }) => {
                 >
                   ₱ {product.price}
                 </p>
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "1px",
+                    right: "3%",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <button
+                    style={{
+                      backgroundColor: "#0071B3",
+                      color: "white",
+                      borderRadius: "10px",
+                      padding: "5px",
+                      margin: "2px",
+                    }}
+                    disabled={orderStatus}
+                    onClick={() => handleQuantityChange(index, "+")}
+                  >
+                    +
+                  </button>
+                  <span>{quantity[index]}</span>
+                  <button
+                    style={{
+                      backgroundColor: "#0071B3",
+                      color: "white",
+                      borderRadius: "10px",
+                      padding: "5px",
+                      margin: "2px",
+                    }}
+                    disabled={orderStatus}
+                    onClick={() => handleQuantityChange(index, "-")}
+                  >
+                    -
+                  </button>
+                </div>
               </>
             </div>
           ))}
         </div>
-
-        {/* Save/Edit button
-          <div className="flex mt-4 absolute bottom-8 w-full">
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ borderRadius: "15px", width: "90%" }}
-              onClick={handleSave}
-            >
-              Save
-            </Button>
-          </div> */}
       </div>
+      {/* Order Total Preview Section */}
 
-      <button
-        type="button"
-        className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
+      <div
+        style={{
+          padding: "10px",
+          backgroundColor: "#f0f0f0",
+          borderRadius: "10px",
+          margin: "10px",
+          textAlign: "center",
+        }}
       >
-        <span className="text-lg  ">Order</span>
-      </button>
+        <h2>
+          Total Order Price: ₱{totalItems() > 0 ? calculateTotalPrice() : 0}
+        </h2>
+      </div>
+      {orderStatus ? (
+        <OrderDetails activeTransaction={activeTransaction} />
+      ) : (
+        <button
+          type="button"
+          className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
+          disabled={quantity.every((q) => q === 0)}
+          onClick={handleOrderClick}
+        >
+          <span className="text-lg  ">Order</span>
+        </button>
+      )}
     </>
   );
 };

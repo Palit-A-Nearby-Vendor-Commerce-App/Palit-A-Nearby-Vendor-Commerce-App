@@ -16,6 +16,12 @@ public class ChatController {
     @Autowired
     private ChatService chatService;
 
+    @GetMapping("/getAllChats")
+    public ResponseEntity<List<ChatEntity>> getAllChats() {
+        List<ChatEntity> chats = chatService.getAllChats();
+        return new ResponseEntity<>(chats, HttpStatus.OK);
+    }
+
     @GetMapping("getChatsByConversationId/{conversationId}")
     public ResponseEntity<List<ChatEntity>> getChatsByConversationId(@PathVariable int conversationId) {
         List<ChatEntity> chats = chatService.getChatsByConversationId(conversationId);

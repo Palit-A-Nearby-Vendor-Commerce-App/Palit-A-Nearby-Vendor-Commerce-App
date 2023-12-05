@@ -24,7 +24,7 @@ const MapSlidingBox = ({
     borderRadius: "5px",
     boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
     transition: "right 0.3s ease",
-    overflow: "hidden",
+    overflow: "scroll",
     padding: "20px",
     backgroundImage: `url(${stroke})`,
     backgroundSize: "cover",
@@ -70,7 +70,7 @@ const MapSlidingBox = ({
             </>
           )
         ) : selectedVendor ? (
-            <Store vendor={selectedVendor} />
+          <Store vendor={selectedVendor} />
         ) : (
           <p>Select a store to view</p>
         )}

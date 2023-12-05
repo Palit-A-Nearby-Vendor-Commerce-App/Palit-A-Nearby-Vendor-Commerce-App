@@ -16,6 +16,10 @@ public class ChatService {
     @Autowired
     private ChatRepository chatRepository;
 
+    public List<ChatEntity> getAllChats() {
+        return chatRepository.findAllByIsDeletedFalse();
+    }
+
     public List<ChatEntity> getChatsByConversationId(int conversationId) {
         return chatRepository.findByConversation_ConversationIdAndIsDeletedFalse(conversationId);
     }

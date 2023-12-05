@@ -27,6 +27,8 @@ const Store = ({ vendor }) => {
   const [orderStatus, setOrderStatus] = useState(false);
   const [activeTransaction, setActiveTransaction] = useState(null);
 
+  const totalItems = () => quantity.reduce((a, b) => a + b, 0);
+
   const refreshActiveTransaction = () => {
     //refresh transaction
     axios
@@ -34,11 +36,11 @@ const Store = ({ vendor }) => {
       .then((response) => {
         console.log("All transactions:", response.data);
         const activeTransactions = response.data.filter((transaction) => {
-            return (
-              (transaction.customer.accountId === user.account.accountId) &&
-              (transaction.status === "In Queue" ||
-                transaction.status === "Now Serving")
-            );
+          return (
+            transaction.customer.accountId === user.account.accountId &&
+            (transaction.status === "In Queue" ||
+              transaction.status === "Now Serving")
+          );
         });
         if (activeTransactions.length === 0) {
           setOrderStatus(false);
@@ -54,7 +56,6 @@ const Store = ({ vendor }) => {
   };
 
   useEffect(() => {
-    
     refreshActiveTransaction();
     const interval = setInterval(() => {
       refreshActiveTransaction();
@@ -337,7 +338,13 @@ const Store = ({ vendor }) => {
 
   return (
     <>
-      <div style={{ height: "70vh", display: "flex", flexDirection: "column" }}>
+      <div
+        style={{
+          height: orderStatus ? "60vh" : "70vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <div style={{ display: "flex" }}>
           <img
             src={`data:image/png;base64, ${vendor?.image || ""}`}
@@ -468,6 +475,22 @@ const Store = ({ vendor }) => {
             </div>
           ))}
         </div>
+      </div>
+      {/* Order Total Preview Section */}
+
+      <div
+        style={{
+          padding: "10px",
+          backgroundColor: "#f0f0f0",
+          borderRadius: "10px",
+          margin: "10px",
+          textAlign: "center",
+        }}
+      >
+        <h2>
+          Total Order Price: ₱
+          {totalItems() > 0? calculateTotalPrice() : 0}
+        </h2>
       </div>
       {orderStatus ? (
         <OrderDetails activeTransaction={activeTransaction} />

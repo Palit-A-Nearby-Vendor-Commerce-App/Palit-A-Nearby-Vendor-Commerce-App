@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import redRating from "../assets/images/redRating.png";
 import { act } from "react-dom/test-utils";
+import CustomButton from "../components/CustomButton";
 
 const Store = ({ vendor }) => {
   const { user, setUser } = useContext(UserContext);
@@ -321,17 +322,20 @@ const Store = ({ vendor }) => {
     return (
       <>
         <div>
-          <h2>Active Order</h2>
-          {activeTransaction.activeTransaction.details
+          {/* {activeTransaction.activeTransaction.details
             .split(";")
             .map((line, index) => (
               <span key={index}>
                 {line}
                 <br />
               </span>
-            ))}
+            ))} */}
+        <CustomButton
+            btnStyle="w-full bg-tertiary p-3 text-white rounded-[20px] mt-3"
+            label="Cancel Order"
+            type="submit"
+           onClick={handleCancelOrder}/>
         </div>
-        <button onClick={handleCancelOrder}>Cancel Order</button>
       </>
     );
   };
@@ -340,7 +344,7 @@ const Store = ({ vendor }) => {
     <>
       <div
         style={{
-          height: orderStatus ? "60vh" : "70vh",
+          height: "70vh",
           display: "flex",
           flexDirection: "column",
         }}

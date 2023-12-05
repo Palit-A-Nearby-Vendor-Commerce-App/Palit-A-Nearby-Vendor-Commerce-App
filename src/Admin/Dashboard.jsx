@@ -36,7 +36,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full" id="dashboard">
       <Typography paragraph>
         {/* Replace with your existing text content */}
       </Typography>
@@ -48,7 +48,7 @@ const Dashboard = () => {
 
         {/* Dashboard components */}
         <StatisticsData />
-      <div id="dashboard">
+      <div>
         <div style={marginBottomStyle}>
           <ReportsData />
         </div>

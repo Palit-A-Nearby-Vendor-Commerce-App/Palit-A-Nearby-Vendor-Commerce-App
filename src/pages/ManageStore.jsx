@@ -17,30 +17,30 @@ import { UserContext } from "../UserContext";
 import editStore from "../assets/images/editStore.png";
 
 const ManageStore = () => {
-    const { user, setUser } = useContext(UserContext);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [editMode, setEditMode] = useState(false);
-    const [editedProduct, setEditedProduct] = useState({
-        picture: "",
-        name: "",
-        price: " 0.00",
-    });
-    const [products, setProducts] = useState([]);
-    const [store, setStore] = useState(null);
-    const [imagePreview, setImagePreview] = useState(null);
-    const [editedStore, setEditedStore] = useState({
-        storeName: "",
-        category: "",
-        description: "",
-    });
-    const [openDialog, setOpenDialog] = useState(false);
-    const [confirmAction, setConfirmAction] = useState(null);
-    const [actionType, setActionType] = useState(null);
-    const [successMessage, setSuccessMessage] = useState(null);
-    const [operationSuccess, setOperationSuccess] = useState(false);
+  const { user, setUser } = useContext(UserContext);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [editedProduct, setEditedProduct] = useState({
+    picture: "",
+    name: "",
+    price: " 0.00",
+  });
+  const [products, setProducts] = useState([]);
+  const [store, setStore] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [editedStore, setEditedStore] = useState({
+    storeName: "",
+    category: "",
+    description: "",
+  });
+  const [openDialog, setOpenDialog] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [actionType, setActionType] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [operationSuccess, setOperationSuccess] = useState(false);
 
-    useEffect(() => {
-        const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.userId}`;
+  useEffect(() => {
+    const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.userId}`;
     const accountApiEndpoint = "http://localhost:8080/api/getAccountById/";
     const storeApiEndpoint = "http://localhost:8080/api/getStoreById/";
 
@@ -56,22 +56,22 @@ const ManageStore = () => {
         }
       })
       .then((response) => {
-            if (response.data && response.data.store) {
+        if (response.data && response.data.store) {
           return axios.get(storeApiEndpoint + response.data.store.storeId);
         } else {
           throw new Error("Store ID not found in account data");
         }
       })
-                .then((response) => {
-                    if (response.data) {
-                    setStore(response.data);
-                    console.log("Store data:", response.data);
-}
-                })
-                .catch((error) => {
-                    console.error("Error fetching data: ", error);
-                });
-        
+      .then((response) => {
+        if (response.data) {
+          setStore(response.data);
+          console.log("Store data:", response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
+
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
@@ -122,6 +122,8 @@ const ManageStore = () => {
   };
 
   const handleSaveConfirm = () => {
+
+    
     console.log("Save clicked", products);
 
     products.forEach((product) => {
@@ -132,7 +134,6 @@ const ManageStore = () => {
         )
         .then((response) => {
           console.log("Product updated:", response.data);
-
           setOperationSuccess((prev) => !prev);
         })
         .catch((error) => {
@@ -221,6 +222,7 @@ const ManageStore = () => {
     if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
       return;
     }
+    
 
     function convertToBase64(file) {
       return new Promise((resolve, reject) => {
@@ -254,6 +256,7 @@ const ManageStore = () => {
           price: "",
         });
 
+        setImagePreview(null);
         setImagePreview(productData.image);
         setOperationSuccess((prev) => !prev);
       })
@@ -295,6 +298,7 @@ const ManageStore = () => {
 
   const handleAdd = () => {
     if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
+      return
     } else {
       openConfirmationDialog(() => handleAddConfirm, "add");
     }
@@ -498,7 +502,6 @@ const ManageStore = () => {
                   }}
                 />
                 <Button
-                  type="submit"
                   variant="contained"
                   color="primary"
                   style={{
@@ -533,12 +536,12 @@ const ManageStore = () => {
             key={product.productId}
             style={{ marginBottom: "20px", width: "48%", position: "relative" }}
           >
-                    {editMode ? (
-                        <>
+            {editMode ? (
+              <>
                 <button
-                            style={{
-                                                                    position: "absolute",
-                                    top: 0,
+                  style={{
+                    position: "absolute",
+                    top: 0,
                     right: 0,
                     fontWeight: "bold",
                     fontSize: "20px",
@@ -550,134 +553,133 @@ const ManageStore = () => {
                     height: "30px",
                     cursor: "pointer",
                   }}
-                                    onClick={() => handleDelete(index)}
-                                >
-                                    X
-                                </button>
-                                <label
-                                    style={{
-                                        width: "100%",
-                                        height: "150px",
-                                        border: "1px solid black",
-                                        borderRadius: "15px",
-                                        backgroundImage: `url(${
+                  onClick={() => handleDelete(index)}
+                >
+                  X
+                </button>
+                <label
+                  style={{
+                    width: "100%",
+                    height: "150px",
+                    border: "1px solid black",
+                    borderRadius: "15px",
+                    backgroundImage: `url(${
                       product.imagePreview ||
                       `data:image/png;base64,${product.image}`
                     })`,
-                                        backgroundSize: "cover",
-                                        backgroundPosition: "center",
-                                        display: "inline-block",
-                                    }}
-                                >
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={(e) => handleProductImageChange(e, index)}
-                                        style={{ display: "none" }}
-                                    />
-                                    <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white', fontSize: '50px', fontWeight: 'bold' }}>+</span>
-                                </label>
-                                <TextField
-                                    name="name"
-                                    variant="outlined"
-                                    value={product.name}
-                                    onChange={(e) => handleProductInputChange(e, index)}
-                                    margin="normal"
-                                    size="small"
-                                    InputProps={{
-                                        style: {
-                                            fontSize: 20,
-                                            height: 25,
-                                            paddingRight: "10px",
-                                            borderRadius: "15px",
-                                            color: "white",
-                                            fontWeight: "bold",
-                                        },
-                                        endAdornment: (
-                                            <InputAdornment
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    display: "inline-block",
+                  }}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleProductImageChange(e, index)}
+                    style={{ display: "none" }}
+                  />
+                </label>
+                <TextField
+                  name="name"
+                  variant="outlined"
+                  value={product.name}
+                  onChange={(e) => handleProductInputChange(e, index)}
+                  margin="normal"
+                  size="small"
+                  InputProps={{
+                    style: {
+                      fontSize: 20,
+                      height: 25,
+                      paddingRight: "10px",
+                      borderRadius: "15px",
+                      color: "white",
+                      fontWeight: "bold",
+                    },
+                    endAdornment: (
+                      <InputAdornment
                         position="end"
                         style={{ width: "3px", marginRight: "10px" }}
                       >
-                                                <Icon>
-                                                    <img
+                        <Icon>
+                          <img
                             src={editStore}
                             alt="Edit Store"
                             style={{ marginTop: "3px" }}
                           />
-                                                </Icon>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                    style={{
-                                        position: "absolute",
-                                        top: "-15px",
-                                        left: "39%",
-                                        width: "79%",
-                                        transform: "translateX(-50%)",
-                                        color: "white",
-                                        fontWeight: "bold",
-                                        backgroundColor: "rgba(136, 170, 204, 0.7)",
-                                        borderRadius: "15px",
-                                    }}
-                                />
-                                <TextField
-                                    name="price"
-                                    variant="outlined"
-                                    type="text"
-                                    value={product.price}
-                                    onChange={(e) => handleProductInputChange(e, index)}
-                                    margin="normal"
-                                    size="small"
-                                    InputProps={{
-                                        style: {
-                                            fontSize: 15,
-                                            height: 20,
-                                            paddingRight: "5x",
-                                            borderRadius: "15px",
-                                            fontWeight: "bold",
-                                        },
-                                        endAdornment: (
-                                            <InputAdornment
+                        </Icon>
+                      </InputAdornment>
+                    ),
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: "-15px",
+                    left: "39%",
+                    width: "79%",
+                    transform: "translateX(-50%)",
+                    color: "white",
+                    fontWeight: "bold",
+                    backgroundColor: "rgba(136, 170, 204, 0.7)",
+                    borderRadius: "15px",
+                  }}
+                />
+                <TextField
+                  name="price"
+                  variant="outlined"
+                  type="text"
+                  value={product.price}
+                  onChange={(e) => handleProductInputChange(e, index)}
+                  margin="normal"
+                  size="small"
+                  InputProps={{
+                    style: {
+                      fontSize: 15,
+                      height: 20,
+                      paddingRight: "5x",
+                      borderRadius: "15px",
+                      fontWeight: "bold",
+                    },
+                    endAdornment: (
+                      <InputAdornment
                         position="end"
                         style={{ width: "3px", marginRight: "5px" }}
                       >
-                                                <Icon>
-                                                    <img
+                        <Icon>
+                          <img
                             src={editStore}
                             alt="Edit Store"
                             style={{ marginTop: "3px" }}
                           />
-                                                </Icon>
-                                            </InputAdornment>
-                                        ),
-                                    }}
-                                    style={{
-                                        position: "absolute",
-                                        bottom: "0px",
-                                        left: "0%",
-                                        width: "50%",
-                                        textAlign: "left",
-                                        color: "black",
-                                        fontSize: "14px",
-                                        fontWeight: "bold",
-                                        backgroundColor: "#c0d8f0",
-                                        borderRadius: "10px",
-                                    }}
-                                />
-                            </>
-                        ) : (
-                            <>
-                                <img
-                                    src={`data:image/png;base64,${product.image}`}
-                                    alt={`Product ${index + 1}`}
-                                    style={{
+                        </Icon>
+                      </InputAdornment>
+                    ),
+                  }}
+                  style={{
+                    position: "absolute",
+                    bottom: "0px",
+                    left: "0%",
+                    width: "50%",
+                    textAlign: "left",
+                    color: "black",
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    backgroundColor: "#c0d8f0",
+                    borderRadius: "10px",
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <img
+                  src={`data:image/png;base64,${product.image}`}
+                  alt={`Product ${index + 1}`}
+                  style={{
                     width: "100%",
                     height: "150px",
                     border: "1px solid black",
                     borderRadius: "15px",
                   }}
-                                />
-                                <p
+                />
+                <p
                   style={{
                     position: "absolute",
                     top: "1px",
@@ -693,9 +695,9 @@ const ManageStore = () => {
                     borderRadius: "15px",
                   }}
                 >
-                                    {product.name}
-                                </p>
-                                <p
+                  {product.name}
+                </p>
+                <p
                   style={{
                     position: "absolute",
                     bottom: "1px",
@@ -710,57 +712,57 @@ const ManageStore = () => {
                     borderRadius: "10px",
                   }}
                 >
-                                    ₱{product.price}
-                                </p>
-                            </>
-                        )}
-                    </div>
-                ))}
-            </div>
-            <div className="flex mt-4 absolute bottom-8 w-full">
-                {editMode ? (
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        style={{ borderRadius: "15px", width: "90%", height: "50px" }}
-                        onClick={handleSave}
-                    >
-                        Save
-                    </Button>
-                ) : (
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        style={{ borderRadius: "15px", width: "90%", height: "50px" }}
-                        onClick={handleEdit}
-                    >
-                        Edit Store and Products
-                    </Button>
-                )}
-            </div>
-            <Dialog
-                open={openDialog}
-                onClose={() => setOpenDialog(false)}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">{"Confirm Action"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        {actionType === "delete" && "Are you sure you want to delete this?"}
-                        {actionType === "save" && "Are you sure you want to save this?"}
-                        {actionType === "add" && "Are you sure you want to add this?"}
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button
+                  ₱{product.price}
+                </p>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="flex mt-4 absolute bottom-8 w-full">
+        {editMode ? (
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ borderRadius: "15px", width: "90%", height: "50px" }}
+            onClick={handleSave}
+          >
+            Save
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ borderRadius: "15px", width: "90%", height: "50px" }}
+            onClick={handleEdit}
+          >
+            Edit Store and Products
+          </Button>
+        )}
+      </div>
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Action"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {actionType === "delete" && "Are you sure you want to delete this?"}
+            {actionType === "save" && "Are you sure you want to save this?"}
+            {actionType === "add" && "Are you sure you want to add this?"}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
             onClick={() => setOpenDialog(false)}
             color="primary"
             style={{ backgroundColor: "#E8594F", color: "white" }}
           >
-                        Cancel
-                    </Button>
-                    <Button
+            Cancel
+          </Button>
+          <Button
             onClick={() => {
               confirmAction();
               setOpenDialog(false);
@@ -769,34 +771,34 @@ const ManageStore = () => {
             autoFocus
             style={{ backgroundColor: "#0575B4", color: "white" }}
           >
-                        Confirm
-                    </Button>
-                </DialogActions>
-            </Dialog>
-            <Dialog
-                open={!!successMessage}
-                onClose={() => setSuccessMessage(null)}
-                aria-labelledby="success-dialog-title"
-                aria-describedby="success-dialog-description"
-            >
-                <DialogTitle id="success-dialog-title">{"Success"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="success-dialog-description">
-                        {successMessage}
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={!!successMessage}
+        onClose={() => setSuccessMessage(null)}
+        aria-labelledby="success-dialog-title"
+        aria-describedby="success-dialog-description"
+      >
+        <DialogTitle id="success-dialog-title">{"Success"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="success-dialog-description">
+            {successMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
             onClick={() => setSuccessMessage(null)}
             color="primary"
             autoFocus
             style={{ backgroundColor: "#0575B4", color: "white" }}
           >
-                        OK
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
-    );
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 };
 export default ManageStore;

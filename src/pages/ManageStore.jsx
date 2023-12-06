@@ -418,7 +418,7 @@ const ManageStore = () => {
                                 label="Product Price"
                                 name="price"
                                 variant="outlined"
-                                type="text"
+                                type="number"
                                 value={editedProduct.price}
                                 onChange={handleInputChange}
                                 margin="normal"
@@ -529,7 +529,7 @@ const ManageStore = () => {
                                 <TextField
                                     name="price"
                                     variant="outlined"
-                                    type="text"
+                                    type="number"
                                     value={product.price}
                                     onChange={(e) => handleProductInputChange(e, index)}
                                     margin="normal"

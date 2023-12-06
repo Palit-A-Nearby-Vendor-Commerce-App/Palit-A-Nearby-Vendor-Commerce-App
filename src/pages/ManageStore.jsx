@@ -1,16 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Icon,
-  InputAdornment,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Icon, InputAdornment, MenuItem, Select, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
@@ -136,9 +124,9 @@ const ManageStore = () => {
         }
         setEditMode(false);
         setEditedProduct({
-          picture: "",
-          name: "",
-          price: "",
+            picture: "",
+            name: "",
+            price: "",
         });
     };
 
@@ -212,9 +200,9 @@ const ManageStore = () => {
                 console.error("Error creating product:", error);
             });
         setEditedProduct({
-          picture: "",
-          name: "",
-          price: "",
+            picture: "",
+            name: "",
+            price: "",
         });
         setImagePreview(null);
     };
@@ -477,17 +465,16 @@ const ManageStore = () => {
                                         backgroundImage: `url(${product.imagePreview || `data:image/png;base64,${product.image}`})`,
                                         backgroundSize: 'cover',
                                         backgroundPosition: 'center',
-                                        display: 'inline-block',
-                                        position: 'relative' // Add this
+                                        display: 'inline-block'
                                     }}
                                 >
-                                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white', fontSize: '50px', fontWeight: 'bold' }}>+</div>
                                     <input
                                         type="file"
                                         accept="image/*"
                                         onChange={(e) => handleProductImageChange(e, index)}
                                         style={{ display: 'none' }}
                                     />
+                                    <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white', fontSize: '50px', fontWeight: 'bold' }}>+</span>
                                 </label>
                                 <TextField
                                     name="name"

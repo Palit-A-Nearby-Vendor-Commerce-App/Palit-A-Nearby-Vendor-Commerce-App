@@ -10,10 +10,15 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
 import { UserContext } from "../UserContext";
+import AlertDialog from "../components/AlertDialog";
 
 const Queue = () => {
   const [queue, setQueue] = useState([]);
   const [users, setUsers] = useState([]);
+  const [openConfirmationServeNow, setOpenConfirmationServeNow] =
+    useState(false);
+  const [openConfirmationCompleted, setOpenConfirmationCompleted] =
+    useState(false);
   const { user } = useContext(UserContext);
 
   const fetchData = () => {
@@ -48,15 +53,29 @@ const Queue = () => {
     return () => clearInterval(intervalId); // Clear interval on component unmount
   }, []);
 
-  const handleServeNow = (item) => {
-    axios
-      .put(
+  const handleConfirmationServeNow = () => {
+    setOpenConfirmationServeNow(true);
+  };
+
+  const handleConfirmationCompleted = () => {
+    setOpenConfirmationCompleted(true);
+  };
+
+  const handleServeNowConfirmed = async (item) => {
+    try {
+      const response = await axios.put(
         `http://localhost:8080/api/updateTransactionById/${item?.transactionId}`,
         { ...item, status: "Now Serving" }
-      )
-      .then((response) => {
+      );
+
+      if (response.status === 200) {
         console.log("Transaction now serving:", response.data);
-      });
+      }
+    } catch (error) {
+      console.error("Error serving now:", error);
+    } finally {
+      setOpenConfirmationServeNow(false);
+    }
   };
 
   const handleCompleted = async (item) => {
@@ -70,6 +89,8 @@ const Queue = () => {
       );
     } catch (error) {
       console.error("Error completing or deleting transaction:", error.message);
+    } finally {
+      setOpenConfirmationCompleted(false);
     }
   };
 
@@ -82,15 +103,6 @@ const Queue = () => {
       }}
     >
       <h3 className="text-xl text-[#E8594F] mb-5">Now Serving</h3>
-      {console.log(
-        "Vendor transacs: ",
-        queue.filter(
-          (q) =>
-            q.accountVendorId.accountId === user.account.accountId &&
-            q.vendor.accountId === user.account.accountId
-        )
-      )}
-
       {queue.length > 0 &&
         queue.map((item) => {
           if (item.status === "Now Serving") {
@@ -160,10 +172,19 @@ const Queue = () => {
                       })}
                     <button
                       className="bg-red-400 font-semibold rounded-2xl p-2 w-full mt-4 shadow-lg hover:bg-red-300 transition-all duration-300 ease-in-out"
-                      onClick={() => handleCompleted(item)}
+                      onClick={handleConfirmationCompleted}
                     >
                       Mark as Completed
                     </button>
+                    {openConfirmationCompleted && (
+                      <AlertDialog
+                        open={true}
+                        handleClose={() => setOpenConfirmationCompleted(false)}
+                        handleConfirm={() => handleCompleted(item)}
+                        title="Completed Order Confirmation"
+                        content="Are you sure you want to mark this order as completed?"
+                      />
+                    )}
                     <Link
                       to={{ pathname: "/chat", state: { u } }}
                       className="absolute right-4 bottom-[70px] p-2 bg-primary rounded-full text-sm animate-bounce hover:bg-[#338dc2]"
@@ -190,15 +211,6 @@ const Queue = () => {
                 u.account &&
                 u.account?.accountId === item.customer?.accountId
             );
-
-            {
-              /* const u = item.find(
-              (itm) => itm.vendor.accountId === user.account.accountId
-            ); */
-            }
-            console.log("U: ", u);
-
-            console.log("Item: ", item.vendor);
 
             if (u) {
               return (
@@ -258,10 +270,19 @@ const Queue = () => {
                       })}
                     <button
                       className="bg-green-400 font-semibold rounded-2xl p-2 w-full mt-4 shadow-lg hover:bg-green-300 transition-all duration-300 ease-in-out"
-                      onClick={() => handleServeNow(item)}
+                      onClick={handleConfirmationServeNow}
                     >
                       Serve Now
                     </button>
+                    {openConfirmationServeNow && (
+                      <AlertDialog
+                        open={true}
+                        handleClose={() => setOpenConfirmationServeNow(false)}
+                        handleConfirm={() => handleServeNowConfirmed(item)}
+                        title="Accept Order Confirmation"
+                        content="Are you sure you want to accept this order?"
+                      />
+                    )}
                     <Link
                       to={{ pathname: "/chat", state: { u } }}
                       className="absolute right-4 bottom-[70px] p-2 bg-primary rounded-full text-sm animate-bounce hover:bg-[#338dc2]"

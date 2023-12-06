@@ -59,15 +59,18 @@ const Queue = () => {
       });
   };
 
-  const handleCompleted = (item) => {
-    axios
-      .put(
+  const handleCompleted = async (item) => {
+    try {
+      const updateResponse = await axios.put(
         `http://localhost:8080/api/updateTransactionById/${item?.transactionId}`,
-        { ...item, isDeleted: true, status: "Completed" }
-      )
-      .then((response) => {
-        console.log("Transaction item completed:", response.data);
-      });
+        { ...item, status: "Completed" }
+      );
+      const deleteResponse = await axios.delete(
+        `http://localhost:8080/api/deleteTransactionById/${item?.transactionId}`
+      );
+    } catch (error) {
+      console.error("Error completing or deleting transaction:", error.message);
+    }
   };
 
   return (

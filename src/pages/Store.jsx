@@ -264,7 +264,7 @@ const Store = ({ vendor }) => {
                 {vendor?.account.store.category}
               </div>
             </div>
-            <div className="p-2" style={{ height: "90px" }}>
+            <div className="p-2" style={{ height: "50px" }}>
               <p className="text-sm" style={{ textAlign: "justify" }}>
                 {vendor?.account?.store?.description || "Loading..."}
               </p>
@@ -290,6 +290,7 @@ const Store = ({ vendor }) => {
                     marginBottom: "20px",
                     width: "48%",
                     position: "relative",
+                    marginRight: "2%",
                   }}
                 >
                   <>
@@ -299,7 +300,7 @@ const Store = ({ vendor }) => {
                       style={{
                         width: "100%",
                         height: "150px",
-                        borderRadius: "15px",
+                        borderRadius: "20px",
                       }}
                     />
                     <p
@@ -329,7 +330,7 @@ const Store = ({ vendor }) => {
                         fontWeight: "bold",
                         backgroundColor: "#c0d8f0",
                         paddingInline: "5px",
-                        borderRadius: "10px",
+                        borderRadius: "20px",
                       }}
                     >
                       ₱ {product.price}
@@ -342,7 +343,7 @@ const Store = ({ vendor }) => {
                         display: "flex",
                         alignItems: "center",
                         backgroundColor: "#c0d8f0",
-                        borderRadius: "10px",
+                        borderRadius: "20px",
                       }}
                     >
                       <button
@@ -416,6 +417,11 @@ const Store = ({ vendor }) => {
         onClose={() => setOpenOrderDialog(false)}
         aria-labelledby="order-dialog-title"
         aria-describedby="order-dialog-description"
+        PaperProps={{
+          style: {
+            borderRadius: "15px", // Apply the borderRadius to the Paper component
+          },
+        }}
       >
         <DialogTitle id="order-dialog-title">{"Confirm Order"}</DialogTitle>
         <DialogContent>
@@ -440,7 +446,7 @@ const Store = ({ vendor }) => {
           <Button
             onClick={() => setOpenOrderDialog(false)}
             color="primary"
-            style={{ backgroundColor: "#E8594F", color: "white" }}
+            style={{ backgroundColor: "#E8594F", color: "white", borderRadius: "15px",  }}
           >
             Cancel
           </Button>
@@ -451,7 +457,7 @@ const Store = ({ vendor }) => {
             }}
             color="primary"
             autoFocus
-            style={{ backgroundColor: "#0575B4", color: "white" }}
+            style={{ backgroundColor: "#0575B4", color: "white", borderRadius: "15px",  }}
           >
             Confirm
           </Button>
@@ -464,6 +470,11 @@ const Store = ({ vendor }) => {
         onClose={() => setOpenCancelDialog(false)}
         aria-labelledby="cancel-dialog-title"
         aria-describedby="cancel-dialog-description"
+        PaperProps={{
+          style: {
+            borderRadius: "15px", // Apply the borderRadius to the Paper component
+          },
+        }}
       >
         <DialogTitle id="cancel-dialog-title">{"Confirm Cancel"}</DialogTitle>
         <DialogContent>
@@ -475,7 +486,7 @@ const Store = ({ vendor }) => {
           <Button
             onClick={() => setOpenCancelDialog(false)}
             color="primary"
-            style={{ backgroundColor: "#E8594F", color: "white" }}
+            style={{ backgroundColor: "#E8594F", color: "white", borderRadius: "15px",  }}
           >
             No
           </Button>
@@ -497,7 +508,7 @@ const Store = ({ vendor }) => {
             }}
             color="primary"
             autoFocus
-            style={{ backgroundColor: "#0575B4", color: "white" }}
+            style={{ backgroundColor: "#0575B4", color: "white", borderRadius: "15px",  }}
           >
             Yes
           </Button>

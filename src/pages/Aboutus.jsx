@@ -1,5 +1,8 @@
-import React from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Element } from "react-scroll";
+import gsap from "gsap";
+import ScrollTrigger from "gsap/ScrollTrigger";
 
 import NavigationBar from "../components/NavigationBar";
 import map from "../assets/images/citmap.png";
@@ -7,6 +10,8 @@ import bardil from "../assets/images/bardil.png";
 import alice from "../assets/images/alice.png";
 import pri from "../assets/images/pri.png";
 import casea from "../assets/images/casea.png";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const membersData = [
   {
@@ -33,16 +38,57 @@ const membersData = [
     name: "Joshua Briones",
     position: "Web Developer",
     img: pri,
-    quote: '"Just wanna die ffs"',
+    quote:
+      '"I would like to change the world, but they wont give me the source code."',
   },
 ];
 
 const Aboutus = () => {
+  useEffect(() => {
+    gsap.from(".aboutus-header", {
+      y: 100,
+      opacity: 0,
+      duration: 2,
+      ease: "power3.out",
+    });
+
+    gsap.from(".aboutus-map", {
+      opacity: 0,
+      scrollTrigger: {
+        trigger: ".aboutus-map",
+        start: "top 90%",
+        end: "top 30%",
+        scrub: true,
+      },
+    });
+
+    gsap.from(".aboutus-secondheader", {
+      y: 200,
+      opacity: 0,
+      scrollTrigger: {
+        trigger: ".aboutus-secondheader",
+        start: "top 80%",
+        end: "top 50%",
+        scrub: true,
+      },
+    });
+
+    gsap.from(".aboutus-members", {
+      y: 200,
+      opacity: 0,
+      stagger: 0.2,
+      scrollTrigger: {
+        trigger: ".aboutus-members",
+        start: "top 80%",
+        end: "top 50%",
+        scrub: true,
+      },
+    });
+  }, []);
   return (
     <div className="w-full font-custom">
-      {/* Navigation bar to be added... */}
       <NavigationBar />
-      <div className="w-full flex items-center flex-col py-[96px] px-20 text-center">
+      <div className="aboutus-header w-full flex items-center flex-col py-[96px] px-20 text-center ">
         <h4 className="text-primary text-[16px] font-semibold mb-4 ">
           About the company
         </h4>
@@ -55,23 +101,25 @@ const Aboutus = () => {
           Come visit our friendly team at one of our offices.
         </p>
 
-        <img src={map} alt="Palit's location" />
+        <img src={map} alt="Palit's location" className="aboutus-map" />
 
         <div className="h-[1px] w-full bg-gray-200 mt-[96px]"></div>
 
-        <h4 className="text-primary text-[16px] font-semibold mb-4 mt-[96px] ">
-          Join us!
-        </h4>
-        <h1 className="text-grayy text-5xl leading-[60px] font-semibold">
-          Meet our team
-        </h1>
-        <p className="text-slate-500 pt-6 text-xl mb-[96px]">
-          Our philosophy is simple &mdash; hire a team of diverse, passionate
-          people and foster <br /> a culture that empowers you to do your best
-          work.
-        </p>
+        <div className="aboutus-secondheader">
+          <h4 className="text-primary text-[16px] font-semibold mb-4 mt-[96px] ">
+            Join us!
+          </h4>
+          <h1 className="text-grayy text-5xl leading-[60px] font-semibold">
+            Meet our team
+          </h1>
+          <p className="text-slate-500 pt-6 text-xl mb-[96px]">
+            Our philosophy is simple &mdash; hire a team of diverse, passionate
+            people and foster <br /> a culture that empowers you to do your best
+            work.
+          </p>
+        </div>
 
-        <div className="pt-16 flex gap-8 w-auto">
+        <div className="aboutus-members pt-16 flex gap-8 w-auto">
           {membersData.map((member, index) => (
             <div className="w-full text-left bg-slate-50 shadow-md" key={index}>
               <div className="relative">

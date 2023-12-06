@@ -23,7 +23,7 @@ const ManageStore = () => {
   const [editedProduct, setEditedProduct] = useState({
     picture: "",
     name: "",
-    price: " 0.00",
+    price: "",
   });
   const [products, setProducts] = useState([]);
   const [store, setStore] = useState(null);
@@ -320,6 +320,7 @@ const ManageStore = () => {
             <TextField
               name="storeName"
               variant="outlined"
+              inputProps={{ maxLength: 23 }}
               InputProps={{
                 style: {
                   fontSize: 18,
@@ -330,6 +331,13 @@ const ManageStore = () => {
                   fontWeight: "bold",
                   borderRadius: "20px",
                 },
+                endAdornment: (
+                    <InputAdornment position="end" style={{marginRight: "3px"}}>
+                        <Icon>
+                            <img src={editStore} alt="Edit Store" />
+                        </Icon>
+                    </InputAdornment>
+                ),
               }}
               value={editedStore.storeName}
               onChange={handleStoreInputChange}
@@ -390,6 +398,7 @@ const ManageStore = () => {
             variant="outlined"
             multiline
             rows={4}
+            inputProps={{ maxLength: 150 }}
             InputProps={{
               style: {
                 fontSize: 15,
@@ -402,11 +411,15 @@ const ManageStore = () => {
               },
               endAdornment: (
                 <InputAdornment position="end">
-                  <Icon>
-                    <img src={editStore} alt="Edit Store" />
-                  </Icon>
+                    <Icon>
+                        <img src={editStore} alt="Edit Store" style={{
+                            position: 'absolute',
+                            top: 1,
+                            right: 15
+                        }} />
+                    </Icon>
                 </InputAdornment>
-              ),
+            ),
             }}
             value={editedStore.description}
             onChange={handleStoreInputChange}
@@ -460,7 +473,6 @@ const ManageStore = () => {
                 <TextField
                   label="Product Name"
                   name="name"
-                  placeholder="Enter product name"
                   value={editedProduct.name}
                   onChange={handleInputChange}
                   margin="normal"
@@ -474,6 +486,7 @@ const ManageStore = () => {
                     marginLeft: "10px",
                   }}
                   InputProps={{
+                    
                     endAdornment: (
                       <InputAdornment position="end">
                         <img src={editStore} alt="Edit Store" />

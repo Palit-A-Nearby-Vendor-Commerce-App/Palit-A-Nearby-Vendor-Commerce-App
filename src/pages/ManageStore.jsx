@@ -1,4 +1,16 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Icon, InputAdornment, MenuItem, Select, TextField } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Icon,
+  InputAdornment,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
@@ -124,9 +136,9 @@ const ManageStore = () => {
         }
         setEditMode(false);
         setEditedProduct({
-            picture: "",
-            name: "",
-            price: "",
+          picture: "",
+          name: "",
+          price: "",
         });
     };
 
@@ -200,9 +212,9 @@ const ManageStore = () => {
                 console.error("Error creating product:", error);
             });
         setEditedProduct({
-            picture: "",
-            name: "",
-            price: "",
+          picture: "",
+          name: "",
+          price: "",
         });
         setImagePreview(null);
     };

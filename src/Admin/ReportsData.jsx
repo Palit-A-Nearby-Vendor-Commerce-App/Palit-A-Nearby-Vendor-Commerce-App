@@ -195,7 +195,7 @@ const ReportsData = () => {
                   />
                 </div>
               </th>
-              <th className="w-1/5 pb-2">
+              <th className="w-2/5 pb-2">
                 <div className="flex items-center">
                   Message Content
                   <input
@@ -272,7 +272,6 @@ const ReportsData = () => {
                 </td>
                 <td className="py-2">
                   {edit === 1 ? (
-                    // Use the handleCheckboxChange function to update the isResolved value
                     <input
                       type="checkbox"
                       name="isResolved"
@@ -285,7 +284,6 @@ const ReportsData = () => {
                     "Pending"
                   )}
                 </td>
-                {/* Use a conditional rendering to display the delete button only when edit is 1 */}
                 {edit === 1 && (
                   <td className="py-2">
                     <CustomButton

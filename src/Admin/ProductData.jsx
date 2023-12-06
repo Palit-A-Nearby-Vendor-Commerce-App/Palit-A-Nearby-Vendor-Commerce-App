@@ -181,7 +181,7 @@ const ProductData = () => {
                   />
                 </div>
               </th>
-              <th className="w-1/5 pb-2">
+              <th className="w-2/5 pb-2">
                 <div>
                   Product Name
                   <input
@@ -209,7 +209,7 @@ const ProductData = () => {
                   />
                 </div>
               </th>
-              <th className="w-3/10 pb-2">Image</th>
+              {/* <th className="w-3/10 pb-2">Image</th> */}
               {edit === 1 && <th className="w-1/10 pb-2">Delete</th>}
             </tr>
           </thead>
@@ -220,8 +220,8 @@ const ProductData = () => {
                   {edit === 1 ? (
                     <input
                       type="text"
-                      name="storeId"
-                      value={editedProductData[index].store.storeId}
+                      name="storeName"
+                      value={editedProductData[index].store.storeName}
                       onChange={(e) => handleChange(e, index)}
                     />
                   ) : (
@@ -252,7 +252,7 @@ const ProductData = () => {
                     product.price
                   )}
                 </td>
-                <td className="py-2">
+                {/* <td className="py-2">
                   {edit === 1 ? (
                     <input
                       type="text"
@@ -268,7 +268,7 @@ const ProductData = () => {
                       />
                     )
                   )}
-                </td>
+                </td> */}
                 {edit === 1 && (
                   <td className="py-2">
                     <CustomButton

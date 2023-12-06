@@ -42,7 +42,10 @@ function Home() {
   );
 
   useEffect(() => {
-    if (!user) {
+    
+  let isMounted = true;
+
+    if (!user && isMounted) {
       history.push("/landing");
     }
   }, [user, history]);
@@ -86,7 +89,8 @@ function Home() {
   };
 
   useEffect(() => {
-    if (user) {
+    let isMounted = true;
+if (user && isMounted) {
       const intervalId = setInterval(() => {
         navigator.geolocation.getCurrentPosition(
           updateLocationInContext,
@@ -131,7 +135,8 @@ function Home() {
   };
 
   useEffect(() => {
-    if (user) {
+    let isMounted = true;
+if (user && isMounted && currentPosition) {
       const intervalId = setInterval(() => {
         axios
           .get("http://localhost:8080/api/getAllUsers")

@@ -8,11 +8,13 @@ const ReportsData = () => {
   const [edit, setEdit] = useState(0);
   const [editedReportData, setEditedReportData] = useState([]);
   const [open, setOpen] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(-1);
   // Add new states for the search and filter inputs
   const [searchSender, setSearchSender] = useState("");
   const [searchMessage, setSearchMessage] = useState("");
   const [filterResolved, setFilterResolved] = useState("All");
+
 
   useEffect(() => {
     const fetchReportData = async () => {
@@ -82,32 +84,44 @@ const ReportsData = () => {
     }
   };
 
+  const handleOpenDeleteDialog = () => {
+    setOpenDelete(true);
+  };
+  
+  const handleCloseDeleteDialog = () => {
+    setOpenDelete(false);
+  };  
+
   const handleDeleteClick = async (index) => {
     setDeleteIndex(index);
-    handleOpenDialog();
+    handleOpenDeleteDialog();
   };
+  
 
   const handleDeleteReport = async () => {
-    const report = editedReportData[deleteIndex];
-    report.isDeleted = true;
+    // Get the report id from the editedReportData array using the deleteIndex
+    const reportId = editedReportData[deleteIndex].reportId;
+    // Call the deleteReportById endpoint using axios.delete and pass the reportId as a parameter
     try {
-      const response = await axios.put(
-        `http://localhost:8080/api/updateReportById/${report.reportId}`,
-        report
+      const response = await axios.delete(
+        `http://localhost:8080/api/deleteReportById/${reportId}`
       );
       console.log(response.data);
     } catch (error) {
       console.error("Error deleting report data:", error);
     }
-    handleCloseDialog();
+    // Fetch the updated report data from the getAllReports endpoint and update the state
     try {
       const response = await axios.get("http://localhost:8080/api/getAllReports");
       setReportData(response.data);
-      console.log(response.data);
+      setEditedReportData(response.data);
     } catch (error) {
       console.error("Error fetching reports data:", error);
     }
+    // Close the delete dialog
+    handleCloseDeleteDialog();
   };
+  
 
   // Add a new function to handle the search input change
   const handleSearchChange = (e) => {
@@ -274,15 +288,34 @@ const ReportsData = () => {
           </table>
         </div>
         <Dialog
-          open={open}
+          open={openDelete}
+          onClose={handleCloseDeleteDialog}
+        >
+          <DialogTitle>Confirm deletion</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete this report?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <CustomButton
+              label="Cancel"
+              onClick={handleCloseDeleteDialog}
+            ></CustomButton>
+            <CustomButton
+              label="Confirm Deletion"
+              onClick={handleDeleteReport}
+            ></CustomButton>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={open && edit === 1}
           onClose={handleCloseDialog}
         >
           <DialogTitle>Confirm changes</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              {edit === 1
-                ? "Are you sure you want to make any changes to the report data?"
-                : "Are you sure you want to delete this report?"}
+              Are you sure you want to make any changes to the report data?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -291,11 +324,13 @@ const ReportsData = () => {
               onClick={handleCloseDialog}
             ></CustomButton>
             <CustomButton
-              label={edit === 1 ? "Confirm Changes" : "Confirm Deletion"}
-              onClick={edit === 1 ? handleConfirmDialog : handleDeleteReport}
+              label="Confirm Changes"
+              onClick={handleConfirmDialog}
             ></CustomButton>
           </DialogActions>
         </Dialog>
+
+
       </Paper>
     );
   };

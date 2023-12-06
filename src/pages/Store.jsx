@@ -311,8 +311,8 @@ const Store = ({ vendor }) => {
                         transform: "translateX(-50%)",
                         paddingInline: "10px",
                         color: "black",
-                        fontSize: "16px",
-                        backgroundColor: "rgba(255,255,255, 0.5)",
+                        fontSize: "17px",
+                        backgroundColor: "rgba(255,255,255, 0.7)",
                         borderTopRadius: "15px",
                       }}
                     >

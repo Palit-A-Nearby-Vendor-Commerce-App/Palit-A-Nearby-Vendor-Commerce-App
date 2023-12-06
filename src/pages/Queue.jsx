@@ -119,7 +119,7 @@ const Queue = () => {
                 <Accordion
                   key={u.account.accountId}
                   className="w-full items-center text-white mb-3"
-                  style={{ backgroundColor: "#E8594F", borderRadius: "20px" }}
+                  style={{ backgroundColor: "#E8594F", borderRadius: "20px", paddingInline: "20px" }}
                 >
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
@@ -217,7 +217,7 @@ const Queue = () => {
                 <Accordion
                   key={u.account.accountId}
                   className="w-full items-center text-white mb-3"
-                  style={{ backgroundColor: "#5FB4B8", borderRadius: "20px" }}
+                  style={{ backgroundColor: "#5FB4B8", borderRadius: "20px", paddingInline: "20px" }}
                 >
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}

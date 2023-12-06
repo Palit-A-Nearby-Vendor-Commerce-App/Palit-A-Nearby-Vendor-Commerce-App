@@ -1,4 +1,12 @@
-import { Button, TextField } from "@mui/material";
+import {
+  Button,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
@@ -29,6 +37,8 @@ const Store = ({ vendor }) => {
   const [activeTransaction, setActiveTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedVendor, setSelectedVendor] = useState(null);
+  const [openOrderDialog, setOpenOrderDialog] = useState(false); // state for order confirmation dialog
+  const [openCancelDialog, setOpenCancelDialog] = useState(false); // state for cancel confirmation dialog
 
   useEffect(() => {
     setSelectedVendor(vendor);
@@ -90,44 +100,46 @@ const Store = ({ vendor }) => {
   };
 
   useEffect(() => {
-    const fetchStore = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/getStoreById/${vendor.account.store.storeId}`
-        );
-        setStore(response.data);
-        setEditedStore({
-          storeName: response.data.storeName,
-          category: response.data.category,
-          description: response.data.description,
-        });
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching store:", error);
-      }
-    };
-
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/getProductServicesByStoreId/store/${vendor.account.store.storeId}`
-        );
-        setProducts(response.data);
-        console.log("Products:", response.data);
-        localStorage.setItem("products", JSON.stringify(response.data));
-        setQuantity(new Array(response.data.length).fill(0));
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        const localData = localStorage.getItem("products");
-        if (localData) {
-          setProducts(JSON.parse(localData));
-          setQuantity(new Array(JSON.parse(localData).length).fill(0));
+    if (vendor) {
+      const fetchStore = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/api/getStoreById/${vendor.account.store.storeId}`
+          );
+          setStore(response.data);
+          setEditedStore({
+            storeName: response.data.storeName,
+            category: response.data.category,
+            description: response.data.description,
+          });
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching store:", error);
         }
-      }
-    };
+      };
 
-    fetchStore();
-    fetchProducts();
+      const fetchProducts = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/api/getProductServicesByStoreId/store/${vendor.account.store.storeId}`
+          );
+          setProducts(response.data);
+          console.log("Products:", response.data);
+          localStorage.setItem("products", JSON.stringify(response.data));
+          setQuantity(new Array(response.data.length).fill(0));
+        } catch (error) {
+          console.error("Error fetching products:", error);
+          const localData = localStorage.getItem("products");
+          if (localData) {
+            setProducts(JSON.parse(localData));
+            setQuantity(new Array(JSON.parse(localData).length).fill(0));
+          }
+        }
+      };
+
+      fetchStore();
+      fetchProducts();
+    }
   }, [vendor]);
 
   const handleMenu = (event) => setAnchorEl(event.currentTarget);
@@ -176,22 +188,14 @@ const Store = ({ vendor }) => {
     let orderedListString = orderedList.join("; ");
     orderedListString += `; Total: Php${calculateTotalPrice()}`;
     setDetails(orderedListString);
-    handleOrder(orderedListString, vendor, user);
+    setOpenOrderDialog(true); // open the order confirmation dialog
+  };
+
+  const handleCancelOrder = () => {
+    setOpenCancelDialog(true); // open the cancel confirmation dialog
   };
 
   const OrderDetails = (activeTransaction) => {
-    const handleCancelOrder = () => {
-      axios
-        .put(
-          `http://localhost:8080/api/updateTransactionById/${activeTransaction.activeTransaction.transactionId}`,
-          { ...activeTransaction.activeTransaction, status: "Cancelled" }
-        )
-        .then((response) => {
-          console.log("Transaction cancelled:", response.data);
-          setOrderStatus(false);
-        });
-    };
-
     return (
       <>
         <div>
@@ -295,24 +299,21 @@ const Store = ({ vendor }) => {
                       style={{
                         width: "100%",
                         height: "150px",
-                        border: "1px solid black",
                         borderRadius: "15px",
                       }}
                     />
                     <p
                       style={{
                         position: "absolute",
-                        top: "1px",
-                        left: "49%",
+                        top: "0",
+                        left: "50%",
                         width: "100%",
                         transform: "translateX(-50%)",
-                        paddingLeft: "10px",
-                        paddingRight: "5px",
-                        color: "white",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        backgroundColor: "rgba(136, 170, 204, 0.7)",
-                        borderRadius: "15px",
+                        paddingInline: "10px",
+                        color: "black",
+                        fontSize: "17px",
+                        backgroundColor: "rgba(255,255,255, 0.7)",
+                        borderTopRadius: "15px",
                       }}
                     >
                       {product.name}
@@ -320,15 +321,14 @@ const Store = ({ vendor }) => {
                     <p
                       style={{
                         position: "absolute",
-                        bottom: "1px",
+                        bottom: "3%",
                         left: "3%",
                         textAlign: "left",
                         color: "black",
                         fontSize: "14px",
                         fontWeight: "bold",
                         backgroundColor: "#c0d8f0",
-                        paddingLeft: "10px",
-                        paddingRight: "5px",
+                        paddingInline: "5px",
                         borderRadius: "10px",
                       }}
                     >
@@ -337,10 +337,12 @@ const Store = ({ vendor }) => {
                     <div
                       style={{
                         position: "absolute",
-                        bottom: "1px",
+                        bottom: "3%",
                         right: "3%",
                         display: "flex",
                         alignItems: "center",
+                        backgroundColor: "#c0d8f0",
+                        borderRadius: "10px",
                       }}
                     >
                       <button
@@ -348,8 +350,8 @@ const Store = ({ vendor }) => {
                           backgroundColor: "#0071B3",
                           color: "white",
                           borderRadius: "10px",
-                          padding: "5px",
-                          margin: "2px",
+                          paddingInline: "5px",
+                          marginRight: "5px",
                         }}
                         disabled={orderStatus}
                         onClick={() => handleQuantityChange(index, "+")}
@@ -362,8 +364,8 @@ const Store = ({ vendor }) => {
                           backgroundColor: "#0071B3",
                           color: "white",
                           borderRadius: "10px",
-                          padding: "5px",
-                          margin: "2px",
+                          paddingInline: "5px",
+                          marginLeft: "5px",
                         }}
                         disabled={orderStatus}
                         onClick={() => handleQuantityChange(index, "-")}
@@ -407,6 +409,100 @@ const Store = ({ vendor }) => {
       ) : (
         <p>Select a store.</p>
       )}
+
+      {/* Order confirmation dialog */}
+      <Dialog
+        open={openOrderDialog}
+        onClose={() => setOpenOrderDialog(false)}
+        aria-labelledby="order-dialog-title"
+        aria-describedby="order-dialog-description"
+      >
+        <DialogTitle id="order-dialog-title">{"Confirm Order"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="order-dialog-description">
+            Are you sure you want to order the following items?
+          </DialogContentText>
+          <ul>
+            {products.map((product, index) => (
+              <li key={index}>
+                {quantity[index] > 0 && (
+                  <span>
+                    {product.name} x {quantity[index]} = ₱{" "}
+                    {product.price * quantity[index]}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+          <p>Total: ₱{calculateTotalPrice()}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenOrderDialog(false)}
+            color="primary"
+            style={{ backgroundColor: "#E8594F", color: "white" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleOrder(details, vendor, user);
+              setOpenOrderDialog(false);
+            }}
+            color="primary"
+            autoFocus
+            style={{ backgroundColor: "#0575B4", color: "white" }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Cancel confirmation dialog */}
+      <Dialog
+        open={openCancelDialog}
+        onClose={() => setOpenCancelDialog(false)}
+        aria-labelledby="cancel-dialog-title"
+        aria-describedby="cancel-dialog-description"
+      >
+        <DialogTitle id="cancel-dialog-title">{"Confirm Cancel"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="cancel-dialog-description">
+            Are you sure you want to cancel your order?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenCancelDialog(false)}
+            color="primary"
+            style={{ backgroundColor: "#E8594F", color: "white" }}
+          >
+            No
+          </Button>
+          <Button
+            onClick={() => {
+              axios
+                .put(
+                  `http://localhost:8080/api/updateTransactionById/${activeTransaction.transactionId}`,
+                  {
+                    ...activeTransaction,
+                    status: "Cancelled",
+                  }
+                )
+                .then((response) => {
+                  console.log("Transaction cancelled:", response.data);
+                  setOrderStatus(false);
+                });
+              setOpenCancelDialog(false);
+            }}
+            color="primary"
+            autoFocus
+            style={{ backgroundColor: "#0575B4", color: "white" }}
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

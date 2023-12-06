@@ -205,11 +205,11 @@ const ReportsData = () => {
                     value={searchMessage}
                     onChange={handleSearchChange}
                     placeholder="Search message"
-                    className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                    className="ml-2 border-b border-[#0071B3] text-slate-500 text-sm font-thin w-30"
                   />
                 </div>
               </th>
-              <th className="w-1/5 pb-2">Time Stamp</th>
+              <th className="w-1/5 pb-2 pl-10">Time Stamp</th>
               <th className="w-1/10 pb-2">
                 <div className="flex items-center">
                   <label htmlFor="filterResolved" className="pr-2">

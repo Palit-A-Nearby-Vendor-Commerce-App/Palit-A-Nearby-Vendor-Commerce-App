@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Paper, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@material-ui/core";
+import {
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@material-ui/core";
+import CustomButton from "../components/CustomButton";
 
 const TransactionData = () => {
   const [transactionData, setTransactionData] = useState([]);
@@ -19,7 +27,6 @@ const TransactionData = () => {
         const response = await axios.get("http://localhost:8080/api/getAllTransactions");
         setTransactionData(response.data);
         setEditedTransactionData(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error("Error fetching transaction data:", error);
       }
@@ -58,7 +65,6 @@ const TransactionData = () => {
           `http://localhost:8080/api/updateTransactionById/${transaction.transactionId}`,
           transaction
         );
-        console.log(response.data);
       } catch (error) {
         console.error("Error updating transaction data:", error);
       }
@@ -67,7 +73,6 @@ const TransactionData = () => {
     try {
       const response = await axios.get("http://localhost:8080/api/getAllTransactions");
       setTransactionData(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching transaction data:", error);
     }
@@ -76,16 +81,15 @@ const TransactionData = () => {
   const handleOpenDeleteDialog = () => {
     setOpenDelete(true);
   };
-  
+
   const handleCloseDeleteDialog = () => {
     setOpenDelete(false);
-  };  
+  };
 
   const handleDeleteClick = async (index) => {
     setDeleteIndex(index);
     handleOpenDeleteDialog();
   };
-  
 
   const handleDeleteTransaction = async () => {
     const transactionId = editedTransactionData[deleteIndex].transactionId;
@@ -93,7 +97,6 @@ const TransactionData = () => {
       const response = await axios.delete(
         `http://localhost:8080/api/deleteTransactionById/${transactionId}`
       );
-      console.log(response.data);
     } catch (error) {
       console.error("Error deleting transaction data:", error);
     }
@@ -137,60 +140,74 @@ const TransactionData = () => {
     }
     return filteredTransactionData;
   };
-  
 
   return (
     <Paper elevation={3} className="p-5 border rounded-3xl font-custom">
       <div>
-        <h1 className="text-2xl font-bold pb-6">Transactions</h1>
-        <button onClick={edit === 1 ? handleOpenDialog : handleEditClick}>
-          {edit === 1 ? "Save" : "Edit"}
-        </button>
-        <div className="flex justify-between items-center py-4">
-          <div className="flex items-center">
-            <label htmlFor="searchDetails" className="pr-2">Search by details:</label>
-            <input
-              type="text"
-              id="searchDetails"
-              name="searchDetails"
-              value={searchDetails}
-              onChange={handleSearchChange}
-            />
-          </div>
-          <div className="flex items-center">
-            <label htmlFor="searchCustomerId" className="pr-2">Search by Customer ID:</label>
-            <input
-              type="text"
-              id="searchCustomerId"
-              name="searchCustomerId"
-              value={searchCustomerId}
-              onChange={handleSearchChange}
-            />
-          </div>
-          <div className="flex items-center">
-            <label htmlFor="searchVendorId" className="pr-2">Search by Vendor ID:</label>
-            <input
-              type="text"
-              id="searchVendorId"
-              name="searchVendorId"
-              value={searchVendorId}
-              onChange={handleSearchChange}
-            />
-          </div>
+        <div className="flex">
+          <h1 className="text-2xl font-bold pb-6 text-[#0071B3]">Transactions</h1>
+          <CustomButton
+            label={edit === 1 ? "Save" : "Edit"}
+            onClick={edit === 1 ? handleOpenDialog : handleEditClick}
+            btnStyle={
+              edit === 1
+                ? "text-blue-500 ml-5 text-sm font-thin"
+                : "text-red-500 ml-5 text-sm font-thin"
+            }
+          ></CustomButton>
         </div>
         <table className="w-full">
           <thead className="text-left border-b border-[#0071B3] text-slate-500">
             <tr>
-              <th className="w-1/5 pb-2">Details</th>
+              <th className="w-1/5 pb-2">
+                <div>
+                  Details
+                  <input
+                    type="text"
+                    id="searchDetails"
+                    name="searchDetails"
+                    value={searchDetails}
+                    onChange={handleSearchChange}
+                    placeholder="Search details"
+                    className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                  />
+                </div>
+              </th>
               <th className="w-1/5 pb-2">Status</th>
-              <th className="w-1/5 pb-2">Customer ID</th>
-              <th className="w-1/5 pb-2">Vendor ID</th>
+              <th className="w-1/5 pb-2">
+                <div>
+                  Customer ID
+                  <input
+                    type="text"
+                    id="searchCustomerId"
+                    name="searchCustomerId"
+                    value={searchCustomerId}
+                    onChange={handleSearchChange}
+                    placeholder="Search customer id"
+                    className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                  />
+                </div>
+              </th>
+              <th className="w-1/5 pb-2">
+                <div>
+                  Vendor ID
+                  <input
+                    type="text"
+                    id="searchVendorId"
+                    name="searchVendorId"
+                    value={searchVendorId}
+                    onChange={handleSearchChange}
+                    placeholder="Search vendor id"
+                    className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                  />
+                </div>
+              </th>
               {edit === 1 && <th className="w-1/10 pb-2">Delete</th>}
             </tr>
           </thead>
           <tbody>
             {filterTransactionData().map((transaction, index) => (
-              <tr key={transaction.customer.accountId + transaction.vendor.accountId + transaction.transactionId}>
+              <tr key={transaction.transactionId}>
                 <td className="py-2">
                   {edit === 1 ? (
                     <input
@@ -239,54 +256,55 @@ const TransactionData = () => {
                     transaction.vendor.accountId
                   )}
                 </td>
-                {edit ? (
+                {edit === 1 && (
                   <td className="py-2">
-                    <button onClick={() => handleDeleteClick(index)}>
-                      Delete
-                    </button>
+                    <CustomButton
+                      label="Delete"
+                      onClick={() => handleDeleteClick(index)}
+                    ></CustomButton>
                   </td>
-                ): null}
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <Dialog
-        open={openDelete}
-        onClose={handleCloseDeleteDialog}
-      >
+      <Dialog open={openDelete} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Confirm deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want to delete this transaction?
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <button onClick={handleCloseDeleteDialog}>
-            Cancel
-          </button>
-          <button onClick={handleDeleteTransaction}>
-            Confirm Deletion
-          </button>
+        <DialogActions className="mr-5 mb-5">
+          <CustomButton
+            label="Cancel"
+            onClick={handleCloseDeleteDialog}
+          ></CustomButton>
+          <CustomButton
+            label="Delete"
+            onClick={handleDeleteTransaction}
+            btnStyle="bg-red-500 rounded-3xl text-white p-2 text-lg font-semibolds cursor-pointer p-3"
+          ></CustomButton>
         </DialogActions>
       </Dialog>
-      <Dialog
-        open={open && edit === 1}
-        onClose={handleCloseDialog}
-      >
+      <Dialog open={open && edit === 1} onClose={handleCloseDialog}>
         <DialogTitle>Confirm changes</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want to make any changes to the transaction data?
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <button onClick={handleCloseDialog}>
-            Cancel
-          </button>
-          <button onClick={handleConfirmDialog}>
-            Confirm Changes
-          </button>
+        <DialogActions className=" mr-5 mb-5">
+          <CustomButton
+            label="Cancel"
+            onClick={handleCloseDialog}
+          ></CustomButton>
+          <CustomButton
+            label="Save Changes"
+            onClick={handleConfirmDialog}
+            btnStyle="bg-blue-500 rounded-3xl text-white p-2 text-lg font-semibolds cursor-pointer p-3"
+          ></CustomButton>
         </DialogActions>
       </Dialog>
     </Paper>

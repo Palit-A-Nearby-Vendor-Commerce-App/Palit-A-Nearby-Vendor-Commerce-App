@@ -738,7 +738,7 @@ const ManageStore = () => {
                     borderRadius: "10px",
                   }}
                 >
-                  ₱{product.price}
+                  ₱ {product.price}
                 </p>
               </>
             )}

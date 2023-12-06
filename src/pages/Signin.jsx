@@ -16,6 +16,13 @@ const Signin = () => {
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  
+  useEffect(() => {
+    if (user) {
+      history.push('/home');
+    }
+  }, [user, history]);
+
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
   };

@@ -145,7 +145,7 @@ export default function NavigationBarAdmin() {
         sx={{ flexGrow: 1, p: 3, backgroundColor: "#D6F3F9", height: "100vh", overflow: "auto" }}
       >
         {/* <Toolbar /> */}
-        <section id="dashboard" className="font-custom">
+        <section className="font-custom">
           <div className="flex justify-between items-center ">
             <div>
               <h1 className="text-4xl font-bold ">Dashboard</h1>

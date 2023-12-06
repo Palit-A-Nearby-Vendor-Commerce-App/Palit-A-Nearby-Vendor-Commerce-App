@@ -28,6 +28,11 @@ const Store = ({ vendor }) => {
   const [orderStatus, setOrderStatus] = useState(false);
   const [activeTransaction, setActiveTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedVendor, setSelectedVendor] = useState(null);
+
+  useEffect(() => {
+    setSelectedVendor(vendor);
+  }, [vendor]);
 
   const totalItems = () => quantity.reduce((a, b) => a + b, 0);
 
@@ -44,13 +49,15 @@ const Store = ({ vendor }) => {
               transaction.status === "Now Serving")
           );
         });
+
+        console.log("Active transaction:", activeTransactions[0]);
         if (activeTransactions.length === 0) {
           setOrderStatus(false);
+          setActiveTransaction(null);
           return;
         }
-        setActiveTransaction(activeTransactions[0]);
         setOrderStatus(true);
-        console.log("Active transaction:", activeTransactions[0]);
+        setActiveTransaction(activeTransactions[0]);
       })
       .catch((error) => {
         console.error("Error fetching transaction data:", error);
@@ -85,19 +92,20 @@ const Store = ({ vendor }) => {
   useEffect(() => {
     const fetchStore = async () => {
       try {
-          const response = await axios.get(`http://localhost:8080/api/getStoreById/${vendor.account.store.storeId}`);
-          setStore(response.data);
-          setEditedStore({
-              storeName: response.data.storeName,
-              category: response.data.category,
-              description: response.data.description,
-          });
-          setLoading(false);
+        const response = await axios.get(
+          `http://localhost:8080/api/getStoreById/${vendor.account.store.storeId}`
+        );
+        setStore(response.data);
+        setEditedStore({
+          storeName: response.data.storeName,
+          category: response.data.category,
+          description: response.data.description,
+        });
+        setLoading(false);
       } catch (error) {
-          console.error('Error fetching store:', error);
+        console.error("Error fetching store:", error);
       }
-  };
-
+    };
 
     const fetchProducts = async () => {
       try {
@@ -120,7 +128,7 @@ const Store = ({ vendor }) => {
 
     fetchStore();
     fetchProducts();
-  }, []);
+  }, [vendor]);
 
   const handleMenu = (event) => setAnchorEl(event.currentTarget);
 
@@ -137,8 +145,6 @@ const Store = ({ vendor }) => {
       });
     }
   }, [vendor, vendor?.account]);
-
-
 
   const handleQuantityChange = (index, operation) => {
     const newQuantity = [...quantity];
@@ -168,7 +174,7 @@ const Store = ({ vendor }) => {
       }
     }
     let orderedListString = orderedList.join("; ");
-    orderedListString += `;; Total: Php${calculateTotalPrice()}`;
+    orderedListString += `; Total: Php${calculateTotalPrice()}`;
     setDetails(orderedListString);
     handleOrder(orderedListString, vendor, user);
   };
@@ -189,19 +195,40 @@ const Store = ({ vendor }) => {
     return (
       <>
         <div>
-          {/* {activeTransaction.activeTransaction.details
-            .split(";")
-            .map((line, index) => (
-              <span key={index}>
-                {line}
-                <br />
-              </span>
-            ))} */}
-        <CustomButton
-            btnStyle="w-full bg-tertiary p-3 text-white rounded-[20px] mt-3"
-            label="Cancel Order"
-            type="submit"
-           onClick={handleCancelOrder}/>
+          {activeTransaction ? (
+            <div className="bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto h-[190px] overflow-auto">
+              <div className="text-gray-800 text-m font-semibold mb-4">
+                {activeTransaction.activeTransaction.status}
+              </div>
+              {activeTransaction.activeTransaction.details
+                .split(";")
+                .map((line, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center border-b border-gray-200 py-2"
+                  >
+                    {line.includes("Total") ? (
+                      <div className="text-right w-full mt-4 text-lg font-semibold text-gray-800">
+                        {line}
+                      </div>
+                    ) : (
+                      <span className="text-gray-700 text-lg w-full">
+                        {line}
+                      </span>
+                    )}
+                  </div>
+                ))}
+            </div>
+          ) : (
+            ""
+          )}
+
+          <button
+            className="w-full bg-tertiary py-3 px-4 text-white rounded-lg mt-4"
+            onClick={handleCancelOrder}
+          >
+            Cancel Order
+          </button>
         </div>
       </>
     );
@@ -209,144 +236,148 @@ const Store = ({ vendor }) => {
 
   return (
     <>
-      <div
-        style={{
-          height: "70vh",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div style={{ display: "flex" }}>
-          <img
-            src={`data:image/png;base64, ${vendor?.image || ""}`}
-            alt="User"
-            className="w-14 h-15 rounded-full border-2 border-black"
-            style={{ width: "70px", height: "70px" }}
-            onClick={handleMenu}
-          />
-          <div className="ml-3" style={{ flexDirection: "column" }}>
-            <h2 className="text-xl font-semibold">
-              {vendor?.account.store.storeName || "Loading..."}
-            </h2>
-            {vendor?.account.store.category}
-          </div>
-        </div>
-        <div className="p-2" style={{ height: "90px" }}>
-          <p className="text-sm" style={{ textAlign: "justify" }}>
-            {vendor?.account?.store?.description || "Loading..."}
-          </p>
-        </div>
-        <h1
-          className="p-2 text-lg font-medium"
-          style={{ fontSize: "25px", color: "#0071B3" }}
-        >
-          Products
-        </h1>
-        <div
-          style={{
-            maxHeight: "450px",
-            display: "flex",
-            flexWrap: "wrap",
-            overflow: "auto",
-          }}
-        >
-          {products.map((product, index) => (
+      {selectedVendor ? (
+        <>
+          <div
+            style={{
+              height: activeTransaction ? "50vh" : "70vh",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div style={{ display: "flex" }}>
+              <img
+                src={`data:image/png;base64, ${vendor?.image || ""}`}
+                alt="User"
+                className="w-14 h-15 rounded-full border-2 border-black"
+                style={{ width: "70px", height: "70px" }}
+                onClick={handleMenu}
+              />
+              <div className="ml-3" style={{ flexDirection: "column" }}>
+                <h2 className="text-xl font-semibold">
+                  {vendor?.account.store.storeName || "Loading..."}
+                </h2>
+                {vendor?.account.store.category}
+              </div>
+            </div>
+            <div className="p-2" style={{ height: "90px" }}>
+              <p className="text-sm" style={{ textAlign: "justify" }}>
+                {vendor?.account?.store?.description || "Loading..."}
+              </p>
+            </div>
+            <h1
+              className="p-2 text-lg font-medium"
+              style={{ fontSize: "25px", color: "#0071B3" }}
+            >
+              Products
+            </h1>
             <div
-              key={product.productId}
               style={{
-                marginBottom: "20px",
-                width: "48%",
-                position: "relative",
+                maxHeight: "450px",
+                display: "flex",
+                flexWrap: "wrap",
+                overflow: "auto",
               }}
             >
-              <>
-                <img
-                  src={`data:image/png;base64,${product.image}`}
-                  alt={`Product ${index + 1}`}
-                  style={{
-                    width: "100%",
-                    height: "150px",
-                    border: "1px solid black",
-                    borderRadius: "15px",
-                  }}
-                />
-                <p
-                  style={{
-                    position: "absolute",
-                    top: "1px",
-                    left: "49%",
-                    width: "100%",
-                    transform: "translateX(-50%)",
-                    paddingLeft: "10px",
-                    paddingRight: "5px",
-                    color: "white",
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    backgroundColor: "rgba(136, 170, 204, 0.7)",
-                    borderRadius: "15px",
-                  }}
-                >
-                  {product.name}
-                </p>
-                <p
-                  style={{
-                    position: "absolute",
-                    bottom: "1px",
-                    left: "3%",
-                    textAlign: "left",
-                    color: "black",
-                    fontSize: "14px",
-                    fontWeight: "bold",
-                    backgroundColor: "#c0d8f0",
-                    paddingLeft: "10px",
-                    paddingRight: "5px",
-                    borderRadius: "10px",
-                  }}
-                >
-                  ₱ {product.price}
-                </p>
+              {products.map((product, index) => (
                 <div
+                  key={product.productId}
                   style={{
-                    position: "absolute",
-                    bottom: "1px",
-                    right: "3%",
-                    display: "flex",
-                    alignItems: "center",
+                    marginBottom: "20px",
+                    width: "48%",
+                    position: "relative",
                   }}
                 >
-                  <button
-                    style={{
-                      backgroundColor: "#0071B3",
-                      color: "white",
-                      borderRadius: "10px",
-                      padding: "5px",
-                      margin: "2px",
-                    }}
-                    disabled={orderStatus}
-                    onClick={() => handleQuantityChange(index, "+")}
-                  >
-                    +
-                  </button>
-                  <span>{quantity[index]}</span>
-                  <button
-                    style={{
-                      backgroundColor: "#0071B3",
-                      color: "white",
-                      borderRadius: "10px",
-                      padding: "5px",
-                      margin: "2px",
-                    }}
-                    disabled={orderStatus}
-                    onClick={() => handleQuantityChange(index, "-")}
-                  >
-                    -
-                  </button>
+                  <>
+                    <img
+                      src={`data:image/png;base64,${product.image}`}
+                      alt={`Product ${index + 1}`}
+                      style={{
+                        width: "100%",
+                        height: "150px",
+                        border: "1px solid black",
+                        borderRadius: "15px",
+                      }}
+                    />
+                    <p
+                      style={{
+                        position: "absolute",
+                        top: "1px",
+                        left: "49%",
+                        width: "100%",
+                        transform: "translateX(-50%)",
+                        paddingLeft: "10px",
+                        paddingRight: "5px",
+                        color: "white",
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        backgroundColor: "rgba(136, 170, 204, 0.7)",
+                        borderRadius: "15px",
+                      }}
+                    >
+                      {product.name}
+                    </p>
+                    <p
+                      style={{
+                        position: "absolute",
+                        bottom: "1px",
+                        left: "3%",
+                        textAlign: "left",
+                        color: "black",
+                        fontSize: "14px",
+                        fontWeight: "bold",
+                        backgroundColor: "#c0d8f0",
+                        paddingLeft: "10px",
+                        paddingRight: "5px",
+                        borderRadius: "10px",
+                      }}
+                    >
+                      ₱ {product.price}
+                    </p>
+                    <div
+                      style={{
+                        position: "absolute",
+                        bottom: "1px",
+                        right: "3%",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <button
+                        style={{
+                          backgroundColor: "#0071B3",
+                          color: "white",
+                          borderRadius: "10px",
+                          padding: "5px",
+                          margin: "2px",
+                        }}
+                        disabled={orderStatus}
+                        onClick={() => handleQuantityChange(index, "+")}
+                      >
+                        +
+                      </button>
+                      <span>{quantity[index]}</span>
+                      <button
+                        style={{
+                          backgroundColor: "#0071B3",
+                          color: "white",
+                          borderRadius: "10px",
+                          padding: "5px",
+                          margin: "2px",
+                        }}
+                        disabled={orderStatus}
+                        onClick={() => handleQuantityChange(index, "-")}
+                      >
+                        -
+                      </button>
+                    </div>
+                  </>
                 </div>
-              </>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        </>
+      ) : null}
       {/* Order Total Preview Section */}
 
       <div
@@ -359,13 +390,12 @@ const Store = ({ vendor }) => {
         }}
       >
         <h2>
-          Total Order Price: ₱
-          {totalItems() > 0? calculateTotalPrice() : 0}
+          Total Order Price: ₱{totalItems() > 0 ? calculateTotalPrice() : 0}
         </h2>
       </div>
-      {orderStatus ? (
+      {activeTransaction ? (
         <OrderDetails activeTransaction={activeTransaction} />
-      ) : (
+      ) : selectedVendor ? (
         <button
           type="button"
           className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
@@ -374,7 +404,7 @@ const Store = ({ vendor }) => {
         >
           <span className="text-lg  ">Order</span>
         </button>
-      )}
+      ) : <p>Select a store.</p>}
     </>
   );
 };

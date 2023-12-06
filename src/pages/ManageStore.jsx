@@ -445,7 +445,7 @@ const ManageStore = () => {
                   className="hidden"
                 />
                 {imagePreview ? (
-                  <img
+                    <img
                     src={imagePreview}
                     alt="Preview"
                     className="w-full h-[136px] rounded-[20px] inline-block border-[3px] border-green-400 "

@@ -192,7 +192,7 @@ const ProductData = () => {
                       onChange={(e) => handleChange(e, index)}
                     />
                   ) : (
-                    product.store.storeId
+                    product.store.storeName
                   )}
                 </td>
                 <td className="py-2">

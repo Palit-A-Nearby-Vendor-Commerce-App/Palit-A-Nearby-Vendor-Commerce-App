@@ -198,7 +198,7 @@ const Store = ({ vendor }) => {
           {activeTransaction ? (
             <div className="bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto h-[190px] overflow-auto">
               <div className="text-gray-800 text-m font-semibold mb-4">
-                You have an active transaction.
+                {activeTransaction.activeTransaction.status}
               </div>
               {activeTransaction.activeTransaction.details
                 .split(";")

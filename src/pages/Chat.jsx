@@ -5,8 +5,13 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import SendIcon from "@mui/icons-material/Send";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import { Link, useLocation } from "react-router-dom";
 import { UserContext } from "../UserContext";
+import AlertDialog from "../components/AlertDialog";
 import axios from "axios";
 
 import {
@@ -14,7 +19,6 @@ import {
   StyledBadge,
   GRADIENT_BG_DM,
 } from "../assets/styles/styles";
-import dummyImg from "../assets/images/dummy_prof.jpeg";
 
 const Chat = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -28,6 +32,24 @@ const Chat = () => {
 
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [conversations, setConversations] = useState(null);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
+  const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
+
+  const handleDeleteConfirmation = (messageId) => {
+    setSelectedMessageId(messageId);
+    setOpenDeleteConfirmation(true); // Open the confirmation dialog
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   console.log("Selected Customer: ", selectedCustomer);
 
@@ -167,6 +189,31 @@ const Chat = () => {
       console.error("Error sending chat:", error);
     }
   };
+
+  const handleDeleteChat = async () => {
+    try {
+      // Make an API call to delete the message by messageId
+      const response = await axios.delete(
+        `http://localhost:8080/api/deleteChatById/${selectedMessageId}`
+      );
+
+      // Check if the deletion was successful
+      if (response.status === 200) {
+        // Update the local state to remove the deleted message
+        setChats((prevChats) =>
+          prevChats.filter((chat) => chat.messageId !== selectedMessageId)
+        );
+      } else {
+        console.error("Error deleting message:", response.data);
+      }
+    } catch (error) {
+      console.error("Error deleting message:", error);
+    } finally {
+      setOpenDeleteConfirmation(false); // Close the confirmation dialog
+      setSelectedMessageId(null);
+    }
+  };
+
   const toggleDarkmode = () => {
     setIsDarkMode(!isDarkMode);
   };
@@ -290,8 +337,43 @@ const Chat = () => {
                   </span>
                 </span>
               ) : (
-                <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg">
+                <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg relative">
                   {chat?.messageContent}
+                  <span className="absolute left-[-50px] top-2">
+                    <Button
+                      id="basic-button"
+                      aria-controls={open ? "basic-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? "true" : undefined}
+                      onClick={handleClick}
+                    >
+                      <MoreVertIcon />
+                    </Button>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        "aria-labelledby": "basic-button",
+                      }}
+                    >
+                      <MenuItem
+                        onClick={() => handleDeleteConfirmation(chat.chatId)}
+                      >
+                        Delete
+                      </MenuItem>
+                      {openDeleteConfirmation && (
+                        <AlertDialog
+                          open={true}
+                          handleClose={() => setOpenDeleteConfirmation(false)}
+                          handleConfirm={handleDeleteChat}
+                          title="Delete Confirmation"
+                          content="Are you sure you want to delete this message?"
+                        />
+                      )}
+                    </Menu>
+                  </span>
                 </span>
               )}
             </div>
@@ -325,8 +407,43 @@ const Chat = () => {
                   </span>
                 </span>
               ) : (
-                <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg">
+                <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg relative">
                   {chat?.messageContent}
+                  <span className="absolute left-[-50px] top-2">
+                    <Button
+                      id="basic-button"
+                      aria-controls={open ? "basic-menu" : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? "true" : undefined}
+                      onClick={handleClick}
+                    >
+                      <MoreVertIcon />
+                    </Button>
+                    <Menu
+                      id="basic-menu"
+                      anchorEl={anchorEl}
+                      open={open}
+                      onClose={handleClose}
+                      MenuListProps={{
+                        "aria-labelledby": "basic-button",
+                      }}
+                    >
+                      <MenuItem
+                        onClick={() => handleDeleteConfirmation(chat.chatId)}
+                      >
+                        Delete
+                      </MenuItem>
+                      {openDeleteConfirmation && (
+                        <AlertDialog
+                          open={true}
+                          handleClose={() => setOpenDeleteConfirmation(false)}
+                          handleConfirm={handleDeleteChat}
+                          title="Delete Confirmation"
+                          content="Are you sure you want to delete this message?"
+                        />
+                      )}
+                    </Menu>
+                  </span>
                 </span>
               )}
             </div>

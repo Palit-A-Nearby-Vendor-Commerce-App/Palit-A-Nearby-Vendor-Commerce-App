@@ -153,8 +153,8 @@ function Home() {
         getNearbyUsers.forEach((user) => {
           console.log("markers: ", markers);
 
-          if (markers[user.account.accountId]) {
-            markers[user.account.accountId].setMap(null);
+          if (markers[user.userId]) {
+            markers[user.userId].setMap(null);
           }
 
           const userMarker = new window.google.maps.Marker({

@@ -5,6 +5,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Icon,
+  InputAdornment,
   MenuItem,
   Select,
   TextField,
@@ -12,6 +14,7 @@ import {
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
+import editStore from "../assets/images/editStore.png";
 
 const ManageStore = () => {
   const { user, setUser } = useContext(UserContext);
@@ -295,6 +298,13 @@ const ManageStore = () => {
                   color: "black",
                   fontWeight: "bold",
                 },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Icon>
+                      <img src={editStore} alt="Edit Store" />
+                    </Icon>
+                  </InputAdornment>
+                ),
               }}
               value={editedStore.storeName}
               onChange={handleStoreInputChange}
@@ -318,6 +328,11 @@ const ManageStore = () => {
                 paddingRight: "10px",
                 color: "black",
               }}
+              IconComponent={() => (
+                <Icon>
+                  <img src={editStore} alt="Edit Store" />
+                </Icon>
+              )}
             >
               <MenuItem value="" style={{ fontSize: 12, height: 18 }}>
                 <em>Select category</em>
@@ -358,6 +373,21 @@ const ManageStore = () => {
                 paddingBottom: "10px",
                 textAlign: "justify",
               },
+              endAdornment: (
+                <InputAdornment position="end">
+                  <Icon>
+                    <img
+                      src={editStore}
+                      alt="Edit Store"
+                      style={{
+                        position: "absolute",
+                        top: 1,
+                        right: 15,
+                      }}
+                    />
+                  </Icon>
+                </InputAdornment>
+              ),
             }}
             value={editedStore.description}
             onChange={handleStoreInputChange}
@@ -410,17 +440,24 @@ const ManageStore = () => {
                 label="Product Name"
                 name="name"
                 variant="outlined"
-                placeholder="Enter product name"
+                placeholder="Enter product"
                 value={editedProduct.name}
                 onChange={handleInputChange}
                 margin="normal"
                 size="small"
                 style={{
-                  width: "40%",
+                  width: "48%",
                   fontSize: "12px",
                   position: "absolute",
                   marginTop: "5px",
                   marginLeft: "10px",
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <img src={editStore} alt="Edit Store" />
+                    </InputAdornment>
+                  ),
                 }}
               />
               <TextField
@@ -433,11 +470,18 @@ const ManageStore = () => {
                 margin="normal"
                 size="small"
                 style={{
-                  width: "40%",
+                  width: "48%",
                   fontSize: "12px",
-                  marginTop: "50px",
                   position: "absolute",
+                  marginTop: "50px",
                   marginLeft: "10px",
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <img src={editStore} alt="Edit Store" />
+                    </InputAdornment>
+                  ),
                 }}
               />
               <Button
@@ -445,7 +489,7 @@ const ManageStore = () => {
                 color="primary"
                 style={{
                   borderRadius: "15px",
-                  width: "80%",
+                  width: "96%",
                   marginTop: "100px",
                   marginLeft: "10px",
                 }}
@@ -533,6 +577,20 @@ const ManageStore = () => {
                       color: "white",
                       fontWeight: "bold",
                     },
+                    endAdornment: (
+                      <InputAdornment
+                        position="center"
+                        style={{ width: "3px", marginRight: "10px" }}
+                      >
+                        <Icon>
+                          <img
+                            src={editStore}
+                            alt="Edit Store"
+                            style={{ marginTop: "3px" }}
+                          />
+                        </Icon>
+                      </InputAdornment>
+                    ),
                   }}
                   style={{
                     position: "absolute",
@@ -562,12 +620,26 @@ const ManageStore = () => {
                       borderRadius: "15px",
                       fontWeight: "bold",
                     },
+                    endAdornment: (
+                      <InputAdornment
+                        position="center"
+                        style={{ width: "3px", marginRight: "5px" }}
+                      >
+                        <Icon>
+                          <img
+                            src={editStore}
+                            alt="Edit Store"
+                            style={{ marginTop: "3px" }}
+                          />
+                        </Icon>
+                      </InputAdornment>
+                    ),
                   }}
                   style={{
                     position: "absolute",
                     bottom: "0px",
                     left: "0%",
-                    width: "50%",
+                    width: "77%",
                     textAlign: "left",
                     color: "black",
                     fontSize: "14px",
@@ -622,7 +694,7 @@ const ManageStore = () => {
                     borderRadius: "10px",
                   }}
                 >
-                  ₱{product.price}
+                  ₱ {product.price}
                 </p>
               </>
             )}

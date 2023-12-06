@@ -35,6 +35,8 @@ const ManageStore = () => {
   const [actionType, setActionType] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
+  const [operationComplete, setOperationComplete] = useState(false);
+
   useEffect(() => {
     if (user) {
       const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.userId}`;
@@ -87,7 +89,7 @@ const ManageStore = () => {
 
       fetchProducts();
     }
-  }, [user]);
+  }, [user, operationComplete]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -130,6 +132,7 @@ const ManageStore = () => {
         )
         .then((response) => {
           console.log("Product updated:", response.data);
+          setOperationComplete((prev) => !prev);
         })
         .catch((error) => {
           console.error("Error updating product:", error);
@@ -242,6 +245,7 @@ const ManageStore = () => {
       .then((response) => {
         console.log("Product created:", response.data);
         setSuccessMessage("Successfully added.");
+        setOperationComplete((prev) => !prev);
       })
       .catch((error) => {
         console.error("Error creating product:", error);
@@ -267,6 +271,7 @@ const ManageStore = () => {
       )
       .then((response) => {
         console.log("Product deleted:", response.data);
+        setOperationComplete((prev) => !prev);
         setSuccessMessage("Successfully deleted.");
       })
       .catch((error) => {
@@ -293,7 +298,8 @@ const ManageStore = () => {
   };
 
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+    <div style={{ height: "100vh", display: "flex", flexDirection: "column",
+    overflow: "auto", }}>
       {/* User details */}
       <div style={{ display: "flex" }}>
         <img
@@ -448,7 +454,7 @@ const ManageStore = () => {
                 label="Product Price"
                 name="price"
                 variant="outlined"
-                type="text"
+                type="number"
                 value={editedProduct.price}
                 onChange={handleInputChange}
                 margin="normal"

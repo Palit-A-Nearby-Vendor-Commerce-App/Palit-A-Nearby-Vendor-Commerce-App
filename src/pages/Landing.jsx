@@ -4,18 +4,17 @@ import { Link, Redirect } from "react-router-dom";
 import { UserContext } from "../UserContext";
 
 import NavigationBar from "../components/NavigationBar.jsx";
+import { useEffect } from "react";
 
 const Landing = () => {
   // Access the user context
   const { user } = useContext(UserContext);
 
-  // Check if a user exists in the context
-  const userExists = user !== null; // Replace with your actual logic
-
-  if (userExists) {
-    // Redirect to "/home" if user exists
-    return <Redirect to="/home" />;
-  }
+  useEffect(() => {
+    if (user) {
+      return <Redirect to="/home" />;
+    }
+  }, [user]);
 
   return (
     <div className="w-full h-screen bg-primary bg-stroke-bg bg-center bg-no-repeat bg-cover font-custom">

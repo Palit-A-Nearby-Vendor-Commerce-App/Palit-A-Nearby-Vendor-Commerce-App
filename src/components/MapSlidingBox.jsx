@@ -24,7 +24,7 @@ const MapSlidingBox = ({
     borderRadius: "5px",
     boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
     transition: "right 0.3s ease",
-    overflow: "scroll",
+    overflow: "hidden",
     padding: "20px",
     backgroundImage: `url(${stroke})`,
     backgroundSize: "cover",

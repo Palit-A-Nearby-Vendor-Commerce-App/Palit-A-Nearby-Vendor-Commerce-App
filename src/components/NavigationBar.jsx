@@ -57,7 +57,9 @@ const NavigationBar = () => {
         <ul className="flex gap-8 items-center justify-center text-white text-xl">
           <li
             className={
-              loc.pathname === "/home" ? NAV_ACTIVE_STYLE : NAV_HOVER_STYLE
+              loc.pathname === "/home" || loc.pathname === "/landing"
+                ? NAV_ACTIVE_STYLE
+                : NAV_HOVER_STYLE
             }
           >
             <Link to={user == null ? "/landing" : "/home"}>Home</Link>

@@ -1,13 +1,23 @@
-import React from "react";
+import { useEffect } from "react";
 import NavigationBar from "../components/NavigationBar";
+import gsap from "gsap";
 
 import { services } from "../data/dummy";
 
 const Services = () => {
+  useEffect(() => {
+    gsap.from(".service-header", {
+      y: -50,
+      opacity: 0,
+      duration: 1,
+    });
+    gsap.from(".service-items", { y: 200, opacity: 0, duration: 1 });
+  }, []);
+
   return (
     <div className="w-full bg-slate-50 font-custom">
       <NavigationBar />
-      <div className="w-full font-custom text-center p-10 flex flex-col items-center justify-center gap-5">
+      <div className="service-header w-full font-custom text-center p-10 flex flex-col items-center justify-center gap-5">
         <div>
           <h1 className="font-bold text-5xl">
             OUR <span className="text-primary">SERVICE</span>
@@ -26,7 +36,7 @@ const Services = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-5 items-center justify-center p-10 bg-red w-full">
+      <div className="service-items grid grid-cols-3 gap-5 items-center justify-center p-10 bg-red w-full">
         {services.map((service, index) => (
           <div
             className="flex flex-col items-center bg-white p-10 rounded-lg text-center shadow-md"

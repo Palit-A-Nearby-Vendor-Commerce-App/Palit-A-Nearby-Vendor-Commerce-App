@@ -82,17 +82,33 @@ const ManageStore = () => {
             [name]: value,
         });
     };
+
     const handleSaveConfirm = () => {
         console.log("Save clicked", products);
-        products.forEach((product) => {
-            axios
-                .put(`http://localhost:8080/api/updateProductServiceById/${product.productId}`, product)
-                .then((response) => {
-                    console.log("Product updated:", response.data);
-                })
-                .catch((error) => {
-                    console.error("Error updating product:", error);
-                });
+        products.forEach((product, index) => {
+            if (product.image instanceof Blob) {
+                const reader = new FileReader();
+                reader.readAsDataURL(product.image);
+                reader.onloadend = () => {
+                    const base64Image = reader.result.split(',')[1];
+                    const productData = {
+                        ...product,
+                        image: base64Image,
+                    };
+                    axios
+                        .put(`http://localhost:8080/api/updateProductServiceById/${product.productId}`, productData)
+                        .then((response) => {
+                            console.log("Product updated:", response.data);
+                            // Update the product image in the state
+                            const newProducts = [...products];
+                            newProducts[index].image = base64Image;
+                            setProducts(newProducts);
+                        })
+                        .catch((error) => {
+                            console.error("Error updating product:", error);
+                        });
+                };
+            }
         });
         if (user && user.account && user.account.store) {
             axios
@@ -113,6 +129,7 @@ const ManageStore = () => {
             price: "",
         });
     };
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         if (name === 'price') {
@@ -189,20 +206,22 @@ const ManageStore = () => {
         });
         setImagePreview(null);
     };
+
     const handleDeleteConfirm = (index) => {
         const newProducts = [...products];
         newProducts[index].isDeleted = 1;
-        setProducts(newProducts);
         axios
             .delete(`http://localhost:8080/api/deleteProductServiceById/${newProducts[index].productId}`)
             .then((response) => {
                 console.log("Product deleted:", response.data);
                 setSuccessMessage('Successfully deleted.');
+                setProducts(products.filter((product, productIndex) => productIndex !== index));
             })
             .catch((error) => {
                 console.error("Error deleting product:", error);
             });
     };
+
     const openConfirmationDialog = (action, actionType) => {
         setConfirmAction(action);
         setActionType(actionType);
@@ -387,7 +406,7 @@ const ManageStore = () => {
                                 label="Product Price"
                                 name="price"
                                 variant="outlined"
-                                type="text"
+                                type="number"
                                 value={editedProduct.price}
                                 onChange={handleInputChange}
                                 margin="normal"
@@ -455,6 +474,7 @@ const ManageStore = () => {
                                         onChange={(e) => handleProductImageChange(e, index)}
                                         style={{ display: 'none' }}
                                     />
+                                    <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white', fontSize: '50px', fontWeight: 'bold' }}>+</span>
                                 </label>
                                 <TextField
                                     name="name"
@@ -465,7 +485,7 @@ const ManageStore = () => {
                                     size="small"
                                     InputProps={{
                                         style: {
-                                            fontSize: 20,
+                                            fontSize: 16,
                                             height: 25,
                                             paddingRight: '10px',
                                             borderRadius: "15px",
@@ -496,7 +516,7 @@ const ManageStore = () => {
                                 <TextField
                                     name="price"
                                     variant="outlined"
-                                    type="text"
+                                    type="number"
                                     value={product.price}
                                     onChange={(e) => handleProductInputChange(e, index)}
                                     margin="normal"

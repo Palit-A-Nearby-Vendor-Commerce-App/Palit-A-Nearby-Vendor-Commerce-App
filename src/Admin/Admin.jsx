@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 
 import logo from "../assets/images/logo.png";
@@ -14,6 +14,13 @@ const Admin = () => {
   const [error, setError] = useState("");
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if(userData)
+    {
+      history.push("/admindashboard/dashboard");
+    }
+  }, [userData]);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);

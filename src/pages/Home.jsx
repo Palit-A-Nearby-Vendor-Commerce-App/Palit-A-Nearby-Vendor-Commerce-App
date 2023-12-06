@@ -24,7 +24,7 @@ let markers = [];
 
 function Home() {
   const history = useHistory();
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [showSlider, setShowSlider] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState(null);

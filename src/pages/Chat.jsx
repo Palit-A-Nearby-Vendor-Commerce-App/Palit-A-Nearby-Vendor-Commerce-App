@@ -307,7 +307,7 @@ const Chat = () => {
       </div>
       <div
         id="message-contents"
-        className="w-full  flex flex-col flex-1 overflow-scroll py-4 px-10"
+        className="w-full  flex flex-col flex-1 overflow-auto py-4 px-10"
       >
         {selectedConversation &&
           selectedVendor &&

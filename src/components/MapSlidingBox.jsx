@@ -103,7 +103,7 @@ const MapSlidingBox = ({
             right: showSlider ? "440px" : "80px",
             bottom: "20px",
             padding: "10px",
-            borderRadius: "5px",
+            borderRadius: "20px",
             boxShadow: "0 0 3px rgba(0, 0, 0, 0.3)",
             transition: "right 0.3s ease", // Add a transition to make the movement smooth
           }}

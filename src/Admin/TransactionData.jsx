@@ -239,13 +239,13 @@ const TransactionData = () => {
                     transaction.vendor.accountId
                   )}
                 </td>
-                {edit === 1 && (
+                {edit ? (
                   <td className="py-2">
                     <button onClick={() => handleDeleteClick(index)}>
                       Delete
                     </button>
                   </td>
-                )}
+                ): null}
               </tr>
             ))}
           </tbody>

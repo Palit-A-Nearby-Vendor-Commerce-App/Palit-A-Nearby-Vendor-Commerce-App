@@ -378,7 +378,7 @@ entity Chat {
 }
 
 Account ||--o{ Chat : sends
-Chat }|..|| Conversation : belongs to
+Chat }|--|| Conversation : belongs to
 
 entity Transaction {
     int transactionId [PK]
@@ -391,7 +391,7 @@ entity Transaction {
     isDeleted boolean
 }
 
-Account }|..|{ Transaction : involves
+Account }|--|{ Transaction : involves
 
 entity Report {
     reportId int [PK]

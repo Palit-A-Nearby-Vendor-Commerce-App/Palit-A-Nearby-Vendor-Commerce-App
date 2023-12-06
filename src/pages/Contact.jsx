@@ -1,11 +1,21 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import emailjs from "emailjs-com";
-
+import gsap from "gsap";
 import NavigationBar from "../components/NavigationBar";
 import contactBg from "../assets/images/contactus.jpg";
 
 const Contact = () => {
   const form = useRef();
+
+  useEffect(() => {
+    // Initial animation when the component mounts
+    gsap.from(".contact-form", {
+      x: -200,
+      opacity: 0,
+      duration: 1,
+    });
+    gsap.from(".contact-img", { x: 200, opacity: 0, duration: 1 });
+  }, []);
 
   const sendEmail = (e) => {
     e.preventDefault();
@@ -31,7 +41,11 @@ const Contact = () => {
     <div className="w-full h-screen font-custom">
       <NavigationBar />
       <div className="w-full grid grid-cols-2 px-[220px] py-24">
-        <form ref={form} onSubmit={sendEmail} className="flex flex-col pr-5">
+        <form
+          ref={form}
+          onSubmit={sendEmail}
+          className="contact-form flex flex-col pr-5"
+        >
           <h1 className="text-4xl font-semibold mb-4 text-dark">
             Get in touch
           </h1>
@@ -58,13 +72,13 @@ const Contact = () => {
           <input
             type="submit"
             value="Send"
-            className="cursor-pointer px-2 py-4 text-white bg-primary rounded-[100px]"
+            className="cursor-pointer px-2 py-4 text-white bg-primary rounded-[100px] hover:bg-[#0066a1] transition-all duration-300 ease-in-out"
           />
         </form>
         <img
           src={contactBg}
           alt="Background image"
-          className="col-span-1 w-full h-full"
+          className="contact-img col-span-1 w-full h-full"
         />
       </div>
     </div>

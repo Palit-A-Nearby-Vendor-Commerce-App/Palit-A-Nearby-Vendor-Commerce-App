@@ -248,7 +248,7 @@ function Home() {
                 left: "30px",
                 bottom: "30px",
                 padding: "10px",
-                borderRadius: "5px",
+                borderRadius: "20px",
                 boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
                 transition: "left 0.3s ease, bottom 0.3s ease",
               }}
@@ -260,7 +260,8 @@ function Home() {
             {selectedVendor && (
               <Link to={{ pathname: "/chat", state: { selectedVendor } }}>
                 <button
-                  className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary"
+                style={{borderRadius: "20px"}}
+                  className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md bg-primary "
                   title="Chat"
                 >
                   <QuestionAnswerIcon sx={{ color: "white" }} />

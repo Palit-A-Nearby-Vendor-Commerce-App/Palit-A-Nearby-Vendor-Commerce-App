@@ -39,15 +39,15 @@ const ManageStore = () => {
   const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
-    const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.id}`;
+    const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.userId}`;
     const accountApiEndpoint = "http://localhost:8080/api/getAccountById/";
     const storeApiEndpoint = "http://localhost:8080/api/getStoreById/";
 
     axios
       .get(userApiEndpoint)
       .then((response) => {
-        if (response.data && response.data.accountId) {
-          return axios.get(accountApiEndpoint + response.data.accountId);
+        if (response.data && response.data.account.accountId) {
+          return axios.get(accountApiEndpoint + response.data.account.accountId);
         } else {
           throw new Error("Account ID not found in user data");
         }
@@ -574,7 +574,7 @@ const ManageStore = () => {
                     },
                     endAdornment: (
                       <InputAdornment
-                        position="center"
+                      position="end"
                         style={{ width: "3px", marginRight: "10px" }}
                       >
                         <Icon>
@@ -617,7 +617,7 @@ const ManageStore = () => {
                     },
                     endAdornment: (
                       <InputAdornment
-                        position="center"
+                        position="end"
                         style={{ width: "3px", marginRight: "5px" }}
                       >
                         <Icon>

@@ -42,8 +42,7 @@ function Home() {
   );
 
   useEffect(() => {
-    
-  let isMounted = true;
+    let isMounted = true;
 
     if (!user && isMounted) {
       history.push("/landing");
@@ -90,7 +89,7 @@ function Home() {
 
   useEffect(() => {
     let isMounted = true;
-if (user && isMounted) {
+    if (user && isMounted) {
       const intervalId = setInterval(() => {
         navigator.geolocation.getCurrentPosition(
           updateLocationInContext,
@@ -123,7 +122,8 @@ if (user && isMounted) {
   };
 
   useEffect(() => {
-    panAndZoomMap();
+    let isMounted = true;
+    if (isMounted) panAndZoomMap();
   }, [showSlider, currentPosition]);
 
   const handleSliderToggle = () => {
@@ -136,7 +136,7 @@ if (user && isMounted) {
 
   useEffect(() => {
     let isMounted = true;
-if (user && isMounted && currentPosition) {
+    if (user && isMounted && currentPosition) {
       const intervalId = setInterval(() => {
         axios
           .get("http://localhost:8080/api/getAllUsers")

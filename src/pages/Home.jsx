@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Link } from "react-router-dom";
 import customerMarker from "../assets/images/customerIcon.png";
@@ -34,7 +40,10 @@ function Home() {
   );
 
   const renderVendorMarkerIcon = () => {
-    if (typeof window.google === "object" && typeof window.google.maps === "object") {
+    if (
+      typeof window.google === "object" &&
+      typeof window.google.maps === "object"
+    ) {
       return {
         url: marker,
         scaledSize: new window.google.maps.Size(40, 40),
@@ -155,7 +164,9 @@ function Home() {
             },
             map: mapRef.current,
             icon: {
-              url: user.account.isVendor ? vendorIcons(user.account.store.category) : customerMarker,
+              url: user.account.isVendor
+                ? vendorIcons(user.account.store.category)
+                : customerMarker,
               scaledSize: new window.google.maps.Size(30, 30),
             },
             owner: user,
@@ -175,8 +186,6 @@ function Home() {
   const handleMarkerClick = (owner) => {
     if (owner && owner.account.isVendor) {
       setSelectedVendor(owner);
-    } else {
-      setSelectedCustomer(owner);
     }
 
     setShowSlider(true);
@@ -234,20 +243,17 @@ function Home() {
                 boxShadow: "0 0 5px rgba(0, 0, 0, 0.3)",
                 transition: "left 0.3s ease, bottom 0.3s ease",
               }}
+              title="Report"
               onClick={handleReport}
             >
               <MdOutlineReportGmailerrorred size={30} />
             </button>
             {selectedVendor && (
               <Link to={{ pathname: "/chat", state: { selectedVendor } }}>
-                <button className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary">
-                  <QuestionAnswerIcon sx={{ color: "white" }} />
-                </button>
-              </Link>
-            )}
-            {selectedCustomer && (
-              <Link to={{ pathname: "/chat", state: { selectedCustomer } }}>
-                <button className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary">
+                <button
+                  className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md rounded-md bg-primary"
+                  title="Chat"
+                >
                   <QuestionAnswerIcon sx={{ color: "white" }} />
                 </button>
               </Link>

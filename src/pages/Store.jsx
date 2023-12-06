@@ -404,7 +404,9 @@ const Store = ({ vendor }) => {
         >
           <span className="text-lg  ">Order</span>
         </button>
-      ) : <p>Select a store.</p>}
+      ) : (
+        <p>Select a store.</p>
+      )}
     </>
   );
 };

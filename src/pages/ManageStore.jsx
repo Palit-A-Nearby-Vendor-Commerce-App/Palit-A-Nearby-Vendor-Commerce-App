@@ -789,7 +789,8 @@ const ManageStore = () => {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => setSuccessMessage(null)}
+            onClick={() => {setSuccessMessage(null)
+            setImagePreview(null)}}
             color="primary"
             autoFocus
             style={{ backgroundColor: "#0575B4", color: "white" }}

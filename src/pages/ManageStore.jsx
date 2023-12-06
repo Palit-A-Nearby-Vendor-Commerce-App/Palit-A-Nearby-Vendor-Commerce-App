@@ -308,7 +308,7 @@ const ManageStore = () => {
                         </h2>
                     )}
                     {editMode ? (
-                        <TextField
+                        <Select
                             name="category"
                             variant="outlined"
                             value={editedStore.category}

@@ -31,6 +31,7 @@ import Statistics from "../Admin/Statistics";
 import Stores from "../Admin/Stores";
 import Transactions from "../Admin/Transactions";
 import Users from "../Admin/Users";
+import { UserContext } from "../UserContext";
 
 const drawerWidth = 240;
 
@@ -40,9 +41,12 @@ export default function NavigationBarAdmin() {
   const location = useLocation().pathname;
   const history = useHistory();
   const formattedDate = currentDate.toDateString();
+  const { user, setUser } = React.useContext(UserContext);
 
   const handleLogout = () => {
     history.push("/adminlogin3x8Yz7!qA");
+    setUser(null);
+    
   };
 
   return (

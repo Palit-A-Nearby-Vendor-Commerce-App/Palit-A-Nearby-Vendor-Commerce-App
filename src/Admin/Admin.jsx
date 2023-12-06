@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import CustomButton from "../components/CustomButton";
 import CustomInput from "../components/CustomInput";
+import { UserContext } from "../UserContext";
 
 
 const Admin = () => {
@@ -12,15 +13,16 @@ const Admin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [userData, setUserData] = useState([]);
+  const { user, setUser } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState([]);
 
   useEffect(() => {
-    if(userData)
+    if(user)
     {
       history.push("/admindashboard/dashboard");
     }
-  }, [userData]);
+  }, [user]);
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -56,6 +58,7 @@ const Admin = () => {
 
     if (user) {
       console.log("Current user: ", user);
+      setUser(user);
       history.push("/admindashboard/dashboard");
     } else {
       setError("Invalid email or password");

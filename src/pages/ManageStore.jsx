@@ -328,7 +328,7 @@ const ManageStore = () => {
                   paddingRight: "5px",
                   color: "black",
                   fontWeight: "bold",
-                  borderRadius: "15px",
+                  borderRadius: "20px",
                 },
               }}
               value={editedStore.storeName}
@@ -352,7 +352,7 @@ const ManageStore = () => {
                 width: "267px",
                 paddingRight: "10px",
                 color: "black",
-                borderRadius: "15px",
+                borderRadius: "20px",
               }}
               IconComponent={() => (
                 <Icon>
@@ -383,7 +383,7 @@ const ManageStore = () => {
           )}
         </div>
       </div>
-      <div className="p-2" style={{ height: "90px" }}>
+      <div className="p-2" style={{ height: "70px" }}>
         {editMode ? (
           <TextField
             name="description"
@@ -393,12 +393,12 @@ const ManageStore = () => {
             InputProps={{
               style: {
                 fontSize: 15,
-                height: 85,
+                height: 60,
                 width: "340px",
                 color: "black",
-                paddingTop: "30px",
+                paddingTop: "50px",
                 textAlign: "justify",
-                borderRadius: "15px",
+                borderRadius: "20px",
               },
               endAdornment: (
                 <InputAdornment position="end">
@@ -480,7 +480,7 @@ const ManageStore = () => {
                       </InputAdornment>
                     ),
                     style: {
-                      borderRadius: "15px", // Moved borderRadius here
+                      borderRadius: "20px", // Moved borderRadius here
                     },
                   }}
                 />
@@ -496,10 +496,10 @@ const ManageStore = () => {
                   size="small"
                   inputProps={{ min: "0" }}
                   style={{
-                    borderRadius: "15px",
+                    borderRadius: "20px",
                     width: "40%",
                     fontSize: "12px",
-                    marginTop: "50px",
+                    marginTop: "55px",
                     position: "absolute",
                     marginLeft: "10px",
                   }}
@@ -510,7 +510,7 @@ const ManageStore = () => {
                       </InputAdornment>
                     ),
                     style: {
-                      borderRadius: "15px", // Moved borderRadius here
+                      borderRadius: "20px", // Moved borderRadius here
                     },
                   }}
                 />
@@ -518,7 +518,7 @@ const ManageStore = () => {
                   variant="contained"
                   style={{
                     backgroundColor: "#0071b3",
-                    borderRadius: "15px",
+                    borderRadius: "20px",
                     width: "96%",
                     marginTop: "100px",
                     marginLeft: "10px",
@@ -574,7 +574,7 @@ const ManageStore = () => {
                   style={{
                     width: "100%",
                     height: "150px",
-                    borderRadius: "15px",
+                    borderRadius: "20px",
                     backgroundImage: `url(${
                       product.imagePreview ||
                       `data:image/png;base64,${product.image}`
@@ -652,7 +652,7 @@ const ManageStore = () => {
                       fontSize: 15,
                       height: 20,
                       paddingRight: "5x",
-                      borderRadius: "15px",
+                      borderRadius: "20px",
                       fontWeight: "bold",
                     },
                     endAdornment: (
@@ -680,7 +680,7 @@ const ManageStore = () => {
                     fontSize: "14px",
                     fontWeight: "bold",
                     backgroundColor: "#c0d8f0",
-                    borderRadius: "10px",
+                    borderRadius: "20px",
                   }}
                 />
               </>
@@ -692,7 +692,7 @@ const ManageStore = () => {
                   style={{
                     width: "100%",
                     height: "150px",
-                    borderRadius: "15px",
+                    borderRadius: "20px",
                   }}
                 />
                 <p
@@ -736,9 +736,12 @@ const ManageStore = () => {
         {editMode ? (
           <Button
             variant="contained"
-            
-            style={{ 
-              backgroundColor: '#0071b3', borderRadius: "15px", width: "90%", height: "50px" }}
+            style={{
+              backgroundColor: "#0071b3",
+              borderRadius: "20px",
+              width: "90%",
+              height: "50px",
+            }}
             onClick={handleSave}
           >
             Save
@@ -748,7 +751,7 @@ const ManageStore = () => {
             variant="contained"
             style={{
               backgroundColor: "#0071b3",
-              borderRadius: "15px",
+              borderRadius: "20px",
               width: "90%",
               height: "50px",
             }}
@@ -763,6 +766,11 @@ const ManageStore = () => {
         onClose={() => setOpenDialog(false)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        PaperProps={{
+          style: {
+            borderRadius: "15px", // Apply the borderRadius to the Paper component
+          },
+        }}
       >
         <DialogTitle id="alert-dialog-title">{"Confirm Action"}</DialogTitle>
         <DialogContent>
@@ -775,8 +783,11 @@ const ManageStore = () => {
         <DialogActions>
           <Button
             onClick={() => setOpenDialog(false)}
-            style={{ 
-              backgroundColor: '#e8594f', color: "white" }}
+            style={{
+              backgroundColor: "#e8594f",
+              color: "white",
+              borderRadius: "15px",
+            }}
           >
             Cancel
           </Button>
@@ -786,8 +797,11 @@ const ManageStore = () => {
               setOpenDialog(false);
             }}
             autoFocus
-            style={{ 
-              backgroundColor: '#0071b3', color: "white" }}
+            style={{
+              backgroundColor: "#0071b3",
+              color: "white",
+              borderRadius: "15px",
+            }}
           >
             Confirm
           </Button>
@@ -798,6 +812,11 @@ const ManageStore = () => {
         onClose={() => setSuccessMessage(null)}
         aria-labelledby="success-dialog-title"
         aria-describedby="success-dialog-description"
+        PaperProps={{
+          style: {
+            borderRadius: "15px", // Apply the borderRadius to the Paper component
+          },
+        }}
       >
         <DialogTitle id="success-dialog-title">{"Success"}</DialogTitle>
         <DialogContent>
@@ -812,8 +831,11 @@ const ManageStore = () => {
               setImagePreview(null);
             }}
             autoFocus
-            style={{ 
-              backgroundColor: '#0071b3', color: "white" }}
+            style={{
+              backgroundColor: "#0071b3",
+              color: "white",
+              borderRadius: "15px",
+            }}
           >
             OK
           </Button>

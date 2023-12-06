@@ -40,6 +40,7 @@ function Home() {
     },
     [currentPosition]
   );
+  
 
   useEffect(() => {
     let isMounted = true;
@@ -161,7 +162,7 @@ function Home() {
   }, [user]);
 
   const calculateOffset = () => {
-    if (mapRef.current) {
+    if (mapRef.current && mapRef.current.getZoom) {
       const zoomLevel = mapRef.current.getZoom();
       return 0.02 / Math.pow(2, zoomLevel - 14);
     }

@@ -37,6 +37,7 @@ const ManageStore = () => {
   const [confirmAction, setConfirmAction] = useState(null);
   const [actionType, setActionType] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [operationSuccess, setOperationSuccess] = useState(false);
 
   useEffect(() => {
     const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.userId}`;
@@ -47,7 +48,9 @@ const ManageStore = () => {
       .get(userApiEndpoint)
       .then((response) => {
         if (response.data && response.data.account.accountId) {
-          return axios.get(accountApiEndpoint + response.data.account.accountId);
+          return axios.get(
+            accountApiEndpoint + response.data.account.accountId
+          );
         } else {
           throw new Error("Account ID not found in user data");
         }
@@ -86,7 +89,7 @@ const ManageStore = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [operationSuccess]);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -129,6 +132,8 @@ const ManageStore = () => {
         )
         .then((response) => {
           console.log("Product updated:", response.data);
+
+          setOperationSuccess((prev) => !prev);
         })
         .catch((error) => {
           console.error("Error updating product:", error);
@@ -152,17 +157,19 @@ const ManageStore = () => {
           },
         }));
         setSuccessMessage("Successfully saved.");
+
+        setOperationSuccess((prev) => !prev);
+        setEditedProduct({
+          picture: "",
+          name: "",
+          price: "",
+        });
       })
       .catch((error) => {
         console.error("Error updating store:", error);
       });
 
     setEditMode(false);
-    setEditedProduct({
-      picture: "",
-      name: "",
-      price: "",
-    });
   };
 
   const handleInputChange = (event) => {
@@ -241,18 +248,19 @@ const ManageStore = () => {
       .then((response) => {
         console.log("Product created:", response.data);
         setSuccessMessage("Successfully added.");
+
+        setEditedProduct({
+          picture: "",
+          name: "",
+          price: "",
+        });
+
+        setImagePreview(productData.image);
+        setOperationSuccess((prev) => !prev);
       })
       .catch((error) => {
         console.error("Error creating product:", error);
       });
-
-    setEditedProduct({
-      picture: "",
-      name: "",
-      price: "",
-    });
-
-    setImagePreview(null);
   };
 
   const handleDeleteConfirm = (index) => {
@@ -267,6 +275,8 @@ const ManageStore = () => {
       .then((response) => {
         console.log("Product deleted:", response.data);
         setSuccessMessage("Successfully deleted.");
+        
+        setOperationSuccess((prev) => !prev);
       })
       .catch((error) => {
         console.error("Error deleting product:", error);
@@ -574,7 +584,7 @@ const ManageStore = () => {
                     },
                     endAdornment: (
                       <InputAdornment
-                      position="end"
+                        position="end"
                         style={{ width: "3px", marginRight: "10px" }}
                       >
                         <Icon>
@@ -701,7 +711,7 @@ const ManageStore = () => {
           <Button
             variant="contained"
             color="primary"
-            style={{ borderRadius: "15px", width: "90%" }}
+            style={{ borderRadius: "15px", width: "90%", height: "50px" }}
             onClick={handleSave}
           >
             Save
@@ -710,7 +720,7 @@ const ManageStore = () => {
           <Button
             variant="contained"
             color="primary"
-            style={{ borderRadius: "15px", width: "90%" }}
+            style={{ borderRadius: "15px", width: "90%", height: "50px" }}
             onClick={handleEdit}
           >
             Edit Store and Products

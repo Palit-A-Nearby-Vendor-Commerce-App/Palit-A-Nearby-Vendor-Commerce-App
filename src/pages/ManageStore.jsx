@@ -459,7 +459,7 @@ const ManageStore = () => {
                 label="Product Price"
                 name="price"
                 variant="outlined"
-                type="text"
+                type="number"
                 value={editedProduct.price}
                 onChange={handleInputChange}
                 margin="normal"

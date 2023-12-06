@@ -18,10 +18,12 @@ import { UserContext } from "../UserContext";
 import { mapContainerStyle, mapOptions } from "../assets/styles/styles";
 import { getDistance, vendorIcons } from "../utils/functions";
 import { ownerWindow } from "@mui/material";
+import { useHistory } from "react-router";
 
 let markers = [];
 
 function Home() {
+  const history = useHistory();
   const { user, setUser } = useContext(UserContext);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [showSlider, setShowSlider] = useState(false);
@@ -38,6 +40,12 @@ function Home() {
     },
     [currentPosition]
   );
+
+  useEffect(() => {
+    if (!user) {
+      history.push("/landing");
+    }
+  }, [user, history]);
 
   const renderVendorMarkerIcon = () => {
     if (
@@ -78,14 +86,18 @@ function Home() {
   };
 
   useEffect(() => {
-    const watchId = navigator.geolocation.watchPosition(
-      updateLocationInContext,
-      (error) => console.log(error),
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-    );
+    if (user) {
+      const intervalId = setInterval(() => {
+        navigator.geolocation.getCurrentPosition(
+          updateLocationInContext,
+          (error) => console.log(error),
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+        );
+      }, 2000);
 
-    return () => navigator.geolocation.clearWatch(watchId);
-  }, [user, user.account.location.latitude, user.account.location.longitude]);
+      return () => clearInterval(intervalId);
+    }
+  }, [user]);
 
   const calculateOffset = () => {
     if (mapRef.current) {
@@ -119,69 +131,75 @@ function Home() {
   };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/api/getAllUsers")
-      .then(({ data }) => {
-        console.log("Users:", data);
+    if (user) {
+      const intervalId = setInterval(() => {
+        axios
+          .get("http://localhost:8080/api/getAllUsers")
+          .then(({ data }) => {
+            console.log("Users:", data);
 
-        const getNearbyUsers = data.filter((otherUser) => {
-          console.log(
-            getDistance(
-              currentPosition.lat,
-              currentPosition.lng,
-              otherUser.account.location.latitude,
-              otherUser.account.location.longitude
-            )
-          );
-          if (
-            user.account.isVendor == !otherUser.account.isVendor &&
-            otherUser.account.location.isActive &&
-            getDistance(
-              currentPosition.lat,
-              currentPosition.lng,
-              otherUser.account.location.latitude,
-              otherUser.account.location.longitude
-            ) <= 200
-          ) {
-            return true;
-          }
-          return false;
-        });
+            const getNearbyUsers = data.filter((otherUser) => {
+              console.log(
+                getDistance(
+                  currentPosition.lat,
+                  currentPosition.lng,
+                  otherUser.account.location.latitude,
+                  otherUser.account.location.longitude
+                )
+              );
+              if (
+                user.account.isVendor == !otherUser.account.isVendor &&
+                otherUser.account.location.isActive &&
+                getDistance(
+                  currentPosition.lat,
+                  currentPosition.lng,
+                  otherUser.account.location.latitude,
+                  otherUser.account.location.longitude
+                ) <= 200
+              ) {
+                return true;
+              }
+              return false;
+            });
 
-        console.log("Filtered users:", getNearbyUsers);
+            console.log("Filtered users:", getNearbyUsers);
 
-        getNearbyUsers.forEach((user) => {
-          console.log("markers: ", markers);
+            getNearbyUsers.forEach((user) => {
+              console.log("markers: ", markers);
 
-          if (markers[user.userId]) {
-            markers[user.userId].setMap(null);
-          }
+              if (markers[user.userId]) {
+                markers[user.userId].setMap(null);
+              }
 
-          const userMarker = new window.google.maps.Marker({
-            position: {
-              lat: user.account.location.latitude,
-              lng: user.account.location.longitude,
-            },
-            map: mapRef.current,
-            icon: {
-              url: user.account.isVendor
-                ? vendorIcons(user.account.store.category)
-                : customerMarker,
-              scaledSize: new window.google.maps.Size(30, 30),
-            },
-            owner: user,
-          });
+              const userMarker = new window.google.maps.Marker({
+                position: {
+                  lat: user.account.location.latitude,
+                  lng: user.account.location.longitude,
+                },
+                map: mapRef.current,
+                icon: {
+                  url: user.account.isVendor
+                    ? vendorIcons(user.account.store.category)
+                    : customerMarker,
+                  scaledSize: new window.google.maps.Size(30, 30),
+                },
+                owner: user,
+              });
 
-          console.log("OWNERRR: ", markers[ownerWindow.userId]);
-          markers[ownerWindow.userId] = userMarker;
+              console.log("OWNERRR: ", markers[ownerWindow.userId]);
+              markers[ownerWindow.userId] = userMarker;
 
-          userMarker.addListener("click", () => {
-            handleMarkerClick(userMarker.owner);
-          });
-        });
-      })
-      .catch((error) => console.error("Error fetching users: ", error));
-  }, [currentPosition, user.account]);
+              userMarker.addListener("click", () => {
+                handleMarkerClick(userMarker.owner);
+              });
+            });
+          })
+          .catch((error) => console.error("Error fetching users: ", error));
+      }, 2000);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [user]);
 
   const handleMarkerClick = (owner) => {
     if (owner && owner.account.isVendor) {

@@ -34,12 +34,12 @@ const NavigationBar = () => {
       .catch((error) => {
         console.error(error);
       });
-      
-      // Perform logout actions (e.g., clear user data)
-      setUser(null);
-      
-      // Redirect to the default page ("/")
-      history.push("/landing");
+
+    // Perform logout actions (e.g., clear user data)
+    setUser(null);
+
+    // Redirect to the default page ("/")
+    history.push("/landing");
   };
 
   const handleMenu = (event) => {

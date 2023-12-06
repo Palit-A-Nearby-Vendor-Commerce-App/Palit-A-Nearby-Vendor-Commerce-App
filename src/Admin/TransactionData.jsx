@@ -25,14 +25,14 @@ const TransactionData = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {transactionData.map(transaction => (
+                        {/* {transactionData.map(transaction => (
                             <tr key={transaction.customer.accountId + transaction.vendor.accountId + transaction.transactionId}>
                                 <td className="py-2">{transaction.customer.accountId}</td>
                                 <td className="py-2">{transaction.vendor.accountId}</td>
                                 <td className="py-2">{transaction.status}</td>
                                 <td className="py-2">{transaction.rating}</td>
                             </tr>
-                        ))}
+                        ))} */}
                     </tbody>
                 </table>
             </div>

@@ -1,7 +1,7 @@
 // Queue.js
 import React from "react";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -9,16 +9,23 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MarkUnreadChatAltIcon from "@mui/icons-material/MarkUnreadChatAlt";
+import { UserContext } from "../UserContext";
 
 const Queue = () => {
   const [queue, setQueue] = useState([]);
   const [users, setUsers] = useState([]);
+  const { user } = useContext(UserContext);
 
   const fetchData = () => {
     axios
       .get("http://localhost:8080/api/getAllTransactions")
       .then((response) => {
-        setQueue(response.data);
+        const queueTransacs = response.data.filter(
+          (q) =>
+            q.accountVendorId.accountId === user.account.accountId &&
+            q.vendor.accountId === user.account.accountId
+        );
+        setQueue(queueTransacs);
       })
       .catch((error) => {
         console.error("Error fetching data: ", error);
@@ -56,7 +63,7 @@ const Queue = () => {
     axios
       .put(
         `http://localhost:8080/api/updateTransactionById/${item?.transactionId}`,
-        { ...item, status: "Completed" }
+        { ...item, isDeleted: true, status: "Completed" }
       )
       .then((response) => {
         console.log("Transaction item completed:", response.data);
@@ -72,6 +79,15 @@ const Queue = () => {
       }}
     >
       <h3 className="text-xl text-[#E8594F] mb-5">Now Serving</h3>
+      {console.log(
+        "Vendor transacs: ",
+        queue.filter(
+          (q) =>
+            q.accountVendorId.accountId === user.account.accountId &&
+            q.vendor.accountId === user.account.accountId
+        )
+      )}
+
       {queue.length > 0 &&
         queue.map((item) => {
           if (item.status === "Now Serving") {
@@ -164,6 +180,7 @@ const Queue = () => {
         queue.map((item) => {
           if (item.status === "In Queue") {
             // Find the user object that matches the account id
+
             const u = users.find(
               (u) =>
                 u &&
@@ -171,7 +188,14 @@ const Queue = () => {
                 u.account?.accountId === item.customer?.accountId
             );
 
-            console.log("Item: ", item);
+            {
+              /* const u = item.find(
+              (itm) => itm.vendor.accountId === user.account.accountId
+            ); */
+            }
+            console.log("U: ", u);
+
+            console.log("Item: ", item.vendor);
 
             if (u) {
               return (

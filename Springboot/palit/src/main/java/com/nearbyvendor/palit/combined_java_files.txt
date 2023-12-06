@@ -972,620 +972,643 @@ public class UserEntity {
 
 ```
 
-AccountController.java:
+AccountService.java:
 ```
-package com.nearbyvendor.palit.controller;
+package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.AccountEntity;
-import com.nearbyvendor.palit.service.AccountService;
+import com.nearbyvendor.palit.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
-public class AccountController {
+@Service
+@Transactional
+public class AccountService {
 
     @Autowired
-    private AccountService accountService;
+    private AccountRepository accountRepository;
 
-    @GetMapping("/getAllAccounts")
-    public ResponseEntity<List<AccountEntity>> getAllAccounts() {
-        List<AccountEntity> accounts = accountService.getAllAccounts();
-        return new ResponseEntity<>(accounts, HttpStatus.OK);
+    public List<AccountEntity> getAllAccounts() {
+        return accountRepository.findByIsDeletedFalse();
     }
 
-    @GetMapping("/getAccountById/{id}")
-    public ResponseEntity<AccountEntity> getAccountById(@PathVariable int id) {
-        AccountEntity account = accountService.getAccountById(id);
-        if (account != null) {
-            return new ResponseEntity<>(account, HttpStatus.OK);
+    public AccountEntity getAccountById(int accountId) {
+        AccountEntity account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        if (account == null) {
+
+            System.err.println("Account not found with ID: " + accountId);
+        }
+        return account;
+    }
+
+    public AccountEntity createAccount(AccountEntity account) {
+        return accountRepository.save(account);
+    }
+
+    public AccountEntity updateAccountById(int accountId, AccountEntity account) {
+        AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        if (existingAccount != null) {
+            existingAccount.setEmail(account.getEmail());
+            existingAccount.setPassword(account.getPassword());
+            existingAccount.setIsVendor(account.getIsVendor());
+            existingAccount.setIsAdmin(account.getIsAdmin());
+            existingAccount.setUser(account.getUser());
+            existingAccount.setLocation(account.getLocation());
+            existingAccount.setStore(account.getStore());
+            return accountRepository.save(existingAccount);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("Invalid account ID for update: " + accountId);
+            throw new RuntimeException("Invalid account ID for update: " + accountId);
         }
     }
 
-    @PostMapping("/createAccount")
-    public ResponseEntity<AccountEntity> createAccount(@RequestBody AccountEntity account) {
-        AccountEntity createdAccount = accountService.createAccount(account);
-        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/editAccountById/{id}")
-    public ResponseEntity<AccountEntity> editAccountById(@PathVariable int id, @RequestBody AccountEntity account) {
-        AccountEntity updatedAccount = accountService.updateAccountById(id, account);
-        if (updatedAccount != null) {
-            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+    public boolean deleteAccountById(int accountId) {
+        AccountEntity existingAccount = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
+        if (existingAccount != null) {
+            existingAccount.setIsDeleted(true);
+            accountRepository.save(existingAccount);
+            return true;
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("Invalid account ID for deletion: " + accountId);
+            return false;
         }
     }
 
-    @DeleteMapping("/deleteAccountById/{id}")
-    public ResponseEntity<Void> deleteAccountById(@PathVariable int id) {
-        boolean deleted = accountService.deleteAccountById(id);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public boolean checkEmail(AccountEntity account) {
+
+        List<AccountEntity> accounts = getAllAccounts();
+
+        for (AccountEntity a : accounts) {
+
+            if (a.getEmail().equals(account.getEmail())) {
+
+                System.err.println("Email already exists: " + account.getEmail());
+                return true;
+            }
         }
+        return false;
     }
 
-    @PostMapping("/isEmailTaken")
-    public ResponseEntity<Boolean> checkEmail(@RequestBody AccountEntity account) {
-        boolean isEmailTaken = accountService.checkEmail(account);
-        return new ResponseEntity<>(isEmailTaken, HttpStatus.OK);
-    }
-    
-    @GetMapping("/getAllAdminAccounts")
-    public ResponseEntity<List<AccountEntity>> getAllAdminAccounts() {
-        List<AccountEntity> adminAccounts = accountService.getAllAdminAccounts();
-
-        if (!adminAccounts.isEmpty()) {
-            return new ResponseEntity<>(adminAccounts, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public List<AccountEntity> getAllAdminAccounts() {
+        return accountRepository.findByIsAdminAndIsDeletedFalse(true);
     }
 }
 
 ```
 
-ChatController.java:
+ChatService.java:
 ```
-package com.nearbyvendor.palit.controller;
+package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.ChatEntity;
-import com.nearbyvendor.palit.service.ChatService;
+import com.nearbyvendor.palit.repository.ChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-@RestController
-@RequestMapping("/api")
-public class ChatController {
+@Service
+@Transactional
+public class ChatService {
 
     @Autowired
-    private ChatService chatService;
+    private ChatRepository chatRepository;
 
-    @GetMapping("getChatsByConversationId/{conversationId}")
-    public ResponseEntity<List<ChatEntity>> getChatsByConversationId(@PathVariable int conversationId) {
-        List<ChatEntity> chats = chatService.getChatsByConversationId(conversationId);
-        return new ResponseEntity<>(chats, HttpStatus.OK);
+    public List<ChatEntity> getAllChats() {
+        return chatRepository.findAllByIsDeletedFalse();
     }
 
-    @PostMapping("/createChat")
-    public ResponseEntity<Object> createChat(@RequestBody ChatEntity chat) {
-
-        if (chat.getAccount() == null) {
-            return new ResponseEntity<>("Account information is required for creating a chat.", HttpStatus.BAD_REQUEST);
-        }
-
-        ChatEntity createdChat = chatService.createChat(chat);
-        return new ResponseEntity<>(createdChat, HttpStatus.CREATED);
+    public List<ChatEntity> getChatsByConversationId(int conversationId) {
+        return chatRepository.findByConversation_ConversationIdAndIsDeletedFalse(conversationId);
     }
 
-    @PutMapping("updateChatById/{chatId}")
-    public ResponseEntity<ChatEntity> updateChatById(@PathVariable int chatId, @RequestBody ChatEntity chat) {
-        ChatEntity updatedChat = chatService.updateChatById(chatId, chat);
-        if (updatedChat != null) {
-            return new ResponseEntity<>(updatedChat, HttpStatus.OK);
+    public ChatEntity getChatById(int chatId) {
+        Optional<ChatEntity> chatOptional = chatRepository.findByChatIdAndIsDeletedFalse(chatId);
+        if (chatOptional.isPresent()) {
+            return chatOptional.get();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("ChatEntity not found with id: " + chatId);
+            throw new RuntimeException("ChatEntity not found with id: " + chatId);
         }
     }
 
-    @DeleteMapping("deleteChatById/{chatId}")
-    public ResponseEntity<Void> deleteChatById(@PathVariable int chatId) {
-        boolean deleted = chatService.deleteChatById(chatId);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ChatEntity createChat(ChatEntity chat) {
+        return chatRepository.save(chat);
+    }
+
+    public ChatEntity updateChatById(int chatId, ChatEntity chat) {
+        Optional<ChatEntity> chatOptional = chatRepository.findByChatIdAndIsDeletedFalse(chatId);
+        if (chatOptional.isPresent()) {
+            ChatEntity existingChat = chatOptional.get();
+            existingChat.setAccount(chat.getAccount());
+            existingChat.setMessageContent(chat.getMessageContent());
+            existingChat.setTimestamp(chat.getTimestamp());
+            existingChat.setConversation(chat.getConversation());
+            return chatRepository.save(existingChat);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("ChatEntity not found with id: " + chatId);
+            throw new RuntimeException("ChatEntity not found with id: " + chatId);
+        }
+    }
+
+    public boolean deleteChatById(int chatId) {
+        Optional<ChatEntity> chatOptional = chatRepository.findByChatIdAndIsDeletedFalse(chatId);
+        if (chatOptional.isPresent()) {
+            ChatEntity chat = chatOptional.get();
+            chat.setIsDeleted(true);
+            chatRepository.save(chat);
+            return true;
+        } else {
+
+            System.err.println("ChatEntity not found with id: " + chatId);
+            throw new RuntimeException("ChatEntity not found with id: " + chatId);
         }
     }
 }
 
 ```
 
-ConversationController.java:
+ConversationService.java:
 ```
-package com.nearbyvendor.palit.controller;
+package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.ConversationEntity;
-import com.nearbyvendor.palit.service.ConversationService;
+import com.nearbyvendor.palit.repository.ConversationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-@RestController
-@RequestMapping("/api")
-public class ConversationController {
+@Service
+@Transactional
+public class ConversationService {
 
     @Autowired
-    private ConversationService conversationService;
+    private ConversationRepository conversationRepository;
 
-    @GetMapping("/getAllConversations")
-    public ResponseEntity<List<ConversationEntity>> getAllConversations() {
-        List<ConversationEntity> conversations = conversationService.getAllConversations();
-        return new ResponseEntity<>(conversations, HttpStatus.OK);
+    public List<ConversationEntity> getAllConversations() {
+        return conversationRepository.findByIsDeletedFalse();
     }
 
-    @GetMapping("/getConversationById/{id}")
-    public ResponseEntity<ConversationEntity> getConversationById(@PathVariable("id") int id) {
-        ConversationEntity conversation = conversationService.getConversationById(id);
-        if (conversation != null) {
-            return new ResponseEntity<>(conversation, HttpStatus.OK);
+    public ConversationEntity getConversationById(int id) {
+        Optional<ConversationEntity> conversation = conversationRepository.findByConversationIdAndIsDeletedFalse(id);
+        if (conversation.isPresent()) {
+            return conversation.get();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            System.err.println("ConversationEntity not found with id: " + id);
+            throw new RuntimeException("ConversationEntity not found with id: " + id);
         }
     }
 
-    @PostMapping("/createConversation")
-    public ResponseEntity<ConversationEntity> createConversation(@RequestBody ConversationEntity conversation) {
-        ConversationEntity newConversation = conversationService.createConversation(conversation);
-        return new ResponseEntity<>(newConversation, HttpStatus.CREATED);
+    public ConversationEntity createConversation(ConversationEntity conversation) {
+        return conversationRepository.save(conversation);
     }
 
-    @PutMapping("/updateConversationById/{id}")
-    public ResponseEntity<ConversationEntity> updateConversationById(@PathVariable("id") int id,
-                                                                     @RequestBody ConversationEntity conversation) {
-        ConversationEntity updatedConversation = conversationService.updateConversationById(id, conversation);
-        if (updatedConversation != null) {
-            return new ResponseEntity<>(updatedConversation, HttpStatus.OK);
+    public ConversationEntity updateConversationById(int id, ConversationEntity conversation) {
+        Optional<ConversationEntity> existingConversation = conversationRepository
+                .findByConversationIdAndIsDeletedFalse(id);
+        if (existingConversation.isPresent()) {
+            existingConversation.get().setVendor(conversation.getVendor());
+            existingConversation.get().setCustomer(conversation.getCustomer());
+            return conversationRepository.save(existingConversation.get());
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("ConversationEntity not found with id: " + id);
+            throw new RuntimeException("ConversationEntity not found with id: " + id);
         }
     }
 
-    @DeleteMapping("/deleteConversationById/{id}")
-    public ResponseEntity<Void> deleteConversationById(@PathVariable("id") int id) {
-        boolean deleted = conversationService.deleteConversationById(id);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public boolean deleteConversationById(int id) {
+        Optional<ConversationEntity> conversation = conversationRepository.findByConversationIdAndIsDeletedFalse(id);
+        if (conversation.isPresent()) {
+            conversation.get().setIsDeleted(true);
+            conversationRepository.save(conversation.get());
+            return true;
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("ConversationEntity not found with id: " + id);
+            throw new RuntimeException("ConversationEntity not found with id: " + id);
         }
     }
     
-    @GetMapping("/getConversationByParticipants/{vendorId}/{customerId}")
-    public ResponseEntity<?> getConversationByParticipants(
-            @PathVariable("vendorId") int vendorId,
-            @PathVariable("customerId") int customerId) {
-        try {
-            ConversationEntity conversation = conversationService.getConversationByParticipants(vendorId, customerId);
-            if (conversation != null) {
-                return new ResponseEntity<>(conversation, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Conversation not found", HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>("Error fetching conversation: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ConversationEntity getConversationByParticipants(int vendorAccountId, int customerAccountId) {
+        Optional<ConversationEntity> conversation = conversationRepository.findByVendor_AccountIdAndCustomer_AccountIdAndIsDeletedFalse(vendorAccountId, customerAccountId);
+        return conversation.orElse(null);
     }
 }
 
 ```
 
-LocationController.java:
+LocationService.java:
 ```
-package com.nearbyvendor.palit.controller;
+package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.LocationEntity;
-import com.nearbyvendor.palit.service.LocationService;
+import com.nearbyvendor.palit.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
-public class LocationController {
+@Service
+@Transactional
+public class LocationService {
 
     @Autowired
-    private LocationService locationService;
-
-    @GetMapping("/getAllLocations")
-    public ResponseEntity<List<LocationEntity>> getAllLocations() {
-        List<LocationEntity> locations = locationService.getAllLocations();
-        return new ResponseEntity<>(locations, HttpStatus.OK);
+    private LocationRepository locationRepository;
+    public List<LocationEntity> getAllLocations() {
+        return locationRepository.findByIsDeletedFalse();
     }
 
-    @GetMapping("/getLocationById/{id}")
-    public ResponseEntity<LocationEntity> getLocationById(@PathVariable("id") int id) {
-        LocationEntity location = locationService.getLocationById(id);
+    public LocationEntity getLocationById(int id) {
+        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
         if (location != null) {
-            return new ResponseEntity<>(location, HttpStatus.OK);
+            return location;
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
         }
     }
 
-    @PostMapping("/createLocation")
-    public ResponseEntity<LocationEntity> createLocation(@RequestBody LocationEntity location) {
-        LocationEntity newLocation = locationService.createLocation(location);
-        return new ResponseEntity<>(newLocation, HttpStatus.CREATED);
+    public LocationEntity createLocation(LocationEntity location) {
+        return locationRepository.save(location);
     }
 
-    @PutMapping("/updateLocationById/{id}")
-    public ResponseEntity<LocationEntity> updateLocationById(@PathVariable("id") int id,
-                                                             @RequestBody LocationEntity location) {
-        LocationEntity updatedLocation = locationService.updateLocationById(id, location);
-        if (updatedLocation != null) {
-            return new ResponseEntity<>(updatedLocation, HttpStatus.OK);
+    public LocationEntity updateLocationById(int id, LocationEntity location) {
+        LocationEntity existingLocation = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+
+        if (existingLocation != null) {
+            existingLocation.setIsActive(location.getIsActive());
+            existingLocation.setLatitude(location.getLatitude());
+            existingLocation.setLongitude(location.getLongitude());
+            existingLocation.setAccount(location.getAccount());
+            return locationRepository.save(existingLocation);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
         }
     }
 
-    @DeleteMapping("/deleteLocationById/{id}")
-    public ResponseEntity<Void> deleteLocationById(@PathVariable("id") int id) {
-        boolean deleted = locationService.deleteLocationById(id);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public boolean deleteLocationById(int id) {
+        LocationEntity location = locationRepository.findByLocationIdAndIsDeletedFalse(id);
+        if (location != null) {
+            location.setIsDeleted(true);
+            locationRepository.save(location);
+            return true;
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("LocationEntity not found with id: " + id);
+            throw new RuntimeException("LocationEntity not found with id: " + id);
         }
     }
 }
 
 ```
 
-ProductServiceController.java:
+ProductServiceService.java:
 ```
-package com.nearbyvendor.palit.controller;
+package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.ProductServiceEntity;
-import com.nearbyvendor.palit.service.ProductServiceService;
+import com.nearbyvendor.palit.repository.ProductServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
-@RestController
-@RequestMapping("/api")
-public class ProductServiceController {
+@Service
+@Transactional
+public class ProductServiceService {
 
     @Autowired
-    private ProductServiceService productServiceService;
-
-    @GetMapping("/getAllProductServices")
-    public ResponseEntity<List<ProductServiceEntity>> getAllProductServices() {
-        List<ProductServiceEntity> productServices = productServiceService.getAllProductServices();
-        return new ResponseEntity<>(productServices, HttpStatus.OK);
+    private ProductServiceRepository productServiceRepository;
+    public List<ProductServiceEntity> getAllProductServices() {
+        return productServiceRepository.findByIsDeletedFalse();
     }
 
-    @GetMapping("/getProductServiceById/{id}")
-    public ResponseEntity<ProductServiceEntity> getProductServiceById(@PathVariable int id) {
-        ProductServiceEntity productService = productServiceService.getProductServiceById(id);
-        if (productService != null) {
-            return new ResponseEntity<>(productService, HttpStatus.OK);
+    public ProductServiceEntity getProductServiceById(int id) {
+        Optional<ProductServiceEntity> productService = productServiceRepository.findByProductIdAndIsDeletedFalse(id);
+        if (productService.isPresent()) {
+            return productService.get();
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("Product service not found with id: " + id);
+            throw new RuntimeException("Product service not found with id: " + id);
         }
     }
 
-    @GetMapping("/getProductServicesByStoreId/store/{storeId}")
-    public ResponseEntity<List<ProductServiceEntity>> getProductServicesByStoreId(@PathVariable int storeId) {
-        List<ProductServiceEntity> productServices = productServiceService.getProductServicesByStoreId(storeId);
-        return new ResponseEntity<>(productServices, HttpStatus.OK);
+    public List<ProductServiceEntity> getProductServicesByStoreId(int storeId) {
+        return productServiceRepository.findByStore_StoreIdAndIsDeletedFalse(storeId);
     }
 
-    @PostMapping("/createProductService")
-    public ResponseEntity<ProductServiceEntity> createProductService(@RequestBody ProductServiceEntity productService) {
-        ProductServiceEntity newProductService = productServiceService.createProductService(productService);
-        return new ResponseEntity<>(newProductService, HttpStatus.CREATED);
+    public ProductServiceEntity createProductService(ProductServiceEntity productService) {
+        return productServiceRepository.save(productService);
     }
 
-    @PutMapping("/updateProductServiceById/{id}")
-    public ResponseEntity<ProductServiceEntity> updateProductService(@PathVariable int id,
-                                                                     @RequestBody ProductServiceEntity productService) {
-        ProductServiceEntity updatedProductService = productServiceService.updateProductServiceById(id, productService);
-        if (updatedProductService != null) {
-            return new ResponseEntity<>(updatedProductService, HttpStatus.OK);
+    public ProductServiceEntity updateProductServiceById(int id, ProductServiceEntity productService) {
+        Optional<ProductServiceEntity> existingProductService = productServiceRepository
+                .findByProductIdAndIsDeletedFalse(id);
+
+        if (existingProductService.isPresent()) {
+            existingProductService.get().setName(productService.getName());
+            existingProductService.get().setPrice(productService.getPrice());
+            existingProductService.get().setImage(productService.getImage());
+            existingProductService.get().setStore(productService.getStore());
+            return productServiceRepository.save(existingProductService.get());
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("Product service not found with id: " + id);
+            throw new RuntimeException("Product service not found with id: " + id);
         }
     }
 
-    @DeleteMapping("/deleteProductServiceById/{id}")
-    public ResponseEntity<Void> deleteProductServiceById(@PathVariable int id) {
-        boolean deleted = productServiceService.deleteProductServiceById(id);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public boolean deleteProductServiceById(int id) {
+        Optional<ProductServiceEntity> existingProductService = productServiceRepository
+                .findByProductIdAndIsDeletedFalse(id);
+        if (existingProductService.isPresent()) {
+            existingProductService.get().setIsDeleted(true);
+            productServiceRepository.save(existingProductService.get());
+            return true;
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("Product service not found with id: " + id);
+            throw new RuntimeException("Product service not found with id: " + id);
         }
     }
 }
 
 ```
 
-ReportController.java:
+ReportService.java:
 ```
-package com.nearbyvendor.palit.controller;
+package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.ReportEntity;
-import com.nearbyvendor.palit.service.ReportService;
+import com.nearbyvendor.palit.repository.ReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
-public class ReportController {
+@Service
+@Transactional
+public class ReportService {
 
     @Autowired
-    private ReportService reportService;
+    private ReportRepository reportRepository;
 
-    @GetMapping("/getAllReports")
-    public ResponseEntity<List<ReportEntity>> getAllReports() {
-        List<ReportEntity> reports = reportService.getAllReports();
-        return new ResponseEntity<>(reports, HttpStatus.OK);
+    public List<ReportEntity> getAllReports() {
+        return reportRepository.findAllByIsDeletedFalse();
     }
 
-    @GetMapping("/getReportById/{id}")
-    public ResponseEntity<ReportEntity> getReportById(@PathVariable int id) {
-        ReportEntity report = reportService.getReportById(id);
+    public ReportEntity getReportById(int id) {
+        ReportEntity report = reportRepository.findByReportIdAndIsDeletedFalse(id);
         if (report != null) {
-            return new ResponseEntity<>(report, HttpStatus.OK);
+            return report;
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            System.err.println("ReportEntity not found with id: " + id);
+            throw new RuntimeException("ReportEntity not found with id: " + id);
         }
     }
 
-    @PostMapping("/createReport")
-    public ResponseEntity<ReportEntity> createReport(@RequestBody ReportEntity report) {
-        ReportEntity newReport = reportService.createReport(report);
-        return new ResponseEntity<>(newReport, HttpStatus.CREATED);
+    public ReportEntity createReport(ReportEntity report) {
+        return reportRepository.save(report);
     }
 
-    @PutMapping("/updateReportById/{id}")
-    public ResponseEntity<ReportEntity> updateReportById(@PathVariable int id, @RequestBody ReportEntity report) {
-        ReportEntity updatedReport = reportService.updateReportById(id, report);
-        if (updatedReport != null) {
-            return new ResponseEntity<>(updatedReport, HttpStatus.OK);
+    public ReportEntity updateReportById(int id, ReportEntity report) {
+        ReportEntity existingReport = reportRepository.findByReportIdAndIsDeletedFalse(id);
+        if (existingReport != null) {
+            existingReport.setAccount(report.getAccount());
+            existingReport.setMessageContent(report.getMessageContent());
+            existingReport.setTimestamp(report.getTimestamp());
+            existingReport.setIsResolved(report.getIsResolved());
+            return reportRepository.save(existingReport);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("Invalid report ID for updating: " + id);
+            throw new IllegalArgumentException("Invalid report ID");
         }
     }
 
-    @DeleteMapping("/deleteReportById/{id}")
-    public ResponseEntity<Void> deleteReportById(@PathVariable int id) {
-        boolean deleted = reportService.deleteReportById(id);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public boolean deleteReportById(int id) {
+        ReportEntity existingReport = reportRepository.findByReportIdAndIsDeletedFalse(id);
+        if (existingReport != null) {
+            existingReport.setIsDeleted(true);
+            reportRepository.save(existingReport);
+            return true;
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("Invalid report ID for deletion: " + id);
+            throw new IllegalArgumentException("Invalid report ID");
         }
     }
 }
 
 ```
 
-StoreController.java:
+StoreService.java:
 ```
-package com.nearbyvendor.palit.controller;
+package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.StoreEntity;
-import com.nearbyvendor.palit.service.StoreService;
+import com.nearbyvendor.palit.repository.StoreRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
-public class StoreController {
+@Service
+@Transactional
+public class StoreService {
 
     @Autowired
-    private StoreService storeService;
+    private StoreRepository storeRepository;
 
-    @GetMapping("/getAllStores")
-    public ResponseEntity<List<StoreEntity>> getAllStores() {
-        List<StoreEntity> stores = storeService.getAllStores();
-        return new ResponseEntity<>(stores, HttpStatus.OK);
+    public List<StoreEntity> getAllStores() {
+        return storeRepository.findAllByIsDeletedFalse();
     }
 
-    @GetMapping("/getStoreById/{id}")
-    public ResponseEntity<StoreEntity> getStoreById(@PathVariable("id") int id) {
-        StoreEntity store = storeService.getStoreById(id);
+    public StoreEntity getStoreById(int storeId) {
+        StoreEntity store = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
         if (store != null) {
-            return new ResponseEntity<>(store, HttpStatus.OK);
+            return store;
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+            System.err.println("StoreEntity not found with id: " + storeId);
+            throw new RuntimeException("StoreEntity not found with id: " + storeId);
         }
     }
 
-    @PostMapping("/createStore")
-    public ResponseEntity<StoreEntity> createStore(@RequestBody StoreEntity store) {
-        StoreEntity newStore = storeService.createStore(store);
-        return new ResponseEntity<>(newStore, HttpStatus.CREATED);
+    public StoreEntity createStore(StoreEntity store) {
+        return storeRepository.save(store);
     }
 
-    @PutMapping("/updateStoreById/{id}")
-    public ResponseEntity<StoreEntity> updateStore(@PathVariable("id") int id, @RequestBody StoreEntity store) {
-        StoreEntity updatedStore = storeService.updateStoreById(id, store);
-        if (updatedStore != null) {
-            return new ResponseEntity<>(updatedStore, HttpStatus.OK);
+    public StoreEntity updateStoreById(int storeId, StoreEntity store) {
+        StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
+        if (existingStore != null) {
+            existingStore.setStoreName(store.getStoreName());
+            existingStore.setDescription(store.getDescription());
+            existingStore.setCategory(store.getCategory());
+            existingStore.setAccount(store.getAccount());
+            return storeRepository.save(existingStore);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("Invalid store ID for updating: " + storeId);
+            throw new IllegalArgumentException("Invalid store ID");
+        }
+    }
+
+    public boolean deleteStoreById(int storeId) {
+        StoreEntity existingStore = storeRepository.findByStoreIdAndIsDeletedFalse(storeId);
+        if (existingStore != null) {
+            existingStore.setIsDeleted(true);
+            storeRepository.save(existingStore);
+            return true;
+        } else {
+            System.err.println("Invalid store ID for deletion: " + storeId);
+            throw new IllegalArgumentException("Invalid store ID");
         }
     }
 }
 
 ```
 
-TransactionController.java:
+TransactionService.java:
 ```
-package com.nearbyvendor.palit.controller;
+package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.TransactionEntity;
-import com.nearbyvendor.palit.service.TransactionService;
+import com.nearbyvendor.palit.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
-public class TransactionController {
+@Service
+@Transactional
+public class TransactionService {
 
     @Autowired
-    private TransactionService transactionService;
+    private TransactionRepository transactionRepository;
 
-    @GetMapping("/getAllTransactions")
-    public ResponseEntity<List<TransactionEntity>> getTransactions() {
-        List<TransactionEntity> transactions = transactionService.getAllTransactions();
-        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    public List<TransactionEntity> getAllTransactions() {
+        return transactionRepository.findAllByIsDeletedFalse();
     }
 
-    @GetMapping("/getTransactionById/{id}")
-    public ResponseEntity<TransactionEntity> getTransactionById(@PathVariable int id) {
-        TransactionEntity transaction = transactionService.getTransactionById(id);
+    public TransactionEntity getTransactionById(int id) {
+        TransactionEntity transaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
         if (transaction != null) {
-            return new ResponseEntity<>(transaction, HttpStatus.OK);
+            return transaction;
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("TransactionEntity not found with id: " + id);
+            throw new RuntimeException("TransactionEntity not found with id: " + id);
         }
     }
 
-    @PostMapping("/createTransaction")
-    public ResponseEntity<TransactionEntity> createTransaction(@RequestBody TransactionEntity transaction) {
-        TransactionEntity newTransaction = transactionService.createTransaction(transaction);
-        return new ResponseEntity<>(newTransaction, HttpStatus.CREATED);
+    public TransactionEntity createTransaction(TransactionEntity transaction) {
+        return transactionRepository.save(transaction);
     }
 
-    @PutMapping("updateTransactionById/{id}")
-    public ResponseEntity<TransactionEntity> updateTransactionById(@PathVariable int id,
-                                                                   @RequestBody TransactionEntity transaction) {
-        TransactionEntity updatedTransaction = transactionService.updateTransactionById(id, transaction);
-        if (updatedTransaction != null) {
-            return new ResponseEntity<>(updatedTransaction, HttpStatus.OK);
+    public TransactionEntity updateTransactionById(int id, TransactionEntity transaction) {
+        TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
+        if (existingTransaction != null) {
+            existingTransaction.setCustomer(transaction.getCustomer());
+            existingTransaction.setVendor(transaction.getVendor());
+            existingTransaction.setStatus(transaction.getStatus());
+            existingTransaction.setDetails(transaction.getDetails());
+            return transactionRepository.save(existingTransaction);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("Invalid transaction ID for updating: " + id);
+            throw new IllegalArgumentException("Invalid transaction ID");
         }
     }
 
-    @DeleteMapping("deleteTransactionById/{id}")
-    public ResponseEntity<Void> deleteTransactionById(@PathVariable int id) {
-        transactionService.deleteTransactionById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public boolean deleteTransactionById(int id) {
+        TransactionEntity existingTransaction = transactionRepository.findByTransactionIdAndIsDeletedFalse(id);
+        if (existingTransaction != null) {
+            existingTransaction.setIsDeleted(true);
+            transactionRepository.save(existingTransaction);
+            return true;
+        } else {
+            System.err.println("Invalid transaction ID for deletion: " + id);
+            throw new IllegalArgumentException("Invalid transaction ID");
+        }
     }
 }
 
 ```
 
-UserController.java:
+UserService.java:
 ```
-package com.nearbyvendor.palit.controller;
+package com.nearbyvendor.palit.service;
 
 import com.nearbyvendor.palit.entity.UserEntity;
-import com.nearbyvendor.palit.service.UserService;
+import com.nearbyvendor.palit.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
-public class UserController {
+@Service
+@Transactional
+public class UserService {
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
-    @GetMapping("/getAllUsers")
-    public ResponseEntity<List<UserEntity>> getAllUsers() {
-        List<UserEntity> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findByIsDeletedFalse();
     }
 
-    @GetMapping("/getUserById/{id}")
-    public ResponseEntity<UserEntity> getUserById(@PathVariable int id) {
-        UserEntity user = userService.getUserById(id);
+    public UserEntity getUserById(int id) {
+        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
         if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
+            return user;
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            System.err.println("UserEntity not found with id: " + id);
+            throw new RuntimeException("UserEntity not found with id: " + id);
         }
     }
 
-    @PostMapping(value = "/createUser")
-    public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity newUserEntity) {
-        UserEntity user = userService.createUser(newUserEntity);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    public UserEntity createUser(UserEntity newUserEntity) {
+        return userRepository.save(newUserEntity);
     }
 
-    @PutMapping(value = "/updateUserById/{id}")
-    public ResponseEntity<UserEntity> updateUser(@PathVariable("id") int id,
-                                                 @RequestBody UserEntity updatedUserEntity) {
-        UserEntity user = userService.updateUserById(id, updatedUserEntity);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    public UserEntity updateUserById(int id, UserEntity updatedUserEntity) {
+
+        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
+        if (user != null) {
+            user.setFirstName(updatedUserEntity.getFirstName());
+            user.setLastName(updatedUserEntity.getLastName());
+            user.setBirthDate(updatedUserEntity.getBirthDate());
+            user.setImage(updatedUserEntity.getImage());
+            user.setAccount(updatedUserEntity.getAccount());
+            userRepository.save(user);
+            return user;
+        } else {
+            System.err.println("Invalid user ID for update: " + id);
+            throw new IllegalArgumentException("Invalid user ID");
+        }
     }
 
-    @DeleteMapping("/deleteUserById/{id}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable int id) {
-        userService.deleteUserById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public boolean deleteUserById(int id) {
+        UserEntity user = userRepository.findByUserIdAndIsDeletedFalse(id);
+        if (user != null) {
+            user.setIsDeleted(true);
+            userRepository.save(user);
+            return true;
+        } else {
+            System.err.println("Invalid user ID for deletion: " + id);
+            throw new IllegalArgumentException("Invalid user ID");
+        }
     }
 }
 
 ```
-
-{
-  "customer": 1
-  "vendor": 2
-  "status": "test"
-  "details": "test"
-}
-
-returns
-{
-    "timestamp": "2023-12-04T02:31:46.515+00:00",
-    "status": 400,
-    "error": "Bad Request",
-    "message": "JSON parse error: Cannot construct instance of `com.nearbyvendor.palit.entity.AccountEntity` (although at least one Creator exists): no int/Int-argument constructor/factory method to deserialize from Number value (1); nested exception is com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot construct instance of `com.nearbyvendor.palit.entity.AccountEntity` (although at least one Creator exists): no int/Int-argument constructor/factory method to deserialize from Number value (1)\n at [Source: (org.springframework.util.StreamUtils$NonClosingInputStream); line: 2, column: 15] (through reference chain: com.nearbyvendor.palit.entity.TransactionEntity[\"customer\"])",
-    "path": "/api/createTransaction"
-}

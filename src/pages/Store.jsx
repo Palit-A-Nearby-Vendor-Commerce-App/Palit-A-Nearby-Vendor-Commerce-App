@@ -177,6 +177,17 @@ const Store = ({ vendor }) => {
   };
 
   const handleOrderClick = () => {
+    let orderedList = [];
+    for (let i = 0; i < products.length; i++) {
+      if (quantity[i] > 0) {
+        orderedList.push(
+          `${products[i].name} Php${products[i].price} x${quantity[i]}`
+        );
+      }
+    }
+    let orderedListString = orderedList.join("; ");
+    orderedListString += `; Total: Php${calculateTotalPrice()}`;
+    setDetails(orderedListString);
     setOpenOrderDialog(true); // open the order confirmation dialog
   };
 
@@ -288,24 +299,21 @@ const Store = ({ vendor }) => {
                       style={{
                         width: "100%",
                         height: "150px",
-                        border: "1px solid black",
                         borderRadius: "15px",
                       }}
                     />
                     <p
                       style={{
                         position: "absolute",
-                        top: "1px",
-                        left: "49%",
+                        top: "0",
+                        left: "50%",
                         width: "100%",
                         transform: "translateX(-50%)",
-                        paddingLeft: "10px",
-                        paddingRight: "5px",
-                        color: "white",
-                        fontSize: "16px",
-                        fontWeight: "bold",
-                        backgroundColor: "rgba(136, 170, 204, 0.7)",
-                        borderRadius: "15px",
+                        paddingInline: "10px",
+                        color: "black",
+                        fontSize: "17px",
+                        backgroundColor: "rgba(255,255,255, 0.7)",
+                        borderTopRadius: "15px",
                       }}
                     >
                       {product.name}
@@ -313,15 +321,14 @@ const Store = ({ vendor }) => {
                     <p
                       style={{
                         position: "absolute",
-                        bottom: "1px",
+                        bottom: "3%",
                         left: "3%",
                         textAlign: "left",
                         color: "black",
                         fontSize: "14px",
                         fontWeight: "bold",
                         backgroundColor: "#c0d8f0",
-                        paddingLeft: "10px",
-                        paddingRight: "5px",
+                        paddingInline: "5px",
                         borderRadius: "10px",
                       }}
                     >
@@ -330,10 +337,12 @@ const Store = ({ vendor }) => {
                     <div
                       style={{
                         position: "absolute",
-                        bottom: "1px",
+                        bottom: "3%",
                         right: "3%",
                         display: "flex",
                         alignItems: "center",
+                        backgroundColor: "#c0d8f0",
+                        borderRadius: "10px",
                       }}
                     >
                       <button
@@ -341,8 +350,8 @@ const Store = ({ vendor }) => {
                           backgroundColor: "#0071B3",
                           color: "white",
                           borderRadius: "10px",
-                          padding: "5px",
-                          margin: "2px",
+                          paddingInline: "5px",
+                          marginRight: "5px",
                         }}
                         disabled={orderStatus}
                         onClick={() => handleQuantityChange(index, "+")}
@@ -355,8 +364,8 @@ const Store = ({ vendor }) => {
                           backgroundColor: "#0071B3",
                           color: "white",
                           borderRadius: "10px",
-                          padding: "5px",
-                          margin: "2px",
+                          paddingInline: "5px",
+                          marginLeft: "5px",
                         }}
                         disabled={orderStatus}
                         onClick={() => handleQuantityChange(index, "-")}
@@ -474,9 +483,9 @@ const Store = ({ vendor }) => {
             onClick={() => {
               axios
                 .put(
-                  `http://localhost:8080/api/updateTransactionById/${activeTransaction.activeTransaction.transactionId}`,
+                  `http://localhost:8080/api/updateTransactionById/${activeTransaction.transactionId}`,
                   {
-                    ...activeTransaction.activeTransaction,
+                    ...activeTransaction,
                     status: "Cancelled",
                   }
                 )

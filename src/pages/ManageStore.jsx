@@ -122,8 +122,6 @@ const ManageStore = () => {
   };
 
   const handleSaveConfirm = () => {
-
-    
     console.log("Save clicked", products);
 
     products.forEach((product) => {
@@ -222,7 +220,6 @@ const ManageStore = () => {
     if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
       return;
     }
-    
 
     function convertToBase64(file) {
       return new Promise((resolve, reject) => {
@@ -292,13 +289,12 @@ const ManageStore = () => {
   };
 
   const handleSave = () => {
-
     openConfirmationDialog(() => handleSaveConfirm, "save");
   };
 
   const handleAdd = () => {
     if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
-      return
+      return;
     } else {
       openConfirmationDialog(() => handleAddConfirm, "add");
     }
@@ -326,12 +322,13 @@ const ManageStore = () => {
               variant="outlined"
               InputProps={{
                 style: {
-                  fontSize: 15,
-                  height: 25,
+                  fontSize: 18,
+                  height: 30,
                   width: "267px",
-                  paddingRight: "10px",
+                  paddingRight: "5px",
                   color: "black",
                   fontWeight: "bold",
+                  borderRadius: "15px",
                 },
               }}
               value={editedStore.storeName}
@@ -350,11 +347,12 @@ const ManageStore = () => {
               onChange={handleStoreInputChange}
               style={{
                 fontSize: 15,
-                height: 20,
+                height: 30,
                 marginTop: "5px",
                 width: "267px",
                 paddingRight: "10px",
                 color: "black",
+                borderRadius: "15px",
               }}
               IconComponent={() => (
                 <Icon>
@@ -398,8 +396,9 @@ const ManageStore = () => {
                 height: 85,
                 width: "340px",
                 color: "black",
-                paddingBottom: "10px",
+                paddingTop: "30px",
                 textAlign: "justify",
+                borderRadius: "15px",
               },
               endAdornment: (
                 <InputAdornment position="end">
@@ -461,7 +460,6 @@ const ManageStore = () => {
                 <TextField
                   label="Product Name"
                   name="name"
-                  variant="outlined"
                   placeholder="Enter product name"
                   value={editedProduct.name}
                   onChange={handleInputChange}
@@ -475,9 +473,19 @@ const ManageStore = () => {
                     marginTop: "5px",
                     marginLeft: "10px",
                   }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <img src={editStore} alt="Edit Store" />
+                      </InputAdornment>
+                    ),
+                    style: {
+                      borderRadius: "15px", // Moved borderRadius here
+                    },
+                  }}
                 />
                 <TextField
-                  label="Product Price"
+                  label="Price"
                   name="price"
                   variant="outlined"
                   type="number"
@@ -486,7 +494,9 @@ const ManageStore = () => {
                   onChange={handleInputChange}
                   margin="normal"
                   size="small"
+                  inputProps={{ min: "0" }}
                   style={{
+                    borderRadius: "15px",
                     width: "40%",
                     fontSize: "12px",
                     marginTop: "50px",
@@ -499,12 +509,15 @@ const ManageStore = () => {
                         <img src={editStore} alt="Edit Store" />
                       </InputAdornment>
                     ),
+                    style: {
+                      borderRadius: "15px", // Moved borderRadius here
+                    },
                   }}
                 />
                 <Button
                   variant="contained"
-                  color="primary"
                   style={{
+                    backgroundColor: "#0071b3",
                     borderRadius: "15px",
                     width: "96%",
                     marginTop: "100px",
@@ -544,13 +557,13 @@ const ManageStore = () => {
                     top: 0,
                     right: 0,
                     fontWeight: "bold",
-                    fontSize: "20px",
-                    color: "red",
-                    backgroundColor: "white",
+                    fontSize: "15px",
+                    color: "white",
+                    backgroundColor: "red",
                     border: "none",
-                    borderRadius: "50%",
-                    width: "30px",
-                    height: "30px",
+                    borderTopRightRadius: "50%",
+                    width: "25px",
+                    height: "25px",
                     cursor: "pointer",
                   }}
                   onClick={() => handleDelete(index)}
@@ -561,7 +574,6 @@ const ManageStore = () => {
                   style={{
                     width: "100%",
                     height: "150px",
-                    border: "1px solid black",
                     borderRadius: "15px",
                     backgroundImage: `url(${
                       product.imagePreview ||
@@ -581,19 +593,27 @@ const ManageStore = () => {
                 </label>
                 <TextField
                   name="name"
-                  variant="outlined"
                   value={product.name}
                   onChange={(e) => handleProductInputChange(e, index)}
-                  margin="normal"
-                  size="small"
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        border: "none", // Removes the border
+                      },
+                      "&:hover fieldset": {
+                        border: "none", // Removes the border on hover
+                      },
+                      "&.Mui-focused fieldset": {
+                        border: "none", // Removes the border when focused
+                      },
+                    },
+                  }}
                   InputProps={{
                     style: {
-                      fontSize: 20,
+                      fontSize: 17,
                       height: 25,
-                      paddingRight: "10px",
-                      borderRadius: "15px",
-                      color: "white",
-                      fontWeight: "bold",
+                      paddingInline: "5px",
+                      color: "black",
                     },
                     endAdornment: (
                       <InputAdornment
@@ -612,14 +632,11 @@ const ManageStore = () => {
                   }}
                   style={{
                     position: "absolute",
-                    top: "-15px",
-                    left: "39%",
-                    width: "79%",
-                    transform: "translateX(-50%)",
+                    left: "0",
+                    width: "85%",
                     color: "white",
-                    fontWeight: "bold",
-                    backgroundColor: "rgba(136, 170, 204, 0.7)",
-                    borderRadius: "15px",
+                    backgroundColor: "rgba(255,255,255, 0.7)",
+                    borderTopLeftRadius: "15px",
                   }}
                 />
                 <TextField
@@ -655,8 +672,8 @@ const ManageStore = () => {
                   }}
                   style={{
                     position: "absolute",
-                    bottom: "0px",
-                    left: "0%",
+                    bottom: "3%",
+                    left: "3%",
                     width: "50%",
                     textAlign: "left",
                     color: "black",
@@ -675,24 +692,21 @@ const ManageStore = () => {
                   style={{
                     width: "100%",
                     height: "150px",
-                    border: "1px solid black",
                     borderRadius: "15px",
                   }}
                 />
                 <p
                   style={{
                     position: "absolute",
-                    top: "1px",
-                    left: "49%",
+                    top: "0",
+                    left: "50%",
                     width: "100%",
                     transform: "translateX(-50%)",
-                    paddingLeft: "10px",
-                    paddingRight: "5px",
-                    color: "white",
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    backgroundColor: "rgba(136, 170, 204, 0.7)",
-                    borderRadius: "15px",
+                    paddingInline: "10px",
+                    color: "black",
+                    fontSize: "17px",
+                    backgroundColor: "rgba(255,255,255, 0.7)",
+                    borderTopRadius: "15px",
                   }}
                 >
                   {product.name}
@@ -700,15 +714,14 @@ const ManageStore = () => {
                 <p
                   style={{
                     position: "absolute",
-                    bottom: "1px",
+                    bottom: "3%",
                     left: "3%",
                     textAlign: "left",
                     color: "black",
                     fontSize: "14px",
                     fontWeight: "bold",
                     backgroundColor: "#c0d8f0",
-                    paddingLeft: "10px",
-                    paddingRight: "5px",
+                    paddingInline: "5px",
                     borderRadius: "10px",
                   }}
                 >
@@ -723,8 +736,9 @@ const ManageStore = () => {
         {editMode ? (
           <Button
             variant="contained"
-            color="primary"
-            style={{ borderRadius: "15px", width: "90%", height: "50px" }}
+            
+            style={{ 
+              backgroundColor: '#0071b3', borderRadius: "15px", width: "90%", height: "50px" }}
             onClick={handleSave}
           >
             Save
@@ -732,8 +746,12 @@ const ManageStore = () => {
         ) : (
           <Button
             variant="contained"
-            color="primary"
-            style={{ borderRadius: "15px", width: "90%", height: "50px" }}
+            style={{
+              backgroundColor: "#0071b3",
+              borderRadius: "15px",
+              width: "90%",
+              height: "50px",
+            }}
             onClick={handleEdit}
           >
             Edit Store and Products
@@ -757,8 +775,8 @@ const ManageStore = () => {
         <DialogActions>
           <Button
             onClick={() => setOpenDialog(false)}
-            color="primary"
-            style={{ backgroundColor: "#E8594F", color: "white" }}
+            style={{ 
+              backgroundColor: '#e8594f', color: "white" }}
           >
             Cancel
           </Button>
@@ -767,9 +785,9 @@ const ManageStore = () => {
               confirmAction();
               setOpenDialog(false);
             }}
-            color="primary"
             autoFocus
-            style={{ backgroundColor: "#0575B4", color: "white" }}
+            style={{ 
+              backgroundColor: '#0071b3', color: "white" }}
           >
             Confirm
           </Button>
@@ -789,11 +807,13 @@ const ManageStore = () => {
         </DialogContent>
         <DialogActions>
           <Button
-            onClick={() => {setSuccessMessage(null)
-            setImagePreview(null)}}
-            color="primary"
+            onClick={() => {
+              setSuccessMessage(null);
+              setImagePreview(null);
+            }}
             autoFocus
-            style={{ backgroundColor: "#0575B4", color: "white" }}
+            style={{ 
+              backgroundColor: '#0071b3', color: "white" }}
           >
             OK
           </Button>

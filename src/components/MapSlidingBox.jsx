@@ -69,10 +69,8 @@ const MapSlidingBox = ({
               </button>
             </>
           )
-        ) : selectedVendor ? (
-          <Store vendor={selectedVendor} />
         ) : (
-          <p>Select a store to view</p>
+          <Store vendor={selectedVendor} />
         )}
       </div>
       {user.account.isVendor ? (

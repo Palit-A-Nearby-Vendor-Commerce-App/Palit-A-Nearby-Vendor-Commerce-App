@@ -177,6 +177,17 @@ const Store = ({ vendor }) => {
   };
 
   const handleOrderClick = () => {
+    let orderedList = [];
+    for (let i = 0; i < products.length; i++) {
+      if (quantity[i] > 0) {
+        orderedList.push(
+          `${products[i].name} Php${products[i].price} x${quantity[i]}`
+        );
+      }
+    }
+    let orderedListString = orderedList.join("; ");
+    orderedListString += `; Total: Php${calculateTotalPrice()}`;
+    setDetails(orderedListString);
     setOpenOrderDialog(true); // open the order confirmation dialog
   };
 
@@ -474,9 +485,9 @@ const Store = ({ vendor }) => {
             onClick={() => {
               axios
                 .put(
-                  `http://localhost:8080/api/updateTransactionById/${activeTransaction.activeTransaction.transactionId}`,
+                  `http://localhost:8080/api/updateTransactionById/${activeTransaction.transactionId}`,
                   {
-                    ...activeTransaction.activeTransaction,
+                    ...activeTransaction,
                     status: "Cancelled",
                   }
                 )

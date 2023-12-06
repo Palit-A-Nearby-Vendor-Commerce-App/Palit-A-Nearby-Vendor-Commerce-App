@@ -395,7 +395,7 @@ const Store = ({ vendor }) => {
       </div>
       {activeTransaction ? (
         <OrderDetails activeTransaction={activeTransaction} />
-      ) : (
+      ) : selectedVendor ? (
         <button
           type="button"
           className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
@@ -404,7 +404,7 @@ const Store = ({ vendor }) => {
         >
           <span className="text-lg  ">Order</span>
         </button>
-      )}
+      ) : <p>Select a store.</p>}
     </>
   );
 };

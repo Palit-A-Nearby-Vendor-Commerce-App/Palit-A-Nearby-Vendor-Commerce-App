@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import moment from "moment";
 import logo from "../assets/images/logo.png";
+
+import { UserContext } from "../UserContext";
 import { useHistory, Link } from "react-router-dom";
 import {
   useTheme,
@@ -18,6 +20,7 @@ import { Alert } from "../assets/styles/styles.js";
 
 function Signup() {
   const history = useHistory();
+  const { user } = useContext(UserContext);
   const [imagePreview, setImagePreview] = useState(null);
   const [alert, setAlert] = useState("");
   const [isImageEmpty, setIsImageEmpty] = useState(false);
@@ -41,6 +44,13 @@ function Signup() {
     lng: 0,
     lat: 0,
   });
+
+  
+  useEffect(() => {
+    if (user) {
+      history.push('/home');
+    }
+  }, [user]);
 
   const handleImageChange = (e) => {
     setUserData({

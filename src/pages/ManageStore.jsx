@@ -1,7 +1,8 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Select, TextField } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Icon, InputAdornment, MenuItem, Select, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
+import editStore from "../assets/images/editStore.png";
 
 const ManageStore = () => {
     const { user, setUser } = useContext(UserContext);
@@ -24,90 +25,65 @@ const ManageStore = () => {
     const [confirmAction, setConfirmAction] = useState(null);
     const [actionType, setActionType] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null);
-
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
-        const userApiEndpoint = `http://localhost:8080/api/getUserById/${user.id}`;
-        const accountApiEndpoint = "http://localhost:8080/api/getAccountById/";
-        const storeApiEndpoint = "http://localhost:8080/api/getStoreById/";
-
-        axios
-            .get(userApiEndpoint)
-            .then((response) => {
-                if (response.data && response.data.accountId) {
-                    return axios.get(accountApiEndpoint + response.data.accountId);
-                } else {
-                    throw new Error("Account ID not found in user data");
+        const fetchStore = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/getStoreById/${user.account.store.storeId}`);
+                setStore(response.data);
+                setEditedStore({
+                    storeName: response.data.storeName,
+                    category: response.data.category,
+                    description: response.data.description,
+                });
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching store:', error);
+            }
+        };
+        const fetchProducts = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/getProductServicesByStoreId/store/${user.account.store.storeId}`);
+                setProducts(response.data);
+                localStorage.setItem('products', JSON.stringify(response.data));
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                const localData = localStorage.getItem('products');
+                if (localData) {
+                    setProducts(JSON.parse(localData));
                 }
-            })
-            .then((response) => {
-                if (response.data && response.data.store) {
-                    return axios.get(storeApiEndpoint + response.data.store.storeId);
-                } else {
-                    throw new Error("Store ID not found in account data");
-                }
-            })
-            .then((response) => {
-                if (response.data) {
-                    setStore(response.data);
-                    console.log("Store data:", response.data);
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching data: ", error);
-            });
-
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/getProductServicesByStoreId/store/${user.account.store.storeId}`
-        );
-        setProducts(response.data);
-        localStorage.setItem("products", JSON.stringify(response.data));
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        const localData = localStorage.getItem("products");
-        if (localData) {
-          setProducts(JSON.parse(localData));
-        }
-      }
-    };
-
+            }
+        };
+        fetchStore();
         fetchProducts();
     }, []);
-
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleEdit = () => {
-    setEditMode(true);
-  };
-
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    const handleEdit = () => {
+        setEditMode(true);
+    };
     useEffect(() => {
-        if (user.account.store) {
+        if (user && user.account && user.account.store) {
             setEditedStore({
                 storeName: user.account.store.storeName,
                 category: user.account.store.category,
                 description: user.account.store.description,
             });
         }
-    }, [user.account.store]);
-
-  const handleStoreInputChange = (event) => {
-    const { name, value } = event.target;
-    setEditedStore({
-      ...editedStore,
-      [name]: value,
-    });
-  };
-
+    }, [user, user?.account]);
+    const handleStoreInputChange = (event) => {
+        const { name, value } = event.target;
+        setEditedStore({
+            ...editedStore,
+            [name]: value,
+        });
+    };
     const handleSaveConfirm = () => {
         console.log("Save clicked", products);
-
         products.forEach((product) => {
             axios
                 .put(`http://localhost:8080/api/updateProductServiceById/${product.productId}`, product)
@@ -118,35 +94,25 @@ const ManageStore = () => {
                     console.error("Error updating product:", error);
                 });
         });
-
-        axios
-            .put(`http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`, editedStore)
-            .then((response) => {
-                console.log("Store updated:", response.data);
-                setStore(response.data);
-
-                setUser((prevUser) => ({
-                    ...prevUser,
-                    account: {
-                        ...prevUser.account,
-                        store: response.data,
-                    },
-                }));
-                setSuccessMessage('Successfully saved.');
-            })
-            .catch((error) => {
-                console.error("Error updating store:", error);
-            });
-
+        if (user && user.account && user.account.store) {
+            axios
+                .put(`http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`, editedStore)
+                .then((response) => {
+                    console.log("Store updated:", response.data);
+                    setStore(response.data);
+                    setSuccessMessage('Successfully saved.');
+                })
+                .catch((error) => {
+                    console.error("Error updating store:", error);
+                });
+        }
         setEditMode(false);
         setEditedProduct({
             picture: "",
             name: "",
             price: "",
         });
-
     };
-
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         if (name === 'price') {
@@ -161,118 +127,96 @@ const ManageStore = () => {
             });
         }
     };
-
-  const handleImageChange = (e) => {
-    setEditedProduct({
-      ...editedProduct,
-      picture: e.target.files[0],
-    });
-    setImagePreview(
-      e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null
-    );
-  };
-
-  const handleProductImageChange = (e, index) => {
-    const newProducts = [...products];
-    newProducts[index].image = e.target.files[0];
-    newProducts[index].imagePreview = e.target.files[0]
-      ? URL.createObjectURL(e.target.files[0])
-      : null;
-    setProducts(newProducts);
-  };
-
-  const handleProductInputChange = (e, index) => {
-    const { name, value } = e.target;
-    const newProducts = [...products];
-    if (name === "price") {
-      newProducts[index][name] = value;
-    } else {
-      newProducts[index][name] = value;
-    }
-    setProducts(newProducts);
-  };
-
-  const handleAddConfirm = async () => {
-    if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
-      alert("Please fill in all product details.");
-      return;
-    }
-
-    function convertToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result.split(",")[1]);
-        reader.onerror = (error) => reject(error);
-      });
-    }
-
-    const imageBase64 = await convertToBase64(editedProduct.picture);
-
-    const productData = {
-      name: editedProduct.name,
-      price: editedProduct.price,
-      image: imageBase64,
-      store: { storeId: user.account.store.storeId },
+    const handleImageChange = (e) => {
+        setEditedProduct({
+            ...editedProduct,
+            picture: e.target.files[0],
+        });
+        setImagePreview(
+            e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null
+        );
     };
-
-    setProducts((prevProducts) => [...prevProducts, productData]);
-
-    axios
-      .post("http://localhost:8080/api/createProductService", productData)
-      .then((response) => {
-        console.log("Product created:", response.data);
-        setSuccessMessage("Successfully added.");
-      })
-      .catch((error) => {
-        console.error("Error creating product:", error);
-      });
-
-    setEditedProduct({
-      picture: "",
-      name: "",
-      price: "",
-    });
-
-    setImagePreview(null);
-  };
-
-  const handleDeleteConfirm = (index) => {
-    const newProducts = [...products];
-    newProducts[index].isDeleted = 1;
-    setProducts(newProducts);
-
-    axios
-      .delete(
-        `http://localhost:8080/api/deleteProductServiceById/${newProducts[index].productId}`
-      )
-      .then((response) => {
-        console.log("Product deleted:", response.data);
-        setSuccessMessage("Successfully deleted.");
-      })
-      .catch((error) => {
-        console.error("Error deleting product:", error);
-      });
-  };
-
-  const openConfirmationDialog = (action, actionType) => {
-    setConfirmAction(action);
-    setActionType(actionType);
-    setOpenDialog(true);
-  };
-
-  const handleSave = () => {
-    openConfirmationDialog(() => handleSaveConfirm, "save");
-  };
-
-  const handleAdd = () => {
-    openConfirmationDialog(() => handleAddConfirm, "add");
-  };
-
-  const handleDelete = (index) => {
-    openConfirmationDialog(() => () => handleDeleteConfirm(index), "delete");
-  };
-
+    const handleProductImageChange = (e, index) => {
+        const newProducts = [...products];
+        newProducts[index].image = e.target.files[0];
+        newProducts[index].imagePreview = e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null;
+        setProducts(newProducts);
+    };
+    const handleProductInputChange = (e, index) => {
+        const { name, value } = e.target;
+        const newProducts = [...products];
+        if (name === 'price') {
+            newProducts[index][name] = value;
+        } else {
+            newProducts[index][name] = value;
+        }
+        setProducts(newProducts);
+    };
+    const handleAddConfirm = async () => {
+        if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
+            alert("Please fill in all product details.");
+            return;
+        }
+        function convertToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(",")[1]);
+                reader.onerror = (error) => reject(error);
+            });
+        }
+        const imageBase64 = await convertToBase64(editedProduct.picture);
+        const productData = {
+            name: editedProduct.name,
+            price: editedProduct.price,
+            image: imageBase64,
+            store: { storeId: user.account.store.storeId },
+        };
+        setProducts((prevProducts) => [...prevProducts, productData]);
+        axios
+            .post("http://localhost:8080/api/createProductService", productData)
+            .then((response) => {
+                console.log("Product created:", response.data);
+                setSuccessMessage('Successfully added.');
+            })
+            .catch((error) => {
+                console.error("Error creating product:", error);
+            });
+        setEditedProduct({
+            picture: "",
+            name: "",
+            price: "",
+        });
+        setImagePreview(null);
+    };
+    const handleDeleteConfirm = (index) => {
+        const newProducts = [...products];
+        newProducts[index].isDeleted = 1;
+        setProducts(newProducts);
+        axios
+            .delete(`http://localhost:8080/api/deleteProductServiceById/${newProducts[index].productId}`)
+            .then((response) => {
+                console.log("Product deleted:", response.data);
+                setSuccessMessage('Successfully deleted.');
+            })
+            .catch((error) => {
+                console.error("Error deleting product:", error);
+            });
+    };
+    const openConfirmationDialog = (action, actionType) => {
+        setConfirmAction(action);
+        setActionType(actionType);
+        setOpenDialog(true);
+    };
+    const handleSave = () => {
+        openConfirmationDialog(() => handleSaveConfirm, 'save');
+    };
+    const handleAdd = () => {
+        openConfirmationDialog(() => handleAddConfirm, 'add');
+    };
+    const handleDelete = (index) => {
+        openConfirmationDialog(() => () => handleDeleteConfirm(index), 'delete');
+    };
     return (
         <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
             {/* User details */}
@@ -298,6 +242,13 @@ const ManageStore = () => {
                                     color: "black",
                                     fontWeight: "bold",
                                 },
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <Icon>
+                                            <img src={editStore} alt="Edit Store" />
+                                        </Icon>
+                                    </InputAdornment>
+                                ),
                             }}
                             value={editedStore.storeName}
                             onChange={handleStoreInputChange}
@@ -308,7 +259,7 @@ const ManageStore = () => {
                         </h2>
                     )}
                     {editMode ? (
-                        <TextField
+                        <Select
                             name="category"
                             variant="outlined"
                             value={editedStore.category}
@@ -321,6 +272,7 @@ const ManageStore = () => {
                                 paddingRight: '10px',
                                 color: "black",
                             }}
+                            IconComponent={() => <Icon><img src={editStore} alt="Edit Store" /></Icon>}
                         >
                             <MenuItem value="" style={{ fontSize: 12, height: 18 }}><em>Select category</em></MenuItem>
                             <MenuItem value="fish" style={{ fontSize: 12, height: 18 }}>Fish</MenuItem>
@@ -351,7 +303,19 @@ const ManageStore = () => {
                                 paddingBottom: "10px",
                                 textAlign: "justify"
                             },
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <Icon>
+                                        <img src={editStore} alt="Edit Store" style={{
+                                            position: 'absolute',
+                                            top: 1,
+                                            right: 15
+                                        }} />
+                                    </Icon>
+                                </InputAdornment>
+                            ),
                         }}
+
                         value={editedStore.description}
                         onChange={handleStoreInputChange}
                     />
@@ -372,7 +336,6 @@ const ManageStore = () => {
                     className="productscomponent"
                     style={{
                         marginBottom: "20px", width: "95%", position: "relative"
-
                     }}
                 >
                     <div className="flex">
@@ -391,8 +354,7 @@ const ManageStore = () => {
                                     className="w-full h-[136px] rounded-[20px] inline-block border-[3px] border-green-400 "
                                 />
                             ) : (
-                                <span className="text-lg font-semibold` text-white inline-block">
-                                    Choose image
+                                <span className="text-lg font-semibold` text-white inline-block">   Choose image
                                 </span>
                             )}
                         </label>
@@ -401,17 +363,24 @@ const ManageStore = () => {
                                 label="Product Name"
                                 name="name"
                                 variant="outlined"
-                                placeholder="Enter product name"
+                                placeholder="Enter product"
                                 value={editedProduct.name}
                                 onChange={handleInputChange}
                                 margin="normal"
                                 size="small"
                                 style={{
-                                    width: "40%",
+                                    width: "48%",
                                     fontSize: "12px",
                                     position: "absolute",
                                     marginTop: "5px",
                                     marginLeft: "10px",
+                                }}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <img src={editStore} alt="Edit Store" />
+                                        </InputAdornment>
+                                    ),
                                 }}
                             />
                             <TextField
@@ -424,11 +393,18 @@ const ManageStore = () => {
                                 margin="normal"
                                 size="small"
                                 style={{
-                                    width: "40%",
+                                    width: "48%",
                                     fontSize: "12px",
-                                    marginTop: "50px",
                                     position: "absolute",
+                                    marginTop: "50px",
                                     marginLeft: "10px",
+                                }}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <img src={editStore} alt="Edit Store" />
+                                        </InputAdornment>
+                                    ),
                                 }}
                             />
                             <Button
@@ -436,7 +412,7 @@ const ManageStore = () => {
                                 color="primary"
                                 style={{
                                     borderRadius: "15px",
-                                    width: "80%",
+                                    width: "96%",
                                     marginTop: "100px",
                                     marginLeft: "10px",
                                 }}
@@ -455,7 +431,6 @@ const ManageStore = () => {
                     <div key={product.productId} style={{ marginBottom: "20px", width: "48%", position: "relative" }}>
                         {editMode ? (
                             <>
-
                                 <button
                                     style={{ position: 'absolute', top: 0, right: 0, fontWeight: 'bold', fontSize: '20px', color: 'red', backgroundColor: 'white', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer' }}
                                     onClick={() => handleDelete(index)}
@@ -498,6 +473,13 @@ const ManageStore = () => {
                                             fontWeight: "bold",
 
                                         },
+                                        endAdornment: (
+                                            <InputAdornment position="center" style={{ width: "3px", marginRight: "10px" }}>
+                                                <Icon >
+                                                    <img src={editStore} alt="Edit Store" style={{ marginTop: "3px" }} />
+                                                </Icon>
+                                            </InputAdornment>
+                                        ),
                                     }}
                                     style={{
                                         position: "absolute",
@@ -527,12 +509,19 @@ const ManageStore = () => {
                                             borderRadius: "15px",
                                             fontWeight: "bold",
                                         },
+                                        endAdornment: (
+                                            <InputAdornment position="center" style={{ width: "3px", marginRight: "5px" }}>
+                                                <Icon >
+                                                    <img src={editStore} alt="Edit Store" style={{ marginTop: "3px" }} />
+                                                </Icon>
+                                            </InputAdornment>
+                                        ),
                                     }}
                                     style={{
                                         position: "absolute",
                                         bottom: "0px",
                                         left: "0%",
-                                        width: "50%",
+                                        width: "77%",
                                         textAlign: "left",
                                         color: "black",
                                         fontSize: "14px",
@@ -553,7 +542,7 @@ const ManageStore = () => {
                                     {product.name}
                                 </p>
                                 <p style={{ position: "absolute", bottom: "1px", left: "3%", textAlign: "left", color: "black", fontSize: "14px", fontWeight: "bold", backgroundColor: "#c0d8f0", paddingLeft: "10px", paddingRight: "5px", borderRadius: "10px" }}>
-                                    ₱{product.price}
+                                    ₱ {product.price}
                                 </p>
                             </>
                         )}
@@ -625,5 +614,4 @@ const ManageStore = () => {
         </div>
     );
 };
-
 export default ManageStore;

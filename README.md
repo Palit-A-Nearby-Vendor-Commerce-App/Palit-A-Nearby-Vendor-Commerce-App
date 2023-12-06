@@ -663,7 +663,7 @@ rectangle Palit {
 @enduml
 ```
 
-**CRUD via dashboard as admin:**
+**Administrator Operations Via Admin Dashboard:**
 
 ```
 @startuml
@@ -906,7 +906,7 @@ stop
 @enduml
 ```
 
-**CRUD via Dashboard as Admin:**
+**Administrator Operations Via Admin Dashboard:**
 ```
 @startuml
 start
@@ -914,9 +914,7 @@ start
 :View dashboard;
 if (Interact with reports) then (yes)
   :See reports;
-  if (Create report) then (yes)
-    :Create report;
-  elseif (Update report) then (yes)
+  if (Update report) then (yes)
     :Update report;
   elseif (Delete report) then (yes)
     :Delete report;
@@ -924,9 +922,7 @@ if (Interact with reports) then (yes)
 endif
 if (Interact with users) then (yes)
   :See users;
-  if (Create user) then (yes)
-    :Create user;
-  elseif (Update user) then (yes)
+  if (Update user) then (yes)
     :Update user;
   elseif (Delete user) then (yes)
     :Delete user;
@@ -934,9 +930,7 @@ if (Interact with users) then (yes)
 endif
 if (Interact with accounts) then (yes)
   :See accounts;
-  if (Create account) then (yes)
-    :Create account;
-  elseif (Update account) then (yes)
+  if (Update account) then (yes)
     :Update account;
   elseif (Delete account) then (yes)
     :Delete account;
@@ -944,9 +938,7 @@ if (Interact with accounts) then (yes)
 endif
 if (Interact with conversations) then (yes)
   :See conversations;
-  if (Create conversation) then (yes)
-    :Create conversation;
-  elseif (Update conversation) then (yes)
+  if (Update conversation) then (yes)
     :Update conversation;
   elseif (Delete conversation) then (yes)
     :Delete conversation;
@@ -954,9 +946,7 @@ if (Interact with conversations) then (yes)
 endif
 if (Interact with chats) then (yes)
   :See chats;
-  if (Create chat) then (yes)
-    :Create chat;
-  elseif (Update chat) then (yes)
+  if (Update chat) then (yes)
     :Update chat;
   elseif (Delete chat) then (yes)
     :Delete chat;
@@ -966,9 +956,7 @@ if (Interact with chats) then (yes)
 endif
 if (Interact with stores) then (yes)
   :See stores;
-  if (Create store) then (yes)
-    :Create store;
-  elseif (Update store) then (yes)
+  if (Update store) then (yes)
     :Update store;
   elseif (Delete store) then (yes)
     :Delete store;
@@ -976,9 +964,7 @@ if (Interact with stores) then (yes)
 endif
 if (Interact with products/services) then (yes)
   :See products/services;
-  if (Create product/service) then (yes)
-    :Create product/service;
-  elseif (Update product/service) then (yes)
+  if (Update product/service) then (yes)
     :Update product/service;
   elseif (Delete product/service) then (yes)
     :Delete product/service;
@@ -986,9 +972,7 @@ if (Interact with products/services) then (yes)
 endif
 if (Interact with transactions) then (yes)
   :See transactions;
-  if (Create transaction) then (yes)
-    :Create transaction;
-  elseif (Update transaction) then (yes)
+  if (Update transaction) then (yes)
     :Update transaction;
   elseif (Delete transaction) then (yes)
     :Delete transaction;
@@ -997,4 +981,5 @@ endif
 
 stop
 @enduml
+
 ```

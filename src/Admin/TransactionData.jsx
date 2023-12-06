@@ -24,7 +24,9 @@ const TransactionData = () => {
   useEffect(() => {
     const fetchTransactionData = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/getAllTransactions");
+        const response = await axios.get(
+          "http://localhost:8080/api/getAllTransactions"
+        );
         setTransactionData(response.data);
         setEditedTransactionData(response.data);
       } catch (error) {
@@ -61,7 +63,7 @@ const TransactionData = () => {
   const handleSaveClick = async () => {
     for (let transaction of editedTransactionData) {
       try {
-        const response = await axios.put(
+        await axios.put(
           `http://localhost:8080/api/updateTransactionById/${transaction.transactionId}`,
           transaction
         );
@@ -71,7 +73,9 @@ const TransactionData = () => {
     }
     setEdit(0);
     try {
-      const response = await axios.get("http://localhost:8080/api/getAllTransactions");
+      const response = await axios.get(
+        "http://localhost:8080/api/getAllTransactions"
+      );
       setTransactionData(response.data);
     } catch (error) {
       console.error("Error fetching transaction data:", error);
@@ -82,8 +86,10 @@ const TransactionData = () => {
     setOpenDelete(true);
   };
 
+
   const handleCloseDeleteDialog = () => {
     setOpenDelete(false);
+  };
   };
 
   const handleDeleteClick = async (index) => {
@@ -94,14 +100,16 @@ const TransactionData = () => {
   const handleDeleteTransaction = async () => {
     const transactionId = editedTransactionData[deleteIndex].transactionId;
     try {
-      const response = await axios.delete(
+      await axios.delete(
         `http://localhost:8080/api/deleteTransactionById/${transactionId}`
       );
     } catch (error) {
       console.error("Error deleting transaction data:", error);
     }
     try {
-      const response = await axios.get("http://localhost:8080/api/getAllTransactions");
+      const response = await axios.get(
+        "http://localhost:8080/api/getAllTransactions"
+      );
       setTransactionData(response.data);
       setEditedTransactionData(response.data);
     } catch (error) {
@@ -130,12 +138,18 @@ const TransactionData = () => {
     }
     if (searchCustomerId) {
       filteredTransactionData = filteredTransactionData.filter((transaction) =>
-        transaction.customer.accountId.toString().toLowerCase().includes(searchCustomerId.toLowerCase())
+        transaction.customer.accountId
+          .toString()
+          .toLowerCase()
+          .includes(searchCustomerId.toLowerCase())
       );
     }
     if (searchVendorId) {
       filteredTransactionData = filteredTransactionData.filter((transaction) =>
-        transaction.vendor.accountId.toString().toLowerCase().includes(searchVendorId.toLowerCase())
+        transaction.vendor.accountId
+          .toString()
+          .toLowerCase()
+          .includes(searchVendorId.toLowerCase())
       );
     }
     return filteredTransactionData;
@@ -270,6 +284,7 @@ const TransactionData = () => {
         </table>
       </div>
       <Dialog open={openDelete} onClose={handleCloseDeleteDialog}>
+      <Dialog open={openDelete} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Confirm deletion</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -288,6 +303,7 @@ const TransactionData = () => {
           ></CustomButton>
         </DialogActions>
       </Dialog>
+      <Dialog open={open && edit === 1} onClose={handleCloseDialog}>
       <Dialog open={open && edit === 1} onClose={handleCloseDialog}>
         <DialogTitle>Confirm changes</DialogTitle>
         <DialogContent>

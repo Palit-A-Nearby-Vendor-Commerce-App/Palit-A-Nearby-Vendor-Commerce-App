@@ -17,6 +17,7 @@ const UserData = () => {
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(-1);
+  const [searchFirstName, setSearchFirstName] = useState("");
   const [searchName, setSearchName] = useState("");
   const [searchBirthdate, setSearchBirthdate] = useState("");
 
@@ -121,6 +122,12 @@ const UserData = () => {
 
   const filterUserData = () => {
     let filteredUserData = userData;
+    if (searchFirstName) {
+      // Add this condition
+      filteredUserData = filteredUserData.filter((user) =>
+        user.firstName.toLowerCase().includes(searchFirstName.toLowerCase())
+      );
+    }
     if (searchName) {
       filteredUserData = filteredUserData.filter(
         (user) =>
@@ -154,7 +161,20 @@ const UserData = () => {
         <table className="w-full">
           <thead className="text-left border-b border-[#0071B3] text-slate-500">
             <tr>
-              <th className="w-1/5 pb-2">First Name</th>
+              <th className="w-1/5 pb-2">
+                <div className="flex items-center">
+                  First Name
+                  <input
+                    type="text"
+                    id="searchFirstName"
+                    name="searchFirstName"
+                    value={searchFirstName}
+                    onChange={handleSearchChange}
+                    placeholder="Search first name"
+                    className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                  />
+                </div>
+              </th>
               <th className="w-1/5 pb-2">
                 <div className="flex items-center">
                   Last Name
@@ -164,7 +184,7 @@ const UserData = () => {
                     name="searchName"
                     value={searchName}
                     onChange={handleSearchChange}
-                    placeholder="Search user"
+                    placeholder="Search last name"
                     className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
                   />
                 </div>
@@ -182,7 +202,7 @@ const UserData = () => {
                   />
                 </div>
               </th>
-              <th className="w-3/10 pb-2">Image</th>
+              {/* <th className="w-3/10 pb-2">Image</th> */}
               {edit === 1 && <th className="w-1/10 pb-2">Delete</th>}
             </tr>
           </thead>
@@ -225,7 +245,7 @@ const UserData = () => {
                     user.birthDate
                   )}
                 </td>
-                <td className="py-2">
+                {/* <td className="py-2">
                   {edit === 1 ? (
                     <input
                       type="text"
@@ -241,7 +261,7 @@ const UserData = () => {
                       />
                     )
                   )}
-                </td>
+                </td> */}
                 {edit === 1 && (
                   <td className="py-2">
                     <CustomButton

@@ -86,10 +86,6 @@ export const mapOptions = {
   styles: [
     {
       featureType: "poi",
-      stylers: [{ visibility: "off" }],
-    },
-    {
-      featureType: "poi",
       elementType: "labels.icon",
       stylers: [{ visibility: "off" }],
     },

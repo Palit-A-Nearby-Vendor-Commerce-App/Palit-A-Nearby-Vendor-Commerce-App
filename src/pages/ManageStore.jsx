@@ -1,21 +1,7 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Icon,
-  InputAdornment,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, Select, TextField } from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
-import redRating from "../assets/images/redRating.png";
-import editStore from "../assets/images/editStore.png";
 
 const ManageStore = () => {
     const { user, setUser } = useContext(UserContext);
@@ -325,19 +311,23 @@ const ManageStore = () => {
                         <TextField
                             name="category"
                             variant="outlined"
-                            InputProps={{
-                                style: {
-                                    fontSize: 15,
-                                    height: 20,
-                                    marginTop: "5px",
-                                    width: "267px",
-                                    paddingRight: '10px',
-                                    color: "black",
-                                },
-                            }}
                             value={editedStore.category}
                             onChange={handleStoreInputChange}
-                        />
+                            style={{
+                                fontSize: 15,
+                                height: 20,
+                                marginTop: "5px",
+                                width: "267px",
+                                paddingRight: '10px',
+                                color: "black",
+                            }}
+                        >
+                            <MenuItem value="" style={{ fontSize: 12, height: 18 }}><em>Select category</em></MenuItem>
+                            <MenuItem value="fish" style={{ fontSize: 12, height: 18 }}>Fish</MenuItem>
+                            <MenuItem value="fruits" style={{ fontSize: 12, height: 18 }}>Fruits</MenuItem>
+                            <MenuItem value="assorted" style={{ fontSize: 12, height: 18 }}>Assorted</MenuItem>
+                            <MenuItem value="manicure" style={{ fontSize: 12, height: 18 }}>Manicure</MenuItem>
+                        </Select>
                     ) : (
                         <p className="text-sm">
                             {editedStore.category ? editedStore.category : "Loading..."}

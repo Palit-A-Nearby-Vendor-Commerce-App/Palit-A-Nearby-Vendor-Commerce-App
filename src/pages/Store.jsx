@@ -1,4 +1,12 @@
-import { Button, TextField } from "@mui/material";
+import {
+  Button,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
@@ -29,6 +37,8 @@ const Store = ({ vendor }) => {
   const [activeTransaction, setActiveTransaction] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedVendor, setSelectedVendor] = useState(null);
+  const [openOrderDialog, setOpenOrderDialog] = useState(false); // state for order confirmation dialog
+  const [openCancelDialog, setOpenCancelDialog] = useState(false); // state for cancel confirmation dialog
 
   useEffect(() => {
     setSelectedVendor(vendor);
@@ -90,44 +100,46 @@ const Store = ({ vendor }) => {
   };
 
   useEffect(() => {
-    const fetchStore = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/getStoreById/${vendor.account.store.storeId}`
-        );
-        setStore(response.data);
-        setEditedStore({
-          storeName: response.data.storeName,
-          category: response.data.category,
-          description: response.data.description,
-        });
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching store:", error);
-      }
-    };
-
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/getProductServicesByStoreId/store/${vendor.account.store.storeId}`
-        );
-        setProducts(response.data);
-        console.log("Products:", response.data);
-        localStorage.setItem("products", JSON.stringify(response.data));
-        setQuantity(new Array(response.data.length).fill(0));
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        const localData = localStorage.getItem("products");
-        if (localData) {
-          setProducts(JSON.parse(localData));
-          setQuantity(new Array(JSON.parse(localData).length).fill(0));
+    if (vendor) {
+      const fetchStore = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/api/getStoreById/${vendor.account.store.storeId}`
+          );
+          setStore(response.data);
+          setEditedStore({
+            storeName: response.data.storeName,
+            category: response.data.category,
+            description: response.data.description,
+          });
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching store:", error);
         }
-      }
-    };
+      };
 
-    fetchStore();
-    fetchProducts();
+      const fetchProducts = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/api/getProductServicesByStoreId/store/${vendor.account.store.storeId}`
+          );
+          setProducts(response.data);
+          console.log("Products:", response.data);
+          localStorage.setItem("products", JSON.stringify(response.data));
+          setQuantity(new Array(response.data.length).fill(0));
+        } catch (error) {
+          console.error("Error fetching products:", error);
+          const localData = localStorage.getItem("products");
+          if (localData) {
+            setProducts(JSON.parse(localData));
+            setQuantity(new Array(JSON.parse(localData).length).fill(0));
+          }
+        }
+      };
+
+      fetchStore();
+      fetchProducts();
+    }
   }, [vendor]);
 
   const handleMenu = (event) => setAnchorEl(event.currentTarget);
@@ -165,33 +177,14 @@ const Store = ({ vendor }) => {
   };
 
   const handleOrderClick = () => {
-    let orderedList = [];
-    for (let i = 0; i < products.length; i++) {
-      if (quantity[i] > 0) {
-        orderedList.push(
-          `${products[i].name} Php${products[i].price} x${quantity[i]}`
-        );
-      }
-    }
-    let orderedListString = orderedList.join("; ");
-    orderedListString += `; Total: Php${calculateTotalPrice()}`;
-    setDetails(orderedListString);
-    handleOrder(orderedListString, vendor, user);
+    setOpenOrderDialog(true); // open the order confirmation dialog
+  };
+
+  const handleCancelOrder = () => {
+    setOpenCancelDialog(true); // open the cancel confirmation dialog
   };
 
   const OrderDetails = (activeTransaction) => {
-    const handleCancelOrder = () => {
-      axios
-        .put(
-          `http://localhost:8080/api/updateTransactionById/${activeTransaction.activeTransaction.transactionId}`,
-          { ...activeTransaction.activeTransaction, status: "Cancelled" }
-        )
-        .then((response) => {
-          console.log("Transaction cancelled:", response.data);
-          setOrderStatus(false);
-        });
-    };
-
     return (
       <>
         <div>
@@ -407,6 +400,100 @@ const Store = ({ vendor }) => {
       ) : (
         <p>Select a store.</p>
       )}
+
+      {/* Order confirmation dialog */}
+      <Dialog
+        open={openOrderDialog}
+        onClose={() => setOpenOrderDialog(false)}
+        aria-labelledby="order-dialog-title"
+        aria-describedby="order-dialog-description"
+      >
+        <DialogTitle id="order-dialog-title">{"Confirm Order"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="order-dialog-description">
+            Are you sure you want to order the following items?
+          </DialogContentText>
+          <ul>
+            {products.map((product, index) => (
+              <li key={index}>
+                {quantity[index] > 0 && (
+                  <span>
+                    {product.name} x {quantity[index]} = ₱{" "}
+                    {product.price * quantity[index]}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ul>
+          <p>Total: ₱{calculateTotalPrice()}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenOrderDialog(false)}
+            color="primary"
+            style={{ backgroundColor: "#E8594F", color: "white" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleOrder(details, vendor, user);
+              setOpenOrderDialog(false);
+            }}
+            color="primary"
+            autoFocus
+            style={{ backgroundColor: "#0575B4", color: "white" }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Cancel confirmation dialog */}
+      <Dialog
+        open={openCancelDialog}
+        onClose={() => setOpenCancelDialog(false)}
+        aria-labelledby="cancel-dialog-title"
+        aria-describedby="cancel-dialog-description"
+      >
+        <DialogTitle id="cancel-dialog-title">{"Confirm Cancel"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="cancel-dialog-description">
+            Are you sure you want to cancel your order?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenCancelDialog(false)}
+            color="primary"
+            style={{ backgroundColor: "#E8594F", color: "white" }}
+          >
+            No
+          </Button>
+          <Button
+            onClick={() => {
+              axios
+                .put(
+                  `http://localhost:8080/api/updateTransactionById/${activeTransaction.activeTransaction.transactionId}`,
+                  {
+                    ...activeTransaction.activeTransaction,
+                    status: "Cancelled",
+                  }
+                )
+                .then((response) => {
+                  console.log("Transaction cancelled:", response.data);
+                  setOrderStatus(false);
+                });
+              setOpenCancelDialog(false);
+            }}
+            color="primary"
+            autoFocus
+            style={{ backgroundColor: "#0575B4", color: "white" }}
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

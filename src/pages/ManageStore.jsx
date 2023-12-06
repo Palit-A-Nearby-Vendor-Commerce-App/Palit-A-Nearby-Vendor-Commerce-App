@@ -219,7 +219,6 @@ const ManageStore = () => {
 
   const handleAddConfirm = async () => {
     if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
-      alert("Please fill in all product details.");
       return;
     }
 
@@ -275,7 +274,7 @@ const ManageStore = () => {
       .then((response) => {
         console.log("Product deleted:", response.data);
         setSuccessMessage("Successfully deleted.");
-        
+
         setOperationSuccess((prev) => !prev);
       })
       .catch((error) => {
@@ -290,11 +289,15 @@ const ManageStore = () => {
   };
 
   const handleSave = () => {
+
     openConfirmationDialog(() => handleSaveConfirm, "save");
   };
 
   const handleAdd = () => {
-    openConfirmationDialog(() => handleAddConfirm, "add");
+    if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
+    } else {
+      openConfirmationDialog(() => handleAddConfirm, "add");
+    }
   };
 
   const handleDelete = (index) => {
@@ -426,84 +429,91 @@ const ManageStore = () => {
             position: "relative",
           }}
         >
-          <div className="flex">
-            <label className="flex-1  justify-center items-center bg-primary rounded-[20px] cursor-pointer mx-auto flex">
-              <input
-                name="image"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-              {imagePreview ? (
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  className="w-full h-[136px] rounded-[20px] inline-block border-[3px] border-green-400 "
+          <form>
+            <div className="flex">
+              <label className="flex-1  justify-center items-center bg-primary rounded-[20px] cursor-pointer mx-auto flex">
+                <input
+                  required
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
                 />
-              ) : (
-                <span className="text-lg font-semibold` text-white inline-block">
-                  Choose image
-                </span>
-              )}
-            </label>
-            <div className="flex-1">
-              <TextField
-                label="Product Name"
-                name="name"
-                variant="outlined"
-                placeholder="Enter product name"
-                value={editedProduct.name}
-                onChange={handleInputChange}
-                margin="normal"
-                size="small"
-                style={{
-                  width: "48%",
-                  fontSize: "12px",
-                  position: "absolute",
-                  marginTop: "5px",
-                  marginLeft: "10px",
-                }}
-              />
-              <TextField
-                label="Product Price"
-                name="price"
-                variant="outlined"
-                type="number"
-                value={editedProduct.price}
-                onChange={handleInputChange}
-                margin="normal"
-                size="small"
-                style={{
-                  width: "40%",
-                  fontSize: "12px",
-                  marginTop: "50px",
-                  position: "absolute",
-                  marginLeft: "10px",
-                }}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <img src={editStore} alt="Edit Store" />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                style={{
-                  borderRadius: "15px",
-                  width: "96%",
-                  marginTop: "100px",
-                  marginLeft: "10px",
-                }}
-                onClick={handleAdd}
-              >
-                Add
-              </Button>
+                {imagePreview ? (
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    className="w-full h-[136px] rounded-[20px] inline-block border-[3px] border-green-400 "
+                  />
+                ) : (
+                  <span className="text-lg font-semibold` text-white inline-block">
+                    Choose image
+                  </span>
+                )}
+              </label>
+              <div className="flex-1">
+                {" "}
+                <TextField
+                  label="Product Name"
+                  name="name"
+                  variant="outlined"
+                  placeholder="Enter product name"
+                  value={editedProduct.name}
+                  onChange={handleInputChange}
+                  margin="normal"
+                  size="small"
+                  required
+                  style={{
+                    width: "48%",
+                    fontSize: "12px",
+                    position: "absolute",
+                    marginTop: "5px",
+                    marginLeft: "10px",
+                  }}
+                />
+                <TextField
+                  label="Product Price"
+                  name="price"
+                  variant="outlined"
+                  type="number"
+                  required
+                  value={editedProduct.price}
+                  onChange={handleInputChange}
+                  margin="normal"
+                  size="small"
+                  style={{
+                    width: "40%",
+                    fontSize: "12px",
+                    marginTop: "50px",
+                    position: "absolute",
+                    marginLeft: "10px",
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <img src={editStore} alt="Edit Store" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  style={{
+                    borderRadius: "15px",
+                    width: "96%",
+                    marginTop: "100px",
+                    marginLeft: "10px",
+                  }}
+                  onClick={handleAdd}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
       ) : (
         <div>{}</div>

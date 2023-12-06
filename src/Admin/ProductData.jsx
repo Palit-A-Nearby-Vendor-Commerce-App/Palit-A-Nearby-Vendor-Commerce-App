@@ -17,9 +17,9 @@ const ProductData = () => {
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(-1);
-  // Add new states for the search and filter inputs
   const [searchStore, setSearchStore] = useState("");
   const [searchName, setSearchName] = useState("");
+  const [searchPrice, setSearchPrice] = useState("");
 
   useEffect(() => {
     const fetchProductData = async () => {
@@ -122,6 +122,8 @@ const ProductData = () => {
       setSearchStore(value);
     } else if (name === "searchName") {
       setSearchName(value);
+    } else if (name === "searchPrice") {
+      setSearchPrice(value);
     }
   };
 
@@ -129,12 +131,19 @@ const ProductData = () => {
     let filteredProductData = productData;
     if (searchStore) {
       filteredProductData = filteredProductData.filter((product) =>
-        product.store.storeId.toLowerCase().includes(searchStore.toLowerCase())
+        product.store.storeName
+          .toLowerCase()
+          .includes(searchStore.toLowerCase())
       );
     }
     if (searchName) {
       filteredProductData = filteredProductData.filter((product) =>
         product.name.toLowerCase().includes(searchName.toLowerCase())
+      );
+    }
+    if (searchPrice) {
+      filteredProductData = filteredProductData.filter((product) =>
+        product.price.toString().includes(searchPrice)
       );
     }
     return filteredProductData;
@@ -159,7 +168,18 @@ const ProductData = () => {
           <thead className="text-left border-b border-[#0071B3] text-slate-500">
             <tr>
               <th className="w-1/5 pb-2">
-                <div>Store Id</div>
+                <div>
+                  Store
+                  <input
+                    type="text"
+                    id="searchStore"
+                    name="searchStore"
+                    value={searchStore}
+                    onChange={handleSearchChange}
+                    placeholder="Search store"
+                    className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                  />
+                </div>
               </th>
               <th className="w-1/5 pb-2">
                 <div>
@@ -175,7 +195,20 @@ const ProductData = () => {
                   />
                 </div>
               </th>
-              <th className="w-1/5 pb-2">Price</th>
+              <th className="w-1/5 pb-2">
+                <div>
+                  Price
+                  <input
+                    type="text"
+                    id="searchPrice"
+                    name="searchPrice"
+                    value={searchPrice}
+                    onChange={handleSearchChange}
+                    placeholder="Search price"
+                    className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                  />
+                </div>
+              </th>
               <th className="w-3/10 pb-2">Image</th>
               {edit === 1 && <th className="w-1/10 pb-2">Delete</th>}
             </tr>

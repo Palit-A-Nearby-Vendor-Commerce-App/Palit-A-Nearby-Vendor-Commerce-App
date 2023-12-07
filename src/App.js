@@ -5,15 +5,15 @@ import { UserProvider } from "./UserContext";
 import Admin from "./Admin/Admin";
 import "./App.css";
 import Aboutus from "./pages/Aboutus";
+import Chat from "./pages/Chat";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import Landing from "./pages/Landing";
+import Report from "./pages/Report";
 import Services from "./pages/Services";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
-import Chat from "./pages/Chat";
 import Store from "./pages/Store";
-import Report from "./pages/Report";
 
 import AdminDashboard from "./components/AdminDashboard";
 // import Dashboard from "./Admin/Dashboard";
@@ -74,6 +74,12 @@ function App() {
           />
           <Route
             path="/admindashboard/products"
+            exact
+            component={AdminDashboard}
+          />
+
+          <Route
+            path="/admindashboard/chat"
             exact
             component={AdminDashboard}
           />

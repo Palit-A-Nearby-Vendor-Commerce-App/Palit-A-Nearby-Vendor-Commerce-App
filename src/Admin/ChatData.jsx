@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper } from "@material-ui/core";
 import axios from "axios";
-import { Paper, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import CustomButton from "../components/CustomButton";
 
 const ChatData = () => {
@@ -12,7 +12,7 @@ const ChatData = () => {
   const [deleteIndex, setDeleteIndex] = useState(-1);
   const [searchConversationId, setSearchConversationId] = useState("");
   const [searchSenderId, setSearchSenderId] = useState("");
-  const [searchStoreId, setSearchStoreId] = useState("");
+  const [searchMessageContent, setSearchMessageContent] = useState("");
 
   useEffect(() => {
     const fetchChatData = async () => {
@@ -77,16 +77,16 @@ const ChatData = () => {
   const handleOpenDeleteDialog = () => {
     setOpenDelete(true);
   };
-  
+
   const handleCloseDeleteDialog = () => {
     setOpenDelete(false);
-  };  
+  };
 
   const handleDeleteClick = async (index) => {
     setDeleteIndex(index);
     handleOpenDeleteDialog();
   };
-  
+
 
   const handleDeleteChat = async () => {
     const chatId = editedChatData[deleteIndex].chatId;
@@ -115,9 +115,10 @@ const ChatData = () => {
     } else if (name === "searchSenderId") {
       setSearchSenderId(value);
     } else if (name === "searchStoreId") {
-      setSearchStoreId(value);
+      setSearchMessageContent(value);
     }
   };
+
 
   const filterChatData = () => {
     let filteredChatData = chatData;
@@ -131,13 +132,14 @@ const ChatData = () => {
         chat.account && chat.account.accountId.toString().toLowerCase().includes(searchSenderId.toLowerCase())
       );
     }
-    if (searchStoreId) {
+    if (searchMessageContent) {
       filteredChatData = filteredChatData.filter((chat) =>
-        chat.conversation && chat.conversation.vendor && chat.conversation.vendor.store && chat.conversation.vendor.store.storeId.toString().toLowerCase().includes(searchStoreId.toLowerCase())
+        chat.messageContent.toLowerCase().includes(searchMessageContent.toLowerCase())
       );
     }
     return filteredChatData;
   };
+
 
   return (
     <Paper elevation={3} className="p-5 border rounded-3xl font-custom">
@@ -157,77 +159,69 @@ const ChatData = () => {
         <table className="w-full">
           <thead className="text-left border-b border-[#0071B3] text-slate-500">
             <tr>
-              <th className="w-1/5 pb-2">Chat Id</th>
-              <th className="w-1/5 pb-2">Message Content</th>
-              <th className="w-1/5 pb-2">Message Time</th>
-              <th className="w-1/5 pb-2">Sender Id</th>
-              <th className="w-1/5 pb-2">Conversation Id</th>
+              <th className="w-1/5 pb-2">
+                <div>
+                  Chat ID
+                </div>
+              </th>
+              <th className="w-1/5 pb-2">
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div>Message Content</div>
+                  <input
+                    type="text"
+                    id="searchMessageContent"
+                    name="searchMessageContent"
+                    value={searchMessageContent}
+                    onChange={handleSearchChange}
+                    placeholder="Search message content"
+                    className="mr-10 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                  />
+                </div>
+              </th>
+              <th className="w-1/5 pb-2">
+                <div>
+                  Timestamp
+                </div>
+              </th>
+              <th className="w-1/5 pb-2">
+                <div>
+                  Sender ID
+                  <input
+                    type="text"
+                    id="searchSenderId"
+                    name="searchSenderId"
+                    value={searchSenderId}
+                    onChange={handleSearchChange}
+                    placeholder="Search sender id"
+                    className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                  />
+                </div>
+              </th>
+              <th className="w-1/5 pb-2">
+                <div>
+                  Conversation ID
+                  <input
+                    type="text"
+                    id="searchConversationId"
+                    name="searchConversationId"
+                    value={searchConversationId}
+                    onChange={handleSearchChange}
+                    placeholder="Search conversation id"
+                    className="ml-55 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                  />
+                </div>
+              </th>
               {edit === 1 && <th className="w-1/10 pb-2">Delete</th>}
             </tr>
           </thead>
           <tbody>
             {filterChatData().map((chat, index) => (
               <tr key={chat.chatId}>
-                <td className="py-2">
-                  {edit === 1 ? (
-                    <input
-                      type="text"
-                      name="chatId"
-                      value={editedChatData[index].chatId}
-                      onChange={(e) => handleChange(e, index)}
-                    />
-                  ) : (
-                    chat.chatId
-                  )}
-                </td>
-                <td className="py-2">
-                  {edit === 1 ? (
-                    <input
-                      type="text"
-                      name="messageContent"
-                      value={editedChatData[index].messageContent}
-                      onChange={(e) => handleChange(e, index)}
-                    />
-                  ) : (
-                    chat.messageContent
-                  )}
-                </td>
-                <td className="py-2">
-                  {edit === 1 ? (
-                    <input
-                      type="text"
-                      name="timestamp"
-                      value={editedChatData[index].timestamp}
-                      onChange={(e) => handleChange(e, index)}
-                    />
-                  ) : (
-                    chat.timestamp
-                  )}
-                </td>
-                <td className="py-2">
-                  {edit === 1 ? (
-                    <input
-                      type="text"
-                      name="account.accountId"
-                      value={editedChatData[index].account.accountId}
-                      onChange={(e) => handleChange(e, index)}
-                    />
-                  ) : (
-                    chat.account.accountId
-                  )}
-                </td>
-                <td className="py-2">
-                  {edit === 1 ? (
-                    <input
-                      type="text"
-                      name="conversation.conversationId"
-                      value={editedChatData[index].conversation.conversationId}
-                      onChange={(e) => handleChange(e, index)}
-                    />
-                  ) : (
-                    chat.conversation.conversationId
-                  )}
-                </td>
+                <td className="py-2">{chat.chatId}</td>
+                <td className="py-2">{chat.messageContent}</td>
+                <td className="py-2">{chat.timestamp}</td>
+                <td className="py-2">{chat.account.accountId}</td>
+                <td className="py-2">{chat.conversation.conversationId}</td>
                 {edit === 1 && (
                   <td className="py-2">
                     <CustomButton

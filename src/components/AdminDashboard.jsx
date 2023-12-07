@@ -1,3 +1,4 @@
+import ChatIcon from '@mui/icons-material/Chat';
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import HomeIcon from "@mui/icons-material/Home";
 import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
@@ -7,6 +8,7 @@ import PeopleIcon from "@mui/icons-material/People";
 import ReportIcon from "@mui/icons-material/Report";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import StackedLineChartIcon from "@mui/icons-material/StackedLineChart";
+
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import Divider from "@mui/material/Divider";
@@ -26,6 +28,7 @@ import { useHistory } from "react-router-dom";
 import Accounts from "../Admin/Accounts";
 import Dashboard from "../Admin/Dashboard";
 import Products from "../Admin/Products";
+import Chat from "../Admin/Chats";
 import Reports from "../Admin/Reports";
 import Statistics from "../Admin/Statistics";
 import Stores from "../Admin/Stores";
@@ -46,7 +49,7 @@ export default function NavigationBarAdmin() {
   const handleLogout = () => {
     history.push("/adminlogin3x8Yz7!qA");
     setUser(null);
-    
+
   };
 
   return (
@@ -77,6 +80,7 @@ export default function NavigationBarAdmin() {
             "Stores",
             "Transactions",
             "Products",
+            "Chat",
           ].map((text, index) => (
             <ListItem
               key={text}
@@ -114,6 +118,8 @@ export default function NavigationBarAdmin() {
                         return <PaymentsIcon />;
                       case "Products":
                         return <ShoppingBagIcon />;
+                      case "Chat":
+                        return <ChatIcon />;
                       default:
                         return null;
                     }
@@ -171,18 +177,7 @@ export default function NavigationBarAdmin() {
           {location === "/admindashboard/stores" && <Stores />}
           {location === "/admindashboard/transactions" && <Transactions />}
           {location === "/admindashboard/products" && <Products />}
-          {/* {(() => {
-            switch (location) {
-              case "/admindashboard/dashboard":
-                return <Dashboard />;
-              case "/admindashboard/statistics":
-                return <Statistics />;
-              case "/admindashboard/reports":
-                return <Reports />;
-              default:
-                return null;
-            }
-          })()} */}
+          {location === "/admindashboard/chat" && <Chat />}
         </section>
       </Box>
     </Box>

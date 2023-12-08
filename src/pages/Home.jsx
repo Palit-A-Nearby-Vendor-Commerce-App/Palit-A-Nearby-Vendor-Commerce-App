@@ -40,7 +40,6 @@ function Home() {
     },
     [currentPosition]
   );
-  
 
   useEffect(() => {
     let isMounted = true;
@@ -82,66 +81,67 @@ function Home() {
             lng: response.data.longitude,
           });
           axios
-      .get("http://localhost:8080/api/getAllUsers")
-      .then(({ data }) => {
-        console.log("Users:", data);
+            .get("http://localhost:8080/api/getAllUsers")
+            .then(({ data }) => {
+              console.log("Users:", data);
 
-        const getNearbyUsers = data.filter((otherUser) => {
-          console.log(user.account.location)
-          if (
-            user.account.isVendor == !otherUser.account.isVendor &&
-            otherUser.account.location.isActive &&
-            getDistance(
-              user.account.location.latitude,
-              user.account.location.longitude,
-              otherUser.account.location.latitude,
-              otherUser.account.location.longitude
-            ) <= 200
-          ) {
-            return true;
-          }
-          return false;
-        });
+              const getNearbyUsers = data.filter((otherUser) => {
+                if (
+                  user.account.isVendor == !otherUser.account.isVendor &&
+                  otherUser.account.location.isActive &&
+                  getDistance(
+                    user.account.location.latitude,
+                    user.account.location.longitude,
+                    otherUser.account.location.latitude,
+                    otherUser.account.location.longitude
+                  ) <= 200
+                ) {
+                  return true;
+                }
+                return false;
+              });
 
-        console.log("Filtered users:", getNearbyUsers);
+              console.log("Filtered users:", getNearbyUsers);
 
-        getNearbyUsers.forEach((user) => {
-          console.log("markers: ", markers);
+              getNearbyUsers.forEach((user) => {
+                console.log("markers: ", markers);
 
-          if (markers[user.userId]) {
-            markers[user.userId].setMap(null);
-          }
+                if (markers[user.userId]) {
+                  markers[user.userId].setMap(null);
+                }
 
-          const userMarker = new window.google.maps.Marker({
-            position: {
-              lat: user.account.location.latitude,
-              lng: user.account.location.longitude,
-            },
-            map: mapRef.current,
-            icon: {
-              url: user.account.isVendor
-                ? vendorIcons(user.account.store.category)
-                : customerMarker,
-              scaledSize: new window.google.maps.Size(30, 30),
-            },
-            owner: user,
-          });
+                const userMarker = new window.google.maps.Marker({
+                  position: {
+                    lat: user.account.location.latitude,
+                    lng: user.account.location.longitude,
+                  },
+                  map: mapRef.current,
+                  icon: {
+                    url: user.account.isVendor
+                      ? vendorIcons(user.account.store.category)
+                      : customerMarker,
+                    scaledSize: new window.google.maps.Size(30, 30),
+                  },
+                  owner: user,
+                });
 
-          console.log("OWNERRR: ", markers[ownerWindow.userId]);
-          markers[ownerWindow.userId] = userMarker;
+                console.log("OWNERRR: ", markers[ownerWindow.userId]);
+                markers[ownerWindow.userId] = userMarker;
 
-          userMarker.addListener("click", () => {
-            handleMarkerClick(userMarker.owner);
-          });
-        });
-      })
-      .catch((error) => console.error("Error fetching users: ", error));
+                userMarker.addListener("click", () => {
+                  handleMarkerClick(userMarker.owner);
+                });
+              });
+            })
+            .catch((error) => console.error("Error fetching users: ", error));
         })
         .catch((error) => {
           console.error("Error updating location:", error);
         });
     }
   };
+
+  // console.log("My location? ", user.account.location);
 
   useEffect(() => {
     let isMounted = true;
@@ -153,9 +153,6 @@ function Home() {
           { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
         );
       }, 2000);
-
-      
-      
 
       return () => clearInterval(intervalId);
     }
@@ -261,7 +258,7 @@ function Home() {
             {selectedVendor && (
               <Link to={{ pathname: "/chat", state: { selectedVendor } }}>
                 <button
-                style={{borderRadius: "20px"}}
+                  style={{ borderRadius: "20px" }}
                   className="animate-bounce absolute bottom-[100px] left-[30px] p-[14px] shadow-md bg-primary "
                   title="Chat"
                 >

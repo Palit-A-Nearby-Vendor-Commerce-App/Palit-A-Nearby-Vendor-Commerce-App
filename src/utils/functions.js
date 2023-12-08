@@ -28,3 +28,15 @@ export const vendorIcons = (category) => {
       return fruits;
   }
 };
+
+export const convertToTime = (timestamp) => {
+  const dateObject = new Date(timestamp);
+
+  const formattedTime = dateObject.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return formattedTime;
+};

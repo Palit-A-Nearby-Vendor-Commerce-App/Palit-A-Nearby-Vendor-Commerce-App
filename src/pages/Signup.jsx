@@ -238,7 +238,7 @@ function Signup() {
           </div>
           <div className="mt-4">
             <input
-              // type="email"
+              type="email"
               name="email"
               onChange={handleChange}
               placeholder="Email"

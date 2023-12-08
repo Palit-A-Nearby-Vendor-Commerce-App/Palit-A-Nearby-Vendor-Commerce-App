@@ -40,7 +40,7 @@ const Contact = () => {
   return (
     <div className="w-full h-screen font-custom">
       <NavigationBar />
-      <div className="w-full grid grid-cols-2 px-[220px] py-24">
+      <div className="w-full grid  grid-cols-2 xl:grid-cols-2 xl:px-[220px] py-24 lg:px-[150px] md:px-[80px] sm:grid-cols-2 sm:px-16 xs:grid-cols-1 xs:px-6">
         <form
           ref={form}
           onSubmit={sendEmail}
@@ -77,8 +77,8 @@ const Contact = () => {
         </form>
         <img
           src={contactBg}
-          alt="Background image"
-          className="contact-img col-span-1 w-full h-full"
+          alt="Background img for contactus"
+          className="contact-img col-span-1 w-full h-full sm:inline-block xs:hidden"
         />
       </div>
     </div>

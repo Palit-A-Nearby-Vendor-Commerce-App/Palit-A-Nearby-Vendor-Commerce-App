@@ -124,6 +124,8 @@ function Home() {
     }
   };
 
+  // console.log("My location? ", user.account.location);
+
   useEffect(() => {
     if (user) {
       const intervalId = setInterval(() => {

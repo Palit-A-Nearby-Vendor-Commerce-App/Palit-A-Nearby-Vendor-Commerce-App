@@ -112,21 +112,21 @@ const Aboutus = () => {
           <h1 className="text-grayy text-5xl leading-[60px] font-semibold">
             Meet our team
           </h1>
-          <p className="text-slate-500 pt-6 text-xl mb-[96px]">
+          <p className="text-slate-500 pt-6 text-xl xl:mb-[96px] md:mb-[42px]">
             Our philosophy is simple &mdash; hire a team of diverse, passionate
             people and foster <br /> a culture that empowers you to do your best
             work.
           </p>
         </div>
 
-        <div className="aboutus-members pt-16 flex gap-8 w-auto">
+        <div className="aboutus-members pt-16 grid gap-8 w-auto grid-cols-4 xl:gap-8 lg:grid-cols-4 lg:gap-6 md:gap-4 md:grid-cols-3 sm:grid-cols-2 sm:gap-3 xs:grid-cols-1">
           {membersData.map((member, index) => (
             <div className="w-full text-left bg-slate-50 shadow-md" key={index}>
               <div className="relative">
                 <img
                   src={member.img}
                   alt={member.name}
-                  className="w-full h-[300px] mb-2 "
+                  className="w-full mb-2 xl:h-[300px] lg:h-[240px]"
                 />
                 <marquee className="absolute bottom-[0px] p-1 bg-slate-800">
                   <span className="text-sm italic text-white">
@@ -135,10 +135,12 @@ const Aboutus = () => {
                 </marquee>
               </div>
               <div className="px-4 py-2">
-                <h5 className="text-xl font-semibold text-grayy">
+                <h5 className="text-xl xl:text-xl md:text-base font-semibold text-grayy">
                   {member.name}
                 </h5>
-                <p className="text-lg text-primary">{member.position}</p>
+                <p className="text-lg xl:text-lg md:text-sm text-primary">
+                  {member.position}
+                </p>
               </div>
             </div>
           ))}

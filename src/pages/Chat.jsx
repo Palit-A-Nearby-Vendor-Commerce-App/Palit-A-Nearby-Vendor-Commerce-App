@@ -9,11 +9,12 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import Tooltip from "@mui/material/Tooltip";
 import { Link, useLocation } from "react-router-dom";
 import { UserContext } from "../UserContext";
 import AlertDialog from "../components/AlertDialog";
 import axios from "axios";
-
+import { convertToTime } from "../utils/functions";
 import {
   GRADIENT_BG,
   StyledBadge,
@@ -332,49 +333,53 @@ const Chat = () => {
                       display: "inline-block",
                     }}
                   />
-                  <span className="bg-[#E3F1F3] p-3 text-left rounded-r-lg rounded-b-lg">
-                    {chat?.messageContent}
-                  </span>
+                  <Tooltip title={`${convertToTime(chat?.timestamp)}`}>
+                    <span className="bg-[#E3F1F3] p-3 text-left rounded-r-lg rounded-b-lg">
+                      {chat?.messageContent}
+                    </span>
+                  </Tooltip>
                 </span>
               ) : (
-                <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg relative">
-                  {chat?.messageContent}
-                  <span className="absolute left-[-50px] top-2">
-                    <Button
-                      id="basic-button"
-                      aria-controls={open ? "basic-menu" : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={open ? "true" : undefined}
-                      onClick={handleClick}
-                    >
-                      <MoreVertIcon />
-                    </Button>
-                    <Menu
-                      id="basic-menu"
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleClose}
-                      MenuListProps={{
-                        "aria-labelledby": "basic-button",
-                      }}
-                    >
-                      <MenuItem
-                        onClick={() => handleDeleteConfirmation(chat.chatId)}
+                <Tooltip title={`${convertToTime(chat?.timestamp)}`}>
+                  <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg relative">
+                    {chat?.messageContent}
+                    <span className="absolute left-[-50px] top-2">
+                      <Button
+                        id="basic-button"
+                        aria-controls={open ? "basic-menu" : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                        onClick={handleClick}
                       >
-                        Delete
-                      </MenuItem>
-                      {openDeleteConfirmation && (
-                        <AlertDialog
-                          open={true}
-                          handleClose={() => setOpenDeleteConfirmation(false)}
-                          handleConfirm={handleDeleteChat}
-                          title="Delete Confirmation"
-                          content="Are you sure you want to delete this message?"
-                        />
-                      )}
-                    </Menu>
+                        <MoreVertIcon />
+                      </Button>
+                      <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                          "aria-labelledby": "basic-button",
+                        }}
+                      >
+                        <MenuItem
+                          onClick={() => handleDeleteConfirmation(chat.chatId)}
+                        >
+                          Delete
+                        </MenuItem>
+                        {openDeleteConfirmation && (
+                          <AlertDialog
+                            open={true}
+                            handleClose={() => setOpenDeleteConfirmation(false)}
+                            handleConfirm={handleDeleteChat}
+                            title="Delete Confirmation"
+                            content="Are you sure you want to delete this message?"
+                          />
+                        )}
+                      </Menu>
+                    </span>
                   </span>
-                </span>
+                </Tooltip>
               )}
             </div>
           ))}
@@ -402,49 +407,53 @@ const Chat = () => {
                       display: "inline-block",
                     }}
                   />
-                  <span className="bg-[#E3F1F3] p-3 text-left rounded-r-lg rounded-b-lg">
-                    {chat?.messageContent}
-                  </span>
+                  <Tooltip title={`${convertToTime(chat?.timestamp)}`}>
+                    <span className="bg-[#E3F1F3] p-3 text-left rounded-r-lg rounded-b-lg">
+                      {chat?.messageContent}
+                    </span>
+                  </Tooltip>
                 </span>
               ) : (
-                <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg relative">
-                  {chat?.messageContent}
-                  <span className="absolute left-[-50px] top-2">
-                    <Button
-                      id="basic-button"
-                      aria-controls={open ? "basic-menu" : undefined}
-                      aria-haspopup="true"
-                      aria-expanded={open ? "true" : undefined}
-                      onClick={handleClick}
-                    >
-                      <MoreVertIcon />
-                    </Button>
-                    <Menu
-                      id="basic-menu"
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleClose}
-                      MenuListProps={{
-                        "aria-labelledby": "basic-button",
-                      }}
-                    >
-                      <MenuItem
-                        onClick={() => handleDeleteConfirmation(chat.chatId)}
+                <Tooltip title={`${convertToTime(chat?.timestamp)}`}>
+                  <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg relative">
+                    {chat?.messageContent}
+                    <span className="absolute left-[-50px] top-2">
+                      <Button
+                        id="basic-button"
+                        aria-controls={open ? "basic-menu" : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                        onClick={handleClick}
                       >
-                        Delete
-                      </MenuItem>
-                      {openDeleteConfirmation && (
-                        <AlertDialog
-                          open={true}
-                          handleClose={() => setOpenDeleteConfirmation(false)}
-                          handleConfirm={handleDeleteChat}
-                          title="Delete Confirmation"
-                          content="Are you sure you want to delete this message?"
-                        />
-                      )}
-                    </Menu>
+                        <MoreVertIcon />
+                      </Button>
+                      <Menu
+                        id="basic-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                          "aria-labelledby": "basic-button",
+                        }}
+                      >
+                        <MenuItem
+                          onClick={() => handleDeleteConfirmation(chat.chatId)}
+                        >
+                          Delete
+                        </MenuItem>
+                        {openDeleteConfirmation && (
+                          <AlertDialog
+                            open={true}
+                            handleClose={() => setOpenDeleteConfirmation(false)}
+                            handleConfirm={handleDeleteChat}
+                            title="Delete Confirmation"
+                            content="Are you sure you want to delete this message?"
+                          />
+                        )}
+                      </Menu>
+                    </span>
                   </span>
-                </span>
+                </Tooltip>
               )}
             </div>
           ))}

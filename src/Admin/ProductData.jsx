@@ -181,8 +181,8 @@ const ProductData = () => {
                   />
                 </div>
               </th>
-              <th className="w-2/5 pb-2">
-                <div>
+              <th className="w-1/5 pb-2">
+                <div className="flex items-center">
                   Product Name
                   <input
                     type="text"
@@ -191,7 +191,7 @@ const ProductData = () => {
                     value={searchName}
                     onChange={handleSearchChange}
                     placeholder="Search product name"
-                    className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
+                    className="ml-3 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
                   />
                 </div>
               </th>
@@ -220,8 +220,8 @@ const ProductData = () => {
                   {edit === 1 ? (
                     <input
                       type="text"
-                      name="storeName"
-                      value={editedProductData[index].store.storeName}
+                      name="storeId"
+                      value={editedProductData[index].store.storeId}
                       onChange={(e) => handleChange(e, index)}
                     />
                   ) : (

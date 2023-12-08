@@ -553,7 +553,6 @@ rectangle Palit {
   (Place order) ..> (See total price) : include
   (Place order) ..> (Select quantity) : include
   (Select quantity) ..> (Tap order button) : include
-  (Tap order button) ..> (Send transaction in chat) : include
 }
 @enduml
 ```
@@ -567,7 +566,6 @@ actor Customer
 rectangle Palit {
   Customer -- (Cancel order)
   (Cancel order) ..> (Tap cancel order button) : include
-  (Cancel order) ..> (Change transaction status in chat) : include
 }
 @enduml
 ```
@@ -584,12 +582,8 @@ rectangle Palit {
   Vendor -- (Chat with customer)
   (Chat with vendor) ..> (Send message) : include
   (Chat with vendor) ..> (Receive message) : include
-  (Chat with vendor) ..> (See transaction status) : include
   (Chat with customer) ..> (Send message) : include
   (Chat with customer) ..> (Receive message) : include
-  (Chat with customer) ..> (See transaction status) : include
-  (Chat with customer) ..> (Accept order) : extend
-  (Chat with customer) ..> (Complete order) : include
 }
 @enduml
 ```
@@ -642,7 +636,6 @@ actor Vendor
 rectangle Palit {
   Vendor -- (Accept order)
   (Accept order) ..> (Tap accept button) : include
-  (Tap accept button) ..> (Change transaction status in chat) : include
   (Tap accept button) ..> (Update customer queue) : include
 }
 @enduml
@@ -657,7 +650,6 @@ actor Vendor
 rectangle Palit {
   Vendor -- (Complete order)
   (Complete order) ..> (Tap complete button) : include
-  (Tap complete button) ..> (Change transaction status in chat) : include
   (Tap complete button) ..> (Update customer queue) : include
 }
 @enduml
@@ -805,7 +797,6 @@ start
 :See total price;
 :Select quantity;
 :Tap order button;
-:Send transaction in chat;
 
 stop
 @enduml
@@ -817,7 +808,6 @@ stop
 start
 
 :Tap cancel order button;
-:Change transaction status in chat;
 
 stop
 @enduml
@@ -830,11 +820,6 @@ start
 
 :Send message;
 :Receive message;
-:See transaction status;
-if (User is Vendor) then (yes)
-  :Accept order;
-  :Complete order;
-endif
 
 stop
 @enduml
@@ -886,7 +871,6 @@ stop
 start
 
 :Tap accept button;
-:Change transaction status in chat;
 :Update customer queue;
 
 stop
@@ -899,7 +883,6 @@ stop
 start
 
 :Tap complete button;
-:Change transaction status in chat;
 :Update customer queue;
 
 stop

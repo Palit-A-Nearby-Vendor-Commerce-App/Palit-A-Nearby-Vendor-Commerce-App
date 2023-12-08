@@ -8,6 +8,7 @@ import {
   DialogContentText,
   DialogActions,
 } from "@material-ui/core";
+import CustomButton from "../components/CustomButton";
 
 const TransactionData = () => {
   const [transactionData, setTransactionData] = useState([]);
@@ -23,9 +24,7 @@ const TransactionData = () => {
   useEffect(() => {
     const fetchTransactionData = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/api/getAllTransactions"
-        );
+        const response = await axios.get("http://localhost:8080/api/getAllTransactions");
         setTransactionData(response.data);
         setEditedTransactionData(response.data);
       } catch (error) {
@@ -62,7 +61,7 @@ const TransactionData = () => {
   const handleSaveClick = async () => {
     for (let transaction of editedTransactionData) {
       try {
-        await axios.put(
+        const response = await axios.put(
           `http://localhost:8080/api/updateTransactionById/${transaction.transactionId}`,
           transaction
         );
@@ -72,9 +71,7 @@ const TransactionData = () => {
     }
     setEdit(0);
     try {
-      const response = await axios.get(
-        "http://localhost:8080/api/getAllTransactions"
-      );
+      const response = await axios.get("http://localhost:8080/api/getAllTransactions");
       setTransactionData(response.data);
     } catch (error) {
       console.error("Error fetching transaction data:", error);
@@ -97,16 +94,14 @@ const TransactionData = () => {
   const handleDeleteTransaction = async () => {
     const transactionId = editedTransactionData[deleteIndex].transactionId;
     try {
-      await axios.delete(
+      const response = await axios.delete(
         `http://localhost:8080/api/deleteTransactionById/${transactionId}`
       );
     } catch (error) {
       console.error("Error deleting transaction data:", error);
     }
     try {
-      const response = await axios.get(
-        "http://localhost:8080/api/getAllTransactions"
-      );
+      const response = await axios.get("http://localhost:8080/api/getAllTransactions");
       setTransactionData(response.data);
       setEditedTransactionData(response.data);
     } catch (error) {
@@ -135,18 +130,12 @@ const TransactionData = () => {
     }
     if (searchCustomerId) {
       filteredTransactionData = filteredTransactionData.filter((transaction) =>
-        transaction.customer.accountId
-          .toString()
-          .toLowerCase()
-          .includes(searchCustomerId.toLowerCase())
+        transaction.customer.accountId.toString().toLowerCase().includes(searchCustomerId.toLowerCase())
       );
     }
     if (searchVendorId) {
       filteredTransactionData = filteredTransactionData.filter((transaction) =>
-        transaction.vendor.accountId
-          .toString()
-          .toLowerCase()
-          .includes(searchVendorId.toLowerCase())
+        transaction.vendor.accountId.toString().toLowerCase().includes(searchVendorId.toLowerCase())
       );
     }
     return filteredTransactionData;
@@ -156,19 +145,16 @@ const TransactionData = () => {
     <Paper elevation={3} className="p-5 border rounded-3xl font-custom">
       <div>
         <div className="flex">
-          <h1 className="text-2xl font-bold pb-6 text-[#0071B3]">
-            Transactions
-          </h1>
-          <button
+          <h1 className="text-2xl font-bold pb-6 text-[#0071B3]">Transactions</h1>
+          <CustomButton
+            label={edit === 1 ? "Save" : "Edit"}
             onClick={edit === 1 ? handleOpenDialog : handleEditClick}
-            className={
+            btnStyle={
               edit === 1
                 ? "text-blue-500 ml-5 text-sm font-thin"
                 : "text-red-500 ml-5 text-sm font-thin"
             }
-          >
-            {edit === 1 ? "Save" : "Edit"}
-          </button>
+          ></CustomButton>
         </div>
         <table className="w-full">
           <thead className="text-left border-b border-[#0071B3] text-slate-500">
@@ -182,7 +168,7 @@ const TransactionData = () => {
                     name="searchDetails"
                     value={searchDetails}
                     onChange={handleSearchChange}
-                    placeholder="Search by details"
+                    placeholder="Search details"
                     className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
                   />
                 </div>
@@ -197,7 +183,7 @@ const TransactionData = () => {
                     name="searchCustomerId"
                     value={searchCustomerId}
                     onChange={handleSearchChange}
-                    placeholder="Search customer ID"
+                    placeholder="Search customer id"
                     className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
                   />
                 </div>
@@ -211,7 +197,7 @@ const TransactionData = () => {
                     name="searchVendorId"
                     value={searchVendorId}
                     onChange={handleSearchChange}
-                    placeholder="Search vendor ID"
+                    placeholder="Search vendor id"
                     className="ml-5 border-b border-[#0071B3] text-slate-500 text-sm font-thin"
                   />
                 </div>
@@ -221,13 +207,7 @@ const TransactionData = () => {
           </thead>
           <tbody>
             {filterTransactionData().map((transaction, index) => (
-              <tr
-                key={
-                  transaction.customer.accountId +
-                  transaction.vendor.accountId +
-                  transaction.transactionId
-                }
-              >
+              <tr key={transaction.transactionId}>
                 <td className="py-2">
                   {edit === 1 ? (
                     <input
@@ -276,13 +256,14 @@ const TransactionData = () => {
                     transaction.vendor.accountId
                   )}
                 </td>
-                {edit ? (
+                {edit === 1 && (
                   <td className="py-2">
-                    <button onClick={() => handleDeleteClick(index)}>
-                      Delete
-                    </button>
+                    <CustomButton
+                      label="Delete"
+                      onClick={() => handleDeleteClick(index)}
+                    ></CustomButton>
                   </td>
-                ) : null}
+                )}
               </tr>
             ))}
           </tbody>
@@ -295,9 +276,16 @@ const TransactionData = () => {
             Are you sure you want to delete this transaction?
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <button onClick={handleCloseDeleteDialog}>Cancel</button>
-          <button onClick={handleDeleteTransaction}>Confirm Deletion</button>
+        <DialogActions className="mr-5 mb-5">
+          <CustomButton
+            label="Cancel"
+            onClick={handleCloseDeleteDialog}
+          ></CustomButton>
+          <CustomButton
+            label="Delete"
+            onClick={handleDeleteTransaction}
+            btnStyle="bg-red-500 rounded-3xl text-white p-2 text-lg font-semibolds cursor-pointer p-3"
+          ></CustomButton>
         </DialogActions>
       </Dialog>
       <Dialog open={open && edit === 1} onClose={handleCloseDialog}>
@@ -307,9 +295,16 @@ const TransactionData = () => {
             Are you sure you want to make any changes to the transaction data?
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <button onClick={handleCloseDialog}>Cancel</button>
-          <button onClick={handleConfirmDialog}>Confirm Changes</button>
+        <DialogActions className=" mr-5 mb-5">
+          <CustomButton
+            label="Cancel"
+            onClick={handleCloseDialog}
+          ></CustomButton>
+          <CustomButton
+            label="Save Changes"
+            onClick={handleConfirmDialog}
+            btnStyle="bg-blue-500 rounded-3xl text-white p-2 text-lg font-semibolds cursor-pointer p-3"
+          ></CustomButton>
         </DialogActions>
       </Dialog>
     </Paper>

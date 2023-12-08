@@ -23,11 +23,12 @@ const NavigationBar = () => {
     const isActive = false;
     // Additional logout actions can be added here
     console.log("LOGGIN OUT", user);
-    axios
+    if(user.location){
+      axios
       .put(
-        `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
+        `http://localhost:8080/api/updateLocationById/${user.location.locationId}`,
         {
-          ...user.account.location,
+          ...user.location,
           isActive: isActive,
         }
       )
@@ -35,6 +36,8 @@ const NavigationBar = () => {
         console.error(error);
       });
 
+    }
+    
     // Perform logout actions (e.g., clear user data)
     setUser(null);
 

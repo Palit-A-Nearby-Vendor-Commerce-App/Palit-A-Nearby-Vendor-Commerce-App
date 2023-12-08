@@ -22,25 +22,24 @@ const NavigationBar = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
 
   const handleLogout = () => {
-    const isActive = false;
     // Additional logout actions can be added here
     console.log("LOGGIN OUT", user);
-    if (user.location) {
+    if (user.account.location) {
       axios
         .put(
-          `http://localhost:8080/api/updateLocationById/${user.location.locationId}`,
+          `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
           {
-            ...user.location,
-            isActive: isActive,
+            ...user.account.location,
+            isActive: false,
           }
         )
+        .then((response) => {
+          setUser(null);
+        })
         .catch((error) => {
           console.error(error);
         });
     }
-
-    // Perform logout actions (e.g., clear user data)
-    setUser(null);
 
     // Redirect to the default page ("/")
     history.push("/landing");

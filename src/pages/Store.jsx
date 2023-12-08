@@ -381,7 +381,7 @@ const Store = ({ vendor }) => {
           </div>
         </>
       ) : null}
-      {/* Order Total Preview Section */}
+      { selectedVendor ? (
 
       <div
         style={{
@@ -393,9 +393,10 @@ const Store = ({ vendor }) => {
         }}
       >
         <h2>
-          Total Order Price: ₱{totalItems() > 0 ? calculateTotalPrice() : 0}
+          Total: ₱{totalItems() > 0 ? calculateTotalPrice() : 0}
         </h2>
       </div>
+      ) : null}
       {activeTransaction ? (
         <OrderDetails activeTransaction={activeTransaction} />
       ) : selectedVendor ? (
@@ -408,7 +409,7 @@ const Store = ({ vendor }) => {
           <span className="text-lg  ">Order</span>
         </button>
       ) : (
-        <p>Select a store.</p>
+        <p style={{textAlign: "center"}}>Select a store.</p>
       )}
 
       {/* Order confirmation dialog */}

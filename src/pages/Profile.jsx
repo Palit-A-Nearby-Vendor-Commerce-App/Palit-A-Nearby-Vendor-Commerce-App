@@ -186,15 +186,14 @@ const Profile = () => {
   };
 
   // The function to format the transaction details
-const formatDetails = (details) => {
-  // Define a regular expression to match the product name, price, quantity, and total
-  const regex = /(\w+) Php(\d+) x(\d+); Total: Php(\d+)/;
-  // Apply the regex to the details string and get the matching groups
-  const [, productName, productPrice, quantity, total] = details.match(regex);
-  // Return the formatted details
-  return `Product: ${productName}, Price: ${productPrice}, Quantity: ${quantity}, Total: ${total}`;
-};
-
+  const formatDetails = (details) => {
+    // Define a regular expression to match the product name, price, quantity, and total
+    const regex = /(\w+) Php(\d+) x(\d+); Total: Php(\d+)/;
+    // Apply the regex to the details string and get the matching groups
+    const [, productName, productPrice, quantity, total] = details.match(regex);
+    // Return the formatted details
+    return `Product: ${productName}, Price: ${productPrice}, Quantity: ${quantity}, Total: ${total}`;
+  };
 
   // The useEffect hook to fetch the data when the component mounts
   useEffect(() => {
@@ -341,8 +340,8 @@ const formatDetails = (details) => {
                     <select
                       id="isVendor"
                       name="isVendor"
-                      contentEditable="false"
-                      value={account.isVendor}
+                      disabled
+                      defaultValue={account.isVendor}
                       className="border-2 border-gray-300 rounded-xl p-2 w-full md:w-3/4"
                     >
                       <option value="true">Yes</option>
@@ -364,9 +363,9 @@ const formatDetails = (details) => {
                   {editMode ? (
                     <select
                       id="isAdmin"
-                      contentEditable="false"
                       name="isAdmin"
-                      value={account.isAdmin}
+                      disabled
+                      defaultValue={account.isAdmin}
                       className="border-2 border-gray-300 rounded-xl p-2 w-full md:w-3/4"
                     >
                       <option value="true">Yes</option>
@@ -391,8 +390,8 @@ const formatDetails = (details) => {
                         type="number"
                         id="latitude"
                         name="latitude"
-                        contentEditable="false"
-                        value={account.location.latitude}
+                        disabled
+                        defaultValue={account.location.latitude}
                         placeholder="Latitude"
                         className="border-2 border-gray-300 rounded-xl p-2 mr-2 mb-2 w-full md:w-1/2"
                       />
@@ -400,8 +399,8 @@ const formatDetails = (details) => {
                         type="number"
                         id="longitude"
                         name="longitude"
-                        value={account.location.longitude}
-                        contentEditable="false"
+                        disabled
+                        defaultValue={account.location.longitude}
                         placeholder="Longitude"
                         className="border-2 border-gray-300 rounded-xl p-2 ml-2 mb-2 w-full md:w-1/2"
                       />
@@ -423,7 +422,7 @@ const formatDetails = (details) => {
                   ) : (
                     <button
                       onClick={handleEdit}
-                    style={{backgroundColor: "#0575B4"}}
+                      style={{ backgroundColor: "#0575B4" }}
                       className="text-white font-bold py-2 px-4 rounded-xl"
                     >
                       Edit
@@ -441,6 +440,9 @@ const formatDetails = (details) => {
           </div>
         )}
       </div>
+      <br/>
+      <br/>
+      <hr/>
       <h2 className="text-3xl font-bold text-center my-4">
         Transaction History
       </h2>

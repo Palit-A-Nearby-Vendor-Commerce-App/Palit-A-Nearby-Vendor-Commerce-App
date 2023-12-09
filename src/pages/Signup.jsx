@@ -272,6 +272,7 @@ function Signup() {
             <LocalizationProvider dateAdapter={AdapterDateFns} >
               <DatePicker
                 value={userData.birthdate}
+                required
                 onChange={(newValue) => {
                   setUserData({
                     ...userData,
@@ -286,6 +287,7 @@ function Signup() {
                       borderRadius: '20px',
                       borderColor: 'lightgray',
                       backgroundColor: 'white',
+                      marginTop: "4px",
                       '& .MuiOutlinedInput-root': {
                         '& fieldset': {
                           borderRadius: '20px',
@@ -331,7 +333,7 @@ function Signup() {
                   onChange={handleChange}
                   placeholder="Description"
                   required
-                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border-gray"
+                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
                 />
               </div>
               <div className="mt-4">

@@ -308,7 +308,7 @@ function Signup() {
               name="userType"
               onChange={handleChange}
               required
-              className="w-full rounded-[20px] p-3 mt-1 text-gray-400 font-custom border border-grayy"
+              className="w-full rounded-[20px] p-3 mt-1 font-custom border border-grayy"
             >
               <option value="">Select user type</option>
               <option value="customer">Customer</option>

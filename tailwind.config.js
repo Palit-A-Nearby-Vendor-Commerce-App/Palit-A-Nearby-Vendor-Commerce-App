@@ -3,6 +3,7 @@ const defaultTheme = require("tailwindcss/defaultTheme");
 
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  mode: 'jit',
   theme: {
     extend: {
       colors: {
@@ -18,6 +19,9 @@ module.exports = {
       },
       fontFamily: {
         custom: ["Poppins", "sans"],
+      },
+      borderRadius: {
+        custom: "20px",
       },
       screens: {
         xs: "475px",

@@ -520,7 +520,7 @@ const AccountData = () => {
     for (let account of editedAccountData) {
       try {
         await axios.put(
-          `http://localhost:8080/api/editAccountById/${account.accountId}`,
+          `http://localhost:8080/api/updateAccountById/${account.accountId}`,
           account
         );
       } catch (error) {

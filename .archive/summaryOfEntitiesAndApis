@@ -5,7 +5,7 @@ Here is a summary of the entities and their APIs:
     * `/getAllAccounts`: This API returns a list of all accounts in the database.
     * `/getAccountById/{id}`: This API returns an account by its id, or null if not found.
     * `/createAccount`: This API creates a new account and returns it.
-    * `/editAccountById/{id}`: This API updates an existing account by its id and returns it, or null if not found.
+    * `/updateAccountById/{id}`: This API updates an existing account by its id and returns it, or null if not found.
     * `/deleteAccountById/{id}`: This API deletes an existing account by its id and returns no content, or not found if not found.
     * `/isEmailTaken`: This API checks if an email is already taken by another account and returns a boolean value.
 

@@ -53,6 +53,10 @@ const NavigationBar = () => {
     setAnchorEl(null);
   };
 
+  const handleProfile = () => {
+    history.push("/profile");
+  };
+
   const handleHamburger = () => {
     setToggleMenu(!toggleMenu);
   };
@@ -111,6 +115,9 @@ const NavigationBar = () => {
 
         {user ? (
           // If the user is logged in, display Logout button and user image
+          
+          <>
+          
           <div className="flex items-center gap-4">
             <img
               src={`data:image/png;base64, ${user.image}`}
@@ -146,8 +153,22 @@ const NavigationBar = () => {
                 <LogoutIcon />
                 Logout
               </MenuItem>
+              
+              <MenuItem
+                    onClick={handleProfile}
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                      paddingLeft: "3px",
+                      paddingRight: "3px",
+                    }}
+                  >
+                    <AccountCircleIcon />
+                    Profile
+                  </MenuItem>
             </Menu>
           </div>
+          <p style={{color: "white", fontWeight: "bold", marginRight: "20px" }}>{user.firstName}</p></>
         ) : (
           // If the user is not logged in, display Sign In button
           <Link to="/signin" style={{ textDecoration: "none" }}>
@@ -242,6 +263,8 @@ const NavigationBar = () => {
                   className="w-12 h-12 rounded-full"
                   onClick={handleMenu}
                 />
+                
+              <span>{user.firstname}</span>
                 <Menu
                   id="menu-appbar"
                   anchorEl={anchorEl}
@@ -270,7 +293,20 @@ const NavigationBar = () => {
                     <LogoutIcon />
                     Logout
                   </MenuItem>
+                  <MenuItem
+                    onClick={handleProfile}
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                      paddingLeft: "3px",
+                      paddingRight: "3px",
+                    }}
+                  >
+                    <AccountCircleIcon />
+                    Profile
+                  </MenuItem>
                 </Menu>
+                
               </div>
             ) : (
               // If the user is not logged in, display Sign In button

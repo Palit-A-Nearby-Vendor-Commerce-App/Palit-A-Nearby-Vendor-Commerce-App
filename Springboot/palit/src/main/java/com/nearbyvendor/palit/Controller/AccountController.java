@@ -38,8 +38,8 @@ public class AccountController {
         return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
     }
 
-    @PutMapping("/editAccountById/{id}")
-    public ResponseEntity<AccountEntity> editAccountById(@PathVariable int id, @RequestBody AccountEntity account) {
+    @PutMapping("/updateAccountById/{id}")
+    public ResponseEntity<AccountEntity> updateAccountById(@PathVariable int id, @RequestBody AccountEntity account) {
         AccountEntity updatedAccount = accountService.updateAccountById(id, account);
         if (updatedAccount != null) {
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);

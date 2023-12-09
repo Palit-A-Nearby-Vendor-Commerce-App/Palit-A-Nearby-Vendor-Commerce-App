@@ -58,4 +58,14 @@ public class TransactionService {
             throw new IllegalArgumentException("Invalid transaction ID");
         }
     }
+
+     // The method to get transactions by user id
+     public List<TransactionEntity> getTransactionsByCustomerId(int customerId) {
+        return transactionRepository.findByCustomer_AccountId (customerId);
+    }
+
+    
+     public List<TransactionEntity> getTransactionsByVendorId(int vendorId) {
+        return transactionRepository.findByVendor_AccountId (vendorId);
+    }
 }

@@ -54,4 +54,16 @@ public class TransactionController {
         transactionService.deleteTransactionById(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/getTransactionsByCustomerId/{customerId}")
+    public ResponseEntity<List<TransactionEntity>> getTransactionsByCustomerId(@PathVariable int customerId) {
+        List<TransactionEntity> transactions = transactionService.getTransactionsByCustomerId(customerId);
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    }
+
+    @GetMapping("/getTransactionsByVendorId/{vendorId}")
+    public ResponseEntity<List<TransactionEntity>> getTransactionsByVendorId(@PathVariable int vendorId) {
+        List<TransactionEntity> transactions = transactionService.getTransactionsByVendorId(vendorId);
+        return new ResponseEntity<>(transactions, HttpStatus.OK);
+    }
 }

@@ -14,7 +14,7 @@ import Services from "./pages/Services";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Store from "./pages/Store";
-
+import Profile from "./pages/Profile";
 import AdminDashboard from "./components/AdminDashboard";
 // import Dashboard from "./Admin/Dashboard";
 
@@ -33,7 +33,7 @@ function App() {
           <Route path="/report" exact component={Report} />
           <Route path="/home" exact component={Home} />
           <Route path="/chat" exact component={Chat} />
-
+          <Route path="/profile" exact component={Profile} />
           <Route path="/adminlogin3x8Yz7!qA" exact component={Admin} />
           <Route
             path="/admindashboard/dashboard"
@@ -78,11 +78,7 @@ function App() {
             component={AdminDashboard}
           />
 
-          <Route
-            path="/admindashboard/chat"
-            exact
-            component={AdminDashboard}
-          />
+          <Route path="/admindashboard/chat" exact component={AdminDashboard} />
 
           <Route component={Landing} />
         </Switch>

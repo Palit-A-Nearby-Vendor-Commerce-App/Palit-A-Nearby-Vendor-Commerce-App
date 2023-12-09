@@ -186,12 +186,15 @@ const Profile = () => {
   };
 
   // The function to format the transaction details
-  const formatDetails = (details) => {
-    // Parse the details string as JSON
-    const detailsObj = JSON.parse(details);
-    // Return the formatted details
-    return `Product: ${detailsObj.productName}, Price: ${detailsObj.productPrice}, Quantity: ${detailsObj.quantity}, Total: ${detailsObj.total}`;
-  };
+const formatDetails = (details) => {
+  // Define a regular expression to match the product name, price, quantity, and total
+  const regex = /(\w+) Php(\d+) x(\d+); Total: Php(\d+)/;
+  // Apply the regex to the details string and get the matching groups
+  const [, productName, productPrice, quantity, total] = details.match(regex);
+  // Return the formatted details
+  return `Product: ${productName}, Price: ${productPrice}, Quantity: ${quantity}, Total: ${total}`;
+};
+
 
   // The useEffect hook to fetch the data when the component mounts
   useEffect(() => {

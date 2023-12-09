@@ -3,7 +3,6 @@ import { Button } from "@material-ui/core";
 import { Link, Redirect } from "react-router-dom";
 import { UserContext } from "../UserContext";
 import gsap from "gsap";
-
 import NavigationBar from "../components/NavigationBar.jsx";
 import hero from "../assets/images/landing-heroimg.png";
 
@@ -65,8 +64,8 @@ const Landing = () => {
         </div>
         <div className="landing-img w-full h-fit flex flex-1 xl:flex-1 sm:flex-1 justify-center sm:flex xs:hidden">
           <img
-            alt="bg hero"
             src={hero}
+            alt="bg hero"
             className="h-[640px] self-center xl:h-[640px] lg:h-[570px] md:h-[480px] sm:h-[320px]"
           />
         </div>

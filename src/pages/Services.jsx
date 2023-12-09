@@ -1,7 +1,6 @@
 import { useEffect } from "react";
-import NavigationBar from "../components/NavigationBar";
 import gsap from "gsap";
-
+import NavigationBar from "../components/NavigationBar";
 import { services } from "../data/dummy";
 
 const Services = () => {
@@ -24,7 +23,6 @@ const Services = () => {
           </h1>
           <p className="text-slate-500 pt-3">
             The app uses realtime geolocation to show the users' locations on a
-            <br />
             map and allows them to chat and transact with each other.
           </p>
         </div>

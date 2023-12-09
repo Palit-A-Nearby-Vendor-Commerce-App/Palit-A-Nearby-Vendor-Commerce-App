@@ -8,13 +8,14 @@ const Contact = () => {
   const form = useRef();
 
   useEffect(() => {
-    // Initial animation when the component mounts
-    gsap.from(".contact-form", {
+    // Animate the form and the image when the component mounts
+    const tl = gsap.timeline();
+    tl.from(".contact-form", {
       x: -200,
       opacity: 0,
       duration: 1,
     });
-    gsap.from(".contact-img", { x: 200, opacity: 0, duration: 1 });
+    tl.from(".contact-img", { x: 200, opacity: 0, duration: 1 }, "-=1");
   }, []);
 
   const sendEmail = (e) => {
@@ -40,7 +41,7 @@ const Contact = () => {
   return (
     <div className="w-full h-screen font-custom">
       <NavigationBar />
-      <div className="w-full grid  grid-cols-2 xl:grid-cols-2 xl:px-[220px] py-24 lg:px-[150px] md:px-[80px] sm:grid-cols-2 sm:px-16 xs:grid-cols-1 xs:px-6">
+      <div className="w-full grid grid-cols-2 xl:px-[220px] py-24 lg:px-[150px] md:px-[80px] sm:grid-cols-2 sm:px-16 xs:grid-cols-1 xs:px-6">
         <form
           ref={form}
           onSubmit={sendEmail}

@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Avatar } from "@material-ui/core";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -25,7 +24,6 @@ const Chat = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const location = useLocation();
   const selectedVendor = location.state?.selectedVendor;
-  // const selectedCustomer = location.state?.selectedCustomer;
   const selectedCustomer = location.state?.u;
   const { user } = useContext(UserContext);
   const [chats, setChats] = useState([]);
@@ -42,7 +40,7 @@ const Chat = () => {
 
   const handleDeleteConfirmation = (messageId) => {
     setSelectedMessageId(messageId);
-    setOpenDeleteConfirmation(true); // Open the confirmation dialog
+    setOpenDeleteConfirmation(true);
   };
 
   const handleClick = (event) => {
@@ -52,15 +50,12 @@ const Chat = () => {
     setAnchorEl(null);
   };
 
-  console.log("Selected Customer: ", selectedCustomer);
-
   useEffect(() => {
     const fetchConversations = async () => {
       try {
         const response = await axios.get(
           "http://localhost:8080/api/getAllConversations"
         );
-        console.log("Mao ni convos: ", response.data);
         setConversations(response.data);
       } catch (error) {
         console.error("Error fetching conversations:", error);
@@ -74,19 +69,14 @@ const Chat = () => {
     const checkAndCreateConversation = async () => {
       try {
         if (selectedVendor && selectedVendor.account && user && user.account) {
-          // Check if a conversation already exists with the selected vendor
           const existingConversation = conversations.find(
             (conv) =>
               conv?.vendor?.accountId === selectedVendor?.account?.accountId &&
               conv?.customer?.accountId === user?.account?.accountId
           );
-
           if (existingConversation) {
-            // If conversation exists, set it in the state
-            console.log("Conversation already exists!");
             setSelectedConversation(existingConversation);
           } else {
-            // Otherwise, create a new conversation
             const response = await axios.post(
               "http://localhost:8080/api/createConversation",
               {
@@ -94,8 +84,6 @@ const Chat = () => {
                 customer: user.account,
               }
             );
-
-            console.log("Success creating conversation", response.data);
             const newConversation = response.data;
             localStorage.setItem(
               "selectedConversationId",
@@ -121,8 +109,6 @@ const Chat = () => {
           );
 
           if (existingConversation) {
-            // If conversation exists, set it in the state
-            console.log("Conversation already exists!");
             setSelectedConversation(existingConversation);
           }
         } else {
@@ -134,8 +120,6 @@ const Chat = () => {
         console.error("Error creating or checking conversation:", error);
       }
     };
-
-    // Call the function when the component mounts or when dependencies change
     checkAndCreateConversation();
   }, [conversations]);
 
@@ -153,19 +137,13 @@ const Chat = () => {
   useEffect(() => {
     fetchChats();
 
-    const intervalId = setInterval(fetchChats, 3000); // Fetch data every 3 seconds
-
+    const intervalId = setInterval(fetchChats, 3000);
     return () => clearInterval(intervalId);
   }, [selectedConversation]);
 
-  console.log("Chats,", chats);
-
   const sendChat = async () => {
     try {
-      // Replace with the actual account and conversation information
-
       const currentTimestamp = new Date();
-
       const newChat = {
         account: user.account,
         messageContent: newMessage,
@@ -174,33 +152,23 @@ const Chat = () => {
           conversationId: selectedConversation.conversationId,
         },
       };
-
       const response = await axios.post(
         "http://localhost:8080/api/createChat",
         newChat
       );
       const createdChat = response.data;
-
-      // Update the local state with the new chat
       setChats((prevChats) => [...prevChats, createdChat]);
-
-      // Clear the input field
       setNewMessage("");
     } catch (error) {
       console.error("Error sending chat:", error);
     }
   };
-
   const handleDeleteChat = async () => {
     try {
-      // Make an API call to delete the message by messageId
       const response = await axios.delete(
         `http://localhost:8080/api/deleteChatById/${selectedMessageId}`
       );
-
-      // Check if the deletion was successful
       if (response.status === 200) {
-        // Update the local state to remove the deleted message
         setChats((prevChats) =>
           prevChats.filter((chat) => chat.messageId !== selectedMessageId)
         );
@@ -210,20 +178,15 @@ const Chat = () => {
     } catch (error) {
       console.error("Error deleting message:", error);
     } finally {
-      setOpenDeleteConfirmation(false); // Close the confirmation dialog
+      setOpenDeleteConfirmation(false);
       setSelectedMessageId(null);
     }
   };
-
   const toggleDarkmode = () => {
     setIsDarkMode(!isDarkMode);
   };
-
   const handleBackButtonClick = () => {
-    // Set selectedConversationId to null in local storage
     localStorage.setItem("selectedConversationId", null);
-
-    // Optionally, you can also reset the selectedConversation state
     setSelectedConversation(null);
   };
 
@@ -254,7 +217,6 @@ const Chat = () => {
                 variant="dot"
               >
                 <Avatar
-                  // alt={selectedVendor.email}
                   src={`data:image/jpeg;base64,${selectedVendor?.image}`}
                   style={{ height: "60px", width: "60px" }}
                 />
@@ -278,7 +240,6 @@ const Chat = () => {
                 variant="dot"
               >
                 <Avatar
-                  // alt={selectedCustomer.email}
                   src={`data:image/jpeg;base64,${selectedCustomer.image}`}
                   style={{ height: "60px", width: "60px" }}
                 />
@@ -310,6 +271,7 @@ const Chat = () => {
         id="message-contents"
         className="w-full  flex flex-col flex-1 overflow-auto py-4 px-10"
       >
+        {!user.account.isVendor ? (<span style={{textAlign: "center", color: "grey"}}> You must order to communicate with the vendor </span>) : null}
         {selectedConversation &&
           selectedVendor &&
           chats.map((chat) => (
@@ -325,8 +287,7 @@ const Chat = () => {
               chat?.conversation?.vendor?.accountId ? (
                 <span className="flex items-center gap-2">
                   <Avatar
-                    // alt={chat?.conversation?.vendor?.email}
-                    src={`data:image/jpeg;base64,${selectedVendor.image}`}
+                    src={`data:image/jpeg;base64,${selectedVendor?.image}`}
                     style={{
                       height: "42px",
                       width: "42px",
@@ -399,7 +360,6 @@ const Chat = () => {
               chat?.conversation?.customer?.accountId ? (
                 <span className="flex items-center gap-2">
                   <Avatar
-                    // alt={chat?.conversation?.customer?.email}
                     src={`data:image/jpeg;base64,${selectedCustomer.image}`}
                     style={{
                       height: "42px",
@@ -462,6 +422,12 @@ const Chat = () => {
         <textarea
           className="w-full h-full p-2 rounded-lg border border-gray-300"
           value={newMessage}
+          onKeyDown={event => {
+            if (event.key === 'Enter') {
+              sendChat();
+              event.preventDefault();
+            }
+          }}
           onChange={(e) => setNewMessage(e.target.value)}
         ></textarea>
         <button onClick={sendChat}>

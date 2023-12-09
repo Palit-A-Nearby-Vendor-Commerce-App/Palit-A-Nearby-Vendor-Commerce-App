@@ -41,7 +41,9 @@ const ManageStore = () => {
   useEffect(() => {
     const fetchStore = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/getStoreById/${user.account.store.storeId}`);
+        const response = await axios.get(
+          `http://localhost:8080/api/getStoreById/${user.account.store.storeId}`
+        );
         setStore(response.data);
         setEditedStore({
           storeName: response.data.storeName,
@@ -50,17 +52,19 @@ const ManageStore = () => {
         });
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching store:', error);
+        console.error("Error fetching store:", error);
       }
     };
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/getProductServicesByStoreId/store/${user.account.store.storeId}`);
+        const response = await axios.get(
+          `http://localhost:8080/api/getProductServicesByStoreId/store/${user.account.store.storeId}`
+        );
         setProducts(response.data);
-        localStorage.setItem('products', JSON.stringify(response.data));
+        localStorage.setItem("products", JSON.stringify(response.data));
       } catch (error) {
-        console.error('Error fetching products:', error);
-        const localData = localStorage.getItem('products');
+        console.error("Error fetching products:", error);
+        const localData = localStorage.getItem("products");
         if (localData) {
           setProducts(JSON.parse(localData));
         }
@@ -102,13 +106,16 @@ const ManageStore = () => {
         const reader = new FileReader();
         reader.readAsDataURL(product.image);
         reader.onloadend = () => {
-          const base64Image = reader.result.split(',')[1];
+          const base64Image = reader.result.split(",")[1];
           const productData = {
             ...product,
             image: base64Image,
           };
           axios
-            .put(`http://localhost:8080/api/updateProductServiceById/${product.productId}`, productData)
+            .put(
+              `http://localhost:8080/api/updateProductServiceById/${product.productId}`,
+              productData
+            )
             .then((response) => {
               console.log("Product updated:", response.data);
               const newProducts = [...products];
@@ -123,11 +130,14 @@ const ManageStore = () => {
     });
     if (user && user.account && user.account.store) {
       axios
-        .put(`http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`, editedStore)
+        .put(
+          `http://localhost:8080/api/updateStoreById/${user.account.store.storeId}`,
+          editedStore
+        )
         .then((response) => {
           console.log("Store updated:", response.data);
           setStore(response.data);
-          setSuccessMessage('Successfully saved.');
+          setSuccessMessage("Successfully saved.");
         })
         .catch((error) => {
           console.error("Error updating store:", error);
@@ -143,7 +153,7 @@ const ManageStore = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === 'price') {
+    if (name === "price") {
       setEditedProduct({
         ...editedProduct,
         [name]: value,
@@ -167,20 +177,21 @@ const ManageStore = () => {
   const handleProductImageChange = (e, index) => {
     const newProducts = [...products];
     newProducts[index].image = e.target.files[0];
-    newProducts[index].imagePreview = e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null;
+    newProducts[index].imagePreview = e.target.files[0]
+      ? URL.createObjectURL(e.target.files[0])
+      : null;
     setProducts(newProducts);
   };
   const handleProductInputChange = (e, index) => {
     const { name, value } = e.target;
     const newProducts = [...products];
-    if (name === 'price') {
+    if (name === "price") {
       newProducts[index][name] = value;
     } else {
       newProducts[index][name] = value;
     }
     setProducts(newProducts);
   };
-
 
   const handleAddConfirm = async () => {
     if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
@@ -206,8 +217,7 @@ const ManageStore = () => {
       .post("http://localhost:8080/api/createProductService", productData)
       .then((response) => {
         console.log("Product created:", response.data);
-        setSuccessMessage('Successfully added.');
-        // Set the productId of the new product to the productId from the response
+        setSuccessMessage("Successfully added.");
         productData.productId = response.data.productId;
         setProducts((prevProducts) => [...prevProducts, productData]);
       })
@@ -226,11 +236,15 @@ const ManageStore = () => {
     const newProducts = [...products];
     newProducts[index].isDeleted = 1;
     axios
-      .delete(`http://localhost:8080/api/deleteProductServiceById/${newProducts[index].productId}`)
+      .delete(
+        `http://localhost:8080/api/deleteProductServiceById/${newProducts[index].productId}`
+      )
       .then((response) => {
         console.log("Product deleted:", response.data);
-        setSuccessMessage('Successfully deleted.');
-        setProducts(products.filter((product, productIndex) => productIndex !== index));
+        setSuccessMessage("Successfully deleted.");
+        setProducts(
+          products.filter((product, productIndex) => productIndex !== index)
+        );
       })
       .catch((error) => {
         console.error("Error deleting product:", error);
@@ -243,18 +257,17 @@ const ManageStore = () => {
     setOpenDialog(true);
   };
   const handleSave = () => {
-    openConfirmationDialog(() => handleSaveConfirm, 'save');
+    openConfirmationDialog(() => handleSaveConfirm, "save");
   };
   const handleAdd = () => {
-    openConfirmationDialog(() => handleAddConfirm, 'add');
+    openConfirmationDialog(() => handleAddConfirm, "add");
   };
   const handleDelete = (index) => {
-    openConfirmationDialog(() => () => handleDeleteConfirm(index), 'delete');
+    openConfirmationDialog(() => () => handleDeleteConfirm(index), "delete");
   };
 
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* User details */}
+    <div style={{ height: "90vh", display: "flex", flexDirection: "column" }}>
       <div style={{ display: "flex" }}>
         <img
           src={`data:image/png;base64, ${user.image}`}
@@ -344,8 +357,7 @@ const ManageStore = () => {
             variant="outlined"
             multiline
             rows={3}
-            rowsMax={3}
-            inputProps={{ maxLength: 150 }}
+            inputProps={{ maxLength: 100 }}
             InputProps={{
               style: {
                 fontSize: 15,
@@ -356,8 +368,11 @@ const ManageStore = () => {
                 borderRadius: "20px",
               },
               endAdornment: (
-                <InputAdornment position="center" style={{ width: "3px", marginRight: "5px" }}>
-                  <Icon >
+                <InputAdornment
+                  position="end"
+                  style={{ width: "3px", marginRight: "5px" }}
+                >
+                  <Icon>
                     <img src={editStore} alt="Edit Store" />
                   </Icon>
                 </InputAdornment>
@@ -367,9 +382,11 @@ const ManageStore = () => {
             onChange={handleStoreInputChange}
           />
         ) : (
-          <p className="text-sm" style={{ textAlign: "justify" }}>
-            {editedStore.description ? editedStore.description : "Loading..."}
-          </p>
+          <div style={{ width: "350px" }}>
+            <p style={{ textAlign: "justify", wordWrap: "break-word" }}>
+              {editedStore.description ? editedStore.description : "Loading..."}
+            </p>
+          </div>
         )}
       </div>
       <h1
@@ -428,7 +445,6 @@ const ManageStore = () => {
                     marginLeft: "10px",
                   }}
                   InputProps={{
-
                     endAdornment: (
                       <InputAdornment position="end">
                         <img src={editStore} alt="Edit Store" />
@@ -465,7 +481,7 @@ const ManageStore = () => {
                       </InputAdornment>
                     ),
                     style: {
-                      borderRadius: "20px", 
+                      borderRadius: "20px",
                     },
                   }}
                 />
@@ -487,7 +503,7 @@ const ManageStore = () => {
           </form>
         </div>
       ) : (
-        <div>{ }</div>
+        <div>{}</div>
       )}
       <div
         style={{
@@ -530,15 +546,28 @@ const ManageStore = () => {
                     width: "100%",
                     height: "150px",
                     borderRadius: "20px",
-                    backgroundImage: `url(${product.imagePreview ||
+                    backgroundImage: `url(${
+                      product.imagePreview ||
                       `data:image/png;base64,${product.image}`
-                      })`,
+                    })`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     display: "inline-block",
                   }}
                 >
-                  <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'red', fontSize: '50px', fontWeight: 'bold' }}>+</div>
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      color: "red",
+                      fontSize: "50px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    +
+                  </div>
                   <input
                     type="file"
                     accept="image/*"
@@ -553,13 +582,13 @@ const ManageStore = () => {
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       "& fieldset": {
-                        border: "none", 
+                        border: "none",
                       },
                       "&:hover fieldset": {
-                        border: "none", 
+                        border: "none",
                       },
                       "&.Mui-focused fieldset": {
-                        border: "none", 
+                        border: "none",
                       },
                     },
                   }}
@@ -611,9 +640,16 @@ const ManageStore = () => {
                       fontWeight: "bold",
                     },
                     endAdornment: (
-                      <InputAdornment position="center" style={{ width: "3px", marginRight: "5px" }}>
-                        <Icon >
-                          <img src={editStore} alt="Edit Store" style={{ marginTop: "3px" }} />
+                      <InputAdornment
+                        position="end"
+                        style={{ width: "3px", marginRight: "5px" }}
+                      >
+                        <Icon>
+                          <img
+                            src={editStore}
+                            alt="Edit Store"
+                            style={{ marginTop: "3px" }}
+                          />
                         </Icon>
                       </InputAdornment>
                     ),

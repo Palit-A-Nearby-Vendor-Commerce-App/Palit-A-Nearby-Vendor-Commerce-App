@@ -1,4 +1,4 @@
-import ChatIcon from '@mui/icons-material/Chat';
+import ChatIcon from "@mui/icons-material/Chat";
 import FolderSharedIcon from "@mui/icons-material/FolderShared";
 import HomeIcon from "@mui/icons-material/Home";
 import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore";
@@ -23,7 +23,6 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import CustomInput from "./CustomInput";
-
 import { useHistory } from "react-router-dom";
 import Accounts from "../Admin/Accounts";
 import Dashboard from "../Admin/Dashboard";
@@ -49,7 +48,6 @@ export default function NavigationBarAdmin() {
   const handleLogout = () => {
     history.push("/adminlogin3x8Yz7!qA");
     setUser(null);
-
   };
 
   return (
@@ -152,7 +150,13 @@ export default function NavigationBarAdmin() {
       </Drawer>
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3, backgroundColor: "#D6F3F9", height: "100vh", overflow: "auto" }}
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          backgroundColor: "#D6F3F9",
+          height: "100vh",
+          overflow: "auto",
+        }}
       >
         {/* <Toolbar /> */}
         <section className="font-custom">

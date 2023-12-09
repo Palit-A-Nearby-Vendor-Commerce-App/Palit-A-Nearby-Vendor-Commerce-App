@@ -1,7 +1,5 @@
-// Queue.js
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
@@ -47,10 +45,9 @@ const Queue = () => {
   };
 
   useEffect(() => {
-    fetchData(); // Fetch data immediately on component mount
-    const intervalId = setInterval(fetchData, 3000); // Fetch data every 3 seconds
-
-    return () => clearInterval(intervalId); // Clear interval on component unmount
+    fetchData();
+    const intervalId = setInterval(fetchData, 3000);
+    return () => clearInterval(intervalId);
   }, []);
 
   const handleConfirmationServeNow = () => {
@@ -106,7 +103,6 @@ const Queue = () => {
       {queue.length > 0 &&
         queue.map((item) => {
           if (item.status === "Now Serving") {
-            // Find the user object that matches the account id
             const u = users.find(
               (u) =>
                 u &&
@@ -119,7 +115,11 @@ const Queue = () => {
                 <Accordion
                   key={u.account.accountId}
                   className="w-full items-center text-white mb-3"
-                  style={{ backgroundColor: "#E8594F", borderRadius: "20px", paddingInline: "10px" }}
+                  style={{
+                    backgroundColor: "#E8594F",
+                    borderRadius: "20px",
+                    paddingInline: "10px",
+                  }}
                 >
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
@@ -203,8 +203,6 @@ const Queue = () => {
       {queue.length > 0 ? (
         queue.map((item) => {
           if (item.status === "In Queue") {
-            // Find the user object that matches the account id
-
             const u = users.find(
               (u) =>
                 u &&
@@ -217,7 +215,11 @@ const Queue = () => {
                 <Accordion
                   key={u.account.accountId}
                   className="w-full items-center text-white mb-3"
-                  style={{ backgroundColor: "#5FB4B8", borderRadius: "20px", paddingInline: "10px" }}
+                  style={{
+                    backgroundColor: "#5FB4B8",
+                    borderRadius: "20px",
+                    paddingInline: "10px",
+                  }}
                 >
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}

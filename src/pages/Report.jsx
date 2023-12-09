@@ -1,7 +1,7 @@
 import React, { useState, useContext, useRef } from "react";
+import axios from "axios";
 import NavigationBar from "../components/NavigationBar";
 import { UserContext } from "../UserContext";
-import axios from "axios";
 import reportBg from "../assets/images/reportpng.png";
 import { Alert } from "../assets/styles/styles.js";
 import {
@@ -30,9 +30,9 @@ const Report = () => {
   };
 
   const handleConfirmSubmit = (e) => {
-    e.preventDefault(); // This line is important to prevent the default form submission
+    e.preventDefault();
     handleCloseConfirmDialog();
-    handleSubmitReport(e); // Pass the event to the handleSubmitReport function
+    handleSubmitReport(e);
   };
 
   const handleOpenDialog = () => {
@@ -172,7 +172,6 @@ const Report = () => {
         onClose={handleCloseDialog}
         PaperComponent={() => (
           <div className="rounded-xl shadow-2xl p-2 bg-white">
-            {/* Customize the contents of the dialog here */}
             <DialogTitle style={{ cursor: "move" }}>
               Report Submission
             </DialogTitle>

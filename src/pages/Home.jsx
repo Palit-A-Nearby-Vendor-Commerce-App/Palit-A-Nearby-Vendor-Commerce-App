@@ -59,7 +59,7 @@ function Home() {
   };
 
   const clearMarkers = () => {
-    markers.forEach(marker => marker.setMap(null));
+    markers.forEach((marker) => marker.setMap(null));
     markers = [];
   };
 
@@ -70,24 +70,34 @@ function Home() {
     setCurrentPosition(updatedLocation);
 
     if (user && user.account.location && mapRef.current) {
-      axios.put(`http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`, 
-      { ...user.account.location, latitude: latitude, longitude: longitude })
+      axios
+        .put(
+          `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
+          {
+            ...user.account.location,
+            latitude: latitude,
+            longitude: longitude,
+          }
+        )
         .then((response) => {
           setCurrentPosition({
             lat: response.data.latitude,
             lng: response.data.longitude,
           });
-          axios.get("http://localhost:8080/api/getAllUsers")
+          axios
+            .get("http://localhost:8080/api/getAllUsers")
             .then(({ data }) => {
               const getNearbyUsers = data.filter((otherUser) => {
-                return user.account.isVendor !== otherUser.account.isVendor &&
+                return (
+                  user.account.isVendor !== otherUser.account.isVendor &&
                   otherUser.account.location.isActive &&
                   getDistance(
                     user.account.location.latitude,
                     user.account.location.longitude,
                     otherUser.account.location.latitude,
                     otherUser.account.location.longitude
-                  ) <= 200;
+                  ) <= 200
+                );
               });
 
               clearMarkers();
@@ -123,8 +133,6 @@ function Home() {
         });
     }
   };
-
-  // console.log("My location? ", user.account.location);
 
   useEffect(() => {
     if (user) {

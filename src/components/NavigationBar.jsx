@@ -8,7 +8,7 @@ import axios from "axios";
 import React, { useContext, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min.js";
-import { UserContext } from "../UserContext"; // Update the path based on your file structure
+import { UserContext } from "../UserContext"; 
 import logo from "../assets/images/logo-white.png";
 import { NAV_ACTIVE_STYLE, NAV_HOVER_STYLE } from "../assets/styles/styles.js";
 
@@ -21,8 +21,6 @@ const NavigationBar = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
 
   const handleLogout = () => {
-    // Additional logout actions can be added here
-    console.log("LOGGIN OUT", user);
     if (user.account.location) {
       axios
         .put(
@@ -40,7 +38,6 @@ const NavigationBar = () => {
         });
     }
 
-    // Redirect to the default page ("/")
     history.push("/landing");
   };
 
@@ -113,64 +110,65 @@ const NavigationBar = () => {
         </ul>
 
         {user ? (
-          // If the user is logged in, display Logout button and user image
-
-          <>
-
-            <div className="flex items-center gap-4">
-              <img
-                src={`data:image/png;base64, ${user.image}`}
-                alt="User"
-                className="w-12 h-12 rounded-full"
-                onClick={handleMenu}
-              />
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
+          <div className="flex items-center gap-4">
+            <img
+              src={`data:image/png;base64, ${user.image}`}
+              alt="User"
+              className="w-12 h-12 rounded-full"
+              onClick={handleMenu}
+            />
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorEl)}
+              onClose={handleClose}
+              style={{ marginTop: "50px" }}
+            >
+              <MenuItem
+                onClick={handleProfile}
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  paddingLeft: "3px",
+                  paddingRight: "3px",
                 }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                style={{ marginTop: "50px" }}
               >
-
-                <MenuItem
-                  onClick={handleProfile}
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    paddingLeft: "3px",
-                    paddingRight: "3px",
-                  }}
-                >
-                  <AccountCircleIcon />
-                  Profile
-                </MenuItem>
-                <MenuItem
-                  onClick={handleLogout}
-                  style={{
-                    display: "flex",
-                    gap: "10px",
-                    paddingLeft: "3px",
-                    paddingRight: "3px",
-                  }}
-                >
-                  <LogoutIcon />
-                  Logout
-                </MenuItem>
-
-              </Menu>
-            </div>
-            <p style={{ color: "white", fontWeight: "bold", marginRight: "20px" }}>{user.firstName}</p></>
+                <AccountCircleIcon />
+                Profile
+              </MenuItem>
+              <MenuItem
+                onClick={handleLogout}
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  paddingLeft: "3px",
+                  paddingRight: "3px",
+                }}
+              >
+                <LogoutIcon />
+                Logout
+              </MenuItem>
+            </Menu>
+            <p
+              style={{
+                color: "white",
+                fontWeight: "bold",
+                marginRight: "20px",
+              }}
+            >
+              {user.firstName}
+            </p>
+          </div>
         ) : (
-          // If the user is not logged in, display Sign In button
           <Link to="/signin" style={{ textDecoration: "none" }}>
             <Button
               variant="outlined"
@@ -185,7 +183,7 @@ const NavigationBar = () => {
                 fontFamily: "Poppins",
                 textDecoration: "semibold",
                 borderRadius: "20px",
-                transition: "color 0.3s, border-color 0.3s, box-shadow 0.3s", // Add box-shadow to the transition
+                transition: "color 0.3s, border-color 0.3s, box-shadow 0.3s",
                 boxShadow: isHovered
                   ? "5px 5px 30px rgba(0, 0, 0, 0.2)"
                   : "none",
@@ -255,7 +253,6 @@ const NavigationBar = () => {
             </ul>
 
             {user ? (
-              // If the user is logged in, display Logout button and user image
               <div className="flex items-center gap-4">
                 <img
                   src={`data:image/png;base64, ${user.image}`}
@@ -263,7 +260,6 @@ const NavigationBar = () => {
                   className="w-12 h-12 rounded-full"
                   onClick={handleMenu}
                 />
-
                 <span>{user.firstname}</span>
                 <Menu
                   id="menu-appbar"
@@ -306,10 +302,8 @@ const NavigationBar = () => {
                     Profile
                   </MenuItem>
                 </Menu>
-
               </div>
             ) : (
-              // If the user is not logged in, display Sign In button
               <Link to="/signin" style={{ textDecoration: "none" }}>
                 <Button
                   variant="outlined"
@@ -325,7 +319,7 @@ const NavigationBar = () => {
                     textDecoration: "semibold",
                     borderRadius: "20px",
                     transition:
-                      "color 0.3s, border-color 0.3s, box-shadow 0.3s", // Add box-shadow to the transition
+                      "color 0.3s, border-color 0.3s, box-shadow 0.3s",
                     boxShadow: isHovered
                       ? "5px 5px 30px rgba(0, 0, 0, 0.2)"
                       : "none",

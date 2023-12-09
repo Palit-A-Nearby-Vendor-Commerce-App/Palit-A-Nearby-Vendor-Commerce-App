@@ -70,8 +70,8 @@ const Aboutus = () => {
         scrub: true,
       },
     });
-
   }, []);
+
   return (
     <div className="w-full font-custom">
       <NavigationBar />
@@ -100,7 +100,7 @@ const Aboutus = () => {
             Meet our team
           </h1>
           <p className="text-slate-500 pt-6 text-xl xl:mb-[96px] md:mb-[42px]">
-            Our philosophy is simple &mdash; hire a team of diverse, passionate
+            Our philosophy is simple — hire a team of diverse, passionate
             people and foster <br /> a culture that empowers you to do your best
             work.
           </p>

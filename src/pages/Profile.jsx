@@ -10,192 +10,138 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-} from "@material-ui/core"; // Import the dialog component from material UI library
+} from "@material-ui/core";
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
-  const [account, setAccount] = useState(null); // The account entity
-  const [transactions, setTransactions] = useState([]); // The list of transactions
-  const [editMode, setEditMode] = useState(false); // The flag for editing mode
-  const [message, setMessage] = useState(""); // The message to display
-  const [open, setOpen] = useState(false); // The flag for dialog open state
-  const history = useHistory(); // The history object for navigation
+  const [account, setAccount] = useState(null);
+  const [transactions, setTransactions] = useState([]);
+  const [editMode, setEditMode] = useState(false);
+  const [message, setMessage] = useState("");
+  const [open, setOpen] = useState(false);
+  const history = useHistory();
 
   const userId = user.userId;
 
-  // The function to fetch the user and account data from the API
   const fetchData = async () => {
     try {
-      // Get the user id from the local storage
       if (!userId) {
-        // If no user id, redirect to login page
         history.push("/login");
         return;
       }
-      // Get the user data by id
       const userResponse = await axios.get(
         `http://localhost:8080/api/getUserById/${userId}`
       );
       const userData = userResponse.data;
-      // Set the user state
       setUser(userData);
 
-      // Get the account data by id
       const accountResponse = await axios.get(
         `http://localhost:8080/api/getAccountById/${userData.account.accountId}`
       );
       const accountData = accountResponse.data;
-      // Set the account state
       setAccount(accountData);
 
-      // Get the transactions by customer id
       const transactionResponse = await axios.get(
         `http://localhost:8080/api/getTransactionsByCustomerId/${userData.account.accountId}`
       );
       const transactionData = transactionResponse.data;
-      // Set the transaction state
       setTransactions(transactionData);
     } catch (error) {
-      // If any error, display the message
       setMessage(error.message);
     }
   };
 
-  // The function to handle the edit button click
   const handleEdit = () => {
-    // Toggle the edit mode
     setEditMode(!editMode);
   };
 
-  // The function to handle the save button click
   const handleSave = async () => {
-    // Show a confirmation dialog
-    setOpen(true); // Set the dialog open state to true
+    setOpen(true);
   };
 
-  // The function to handle the confirm button click
   const handleConfirm = async () => {
     try {
-      // Update the user data by id
       await axios.put(
         `http://localhost:8080/api/updateUserById/${user.userId}`,
         user
       );
-      // Update the account data by id
       await axios.put(
         `http://localhost:8080/api/updateAccountById/${user.account.accountId}`,
         account
       );
-      // Display a success message
       setMessage("Your changes have been saved successfully.");
-      // Exit the edit mode
       setEditMode(false);
     } catch (error) {
-      // If any error, display the message
       setMessage(error.message);
     }
-    // Close the dialog
     setOpen(false);
   };
 
-  // The function to handle the cancel button click
   const handleCancel = () => {
-    // Close the dialog
     setOpen(false);
   };
 
-  // The function to handle the delete button click
   const handleDelete = async () => {
-    // Show a confirmation dialog
-    setOpen(true); // Set the dialog open state to true
+    setOpen(true);
   };
 
-  // The function to handle the delete confirm button click
   const handleDeleteConfirm = async () => {
     try {
-      // Delete the user data by id
       await axios.delete(
         `http://localhost:8080/api/deleteUserById/${user.userId}`
       );
-      // Delete the account data by id
       await axios.delete(
         `http://localhost:8080/api/deleteAccountById/${user.account.accountId}`
       );
-      // Display a success message
       setMessage("Your account has been deleted successfully.");
-      // Clear the local storage
       localStorage.clear();
-      // Redirect to the home page
       history.push("/");
     } catch (error) {
-      // If any error, display the message
       setMessage(error.message);
     }
-    // Close the dialog
     setOpen(false);
   };
 
-  // The function to handle the input change for user data
   const handleUserChange = (event) => {
-    // Get the name and value of the input
     const { name, value } = event.target;
-    // Update the user state
     setUser((prevUser) => ({
       ...prevUser,
       [name]: value,
     }));
   };
 
-  // The function to handle the input change for account data
   const handleAccountChange = (event) => {
-    // Get the name and value of the input
     const { name, value } = event.target;
-    // Update the account state
     setAccount((prevAccount) => ({
       ...prevAccount,
       [name]: value,
     }));
   };
 
-  // The function to handle the file change for user image
   const handleFileChange = (event) => {
-    // Get the file from the input
     const file = event.target.files[0];
-    // Create a file reader object
     const reader = new FileReader();
-    // Set the onload event handler
     reader.onload = (e) => {
-      // Get the base64 encoded data from the reader
       const data = e.target.result.split(",")[1];
-      // Update the user state with the image data
       setUser((prevUser) => ({
         ...prevUser,
         image: data,
       }));
     };
-    // Read the file as data URL
     reader.readAsDataURL(file);
   };
 
-  // The function to format the date
   const formatDate = (dateString) => {
-    // Create a date object from the string
     const date = new Date(dateString);
-    // Return the formatted date
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   };
 
-  // The function to format the transaction details
   const formatDetails = (details) => {
-    // Define a regular expression to match the product name, price, quantity, and total
     const regex = /(\w+) Php(\d+) x(\d+); Total: Php(\d+)/;
-    // Apply the regex to the details string and get the matching groups
     const [, productName, productPrice, quantity, total] = details.match(regex);
-    // Return the formatted details
     return `Product: ${productName}, Price: ${productPrice}, Quantity: ${quantity}, Total: ${total}`;
   };
 
-  // The useEffect hook to fetch the data when the component mounts
   useEffect(() => {
     fetchData();
   }, []);
@@ -209,14 +155,12 @@ const Profile = () => {
         {user && account && (
           <div className="flex flex-col gap-5 md:flex-row items-center justify-center">
             <div className="md:w-1/2 p-4 bg-white shadow-lg rounded-xl">
-              {" "}
-              {/* Add a white background, a shadow, and a rounded border to the image section */}
               <img
                 src={`data:image/jpeg;base64,${user.image}`}
                 alt="User profile"
                 className="rounded-2xl w-full h-full object-cover"
               />
-              {editMode && ( // Add a file input for image upload when in edit mode
+              {editMode && (
                 <input
                   type="file"
                   accept="image/*"
@@ -226,8 +170,6 @@ const Profile = () => {
               )}
             </div>
             <div className="md:w-1/2 p-4 bg-white shadow-lg rounded-xl">
-              {" "}
-              {/* Add a white background, a shadow, and a rounded border to the details section */}
               <h2 className="text-3xl font-bold text-center my-2">
                 User Details
               </h2>
@@ -440,9 +382,9 @@ const Profile = () => {
           </div>
         )}
       </div>
-      <br/>
-      <br/>
-      <hr/>
+      <br />
+      <br />
+      <hr />
       <h2 className="text-3xl font-bold text-center my-4">
         Transaction History
       </h2>
@@ -480,7 +422,6 @@ const Profile = () => {
       ) : (
         <p className="text-xl text-center">You have no transactions.</p>
       )}
-      {/* Add a dialog component for confirmation and success messages */}
       <Dialog
         open={open}
         onClose={handleCancel}
@@ -488,20 +429,18 @@ const Profile = () => {
         aria-describedby="alert-dialog-description"
         PaperProps={{
           style: {
-            borderRadius: "15px", // Apply the borderRadius to the Paper component
+            borderRadius: "15px",
           },
         }}
       >
         <DialogTitle id="alert-dialog-title">
-          {editMode ? "Confirm changes" : "Confirm deletion"}{" "}
-          {/* Change the title based on the edit mode */}
+          {editMode ? "Confirm changes" : "Confirm deletion"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             {editMode
               ? "Are you sure you want to save the changes to your profile?"
-              : "Are you sure you want to delete your account?"}{" "}
-            {/* Change the message based on the edit mode */}
+              : "Are you sure you want to delete your account?"}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -517,9 +456,7 @@ const Profile = () => {
             Cancel
           </Button>
           <Button
-            onClick={
-              editMode ? handleConfirm : handleDeleteConfirm
-            } /* Change the click handler based on the edit mode */
+            onClick={editMode ? handleConfirm : handleDeleteConfirm}
             color="primary"
             autoFocus
             style={{
@@ -528,8 +465,7 @@ const Profile = () => {
               borderRadius: "15px",
             }}
           >
-            {editMode ? "Confirm" : "Delete"}{" "}
-            {/* Change the button text based on the edit mode */}
+            {editMode ? "Confirm" : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>

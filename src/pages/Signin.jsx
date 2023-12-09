@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
-
+import { Link, useHistory } from "react-router-dom";
 import logo from "../assets/images/logo.png";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
@@ -16,10 +15,9 @@ const Signin = () => {
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
   useEffect(() => {
     if (user) {
-      history.push('/home');
+      history.push("/home");
     }
   }, [user, history]);
 
@@ -59,25 +57,15 @@ const Signin = () => {
     const isActive = true;
 
     if (currentUser) {
-      console.log("Current user: ", currentUser);
-      console.log(
-        "Location of user: ",
-        currentUser.account.location.locationId
-      );
-      // update users location to isactive
       axios
         .put(
           `http://localhost:8080/api/updateLocationById/${currentUser.account.location.locationId}`,
-          { ...currentUser.account.location,
-            isActive: isActive }
+          { ...currentUser.account.location, isActive: isActive }
         )
         .then((response) => {
-          console.log("User is now marked active, Location: ", response.data);
-          // get updated user data by getting user by id
           axios
             .get(`http://localhost:8080/api/getUserById/${currentUser.userId}`)
             .then((response) => {
-              console.log("Updated user data: ", response);
               setUser(response.data);
               history.push("/home");
             })

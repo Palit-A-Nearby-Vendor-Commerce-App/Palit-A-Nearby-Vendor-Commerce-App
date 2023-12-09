@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useContext } from "react";
+import { DatePicker } from "@mui/lab";
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import {
+  TextField
+} from "@mui/material";
 import axios from "axios";
 import moment from "moment";
+import React, { useContext, useEffect, useState } from "react";
 import logo from "../assets/images/logo.png";
 
-import { UserContext } from "../UserContext";
-import { useHistory, Link } from "react-router-dom";
 import {
-  useTheme,
-  useMediaQuery,
   Button,
   Dialog,
   DialogActions,
@@ -15,7 +17,11 @@ import {
   DialogContentText,
   DialogTitle,
   Snackbar,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
+import { Link, useHistory } from "react-router-dom";
+import { UserContext } from "../UserContext";
 import { Alert } from "../assets/styles/styles.js";
 
 function Signup() {
@@ -45,7 +51,7 @@ function Signup() {
     lat: 0,
   });
 
-  
+
   useEffect(() => {
     if (user) {
       history.push('/home');
@@ -262,22 +268,47 @@ function Signup() {
               </p>
             )}
           </div>
-          <div className="mt-4">
-            <input
-              name="birthdate"
-              type="date"
-              onChange={handleChange}
-              placeholder="Birthdate"
-              required
-              className="w-full rounded-[20px] p-3 mt-1 text-gray-400 font-custom border border-grayy"
-            />
+          <div className="mt-4 ">
+            <LocalizationProvider dateAdapter={AdapterDateFns} >
+              <DatePicker
+                value={userData.birthdate}
+                required
+                onChange={(newValue) => {
+                  setUserData({
+                    ...userData,
+                    birthdate: newValue,
+                  });
+                }}
+                renderInput={(params) =>
+                  <TextField
+                    {...params}
+                    sx={{
+                      width: '100%',
+                      borderRadius: '20px',
+                      borderColor: 'lightgray',
+                      backgroundColor: 'white',
+                      marginTop: "4px",
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderRadius: '20px',
+                          
+                        },
+                        '&.Mui-error fieldset': {
+                          borderColor: 'lightgray',
+                        },
+                      },
+                    }}
+                  />
+                }
+              />
+            </LocalizationProvider>
           </div>
           <div className="mt-4">
             <select
               name="userType"
               onChange={handleChange}
               required
-              className="w-full rounded-[20px] p-3 mt-1 text-gray-400 font-custom border border-grayy"
+              className="w-full rounded-[20px] p-3 mt-1 font-custom border border-grayy"
             >
               <option value="">Select user type</option>
               <option value="customer">Customer</option>
@@ -302,7 +333,7 @@ function Signup() {
                   onChange={handleChange}
                   placeholder="Description"
                   required
-                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border-gray"
+                  className="w-full rounded-[20px] p-3 mt-1 text-grayy font-custom border border-grayy"
                 />
               </div>
               <div className="mt-4">

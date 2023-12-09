@@ -23,7 +23,7 @@ const ManageStore = () => {
   const [editedProduct, setEditedProduct] = useState({
     picture: "",
     name: "",
-    price: " 0.00",
+    price: "",
   });
   const [products, setProducts] = useState([]);
   const [store, setStore] = useState(null);
@@ -181,7 +181,7 @@ const ManageStore = () => {
     setProducts(newProducts);
   };
 
-  
+
   const handleAddConfirm = async () => {
     if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
       alert("Please fill in all product details.");
@@ -301,6 +301,7 @@ const ManageStore = () => {
               variant="outlined"
               value={editedStore.category}
               onChange={handleStoreInputChange}
+              className="rounded-custom"
               style={{
                 fontSize: 15,
                 height: 30,
@@ -316,19 +317,16 @@ const ManageStore = () => {
                 </Icon>
               )}
             >
-              <MenuItem value="" style={{ fontSize: 12, height: 18 }}>
-                <em>Select category</em>
-              </MenuItem>
-              <MenuItem value="fish" style={{ fontSize: 12, height: 18 }}>
+              <MenuItem value="fish" className="text-xs h-4">
                 Fish
               </MenuItem>
-              <MenuItem value="fruits" style={{ fontSize: 12, height: 18 }}>
+              <MenuItem value="fruits" className="text-xs h-4">
                 Fruits
               </MenuItem>
-              <MenuItem value="assorted" style={{ fontSize: 12, height: 18 }}>
+              <MenuItem value="assorted" className="text-xs h-4">
                 Assorted
               </MenuItem>
-              <MenuItem value="manicure" style={{ fontSize: 12, height: 18 }}>
+              <MenuItem value="manicure" className="text-xs h-4">
                 Manicure
               </MenuItem>
             </Select>
@@ -359,11 +357,11 @@ const ManageStore = () => {
               },
               endAdornment: (
                 <InputAdornment position="center" style={{ width: "3px", marginRight: "5px" }}>
-                    <Icon >
-                        <img src={editStore} alt="Edit Store"  />
-                    </Icon>
+                  <Icon >
+                    <img src={editStore} alt="Edit Store" />
+                  </Icon>
                 </InputAdornment>
-            ),
+              ),
             }}
             value={editedStore.description}
             onChange={handleStoreInputChange}
@@ -437,7 +435,7 @@ const ManageStore = () => {
                       </InputAdornment>
                     ),
                     style: {
-                      borderRadius: "20px", // Moved borderRadius here
+                      borderRadius: "20px",
                     },
                   }}
                 />
@@ -467,7 +465,7 @@ const ManageStore = () => {
                       </InputAdornment>
                     ),
                     style: {
-                      borderRadius: "20px", // Moved borderRadius here
+                      borderRadius: "20px", 
                     },
                   }}
                 />
@@ -493,7 +491,7 @@ const ManageStore = () => {
       )}
       <div
         style={{
-          maxHeight: editMode ? "350px" : "510px",
+          maxHeight: editMode ? "355px" : "510px",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "space-between",
@@ -555,13 +553,13 @@ const ManageStore = () => {
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       "& fieldset": {
-                        border: "none", // Removes the border
+                        border: "none", 
                       },
                       "&:hover fieldset": {
-                        border: "none", // Removes the border on hover
+                        border: "none", 
                       },
                       "&.Mui-focused fieldset": {
-                        border: "none", // Removes the border when focused
+                        border: "none", 
                       },
                     },
                   }}
@@ -614,11 +612,11 @@ const ManageStore = () => {
                     },
                     endAdornment: (
                       <InputAdornment position="center" style={{ width: "3px", marginRight: "5px" }}>
-                          <Icon >
-                              <img src={editStore} alt="Edit Store" style={{ marginTop: "3px" }} />
-                          </Icon>
+                        <Icon >
+                          <img src={editStore} alt="Edit Store" style={{ marginTop: "3px" }} />
+                        </Icon>
                       </InputAdornment>
-                  ),
+                    ),
                   }}
                   style={{
                     position: "absolute",
@@ -718,7 +716,7 @@ const ManageStore = () => {
         aria-describedby="alert-dialog-description"
         PaperProps={{
           style: {
-            borderRadius: "15px", // Apply the borderRadius to the Paper component
+            borderRadius: "15px",
           },
         }}
       >

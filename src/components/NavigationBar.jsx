@@ -1,17 +1,16 @@
+import { Button } from "@material-ui/core";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LogoutIcon from "@mui/icons-material/Logout";
+import MenuIcon from "@mui/icons-material/Menu";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import axios from "axios";
 import React, { useContext, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { Button } from "@material-ui/core";
-import logo from "../assets/images/logo-white.png";
-import { NAV_HOVER_STYLE, NAV_ACTIVE_STYLE } from "../assets/styles/styles.js";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min.js";
 import { UserContext } from "../UserContext"; // Update the path based on your file structure
-import sampleStore from "../assets/images/storesample.png";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import MenuIcon from "@mui/icons-material/Menu";
-import LogoutIcon from "@mui/icons-material/Logout";
-import axios from "axios";
+import logo from "../assets/images/logo-white.png";
+import { NAV_ACTIVE_STYLE, NAV_HOVER_STYLE } from "../assets/styles/styles.js";
 
 const NavigationBar = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -115,60 +114,61 @@ const NavigationBar = () => {
 
         {user ? (
           // If the user is logged in, display Logout button and user image
-          
+
           <>
-          
-          <div className="flex items-center gap-4">
-            <img
-              src={`data:image/png;base64, ${user.image}`}
-              alt="User"
-              className="w-12 h-12 rounded-full"
-              onClick={handleMenu}
-            />
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              style={{ marginTop: "50px" }}
-            >
-              <MenuItem
-                onClick={handleLogout}
-                style={{
-                  display: "flex",
-                  gap: "10px",
-                  paddingLeft: "3px",
-                  paddingRight: "3px",
+
+            <div className="flex items-center gap-4">
+              <img
+                src={`data:image/png;base64, ${user.image}`}
+                alt="User"
+                className="w-12 h-12 rounded-full"
+                onClick={handleMenu}
+              />
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
                 }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                style={{ marginTop: "50px" }}
               >
-                <LogoutIcon />
-                Logout
-              </MenuItem>
-              
-              <MenuItem
-                    onClick={handleProfile}
-                    style={{
-                      display: "flex",
-                      gap: "10px",
-                      paddingLeft: "3px",
-                      paddingRight: "3px",
-                    }}
-                  >
-                    <AccountCircleIcon />
-                    Profile
-                  </MenuItem>
-            </Menu>
-          </div>
-          <p style={{color: "white", fontWeight: "bold", marginRight: "20px" }}>{user.firstName}</p></>
+
+                <MenuItem
+                  onClick={handleProfile}
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    paddingLeft: "3px",
+                    paddingRight: "3px",
+                  }}
+                >
+                  <AccountCircleIcon />
+                  Profile
+                </MenuItem>
+                <MenuItem
+                  onClick={handleLogout}
+                  style={{
+                    display: "flex",
+                    gap: "10px",
+                    paddingLeft: "3px",
+                    paddingRight: "3px",
+                  }}
+                >
+                  <LogoutIcon />
+                  Logout
+                </MenuItem>
+
+              </Menu>
+            </div>
+            <p style={{ color: "white", fontWeight: "bold", marginRight: "20px" }}>{user.firstName}</p></>
         ) : (
           // If the user is not logged in, display Sign In button
           <Link to="/signin" style={{ textDecoration: "none" }}>
@@ -263,8 +263,8 @@ const NavigationBar = () => {
                   className="w-12 h-12 rounded-full"
                   onClick={handleMenu}
                 />
-                
-              <span>{user.firstname}</span>
+
+                <span>{user.firstname}</span>
                 <Menu
                   id="menu-appbar"
                   anchorEl={anchorEl}
@@ -306,7 +306,7 @@ const NavigationBar = () => {
                     Profile
                   </MenuItem>
                 </Menu>
-                
+
               </div>
             ) : (
               // If the user is not logged in, display Sign In button

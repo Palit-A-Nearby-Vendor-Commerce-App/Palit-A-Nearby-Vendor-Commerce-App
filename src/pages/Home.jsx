@@ -69,7 +69,7 @@ function Home() {
 
     setCurrentPosition(updatedLocation);
 
-    if (user && user.account.location) {
+    if (user && user.account.location && mapRef.current) {
       axios.put(`http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`, 
       { ...user.account.location, latitude: latitude, longitude: longitude })
         .then((response) => {

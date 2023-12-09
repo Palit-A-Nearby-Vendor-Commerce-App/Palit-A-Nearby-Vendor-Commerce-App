@@ -132,12 +132,12 @@ const Store = ({ vendor }) => {
     for (let i = 0; i < products.length; i++) {
       if (quantity[i] > 0) {
         orderedList.push(
-          `${products[i].name} Php${products[i].price} x${quantity[i]}`
+          `${products[i].name} ₱${products[i].price} x${quantity[i]}`
         );
       }
     }
     let orderedListString = orderedList.join("; ");
-    orderedListString += `; Total: Php${calculateTotalPrice()}`;
+    orderedListString += `; Total: ₱${calculateTotalPrice()}`;
     setDetails(orderedListString);
     setOpenOrderDialog(true);
   };
@@ -147,14 +147,21 @@ const Store = ({ vendor }) => {
   };
 
   const OrderDetails = (activeTransaction) => {
+    const orderStatus = activeTransaction.activeTransaction.status;
+    const statusColor = orderStatus === "In Queue" ? "green" : "blue";
+
     return (
       <>
         <div>
           {activeTransaction && (
             <div className="bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto h-[190px] overflow-auto">
-              <div className="text-gray-800 text-m font-semibold mb-4">
-                {activeTransaction.activeTransaction.status}
+              <div className="text-gray-800 text-m">
+                Active Order:{" "}
+                <span style={{ fontWeight:"bold", color: statusColor }}>{orderStatus}</span>
               </div>
+              <p style={{ color: "grey" }}>
+                Vendor: {activeTransaction.activeTransaction.vendor.email}
+              </p>
               {activeTransaction.activeTransaction.details
                 .split(";")
                 .map((line, index) => (
@@ -212,8 +219,8 @@ const Store = ({ vendor }) => {
                 {vendor?.account.store.category}
               </div>
             </div>
-            <div className="p-2" style={{ height: "50px" }}>
-              <p className="text-sm" style={{ textAlign: "justify" }}>
+            <div style={{ marginTop: "20px", width: "350px" }}>
+              <p style={{ textAlign: "justify", wordWrap: "break-word" }}>
                 {vendor?.account?.store?.description || "Loading..."}
               </p>
             </div>

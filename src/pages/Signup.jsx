@@ -1,15 +1,9 @@
-import { DatePicker } from "@mui/lab";
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import {
-  TextField
-} from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
-import React, { useContext, useEffect, useState } from "react";
-import logo from "../assets/images/logo.png";
-
+import { Link, useHistory } from "react-router-dom";
 import {
+  TextField,
   Button,
   Dialog,
   DialogActions,
@@ -20,9 +14,12 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { Link, useHistory } from "react-router-dom";
+import { DatePicker } from "@mui/lab";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import { UserContext } from "../UserContext";
 import { Alert } from "../assets/styles/styles.js";
+import logo from "../assets/images/logo.png";
 
 function Signup() {
   const history = useHistory();
@@ -51,10 +48,9 @@ function Signup() {
     lat: 0,
   });
 
-
   useEffect(() => {
     if (user) {
-      history.push('/home');
+      history.push("/home");
     }
   }, [user]);
 
@@ -269,7 +265,7 @@ function Signup() {
             )}
           </div>
           <div className="mt-4 ">
-            <LocalizationProvider dateAdapter={AdapterDateFns} >
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 value={userData.birthdate}
                 required
@@ -279,27 +275,26 @@ function Signup() {
                     birthdate: newValue,
                   });
                 }}
-                renderInput={(params) =>
+                renderInput={(params) => (
                   <TextField
                     {...params}
                     sx={{
-                      width: '100%',
-                      borderRadius: '20px',
-                      borderColor: 'lightgray',
-                      backgroundColor: 'white',
+                      width: "100%",
+                      borderRadius: "20px",
+                      borderColor: "lightgray",
+                      backgroundColor: "white",
                       marginTop: "4px",
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderRadius: '20px',
-                          
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderRadius: "20px",
                         },
-                        '&.Mui-error fieldset': {
-                          borderColor: 'lightgray',
+                        "&.Mui-error fieldset": {
+                          borderColor: "lightgray",
                         },
                       },
                     }}
                   />
-                }
+                )}
               />
             </LocalizationProvider>
           </div>

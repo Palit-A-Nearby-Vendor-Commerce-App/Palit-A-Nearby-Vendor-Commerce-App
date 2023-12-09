@@ -466,55 +466,55 @@ const Store = ({ vendor }) => {
       </Dialog>
 
       {/* Cancel confirmation dialog */}
-      <Dialog
-        open={openCancelDialog}
-        onClose={() => setOpenCancelDialog(false)}
-        aria-labelledby="cancel-dialog-title"
-        aria-describedby="cancel-dialog-description"
-        PaperProps={{
-          style: {
-            borderRadius: "15px", // Apply the borderRadius to the Paper component
-          },
-        }}
-      >
-        <DialogTitle id="cancel-dialog-title">{"Confirm Cancel"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="cancel-dialog-description">
-            Are you sure you want to cancel your order?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setOpenCancelDialog(false)}
-            color="primary"
-            style={{ backgroundColor: "#E8594F", color: "white", borderRadius: "15px",  }}
-          >
-            No
-          </Button>
-          <Button
-            onClick={() => {
-              axios
-                .put(
-                  `http://localhost:8080/api/updateTransactionById/${activeTransaction.transactionId}`,
-                  {
-                    ...activeTransaction,
-                    status: "Cancelled",
-                  }
-                )
-                .then((response) => {
-                  console.log("Transaction cancelled:", response.data);
-                  setOrderStatus(false);
-                });
-              setOpenCancelDialog(false);
+          <Dialog
+            open={openCancelDialog}
+            onClose={() => setOpenCancelDialog(false)}
+            aria-labelledby="cancel-dialog-title"
+            aria-describedby="cancel-dialog-description"
+            PaperProps={{
+              style: {
+                borderRadius: "15px", // Apply the borderRadius to the Paper component
+              },
             }}
-            color="primary"
-            autoFocus
-            style={{ backgroundColor: "#0575B4", color: "white", borderRadius: "15px",  }}
           >
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <DialogTitle id="cancel-dialog-title">{"Confirm Cancel"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="cancel-dialog-description">
+                Are you sure you want to cancel your order?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={() => setOpenCancelDialog(false)}
+                color="primary"
+                style={{ backgroundColor: "#E8594F", color: "white", borderRadius: "15px",  }}
+              >
+                No
+              </Button>
+              <Button
+                onClick={() => {
+                  axios
+                    .put(
+                      `http://localhost:8080/api/updateTransactionById/${activeTransaction.transactionId}`,
+                      {
+                        ...activeTransaction,
+                        status: "Cancelled",
+                      }
+                    )
+                    .then((response) => {
+                      console.log("Transaction cancelled:", response.data);
+                      setOrderStatus(false);
+                    });
+                  setOpenCancelDialog(false);
+                }}
+                color="primary"
+                autoFocus
+                style={{ backgroundColor: "#0575B4", color: "white", borderRadius: "15px",  }}
+              >
+                Yes
+              </Button>
+            </DialogActions>
+          </Dialog>
     </>
   );
 };

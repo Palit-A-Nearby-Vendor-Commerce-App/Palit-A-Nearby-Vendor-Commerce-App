@@ -3,6 +3,14 @@ import axios from "axios";
 import { useHistory } from "react-router-dom";
 import { UserContext } from "../UserContext";
 import NavigationBar from "../components/NavigationBar";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from "@material-ui/core"; // Import the dialog component from material UI library
 
 const Profile = () => {
   const { user, setUser } = useContext(UserContext);
@@ -10,6 +18,7 @@ const Profile = () => {
   const [transactions, setTransactions] = useState([]); // The list of transactions
   const [editMode, setEditMode] = useState(false); // The flag for editing mode
   const [message, setMessage] = useState(""); // The message to display
+  const [open, setOpen] = useState(false); // The flag for dialog open state
   const history = useHistory(); // The history object for navigation
 
   const userId = user.userId;
@@ -61,59 +70,69 @@ const Profile = () => {
   // The function to handle the save button click
   const handleSave = async () => {
     // Show a confirmation dialog
-    const confirmed = window.confirm(
-      "Are you sure you want to save the changes?"
-    );
-    if (confirmed) {
-      try {
-        // Update the user data by id
-        await axios.put(
-          `http://localhost:8080/api/updateUserById/${user.userId}`,
-          user
-        );
-        // Update the account data by id
-        await axios.put(
-          `http://localhost:8080/api/updateAccountById/${user.account.accountId}`,
-          account
-        );
-        // Display a success message
-        setMessage("Your changes have been saved successfully.");
-        // Exit the edit mode
-        setEditMode(false);
-      } catch (error) {
-        // If any error, display the message
-        setMessage(error.message);
-      }
+    setOpen(true); // Set the dialog open state to true
+  };
+
+  // The function to handle the confirm button click
+  const handleConfirm = async () => {
+    try {
+      // Update the user data by id
+      await axios.put(
+        `http://localhost:8080/api/updateUserById/${user.userId}`,
+        user
+      );
+      // Update the account data by id
+      await axios.put(
+        `http://localhost:8080/api/updateAccountById/${user.account.accountId}`,
+        account
+      );
+      // Display a success message
+      setMessage("Your changes have been saved successfully.");
+      // Exit the edit mode
+      setEditMode(false);
+    } catch (error) {
+      // If any error, display the message
+      setMessage(error.message);
     }
+    // Close the dialog
+    setOpen(false);
+  };
+
+  // The function to handle the cancel button click
+  const handleCancel = () => {
+    // Close the dialog
+    setOpen(false);
   };
 
   // The function to handle the delete button click
   const handleDelete = async () => {
     // Show a confirmation dialog
-    const confirmed = window.confirm(
-      "Are you sure you want to delete your account?"
-    );
-    if (confirmed) {
-      try {
-        // Delete the user data by id
-        await axios.delete(
-          `http://localhost:8080/api/deleteUserById/${user.userId}`
-        );
-        // Delete the account data by id
-        await axios.delete(
-          `http://localhost:8080/api/deleteAccountById/${user.account.accountId}`
-        );
-        // Display a success message
-        setMessage("Your account has been deleted successfully.");
-        // Clear the local storage
-        localStorage.clear();
-        // Redirect to the home page
-        history.push("/");
-      } catch (error) {
-        // If any error, display the message
-        setMessage(error.message);
-      }
+    setOpen(true); // Set the dialog open state to true
+  };
+
+  // The function to handle the delete confirm button click
+  const handleDeleteConfirm = async () => {
+    try {
+      // Delete the user data by id
+      await axios.delete(
+        `http://localhost:8080/api/deleteUserById/${user.userId}`
+      );
+      // Delete the account data by id
+      await axios.delete(
+        `http://localhost:8080/api/deleteAccountById/${user.account.accountId}`
+      );
+      // Display a success message
+      setMessage("Your account has been deleted successfully.");
+      // Clear the local storage
+      localStorage.clear();
+      // Redirect to the home page
+      history.push("/");
+    } catch (error) {
+      // If any error, display the message
+      setMessage(error.message);
     }
+    // Close the dialog
+    setOpen(false);
   };
 
   // The function to handle the input change for user data
@@ -179,16 +198,17 @@ const Profile = () => {
     fetchData();
   }, []);
 
-  // The JSX code for rendering the profile page
   return (
     <>
       <NavigationBar />
-      <div className="container mx-auto px-4">
+      <div className="container gap-5 mx-auto px-4">
         <h1 className="text-4xl font-bold text-center my-4">Profile</h1>
-        {message && <p className="text-red-600 text-center">{message}</p>}
+        {message && <p className="text-green-600 text-center">{message}</p>}
         {user && account && (
-          <div className="flex flex-col md:flex-row items-center justify-center">
-            <div className="md:w-1/2 p-4">
+          <div className="flex flex-col gap-5 md:flex-row items-center justify-center">
+            <div className="md:w-1/2 p-4 bg-white shadow-lg rounded-xl">
+              {" "}
+              {/* Add a white background, a shadow, and a rounded border to the image section */}
               <img
                 src={`data:image/jpeg;base64,${user.image}`}
                 alt="User profile"
@@ -203,7 +223,9 @@ const Profile = () => {
                 />
               )}
             </div>
-            <div className="md:w-1/2 p-4">
+            <div className="md:w-1/2 p-4 bg-white shadow-lg rounded-xl">
+              {" "}
+              {/* Add a white background, a shadow, and a rounded border to the details section */}
               <h2 className="text-3xl font-bold text-center my-2">
                 User Details
               </h2>
@@ -398,7 +420,8 @@ const Profile = () => {
                   ) : (
                     <button
                       onClick={handleEdit}
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-xl"
+                    style={{backgroundColor: "#0575B4"}}
+                      className="text-white font-bold py-2 px-4 rounded-xl"
                     >
                       Edit
                     </button>
@@ -414,46 +437,97 @@ const Profile = () => {
             </div>
           </div>
         )}
-        <h2 className="text-3xl font-bold text-center my-4">
-          Transaction History
-        </h2>
-        {transactions.length > 0 ? (
-          <div className="flex flex-col items-center justify-center">
-            <table className="table-auto border-collapse border-2 border-gray-300 rounded-xl">
-              <thead>
-                <tr>
-                  <th className="border-2 border-gray-300 p-2">
-                    Transaction ID
-                  </th>
-                  <th className="border-2 border-gray-300 p-2">Vendor</th>
-                  <th className="border-2 border-gray-300 p-2">Status</th>
-                  <th className="border-2 border-gray-300 p-2">Details</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transactions.map((transaction) => (
-                  <tr key={transaction.transactionId}>
-                    <td className="border-2 border-gray-300 p-2 text-center">
-                      {transaction.transactionId}
-                    </td>
-                    <td className="border-2 border-gray-300 p-2 text-center">
-                      {transaction.vendor.email}
-                    </td>
-                    <td className="border-2 border-gray-300 p-2 text-center">
-                      {transaction.status}
-                    </td>
-                    <td className="border-2 border-gray-300 p-2 text-center">
-                      {formatDetails(transaction.details)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p className="text-xl text-center">You have no transactions.</p>
-        )}
       </div>
+      <h2 className="text-3xl font-bold text-center my-4">
+        Transaction History
+      </h2>
+      {transactions.length > 0 ? (
+        <div className="flex flex-col items-center justify-center">
+          <table className="table-auto border-collapse border-2 border-gray-300 rounded-xl">
+            <thead>
+              <tr>
+                <th className="border-2 border-gray-300 p-2">Transaction ID</th>
+                <th className="border-2 border-gray-300 p-2">Vendor</th>
+                <th className="border-2 border-gray-300 p-2">Status</th>
+                <th className="border-2 border-gray-300 p-2">Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactions.map((transaction) => (
+                <tr key={transaction.transactionId}>
+                  <td className="border-2 border-gray-300 p-2 text-center">
+                    {transaction.transactionId}
+                  </td>
+                  <td className="border-2 border-gray-300 p-2 text-center">
+                    {transaction.vendor.email}
+                  </td>
+                  <td className="border-2 border-gray-300 p-2 text-center">
+                    {transaction.status}
+                  </td>
+                  <td className="border-2 border-gray-300 p-2 text-center">
+                    {formatDetails(transaction.details)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-xl text-center">You have no transactions.</p>
+      )}
+      {/* Add a dialog component for confirmation and success messages */}
+      <Dialog
+        open={open}
+        onClose={handleCancel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+        PaperProps={{
+          style: {
+            borderRadius: "15px", // Apply the borderRadius to the Paper component
+          },
+        }}
+      >
+        <DialogTitle id="alert-dialog-title">
+          {editMode ? "Confirm changes" : "Confirm deletion"}{" "}
+          {/* Change the title based on the edit mode */}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {editMode
+              ? "Are you sure you want to save the changes to your profile?"
+              : "Are you sure you want to delete your account?"}{" "}
+            {/* Change the message based on the edit mode */}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleCancel}
+            color="primary"
+            style={{
+              backgroundColor: "#E8594F",
+              color: "white",
+              borderRadius: "15px",
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={
+              editMode ? handleConfirm : handleDeleteConfirm
+            } /* Change the click handler based on the edit mode */
+            color="primary"
+            autoFocus
+            style={{
+              backgroundColor: "#0575B4",
+              color: "white",
+              borderRadius: "15px",
+            }}
+          >
+            {editMode ? "Confirm" : "Delete"}{" "}
+            {/* Change the button text based on the edit mode */}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

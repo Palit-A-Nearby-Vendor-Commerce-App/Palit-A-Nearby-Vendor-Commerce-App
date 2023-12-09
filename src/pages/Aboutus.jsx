@@ -71,17 +71,6 @@ const Aboutus = () => {
       },
     });
 
-    gsap.from(".aboutus-members", {
-      y: 200,
-      opacity: 0,
-      stagger: 0.2,
-      scrollTrigger: {
-        trigger: ".aboutus-members",
-        start: "top 80%",
-        end: "top 50%",
-        scrub: true,
-      },
-    });
   }, []);
   return (
     <div className="w-full font-custom">

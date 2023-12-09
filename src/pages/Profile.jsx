@@ -154,7 +154,10 @@ const Profile = () => {
         {message && <p className="text-green-600 text-center">{message}</p>}
         {user && account && (
           <div className="flex flex-col gap-5 md:flex-row items-center justify-center">
-            <div className="md:w-1/2 p-4 bg-white shadow-lg rounded-xl">
+            <div
+              style={{ width: "350px", height: "350px" }}
+              className="md:w-1/2 p-4 bg-white shadow-lg rounded-xl overflow-hidden"
+            >
               <img
                 src={`data:image/jpeg;base64,${user.image}`}
                 alt="User profile"

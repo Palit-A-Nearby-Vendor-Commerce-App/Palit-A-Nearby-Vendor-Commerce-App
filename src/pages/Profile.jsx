@@ -137,7 +137,6 @@ const Profile = () => {
   };
   
   const formatDetails = (details) => {
-    console.log(details);
     if (details == null || details === "") return "";
     const regex = /(\w+) ₱(\d+) x(\d+); Total: ₱(\d+)/;
     const [, productName, productPrice, quantity, total] = details.match(regex);

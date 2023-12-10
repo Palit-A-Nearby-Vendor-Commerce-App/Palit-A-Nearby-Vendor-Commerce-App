@@ -61,61 +61,62 @@ const Chat = () => {
     fetchConversations();
   }, []);
 
-  useEffect(() => {
-    const checkAndCreateConversation = async () => {
-      try {
-        if (selectedVendor && selectedVendor.account && user && user.account) {
-          const existingConversation = conversations.find(
-            (conv) =>
-              conv?.vendor?.accountId === selectedVendor?.account?.accountId &&
-              conv?.customer?.accountId === user?.account?.accountId
-          );
-          if (existingConversation) {
-            setSelectedConversation(existingConversation);
-          } else {
-            const response = await axios.post(
-              "http://localhost:8080/api/createConversation",
-              {
-                vendor: selectedVendor.account,
-                customer: user.account,
-              }
-            );
-            const newConversation = response.data;
-            localStorage.setItem(
-              "selectedConversationId",
-              newConversation.conversationId
-            );
-            localStorage.setItem(
-              "selectedVendorId",
-              selectedVendor.account.accountId
-            );
-            setSelectedConversation(newConversation);
-          }
-        } else if (
-          selectedCustomer &&
-          selectedCustomer.account &&
-          user &&
-          user.account
-        ) {
-          const existingConversation = conversations.find(
-            (conv) =>
-              conv?.customer?.accountId ===
-                selectedCustomer?.account?.accountId &&
-              conv?.vendor?.accountId === user?.account?.accountId
-          );
-
-          if (existingConversation) {
-            setSelectedConversation(existingConversation);
-          }
+  const checkAndCreateConversation = async () => {
+    try {
+      if (selectedVendor && selectedVendor.account && user && user.account) {
+        const existingConversation = conversations?.find(
+          (conv) =>
+            conv?.vendor?.accountId === selectedVendor?.account?.accountId &&
+            conv?.customer?.accountId === user?.account?.accountId
+        );
+        if (existingConversation) {
+          setSelectedConversation(existingConversation);
         } else {
-          console.error(
-            "selectedVendor, selectedVendor.account, user, or user.account is undefined or null"
+          const response = await axios.post(
+            "http://localhost:8080/api/createConversation",
+            {
+              vendor: selectedVendor.account,
+              customer: user.account,
+            }
           );
+          const newConversation = response.data;
+          localStorage.setItem(
+            "selectedConversationId",
+            newConversation.conversationId
+          );
+          localStorage.setItem(
+            "selectedVendorId",
+            selectedVendor.account.accountId
+          );
+          setSelectedConversation(newConversation);
         }
-      } catch (error) {
-        console.error("Error creating or checking conversation:", error);
+      } else if (
+        selectedCustomer &&
+        selectedCustomer.account &&
+        user &&
+        user.account
+      ) {
+        const existingConversation = conversations?.find(
+          (conv) =>
+            conv?.customer?.accountId ===
+              selectedCustomer?.account?.accountId &&
+            conv?.vendor?.accountId === user?.account?.accountId
+        );
+
+        if (existingConversation) {
+          setSelectedConversation(existingConversation);
+        }
+      } else {
+        console.error(
+          "selectedVendor, selectedVendor.account, user, or user.account is undefined or null"
+        );
       }
-    };
+    } catch (error) {
+      console.error("Error creating or checking conversation:", error);
+    }
+  };
+
+  useEffect(() => {
     checkAndCreateConversation();
   }, [conversations]);
 
@@ -279,6 +280,7 @@ const Chat = () => {
           selectedVendor &&
           chats.map((chat) => (
             <div
+              key={chat.chatId}
               className={`${
                 chat?.account?.accountId ===
                 chat?.conversation?.vendor?.accountId
@@ -355,6 +357,7 @@ const Chat = () => {
           selectedCustomer &&
           chats.map((chat) => (
             <div
+              key={chat.chatId}
               className={`${
                 chat?.account?.accountId ===
                 chat?.conversation?.customer?.accountId
@@ -435,7 +438,7 @@ const Chat = () => {
             if (event.key === "Enter") {
               sendChat();
               event.preventDefault();
-              setNewMessage('');
+              setNewMessage("");
             }
           }}
           onChange={(e) => setNewMessage(e.target.value)}

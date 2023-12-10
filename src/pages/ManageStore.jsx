@@ -41,40 +41,41 @@ const ManageStore = () => {
   const [openAddConfirmDialog, setOpenAddConfirmDialog] = useState(false);
 
   useEffect(() => {
-    const fetchStore = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/getStoreById/${user.account.store.storeId}`
-        );
-        setStore(response.data);
-        setEditedStore({
-          storeName: response.data.storeName,
-          category: response.data.category,
-          description: response.data.description,
-        });
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching store:", error);
-      }
-    };
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/getProductServicesByStoreId/store/${user.account.store.storeId}`
-        );
-        setProducts(response.data);
-        localStorage.setItem("products", JSON.stringify(response.data));
-      } catch (error) {
-        console.error("Error fetching products:", error);
-        const localData = localStorage.getItem("products");
-        if (localData) {
-          setProducts(JSON.parse(localData));
-        }
-      }
-    };
-    fetchStore();
-    fetchProducts();
+    const interval = setInterval(() => {
+      fetchStore();
+      fetchProducts();
+    }, 3000);
+
+    return () => clearInterval(interval);
   }, []);
+
+  const fetchStore = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/getStoreById/${user.account.store.storeId}`
+      );
+      setStore(response.data);
+      setEditedStore({
+        storeName: response.data.storeName,
+        category: response.data.category,
+        description: response.data.description,
+      });
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching store:", error);
+    }
+  };
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/getProductServicesByStoreId/store/${user.account.store.storeId}`
+      );
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -269,13 +270,21 @@ const ManageStore = () => {
       openConfirmationDialog(() => handleAddConfirm, "add");
     }
   };
-  
+
   const handleDelete = (index) => {
     openConfirmationDialog(() => () => handleDeleteConfirm(index), "delete");
   };
 
   return (
-    <div className="noscrollbar" style={{ overflow: "auto", height: "90vh", display: "flex", flexDirection: "column" }}>
+    <div
+      className="noscrollbar"
+      style={{
+        overflow: "auto",
+        height: "90vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <div style={{ display: "flex" }}>
         <img
           src={`data:image/png;base64, ${user.image}`}
@@ -511,10 +520,10 @@ const ManageStore = () => {
           </form>
         </div>
       ) : (
-        <div>{ }</div>
+        <div>{}</div>
       )}
       <div
-        className = "noscrollbar"
+        className="noscrollbar"
         style={{
           maxHeight: editMode ? "340px" : "500px",
           display: "flex",
@@ -555,9 +564,10 @@ const ManageStore = () => {
                     width: "100%",
                     height: "150px",
                     borderRadius: "20px",
-                    backgroundImage: `url(${product.imagePreview ||
+                    backgroundImage: `url(${
+                      product.imagePreview ||
                       `data:image/png;base64,${product.image}`
-                      })`,
+                    })`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     display: "inline-block",
@@ -839,14 +849,19 @@ const ManageStore = () => {
         aria-labelledby="add-confirm-dialog-title"
         aria-describedby="add-confirm-dialog-description"
       >
-        <DialogTitle id="add-confirm-dialog-title">{"Incomplete Details"}</DialogTitle>
+        <DialogTitle id="add-confirm-dialog-title">
+          {"Incomplete Details"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="add-confirm-dialog-description">
             Please fill in all product details.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddConfirmDialog(false)} color="primary">
+          <Button
+            onClick={() => setOpenAddConfirmDialog(false)}
+            color="primary"
+          >
             OK
           </Button>
         </DialogActions>

@@ -438,6 +438,7 @@ const Chat = () => {
             if (event.key === "Enter") {
               sendChat();
               event.preventDefault();
+              setNewMessage('');
             }
           }}
           onChange={(e) => setNewMessage(e.target.value)}

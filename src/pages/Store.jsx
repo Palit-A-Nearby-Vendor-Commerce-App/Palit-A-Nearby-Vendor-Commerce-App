@@ -148,7 +148,7 @@ const Store = ({ vendor }) => {
 
   const OrderDetails = (activeTransaction) => {
     const orderStatus = activeTransaction.activeTransaction.status;
-    const statusColor = orderStatus === "In Queue" ? "green" : "blue";
+    const statusColor = orderStatus === "In Queue" ? "#0071b3" : "#e8594f";
 
     return (
       <>

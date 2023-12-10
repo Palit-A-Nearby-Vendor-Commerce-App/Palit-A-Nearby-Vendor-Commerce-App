@@ -11,7 +11,7 @@ const Landing = () => {
 
   useEffect(() => {
     if (user) {
-      return <Redirect to="/home" />;
+      <Redirect to="/home" />;
     }
 
     const tl = gsap.timeline();

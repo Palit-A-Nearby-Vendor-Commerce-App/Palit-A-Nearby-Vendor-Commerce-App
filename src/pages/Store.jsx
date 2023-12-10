@@ -152,7 +152,13 @@ const Store = ({ vendor }) => {
 
     return (
       <>
-        <div>
+        <div
+          style={{
+            position: "absolute",
+            width: "360px",
+            bottom: "20px",
+          }}
+        >
           {activeTransaction && (
             <div className="noscrollbar bg-white shadow-md rounded-lg p-6 max-w-md mx-auto h-[190px] overflow-auto">
               <div className="text-gray-800 text-m">
@@ -205,10 +211,14 @@ const Store = ({ vendor }) => {
       }}
     >
       {selectedVendor && (
-        <>
+        <div>
           <div
+            className="noscrollbar"
             style={{
-              height: activeTransaction ? "50vh" : "70vh",
+              height: activeTransaction
+                ? "calc(70vh - 200px)"
+                : "70vh",
+              overflow: "auto",
               display: "flex",
               flexDirection: "column",
             }}
@@ -240,10 +250,8 @@ const Store = ({ vendor }) => {
             </h1>
             <div
               style={{
-                maxHeight: "450px",
                 display: "flex",
                 flexWrap: "wrap",
-                overflow: "auto",
               }}
             >
               {products.map((product, index) => (
@@ -342,19 +350,23 @@ const Store = ({ vendor }) => {
               ))}
             </div>
           </div>
-          <div
-            style={{
-              padding: "10px",
-              backgroundColor: "#f0f0f0",
-              borderRadius: "10px",
-              margin: "10px",
-              textAlign: "center",
-            }}
-          >
-            <h2>Total: ₱{totalItems() > 0 ? calculateTotalPrice() : 0}</h2>
-          </div>
-        </>
+        </div>
       )}
+
+      <div
+        style={{
+          padding: "10px",
+          backgroundColor: "#f0f0f0",
+          borderRadius: "10px",
+          textAlign: "center",
+          bottom: "280px",
+          position: "absolute",
+          zIndex: "1",
+        }}
+        className="w-[360px] flex justify-center items-center"
+      >
+        <h2>Total: ₱{totalItems() > 0 ? calculateTotalPrice() : 0}</h2>
+      </div>
       {activeTransaction ? (
         <OrderDetails activeTransaction={activeTransaction} />
       ) : selectedVendor ? (
@@ -363,6 +375,10 @@ const Store = ({ vendor }) => {
           className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-5"
           disabled={quantity.every((q) => q === 0)}
           onClick={handleOrderClick}
+          style={{
+            position: "sticky",
+            bottom: "20px",
+          }}
         >
           <span className="text-lg  ">Order</span>
         </button>

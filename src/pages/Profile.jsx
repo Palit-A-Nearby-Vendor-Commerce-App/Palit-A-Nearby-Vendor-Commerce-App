@@ -405,7 +405,13 @@ const Profile = () => {
             <thead>
               <tr>
                 <th className="border-2 border-gray-300 p-2">Transaction ID</th>
-                <th className="border-2 border-gray-300 p-2">Vendor</th>
+                {user.account.isVendor ? (
+                  <th className="border-2 border-gray-300 p-2">
+                    Customer Email
+                  </th>
+                ) : (
+                  <th className="border-2 border-gray-300 p-2">Vendor Email</th>
+                )}
                 <th className="border-2 border-gray-300 p-2">Status</th>
                 <th className="border-2 border-gray-300 p-2">Details</th>
               </tr>
@@ -417,9 +423,15 @@ const Profile = () => {
                       <td className="border-2 border-gray-300 p-2 text-center">
                         {transaction.transactionId}
                       </td>
-                      <td className="border-2 border-gray-300 p-2 text-center">
-                        {transaction.vendor.email}
-                      </td>
+                      {user.account.isVendor ? (
+                        <td className="border-2 border-gray-300 p-2 text-center">
+                          {transaction.customer.email}
+                        </td>
+                      ) : (
+                        <td className="border-2 border-gray-300 p-2 text-center">
+                          {transaction.vendor.email}
+                        </td>
+                      )}
                       <td className="border-2 border-gray-300 p-2 text-center">
                         {transaction.status}
                       </td>

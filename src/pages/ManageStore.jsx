@@ -503,11 +503,11 @@ const ManageStore = () => {
           </form>
         </div>
       ) : (
-        <div>{}</div>
+        <div>{ }</div>
       )}
       <div
         style={{
-          maxHeight: editMode ? "355px" : "510px",
+          maxHeight: editMode ? "340px" : "500px",
           display: "flex",
           flexWrap: "wrap",
           justifyContent: "space-between",
@@ -546,10 +546,9 @@ const ManageStore = () => {
                     width: "100%",
                     height: "150px",
                     borderRadius: "20px",
-                    backgroundImage: `url(${
-                      product.imagePreview ||
+                    backgroundImage: `url(${product.imagePreview ||
                       `data:image/png;base64,${product.image}`
-                    })`,
+                      })`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     display: "inline-block",

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Bar, Line } from "react-chartjs-2";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { Bar, Line } from "react-chartjs-2";
 
 const StatisticsData = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalTransactions, setTotalTransactions] = useState(0);
+  const [resolutionRate, setResolutionRate] = useState(0);
 
   const reports = [
     { isResolved: true },
@@ -14,10 +15,7 @@ const StatisticsData = () => {
     { isResolved: false },
   ];
 
-  const resolvedReports = reports.filter(
-    (report) => report.isResolved === true
-  );
-  const resolutionRate = (resolvedReports.length / reports.length) * 100 || 0;
+
 
   const websiteVisitorsData = {
     labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
@@ -86,6 +84,25 @@ const StatisticsData = () => {
           error
         );
       });
+
+    // New API call to get all reports and calculate resolution rate
+    axios
+      .get("http://localhost:8080/api/getAllReports")
+      .then((response) => {
+        const reports = response.data;
+        const resolvedReports = reports.filter(
+          (report) => report.isResolved === true
+        );
+        const resolutionRate =
+          (resolvedReports.length / reports.length) * 100 || 0;
+        setResolutionRate(resolutionRate);
+      })
+      .catch((error) => {
+        console.error(
+          "There was an error fetching the total number of reports!",
+          error
+        );
+      });
   }, []);
 
   return (
@@ -117,7 +134,7 @@ const StatisticsData = () => {
             <p className="text-5xl font-bold text-center ">
               {resolutionRate.toFixed(2)}%
             </p>
-            <p className="text-center">+ 7.46% greater than last month</p>
+            <p className="text-center">From the running month</p>
           </div>
         </div>
       </div>

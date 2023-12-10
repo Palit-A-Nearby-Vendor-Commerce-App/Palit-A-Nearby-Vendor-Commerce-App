@@ -275,7 +275,7 @@ const ManageStore = () => {
   };
 
   return (
-    <div style={{ height: "90vh", display: "flex", flexDirection: "column" }}>
+    <div className="noscrollbar" style={{ overflow: "auto", height: "90vh", display: "flex", flexDirection: "column" }}>
       <div style={{ display: "flex" }}>
         <img
           src={`data:image/png;base64, ${user.image}`}

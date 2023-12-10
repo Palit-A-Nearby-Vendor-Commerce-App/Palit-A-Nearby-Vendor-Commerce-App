@@ -154,10 +154,12 @@ const Store = ({ vendor }) => {
       <>
         <div>
           {activeTransaction && (
-            <div className="bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto h-[190px] overflow-auto">
+            <div className="noscrollbar bg-white shadow-md rounded-lg p-6 max-w-md mx-auto h-[190px] overflow-auto">
               <div className="text-gray-800 text-m">
                 Active Order:{" "}
-                <span style={{ fontWeight:"bold", color: statusColor }}>{orderStatus}</span>
+                <span style={{ fontWeight: "bold", color: statusColor }}>
+                  {orderStatus}
+                </span>
               </div>
               <p style={{ color: "grey" }}>
                 Vendor: {activeTransaction.activeTransaction.vendor.email}
@@ -195,7 +197,13 @@ const Store = ({ vendor }) => {
   };
 
   return (
-    <>
+    <div
+      className="noscrollbar"
+      style={{
+        overflow: "auto",
+        height: "100%",
+      }}
+    >
       {selectedVendor && (
         <>
           <div
@@ -477,7 +485,7 @@ const Store = ({ vendor }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 };
 

@@ -31,22 +31,16 @@ const Chat = () => {
   const [chatId, setChatId] = useState(null);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [conversations, setConversations] = useState(null);
-
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [open, setOpen] = React.useState(false);
-
   const [selectedMessageId, setSelectedMessageId] = useState(null);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 
   const handleDeleteConfirmation = (messageId) => {
-    console.log("messageId", messageId);
     setSelectedMessageId(messageId);
     setOpenDeleteConfirmation(true);
   };
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
   const handleClose = () => {
     setAnchorEl(null);
     setChatId(null);

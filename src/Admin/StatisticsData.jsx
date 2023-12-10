@@ -1,4 +1,5 @@
 import axios from "axios";
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 
@@ -6,14 +7,7 @@ const StatisticsData = () => {
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalTransactions, setTotalTransactions] = useState(0);
   const [resolutionRate, setResolutionRate] = useState(0);
-
-  const reports = [
-    { isResolved: true },
-    { isResolved: true },
-    { isResolved: false },
-    { isResolved: false },
-    { isResolved: false },
-  ];
+  const [reportsData, setReportsData] = useState([]); // New state variable for reports data
 
 
 
@@ -32,11 +26,11 @@ const StatisticsData = () => {
     ],
   };
 
-  const salesAnalyticsData = {
-    labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5", "Day 6", "Day 7"],
+  const reportsAnalyticsData = {
+    labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     datasets: [
       {
-        label: "Total Sales (in thousands)",
+        label: "Total Reports",
         fill: false,
         lineTension: 0.1,
         backgroundColor: "rgba(75,192,192,0.4)",
@@ -54,7 +48,7 @@ const StatisticsData = () => {
         pointHoverBorderWidth: 2,
         pointRadius: 1,
         pointHitRadius: 10,
-        data: [30, 40, 25, 45, 30, 50, 35],
+        data: reportsData, // Use the reports data here
       },
     ],
   };
@@ -96,6 +90,18 @@ const StatisticsData = () => {
         const resolutionRate =
           (resolvedReports.length / reports.length) * 100 || 0;
         setResolutionRate(resolutionRate);
+
+        // Calculate the number of reports received in the past week
+        const pastWeekReports = Array(7).fill(0);
+        const oneWeekAgo = moment().subtract(7, 'days');
+        reports.forEach(report => {
+          const reportDate = moment(report.timestamp);
+          if (reportDate.isAfter(oneWeekAgo)) {
+            const dayOfWeek = reportDate.day();
+            pastWeekReports[dayOfWeek]++;
+          }
+        });
+        setReportsData(pastWeekReports);
       })
       .catch((error) => {
         console.error(
@@ -141,13 +147,31 @@ const StatisticsData = () => {
 
       {/* Display graphs side by side */}
       <div className="flex flex-wrap -mx-2">
-        {/* Sales Analytics Line Graph */}
+        {/* Reports Analytics Line Graph */}
         <div className="w-full md:w-1/2 px-2 mb-4 ">
           <div className="border border-gray-300 p-4 rounded shadow-md bg-white">
             <h2 className="text-2xl font-bold mb-2">
-              Sales Analytics (Past 7 Days)
+              Reports Analytics for this week
             </h2>
-            <Line data={salesAnalyticsData} />
+            <Line
+              data={reportsAnalyticsData}
+              options={{
+                scales: {
+                  xAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Days of the Week'
+                    }
+                  }],
+                  yAxes: [{
+                    scaleLabel: {
+                      display: true,
+                      labelString: 'Number of Reports'
+                    }
+                  }]
+                }
+              }}
+            />
           </div>
         </div>
 

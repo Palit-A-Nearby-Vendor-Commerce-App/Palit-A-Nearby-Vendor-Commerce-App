@@ -38,6 +38,8 @@ const ManageStore = () => {
   const [actionType, setActionType] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [openAddConfirmDialog, setOpenAddConfirmDialog] = useState(false);
+
   useEffect(() => {
     const fetchStore = async () => {
       try {
@@ -195,7 +197,7 @@ const ManageStore = () => {
 
   const handleAddConfirm = async () => {
     if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
-      alert("Please fill in all product details.");
+      setOpenAddConfirmDialog(true);
       return;
     }
     function convertToBase64(file) {
@@ -259,9 +261,15 @@ const ManageStore = () => {
   const handleSave = () => {
     openConfirmationDialog(() => handleSaveConfirm, "save");
   };
+
   const handleAdd = () => {
-    openConfirmationDialog(() => handleAddConfirm, "add");
+    if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
+      setOpenAddConfirmDialog(true);
+    } else {
+      openConfirmationDialog(() => handleAddConfirm, "add");
+    }
   };
+  
   const handleDelete = (index) => {
     openConfirmationDialog(() => () => handleDeleteConfirm(index), "delete");
   };
@@ -820,6 +828,24 @@ const ManageStore = () => {
               borderRadius: "15px",
             }}
           >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={openAddConfirmDialog}
+        onClose={() => setOpenAddConfirmDialog(false)}
+        aria-labelledby="add-confirm-dialog-title"
+        aria-describedby="add-confirm-dialog-description"
+      >
+        <DialogTitle id="add-confirm-dialog-title">{"Incomplete Details"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="add-confirm-dialog-description">
+            Please fill in all product details.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenAddConfirmDialog(false)} color="primary">
             OK
           </Button>
         </DialogActions>

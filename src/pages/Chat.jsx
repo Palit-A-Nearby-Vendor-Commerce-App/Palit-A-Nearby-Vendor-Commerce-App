@@ -272,7 +272,7 @@ const Chat = () => {
         {!user.account.isVendor ? (
           <span style={{ textAlign: "center", color: "grey" }}>
             {" "}
-            You must order to communicate with the vendor{" "}
+            You must have an active order to communicate with the vendor{" "}
           </span>
         ) : null}
         {selectedConversation &&

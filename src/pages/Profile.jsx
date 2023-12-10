@@ -135,13 +135,15 @@ const Profile = () => {
     const date = new Date(dateString);
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   };
-
+  
   const formatDetails = (details) => {
-    const regex = /(\w+) Php(\d+) x(\d+); Total: Php(\d+)/;
+    console.log(details);
+    if (details == null || details === "") return "";
+    const regex = /(\w+) ₱(\d+) x(\d+); Total: ₱(\d+)/;
     const [, productName, productPrice, quantity, total] = details.match(regex);
     return `Product: ${productName}, Price: ${productPrice}, Quantity: ${quantity}, Total: ${total}`;
   };
-
+  
   useEffect(() => {
     fetchData();
   }, []);
@@ -403,7 +405,7 @@ const Profile = () => {
               </tr>
             </thead>
             <tbody>
-              {transactions.map((transaction) => (
+              {transactions.length > 0 ? (transactions.map((transaction) => (
                 <tr key={transaction.transactionId}>
                   <td className="border-2 border-gray-300 p-2 text-center">
                     {transaction.transactionId}
@@ -418,7 +420,7 @@ const Profile = () => {
                     {formatDetails(transaction.details)}
                   </td>
                 </tr>
-              ))}
+              ))): null}
             </tbody>
           </table>
         </div>

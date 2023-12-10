@@ -21,6 +21,8 @@ import { useHistory } from "react-router";
 
 let markers = [];
 
+const zoom = 18;
+
 function Home() {
   const history = useHistory();
   const { user } = useContext(UserContext);
@@ -64,6 +66,8 @@ function Home() {
   };
 
   const updateLocationInContext = (position) => {
+    const isMounted = mapRef.current;
+    if (!isMounted) return null;
     const { latitude, longitude } = position.coords;
     const updatedLocation = { lat: latitude, lng: longitude };
 
@@ -149,6 +153,8 @@ function Home() {
   }, [user]);
 
   const calculateOffset = () => {
+    const isMounted = mapRef.current;
+    if (!isMounted) return null;
     if (mapRef.current && mapRef.current.getZoom) {
       const zoomLevel = mapRef.current.getZoom();
       return 0.02 / Math.pow(2, zoomLevel - 14);
@@ -157,6 +163,8 @@ function Home() {
   };
 
   const panAndZoomMap = () => {
+    const isMounted = mapRef.current;
+    if (!isMounted) return null;
     if (mapRef.current && currentPosition) {
       const offset = calculateOffset();
       const newCenter = {
@@ -195,7 +203,7 @@ function Home() {
           <div>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
-              zoom={17}
+              zoom={zoom}
               className="flex-1"
               options={mapOptions}
               onLoad={onMapLoad}

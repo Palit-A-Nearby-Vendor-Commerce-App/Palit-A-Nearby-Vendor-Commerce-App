@@ -40,12 +40,19 @@ const Profile = () => {
       );
       const accountData = accountResponse.data;
       setAccount(accountData);
-
-      const transactionResponse = await axios.get(
-        `http://localhost:8080/api/getTransactionsByCustomerId/${userData.account.accountId}`
-      );
-      const transactionData = transactionResponse.data;
-      setTransactions(transactionData);
+      if (!accountData.isVendor) {
+        const transactionResponse = await axios.get(
+          `http://localhost:8080/api/getTransactionsByCustomerId/${userData.account.accountId}`
+        );
+        const transactionData = transactionResponse.data;
+        setTransactions(transactionData);
+      } else {
+        const transactionResponse = await axios.get(
+          `http://localhost:8080/api/getTransactionsByVendorId/${userData.account.accountId}`
+        );
+        const transactionData = transactionResponse.data;
+        setTransactions(transactionData);
+      }
     } catch (error) {
       setMessage(error.message);
     }
@@ -135,14 +142,14 @@ const Profile = () => {
     const date = new Date(dateString);
     return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   };
-  
+
   const formatDetails = (details) => {
     if (details == null || details === "") return "";
     const regex = /(\w+) ₱(\d+) x(\d+); Total: ₱(\d+)/;
     const [, productName, productPrice, quantity, total] = details.match(regex);
     return `Product: ${productName}, Price: ${productPrice}, Quantity: ${quantity}, Total: ${total}`;
   };
-  
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -404,22 +411,24 @@ const Profile = () => {
               </tr>
             </thead>
             <tbody>
-              {transactions.length > 0 ? (transactions.map((transaction) => (
-                <tr key={transaction.transactionId}>
-                  <td className="border-2 border-gray-300 p-2 text-center">
-                    {transaction.transactionId}
-                  </td>
-                  <td className="border-2 border-gray-300 p-2 text-center">
-                    {transaction.vendor.email}
-                  </td>
-                  <td className="border-2 border-gray-300 p-2 text-center">
-                    {transaction.status}
-                  </td>
-                  <td className="border-2 border-gray-300 p-2 text-center">
-                    {formatDetails(transaction.details)}
-                  </td>
-                </tr>
-              ))): null}
+              {transactions.length > 0
+                ? transactions.map((transaction) => (
+                    <tr key={transaction.transactionId}>
+                      <td className="border-2 border-gray-300 p-2 text-center">
+                        {transaction.transactionId}
+                      </td>
+                      <td className="border-2 border-gray-300 p-2 text-center">
+                        {transaction.vendor.email}
+                      </td>
+                      <td className="border-2 border-gray-300 p-2 text-center">
+                        {transaction.status}
+                      </td>
+                      <td className="border-2 border-gray-300 p-2 text-center">
+                        {formatDetails(transaction.details)}
+                      </td>
+                    </tr>
+                  ))
+                : null}
             </tbody>
           </table>
         </div>

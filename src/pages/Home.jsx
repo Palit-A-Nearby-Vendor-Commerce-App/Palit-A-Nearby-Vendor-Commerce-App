@@ -48,6 +48,8 @@ function Home() {
   }, [user, history]);
 
   const renderVendorMarkerIcon = () => {
+    const isMounted = mapRef.current;
+    if (!isMounted) return null;
     if (
       typeof window.google === "object" &&
       typeof window.google.maps === "object"
@@ -61,6 +63,8 @@ function Home() {
   };
 
   const clearMarkers = () => {
+    const isMounted = mapRef.current;
+    if (!isMounted) return null;
     markers.forEach((marker) => marker.setMap(null));
     markers = [];
   };
@@ -107,6 +111,8 @@ function Home() {
               clearMarkers();
 
               getNearbyUsers.forEach((user) => {
+                let isMounted = mapRef.current;
+                if (!isMounted) return null;
                 const userMarker = new window.google.maps.Marker({
                   position: {
                     lat: user.account.location.latitude,
@@ -154,7 +160,9 @@ function Home() {
 
   const calculateOffset = () => {
     const isMounted = mapRef.current;
-    if (!isMounted) return null;
+    if (!isMounted) {
+      return null;
+    }
     if (mapRef.current && mapRef.current.getZoom) {
       const zoomLevel = mapRef.current.getZoom();
       return 0.02 / Math.pow(2, zoomLevel - 14);

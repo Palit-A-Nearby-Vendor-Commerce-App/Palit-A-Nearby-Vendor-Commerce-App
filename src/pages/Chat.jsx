@@ -28,13 +28,11 @@ const Chat = () => {
   const { user } = useContext(UserContext);
   const [chats, setChats] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-
+  const [chatId, setChatId] = useState(null);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [conversations, setConversations] = useState(null);
-
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-
+  const [open, setOpen] = React.useState(false);
   const [selectedMessageId, setSelectedMessageId] = useState(null);
   const [openDeleteConfirmation, setOpenDeleteConfirmation] = useState(false);
 
@@ -43,11 +41,9 @@ const Chat = () => {
     setOpenDeleteConfirmation(true);
   };
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
   const handleClose = () => {
     setAnchorEl(null);
+    setChatId(null);
   };
 
   useEffect(() => {
@@ -124,13 +120,15 @@ const Chat = () => {
   }, [conversations]);
 
   const fetchChats = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:8080/api/getChatsByConversationId/${selectedConversation.conversationId}`
-      );
-      setChats(response.data);
-    } catch (error) {
-      console.error("Error fetching chats:", error);
+    if (selectedConversation) {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/api/getChatsByConversationId/${selectedConversation?.conversationId}`
+        );
+        setChats(response.data);
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+      }
     }
   };
 
@@ -152,29 +150,22 @@ const Chat = () => {
           conversationId: selectedConversation.conversationId,
         },
       };
-      const response = await axios.post(
-        "http://localhost:8080/api/createChat",
-        newChat
-      );
-      const createdChat = response.data;
-      setChats((prevChats) => [...prevChats, createdChat]);
-      setNewMessage("");
+      const response = await axios
+        .post("http://localhost:8080/api/createChat", newChat)
+        .then(() => {
+          fetchChats();
+        });
     } catch (error) {
       console.error("Error sending chat:", error);
     }
   };
   const handleDeleteChat = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:8080/api/deleteChatById/${selectedMessageId}`
-      );
-      if (response.status === 200) {
-        setChats((prevChats) =>
-          prevChats.filter((chat) => chat.messageId !== selectedMessageId)
-        );
-      } else {
-        console.error("Error deleting message:", response.data);
-      }
+      const response = await axios
+        .delete(`http://localhost:8080/api/deleteChatById/${selectedMessageId}`)
+        .then(() => {
+          fetchChats();
+        });
     } catch (error) {
       console.error("Error deleting message:", error);
     } finally {
@@ -188,6 +179,13 @@ const Chat = () => {
   const handleBackButtonClick = () => {
     localStorage.setItem("selectedConversationId", null);
     setSelectedConversation(null);
+  };
+  const handleMenuClick = (chatId) => {
+    console.log("chat id:", chatId); // log the chat id
+    setChatId(chatId); // set the chat id state
+    setAnchorEl(document.getElementById(`button-${chatId}`)); // set the anchor element
+    console.log("anchor element:", anchorEl); // log the anchor element
+    setOpen(true); // open the menu
   };
 
   return (
@@ -271,7 +269,12 @@ const Chat = () => {
         id="message-contents"
         className="w-full  flex flex-col flex-1 overflow-auto py-4 px-10"
       >
-        {!user.account.isVendor ? (<span style={{textAlign: "center", color: "grey"}}> You must order to communicate with the vendor </span>) : null}
+        {!user.account.isVendor ? (
+          <span style={{ textAlign: "center", color: "grey" }}>
+            {" "}
+            You must order to communicate with the vendor{" "}
+          </span>
+        ) : null}
         {selectedConversation &&
           selectedVendor &&
           chats.map((chat) => (
@@ -306,25 +309,28 @@ const Chat = () => {
                     {chat?.messageContent}
                     <span className="absolute left-[-50px] top-2">
                       <Button
-                        id="basic-button"
-                        aria-controls={open ? "basic-menu" : undefined}
+                        id={`button-${chat.chatId}`} // use a unique id for each button
+                        aria-controls={`menu-${chat.chatId}`} // use a unique id for each menu
                         aria-haspopup="true"
                         aria-expanded={open ? "true" : undefined}
-                        onClick={handleClick}
+                        onClick={() => handleMenuClick(chat.chatId)} // pass the chat id as a parameter
                       >
                         <MoreVertIcon />
                       </Button>
                       <Menu
-                        id="basic-menu"
+                        id={`menu-${chat.chatId}`} // use a unique id for each menu
                         anchorEl={anchorEl}
-                        open={open}
+                        open={open && chatId === chat.chatId} // only open the menu if the chat id matches
                         onClose={handleClose}
                         MenuListProps={{
-                          "aria-labelledby": "basic-button",
+                          "aria-labelledby": `button-${chat.chatId}`, // use the corresponding button id
                         }}
                       >
                         <MenuItem
-                          onClick={() => handleDeleteConfirmation(chat.chatId)}
+                          id={chat.chatId}
+                          onClick={(event) =>
+                            handleDeleteConfirmation(event.currentTarget.id)
+                          }
                         >
                           Delete
                         </MenuItem>
@@ -383,7 +389,7 @@ const Chat = () => {
                         aria-controls={open ? "basic-menu" : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? "true" : undefined}
-                        onClick={handleClick}
+                        onClick={handleMenuClick}
                       >
                         <MoreVertIcon />
                       </Button>
@@ -422,10 +428,11 @@ const Chat = () => {
         <textarea
           className="w-full h-full p-2 rounded-lg border border-gray-300"
           value={newMessage}
-          onKeyDown={event => {
-            if (event.key === 'Enter') {
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
               sendChat();
               event.preventDefault();
+              setNewMessage('');
             }
           }}
           onChange={(e) => setNewMessage(e.target.value)}

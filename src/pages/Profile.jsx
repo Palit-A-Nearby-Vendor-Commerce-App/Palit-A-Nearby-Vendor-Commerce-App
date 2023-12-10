@@ -40,12 +40,19 @@ const Profile = () => {
       );
       const accountData = accountResponse.data;
       setAccount(accountData);
-
-      const transactionResponse = await axios.get(
-        `http://localhost:8080/api/getTransactionsByCustomerId/${userData.account.accountId}`
-      );
-      const transactionData = transactionResponse.data;
-      setTransactions(transactionData);
+      if (!accountData.isVendor) {
+        const transactionResponse = await axios.get(
+          `http://localhost:8080/api/getTransactionsByCustomerId/${userData.account.accountId}`
+        );
+        const transactionData = transactionResponse.data;
+        setTransactions(transactionData);
+      } else {
+        const transactionResponse = await axios.get(
+          `http://localhost:8080/api/getTransactionsByVendorId/${userData.account.accountId}`
+        );
+        const transactionData = transactionResponse.data;
+        setTransactions(transactionData);
+      }
     } catch (error) {
       setMessage(error.message);
     }
@@ -137,7 +144,8 @@ const Profile = () => {
   };
 
   const formatDetails = (details) => {
-    const regex = /(\w+) Php(\d+) x(\d+); Total: Php(\d+)/;
+    if (details == null || details === "") return "";
+    const regex = /(\w+) ₱(\d+) x(\d+); Total: ₱(\d+)/;
     const [, productName, productPrice, quantity, total] = details.match(regex);
     return `Product: ${productName}, Price: ${productPrice}, Quantity: ${quantity}, Total: ${total}`;
   };
@@ -155,7 +163,7 @@ const Profile = () => {
         {user && account && (
           <div className="flex flex-col gap-5 md:flex-row items-center justify-center">
             <div
-              style={{ width: "350px", height: "350px" }}
+              style={{ width: "350px", height: ( editMode? "auto" : "350px")  }}
               className="md:w-1/2 p-4 bg-white shadow-lg rounded-xl overflow-hidden"
             >
               <img
@@ -397,28 +405,42 @@ const Profile = () => {
             <thead>
               <tr>
                 <th className="border-2 border-gray-300 p-2">Transaction ID</th>
-                <th className="border-2 border-gray-300 p-2">Vendor</th>
+                {user.account.isVendor ? (
+                  <th className="border-2 border-gray-300 p-2">
+                    Customer Email
+                  </th>
+                ) : (
+                  <th className="border-2 border-gray-300 p-2">Vendor Email</th>
+                )}
                 <th className="border-2 border-gray-300 p-2">Status</th>
                 <th className="border-2 border-gray-300 p-2">Details</th>
               </tr>
             </thead>
             <tbody>
-              {transactions.map((transaction) => (
-                <tr key={transaction.transactionId}>
-                  <td className="border-2 border-gray-300 p-2 text-center">
-                    {transaction.transactionId}
-                  </td>
-                  <td className="border-2 border-gray-300 p-2 text-center">
-                    {transaction.vendor.email}
-                  </td>
-                  <td className="border-2 border-gray-300 p-2 text-center">
-                    {transaction.status}
-                  </td>
-                  <td className="border-2 border-gray-300 p-2 text-center">
-                    {formatDetails(transaction.details)}
-                  </td>
-                </tr>
-              ))}
+              {transactions.length > 0
+                ? transactions.map((transaction) => (
+                    <tr key={transaction.transactionId}>
+                      <td className="border-2 border-gray-300 p-2 text-center">
+                        {transaction.transactionId}
+                      </td>
+                      {user.account.isVendor ? (
+                        <td className="border-2 border-gray-300 p-2 text-center">
+                          {transaction.customer.email}
+                        </td>
+                      ) : (
+                        <td className="border-2 border-gray-300 p-2 text-center">
+                          {transaction.vendor.email}
+                        </td>
+                      )}
+                      <td className="border-2 border-gray-300 p-2 text-center">
+                        {transaction.status}
+                      </td>
+                      <td className="border-2 border-gray-300 p-2 text-center">
+                        {formatDetails(transaction.details)}
+                      </td>
+                    </tr>
+                  ))
+                : null}
             </tbody>
           </table>
         </div>

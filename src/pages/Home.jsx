@@ -64,6 +64,8 @@ function Home() {
   };
 
   const updateLocationInContext = (position) => {
+    const isMounted = mapRef.current;
+    if (!isMounted) return null;
     const { latitude, longitude } = position.coords;
     const updatedLocation = { lat: latitude, lng: longitude };
 

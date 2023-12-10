@@ -514,6 +514,7 @@ const ManageStore = () => {
         <div>{ }</div>
       )}
       <div
+        className = "noscrollbar"
         style={{
           maxHeight: editMode ? "340px" : "500px",
           display: "flex",

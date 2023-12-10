@@ -15,7 +15,7 @@ const StatisticsData = () => {
     labels: ['10-20', '20-30', '30-40', '40-50', '50+'],
     datasets: [
       {
-        label: 'Age Distribution',
+        label: 'Number of Users',
         backgroundColor: 'rgba(75,192,192,0.4)',
         borderColor: 'rgba(75,192,192,1)',
         borderWidth: 1,
@@ -187,6 +187,9 @@ const StatisticsData = () => {
                     scaleLabel: {
                       display: true,
                       labelString: 'Number of Reports'
+                    },
+                    ticks: {
+                      stepSize: 1
                     }
                   }]
                 }

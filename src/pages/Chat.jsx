@@ -385,25 +385,28 @@ const Chat = () => {
                     {chat?.messageContent}
                     <span className="absolute left-[-50px] top-2">
                       <Button
-                        id="basic-button"
-                        aria-controls={open ? "basic-menu" : undefined}
+                        id={`button-${chat.chatId}`} // use a unique id for each button
+                        aria-controls={`menu-${chat.chatId}`} // use a unique id for each menu
                         aria-haspopup="true"
                         aria-expanded={open ? "true" : undefined}
-                        onClick={handleMenuClick}
+                        onClick={() => handleMenuClick(chat.chatId)} // pass the chat id as a parameter
                       >
                         <MoreVertIcon />
                       </Button>
                       <Menu
-                        id="basic-menu"
+                        id={`menu-${chat.chatId}`} // use a unique id for each menu
                         anchorEl={anchorEl}
-                        open={open}
+                        open={open && chatId === chat.chatId} // only open the menu if the chat id matches
                         onClose={handleClose}
                         MenuListProps={{
-                          "aria-labelledby": "basic-button",
+                          "aria-labelledby": `button-${chat.chatId}`, // use the corresponding button id
                         }}
                       >
                         <MenuItem
-                          onClick={() => handleDeleteConfirmation(chat.chatId)}
+                          id={chat.chatId}
+                          onClick={(event) =>
+                            handleDeleteConfirmation(event.currentTarget.id)
+                          }
                         >
                           Delete
                         </MenuItem>

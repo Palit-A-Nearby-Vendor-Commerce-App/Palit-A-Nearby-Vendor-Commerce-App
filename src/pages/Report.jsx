@@ -1,9 +1,3 @@
-import React, { useState, useContext, useRef } from "react";
-import axios from "axios";
-import NavigationBar from "../components/NavigationBar";
-import { UserContext } from "../UserContext";
-import reportBg from "../assets/images/reportpng.png";
-import { Alert } from "../assets/styles/styles.js";
 import {
   Button,
   Dialog,
@@ -12,6 +6,12 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import axios from "axios";
+import React, { useContext, useRef, useState } from "react";
+import { UserContext } from "../UserContext";
+import reportBg from "../assets/images/reportpng.png";
+import { Alert } from "../assets/styles/styles.js";
+import NavigationBar from "../components/NavigationBar";
 
 const Report = () => {
   const { user } = useContext(UserContext);
@@ -76,10 +76,7 @@ const Report = () => {
         reportData
       );
       console.log(response.data);
-
-      setAlertMessage("Report created successfully!");
       handleOpenDialog();
-      setShowAlert(true);
 
       reportRef.current.reset();
 

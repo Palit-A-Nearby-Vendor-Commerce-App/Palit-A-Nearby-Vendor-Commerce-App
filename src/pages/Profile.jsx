@@ -163,7 +163,7 @@ const Profile = () => {
         {user && account && (
           <div className="flex flex-col gap-5 md:flex-row items-center justify-center">
             <div
-              style={{ width: "350px", height: "350px" }}
+              style={{ width: "350px", height: ( editMode? "auto" : "350px")  }}
               className="md:w-1/2 p-4 bg-white shadow-lg rounded-xl overflow-hidden"
             >
               <img

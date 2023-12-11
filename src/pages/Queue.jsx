@@ -81,9 +81,6 @@ const Queue = () => {
         `http://localhost:8080/api/updateTransactionById/${item?.transactionId}`,
         { ...item, status: "Completed" }
       );
-      const deleteResponse = await axios.delete(
-        `http://localhost:8080/api/deleteTransactionById/${item?.transactionId}`
-      );
     } catch (error) {
       console.error("Error completing or deleting transaction:", error.message);
     } finally {

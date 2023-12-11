@@ -1,0 +1,64 @@
+d:\Users\Mark\Documents\GitHub\react-projects\Palit-A-Nearby-Vendor-Commerce-App\Springboot\palit\src\main\java\com\nearbyvendor\palit
+|-- PalitApplication.java
+|-- config
+|-- `-- CorsConfiguration.java
+|-- controller
+|-- |-- AccountController.java
+|-- |-- ChatController.java
+|-- |-- ConversationController.java
+|-- |-- LocationController.java
+|-- |-- ProductServiceController.java
+|-- |-- ReportController.java
+|-- |-- StoreController.java
+|-- |-- TransactionController.java
+|-- `-- UserController.java
+|-- entity
+|-- |-- AccountEntity.java
+|-- |-- ChatEntity.java
+|-- |-- ConversationEntity.java
+|-- |-- LocationEntity.java
+|-- |-- ProductServiceEntity.java
+|-- |-- ReportEntity.java
+|-- |-- StoreEntity.java
+|-- |-- TransactionEntity.java
+|-- `-- UserEntity.java
+|-- repository
+|-- |-- AccountRepository.java
+|-- |-- ChatRepository.java
+|-- |-- ConversationRepository.java
+|-- |-- LocationRepository.java
+|-- |-- ProductServiceRepository.java
+|-- |-- ReportRepository.java
+|-- |-- StoreRepository.java
+|-- |-- TransactionRepository.java
+|-- `-- UserRepository.java
+|-- service
+|-- |-- AccountService.java
+|-- |-- ChatService.java
+|-- |-- ConversationService.java
+|-- |-- LocationService.java
+|-- |-- ProductServiceService.java
+|-- |-- ReportService.java
+|-- |-- StoreService.java
+|-- |-- TransactionService.java
+|-- `-- UserService.java
+
+
+d:\Users\Mark\Documents\GitHub\react-projects\Palit-A-Nearby-Vendor-Commerce-App\Springboot\palit\src\main\java\com\nearbyvendor\palit\PalitApplication.java:
+```
+package com.nearbyvendor.palit;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class PalitApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(PalitApplication.class, args);
+        System.out.println("Ok");
+    }
+
+}
+
+```

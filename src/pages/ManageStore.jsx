@@ -1,3 +1,4 @@
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -12,12 +13,11 @@ import {
   TextField,
 } from "@mui/material";
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import editStore from "../assets/images/editStore.png";
 
 const ManageStore = () => {
-  const { user, setUser } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editedProduct, setEditedProduct] = useState({
@@ -43,7 +43,6 @@ const ManageStore = () => {
   useEffect(() => {
     const isMounted = true;
     if (!isMounted) return;
-    console.log("asdfasdfasdf");
     fetchStore();
     fetchProducts();
   }, [successMessage]);
@@ -79,9 +78,11 @@ const ManageStore = () => {
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleEdit = () => {
     setEditMode(true);
   };
@@ -96,30 +97,27 @@ const ManageStore = () => {
 
   const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const base64 = reader.result.split(',')[1];
-            console.log('File read as base64:', base64);
-            resolve(base64);
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result.split(",")[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
     });
-};
+  };
 
   async function handleSaveConfirm() {
     const updatedProducts = await Promise.all(
       products.map(async (product) => {
         let image = product.image;
-        console.log("product.image", product.image instanceof File);
         if (product.image instanceof File) {
           image = await fileToBase64(product.image);
-
-          console.log("AFTER.image", image);
         }
         return { ...product, image };
       })
     );
+
     updatedProducts.map((product) => {
       axios
         .put(
@@ -128,10 +126,6 @@ const ManageStore = () => {
         )
         .then((response) => {
           console.log("Product updated:", response.data);
-          setProducts((prevProducts) => {
-            const newProducts = [...prevProducts];
-            return newProducts;
-          });
         })
         .catch((error) => {
           console.error("Error updating product:", error);
@@ -163,17 +157,10 @@ const ManageStore = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    if (name === "price") {
-      setEditedProduct({
-        ...editedProduct,
-        [name]: value,
-      });
-    } else {
-      setEditedProduct({
-        ...editedProduct,
-        [name]: value,
-      });
-    }
+    setEditedProduct({
+      ...editedProduct,
+      [name]: value,
+    });
   };
 
   const handleImageChange = (e) => {
@@ -198,17 +185,12 @@ const ManageStore = () => {
   const handleProductInputChange = (e, index) => {
     const { name, value } = e.target;
     const newProducts = [...products];
-    if (name === "price") {
-      newProducts[index][name] = value;
-    } else {
-      newProducts[index][name] = value;
-    }
+    newProducts[index][name] = value;
     setProducts(newProducts);
   };
 
   const handleAddConfirm = async () => {
     if (!editedProduct.image || !editedProduct.name || !editedProduct.price) {
-      console.log("image, name, price",editedProduct.image, editedProduct.name,editedProduct.price )
       setOpenAddConfirmDialog(true);
       return;
     }
@@ -696,7 +678,11 @@ const ManageStore = () => {
             ) : (
               <>
                 <img
-                  src={`${product.image instanceof File ? null : "data:image/png;base64," + product.image}`}
+                  src={`${
+                    product.image instanceof File
+                      ? null
+                      : "data:image/png;base64," + product.image
+                  }`}
                   alt={`Product ${index + 1}`}
                   style={{
                     width: "100%",

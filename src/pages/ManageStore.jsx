@@ -41,10 +41,12 @@ const ManageStore = () => {
   const [openAddConfirmDialog, setOpenAddConfirmDialog] = useState(false);
 
   useEffect(() => {
+    const isMounted = true;
+    if(!isMounted) return;
     const interval = setInterval(() => {
       fetchStore();
       fetchProducts();
-    }, 3000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -65,6 +67,7 @@ const ManageStore = () => {
       console.error("Error fetching store:", error);
     }
   };
+
   const fetchProducts = async () => {
     try {
       const response = await axios.get(

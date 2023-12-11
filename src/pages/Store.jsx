@@ -58,7 +58,6 @@ const Store = ({ vendor }) => {
         `http://localhost:8080/api/getProductServicesByStoreId/store/${vendor.account.store.storeId}`
       );
       setProducts(response.data);
-      localStorage.setItem("products", JSON.stringify(response.data));
       setQuantity(new Array(response.data.length).fill(0));
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -215,9 +214,7 @@ const Store = ({ vendor }) => {
           <div
             className="noscrollbar"
             style={{
-              height: activeTransaction
-                ? "calc(70vh - 200px)"
-                : "70vh",
+              height: activeTransaction ? "calc(70vh - 200px)" : "70vh",
               overflow: "auto",
               display: "flex",
               flexDirection: "column",
@@ -359,7 +356,7 @@ const Store = ({ vendor }) => {
           backgroundColor: "#f0f0f0",
           borderRadius: "10px",
           textAlign: "center",
-          bottom: "280px",
+          bottom: activeTransaction ? "280px" : "80px",
           position: "absolute",
           zIndex: "1",
         }}
@@ -376,7 +373,8 @@ const Store = ({ vendor }) => {
           disabled={quantity.every((q) => q === 0)}
           onClick={handleOrderClick}
           style={{
-            position: "sticky",
+            width: "360px",
+            position: "absolute",
             bottom: "20px",
           }}
         >

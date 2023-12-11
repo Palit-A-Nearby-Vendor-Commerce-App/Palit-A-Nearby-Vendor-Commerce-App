@@ -66,10 +66,7 @@ function Home() {
   };
 
   const clearMarkers = () => {
-    const isMounted = mapRef.current;
-    if (!isMounted) return null;
-    markers.forEach((marker) => marker.setMap(null));
-    markers = [];
+    markers?.forEach((marker) => marker.setMap(null));
   };
 
   const updateLocationInContext = (position) => {
@@ -137,11 +134,15 @@ function Home() {
                         )
                       ? customerMarkerNowServing
                       : customerMarker,
-                    scaledSize:  !user.account.isVendor && activeTransactions.some(
-                      (transaction) =>
-                        transaction.customer.accountId ===
-                        user.account.accountId
-                    )? new window.google.maps.Size(30, 45) : new window.google.maps.Size(20, 20),
+                    scaledSize: user.account.isVendor
+                      ? new window.google.maps.Size(45, 45)
+                      : activeTransactions.some(
+                          (transaction) =>
+                            transaction.customer.accountId ===
+                            user.account.accountId
+                        )
+                      ? new window.google.maps.Size(30, 45)
+                      : new window.google.maps.Size(20, 20),
                   },
                   owner: user,
                 });
@@ -179,7 +180,7 @@ function Home() {
       axios
         .get("http://localhost:8080/api/getAllTransactions")
         .then((response) => {
-          setActiveTransactions(prev => 
+          setActiveTransactions((prev) =>
             response.data.filter(
               (transaction) => transaction.status === "Now Serving"
             )
@@ -250,10 +251,7 @@ function Home() {
               onLoad={onMapLoad}
             >
               {currentPosition && (
-                <Marker
-                  position={currentPosition}
-                  icon={renderMarkerIcon()}
-                />
+                <Marker position={currentPosition} icon={renderMarkerIcon()} />
               )}
               {currentPosition && (
                 <Circle

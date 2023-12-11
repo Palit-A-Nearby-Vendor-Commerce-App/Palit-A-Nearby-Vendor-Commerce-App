@@ -8,6 +8,7 @@ import React, {
 import { Circle, GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
 import { Link } from "react-router-dom";
 import customerMarker from "../assets/images/customerIcon.png";
+import customerMarkerNowServing from "../assets/images/customerMarkerNowServing.png";
 import marker from "../assets/images/vendor-self-pin.png";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import axios from "axios";
@@ -18,6 +19,7 @@ import { UserContext } from "../UserContext";
 import { mapContainerStyle, mapOptions } from "../assets/styles/styles";
 import { getDistance, vendorIcons } from "../utils/functions";
 import { useHistory } from "react-router";
+import { set } from "date-fns";
 
 let markers = [];
 
@@ -29,6 +31,7 @@ function Home() {
   const [currentPosition, setCurrentPosition] = useState(null);
   const [showSlider, setShowSlider] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState(null);
+  const [activeTransactions, setActiveTransactions] = useState([]);
   const mapRef = useRef();
 
   const onMapLoad = useCallback(
@@ -47,7 +50,7 @@ function Home() {
     }
   }, [user, history]);
 
-  const renderVendorMarkerIcon = () => {
+  const renderMarkerIcon = () => {
     const isMounted = mapRef.current;
     if (!isMounted) return null;
     if (
@@ -56,7 +59,7 @@ function Home() {
     ) {
       return {
         url: marker,
-        scaledSize: new window.google.maps.Size(40, 40),
+        scaledSize: new window.google.maps.Size(30, 30),
       };
     }
     return undefined;
@@ -72,6 +75,7 @@ function Home() {
   const updateLocationInContext = (position) => {
     const isMounted = mapRef.current;
     if (!isMounted) return null;
+
     const { latitude, longitude } = position.coords;
     const updatedLocation = { lat: latitude, lng: longitude };
 
@@ -95,7 +99,7 @@ function Home() {
           axios
             .get("http://localhost:8080/api/getAllUsers")
             .then(({ data }) => {
-              const getNearbyUsers = data.filter((otherUser) => {
+              let nearbyUsers = data.filter((otherUser) => {
                 return (
                   user.account.isVendor !== otherUser.account.isVendor &&
                   otherUser.account.location.isActive &&
@@ -110,9 +114,13 @@ function Home() {
 
               clearMarkers();
 
-              getNearbyUsers.forEach((user) => {
-                let isMounted = mapRef.current;
-                if (!isMounted) return null;
+              nearbyUsers.forEach((user) => {
+                activeTransactions.some((transaction) => {
+                  return (
+                    transaction.customer.accountId === user.account.accountId
+                  );
+                });
+
                 const userMarker = new window.google.maps.Marker({
                   position: {
                     lat: user.account.location.latitude,
@@ -122,8 +130,18 @@ function Home() {
                   icon: {
                     url: user.account.isVendor
                       ? vendorIcons(user.account.store.category)
+                      : activeTransactions.some(
+                          (transaction) =>
+                            transaction.customer.accountId ===
+                            user.account.accountId
+                        )
+                      ? customerMarkerNowServing
                       : customerMarker,
-                    scaledSize: new window.google.maps.Size(30, 30),
+                    scaledSize:  !user.account.isVendor && activeTransactions.some(
+                      (transaction) =>
+                        transaction.customer.accountId ===
+                        user.account.accountId
+                    )? new window.google.maps.Size(30, 45) : new window.google.maps.Size(20, 20),
                   },
                   owner: user,
                 });
@@ -145,18 +163,33 @@ function Home() {
   };
 
   useEffect(() => {
-    if (user) {
-      const intervalId = setInterval(() => {
-        navigator.geolocation.getCurrentPosition(
-          updateLocationInContext,
-          (error) => console.log(error),
-          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-        );
-      }, 2000);
+    const intervalId = setInterval(() => {
+      navigator.geolocation.getCurrentPosition(
+        updateLocationInContext,
+        (error) => console.log(error),
+        { enableHighAccuracy: true, maximumAge: 0 }
+      );
+    }, 1000);
 
-      return () => clearInterval(intervalId);
-    }
-  }, [user]);
+    return () => clearInterval(intervalId);
+  }, [user, activeTransactions]);
+
+  useEffect(() => {
+    setInterval(() => {
+      axios
+        .get("http://localhost:8080/api/getAllTransactions")
+        .then((response) => {
+          setActiveTransactions(prev => 
+            response.data.filter(
+              (transaction) => transaction.status === "Now Serving"
+            )
+          );
+        })
+        .catch((error) =>
+          console.error("Error fetching transactions: ", error)
+        );
+    }, 2000);
+  }, []);
 
   const calculateOffset = () => {
     const isMounted = mapRef.current;
@@ -219,7 +252,7 @@ function Home() {
               {currentPosition && (
                 <Marker
                   position={currentPosition}
-                  icon={renderVendorMarkerIcon()}
+                  icon={renderMarkerIcon()}
                 />
               )}
               {currentPosition && (

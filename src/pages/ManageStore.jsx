@@ -21,7 +21,7 @@ const ManageStore = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [editedProduct, setEditedProduct] = useState({
-    picture: "",
+    image: "",
     name: "",
     price: "",
   });
@@ -42,14 +42,11 @@ const ManageStore = () => {
 
   useEffect(() => {
     const isMounted = true;
-    if(!isMounted) return;
-    const interval = setInterval(() => {
-      fetchStore();
-      fetchProducts();
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
+    if (!isMounted) return;
+    console.log("asdfasdfasdf");
+    fetchStore();
+    fetchProducts();
+  }, [successMessage]);
 
   const fetchStore = async () => {
     try {
@@ -88,15 +85,7 @@ const ManageStore = () => {
   const handleEdit = () => {
     setEditMode(true);
   };
-  useEffect(() => {
-    if (user && user.account && user.account.store) {
-      setEditedStore({
-        storeName: user.account.store.storeName,
-        category: user.account.store.category,
-        description: user.account.store.description,
-      });
-    }
-  }, [user, user?.account]);
+
   const handleStoreInputChange = (event) => {
     const { name, value } = event.target;
     setEditedStore({
@@ -105,35 +94,50 @@ const ManageStore = () => {
     });
   };
 
-  const handleSaveConfirm = () => {
-    console.log("Save clicked", products);
-    products.forEach((product, index) => {
-      if (product.image instanceof Blob) {
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.readAsDataURL(product.image);
-        reader.onloadend = () => {
-          const base64Image = reader.result.split(",")[1];
-          const productData = {
-            ...product,
-            image: base64Image,
-          };
-          axios
-            .put(
-              `http://localhost:8080/api/updateProductServiceById/${product.productId}`,
-              productData
-            )
-            .then((response) => {
-              console.log("Product updated:", response.data);
-              const newProducts = [...products];
-              newProducts[index].image = base64Image;
-              setProducts(newProducts);
-            })
-            .catch((error) => {
-              console.error("Error updating product:", error);
-            });
+        reader.onload = () => {
+            const base64 = reader.result.split(',')[1];
+            console.log('File read as base64:', base64);
+            resolve(base64);
         };
-      }
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
     });
+};
+
+  async function handleSaveConfirm() {
+    const updatedProducts = await Promise.all(
+      products.map(async (product) => {
+        let image = product.image;
+        console.log("product.image", product.image instanceof File);
+        if (product.image instanceof File) {
+          image = await fileToBase64(product.image);
+
+          console.log("AFTER.image", image);
+        }
+        return { ...product, image };
+      })
+    );
+    updatedProducts.map((product) => {
+      axios
+        .put(
+          `http://localhost:8080/api/updateProductServiceById/${product.productId}`,
+          product
+        )
+        .then((response) => {
+          console.log("Product updated:", response.data);
+          setProducts((prevProducts) => {
+            const newProducts = [...prevProducts];
+            return newProducts;
+          });
+        })
+        .catch((error) => {
+          console.error("Error updating product:", error);
+        });
+    });
+
     if (user && user.account && user.account.store) {
       axios
         .put(
@@ -151,11 +155,11 @@ const ManageStore = () => {
     }
     setEditMode(false);
     setEditedProduct({
-      picture: "",
+      image: "",
       name: "",
       price: "",
     });
-  };
+  }
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -171,15 +175,17 @@ const ManageStore = () => {
       });
     }
   };
+
   const handleImageChange = (e) => {
     setEditedProduct({
       ...editedProduct,
-      picture: e.target.files[0],
+      image: e.target.files[0],
     });
     setImagePreview(
       e.target.files[0] ? URL.createObjectURL(e.target.files[0]) : null
     );
   };
+
   const handleProductImageChange = (e, index) => {
     const newProducts = [...products];
     newProducts[index].image = e.target.files[0];
@@ -188,6 +194,7 @@ const ManageStore = () => {
       : null;
     setProducts(newProducts);
   };
+
   const handleProductInputChange = (e, index) => {
     const { name, value } = e.target;
     const newProducts = [...products];
@@ -200,23 +207,19 @@ const ManageStore = () => {
   };
 
   const handleAddConfirm = async () => {
-    if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
+    if (!editedProduct.image || !editedProduct.name || !editedProduct.price) {
+      console.log("image, name, price",editedProduct.image, editedProduct.name,editedProduct.price )
       setOpenAddConfirmDialog(true);
       return;
     }
-    function convertToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result.split(",")[1]);
-        reader.onerror = (error) => reject(error);
-      });
+    let image = editedProduct.image;
+    if (editedProduct.image instanceof File) {
+      image = await fileToBase64(editedProduct.image);
     }
-    const imageBase64 = await convertToBase64(editedProduct.picture);
     const productData = {
       name: editedProduct.name,
       price: editedProduct.price,
-      image: imageBase64,
+      image: image,
       store: { storeId: user.account.store.storeId },
     };
     axios
@@ -231,7 +234,7 @@ const ManageStore = () => {
         console.error("Error creating product:", error);
       });
     setEditedProduct({
-      picture: "",
+      image: "",
       name: "",
       price: "",
     });
@@ -262,12 +265,13 @@ const ManageStore = () => {
     setActionType(actionType);
     setOpenDialog(true);
   };
+
   const handleSave = () => {
     openConfirmationDialog(() => handleSaveConfirm, "save");
   };
 
   const handleAdd = () => {
-    if (!editedProduct.picture || !editedProduct.name || !editedProduct.price) {
+    if (!editedProduct.image || !editedProduct.name || !editedProduct.price) {
       setOpenAddConfirmDialog(true);
     } else {
       openConfirmationDialog(() => handleAddConfirm, "add");
@@ -692,7 +696,7 @@ const ManageStore = () => {
             ) : (
               <>
                 <img
-                  src={`data:image/png;base64,${product.image}`}
+                  src={`${product.image instanceof File ? null : "data:image/png;base64," + product.image}`}
                   alt={`Product ${index + 1}`}
                   style={{
                     width: "100%",

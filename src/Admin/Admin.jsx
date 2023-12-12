@@ -18,9 +18,11 @@ const Admin = () => {
   const [userData, setUserData] = useState([]);
 
   useEffect(() => {
-    if(user)
+    if(user && user.account.isAdmin)
     {
       history.push("/admindashboard/dashboard");
+    } else {
+      setUser(null);
     }
   }, [user]);
 
@@ -40,7 +42,7 @@ const Admin = () => {
         setLoading(false);
       })
       .catch((error) => {
-        alert("Error fetching data:", error);
+        console.log("User is not an admin or no admin account logged in.");
         setLoading(false);
       });
   };

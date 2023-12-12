@@ -16,6 +16,10 @@ export default function AlertDialog({
   return (
     <React.Fragment>
       <Dialog
+        PaperProps={{
+          style: {
+            borderRadius: "15px",
+          }}}
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
@@ -30,14 +34,14 @@ export default function AlertDialog({
         <DialogActions>
           <Button
             onClick={handleClose}
-            style={{ backgroundColor: "#E8594F", color: "white" }}
+            style={{ backgroundColor: "#E8594F", color: "white", borderRadius: "20px" }}
           >
             Cancel
           </Button>
           <Button
             onClick={handleConfirm}
             autoFocus
-            style={{ backgroundColor: "#0575B4", color: "white" }}
+            style={{ backgroundColor: "#0575B4", color: "white", borderRadius: "20px" }}
           >
             Confirm
           </Button>

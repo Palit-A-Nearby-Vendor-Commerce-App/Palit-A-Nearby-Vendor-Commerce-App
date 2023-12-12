@@ -27,7 +27,7 @@ const zoom = 18;
 
 function Home() {
   const history = useHistory();
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [showSlider, setShowSlider] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState(null);
@@ -45,7 +45,8 @@ function Home() {
   );
 
   useEffect(() => {
-    if (!user) {
+    if (!user || user.email) {
+      setUser(null);
       history.push("/landing");
     }
   }, [user, history]);
@@ -176,19 +177,22 @@ function Home() {
   }, [user, activeTransactions]);
 
   useEffect(() => {
+    const isMounted = mapRef.current;
     setInterval(() => {
-      axios
-        .get("http://localhost:8080/api/getAllTransactions")
-        .then((response) => {
-          setActiveTransactions((prev) =>
-            response.data.filter(
-              (transaction) => transaction.status === "Now Serving"
-            )
+      if (isMounted) {
+        axios
+          .get("http://localhost:8080/api/getAllTransactions")
+          .then((response) => {
+            setActiveTransactions((prev) =>
+              response.data.filter(
+                (transaction) => transaction.status === "Now Serving"
+              )
+            );
+          })
+          .catch((error) =>
+            console.error("Error fetching transactions: ", error)
           );
-        })
-        .catch((error) =>
-          console.error("Error fetching transactions: ", error)
-        );
+      }
     }, 2000);
   }, []);
 

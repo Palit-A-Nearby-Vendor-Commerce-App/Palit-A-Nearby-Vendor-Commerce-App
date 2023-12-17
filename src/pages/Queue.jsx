@@ -149,13 +149,11 @@ const Queue = () => {
                               {index !== array.length - 1 ? (
                                 <span>
                                   {trimmedItemName
-                                    .replace(" ", ": ")
-                                    .replace("Php", "₱")}
+                                    .replace(" ", ": ")}
                                 </span>
                               ) : (
                                 <span className="font-semibold text-sm mt-3 bg-slate-100 border border-red-500 p-1 text-red-400 rounded-md">
-                                  {trimmedItemName.split(" ")[0]} ₱
-                                  {trimmedItemName.split(" ")[1].substring(3)}
+                                  {trimmedItemName}
                                 </span>
                               )}
                               <span>
@@ -254,8 +252,7 @@ const Queue = () => {
                                 </span>
                               ) : (
                                 <span className="font-semibold text-sm mt-3 bg-slate-100 border-2 border-green-300 p-1 text-green-400 rounded-md">
-                                  {trimmedItemName.split(" ")[0]} ₱
-                                  {trimmedItemName.split(" ")[1].substring(3)}
+                                  {trimmedItemName}
                                 </span>
                               )}
                               <span>

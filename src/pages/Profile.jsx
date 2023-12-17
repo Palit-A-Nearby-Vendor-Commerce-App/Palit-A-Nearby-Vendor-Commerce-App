@@ -147,7 +147,7 @@ const Profile = () => {
     if (details == null || details === "") return "";
     const regex = /(\w+) ₱(\d+) x(\d+); Total: ₱(\d+)/;
     const [, productName, productPrice, quantity, total] = details.match(regex);
-    return `Product: ${productName}, Price: ${productPrice}, Quantity: ${quantity}, Total: ${total}`;
+    return `Product: ${productName}, Price: ₱${productPrice}, Quantity: ${quantity}, Total: ₱${total}`;
   };
 
   useEffect(() => {

@@ -247,8 +247,7 @@ const Queue = () => {
                               {index !== array.length - 1 ? (
                                 <span>
                                   {trimmedItemName
-                                    .replace(" ", ": ")
-                                    .replace("Php", "₱")}
+                                    .replace(" ", ": ")}
                                 </span>
                               ) : (
                                 <span className="font-semibold text-sm mt-3 bg-slate-100 border-2 border-green-300 p-1 text-green-400 rounded-md">

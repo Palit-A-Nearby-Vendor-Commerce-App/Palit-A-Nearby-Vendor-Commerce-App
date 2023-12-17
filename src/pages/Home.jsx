@@ -68,6 +68,7 @@ function Home() {
 
   const clearMarkers = () => {
     markers?.forEach((marker) => marker.setMap(null));
+    markers = [];
   };
 
   const updateLocationInContext = (position) => {
@@ -109,6 +110,18 @@ function Home() {
                   ) <= 200
                 );
               });
+
+              axios
+                .get("http://localhost:8080/api/getAllTransactions")
+                .then((response) => {
+                  setActiveTransactions([]);
+                  response.data.filter((transaction) => transaction.status === "Now Serving").forEach(transaction => {
+                    setActiveTransactions(prevTransactions => [...prevTransactions, transaction]);
+                  });
+                })
+                .catch((error) =>
+                  console.error("Error fetching transactions: ", error)
+                );
 
               clearMarkers();
 
@@ -174,27 +187,7 @@ function Home() {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [user, activeTransactions]);
-
-  useEffect(() => {
-    const isMounted = mapRef.current;
-    setInterval(() => {
-      if (isMounted) {
-        axios
-          .get("http://localhost:8080/api/getAllTransactions")
-          .then((response) => {
-            setActiveTransactions((prev) =>
-              response.data.filter(
-                (transaction) => transaction.status === "Now Serving"
-              )
-            );
-          })
-          .catch((error) =>
-            console.error("Error fetching transactions: ", error)
-          );
-      }
-    }, 2000);
-  }, []);
+  }, [activeTransactions]);
 
   const calculateOffset = () => {
     const isMounted = mapRef.current;

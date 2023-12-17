@@ -400,7 +400,7 @@ const Profile = () => {
         Transaction History
       </h2>
       {transactions.length > 0 ? (
-        <div className="flex flex-col items-center justify-center">
+        <div className="mb-20 flex flex-col items-center justify-center">
           <table className="table-auto border-collapse border-2 border-gray-300 rounded-xl">
             <thead>
               <tr>
@@ -445,7 +445,7 @@ const Profile = () => {
           </table>
         </div>
       ) : (
-        <p className="text-xl text-center">You have no transactions.</p>
+        <p className="mb-20 text-xl text-center">You have no transactions.</p>
       )}
       <Dialog
         open={open}

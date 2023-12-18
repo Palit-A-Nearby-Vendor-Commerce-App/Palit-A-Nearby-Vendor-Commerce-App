@@ -85,9 +85,11 @@ function Signup() {
     e.preventDefault();
 
     setIsImageEmpty(!userData.image);
+
     const age = moment().diff(moment(userData.birthdate), "years");
-    if (age < 13) {
-      setAlert("You must be at least 13 years old to sign up.");
+
+    if (age < 18) {
+      setAlert("You must be at least 18 years old to sign up.");
       return;
     }
 

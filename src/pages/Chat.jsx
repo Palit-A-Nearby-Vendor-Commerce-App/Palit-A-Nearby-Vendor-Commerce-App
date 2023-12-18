@@ -47,18 +47,21 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    const fetchConversations = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/api/getAllConversations"
-        );
-        setConversations(response.data);
-      } catch (error) {
-        console.error("Error fetching conversations:", error);
-      }
-    };
+    // use interval to fetch conversations every 3 seconds
+    const intervalId = setInterval(() => {
+      const fetchConversations = async () => {
+        try {
+          const response = await axios.get(
+            "http://localhost:8080/api/getAllConversations"
+          );
+          setConversations(response.data);
+        } catch (error) {
+          console.error("Error fetching conversations:", error);
+        }
+      };
 
-    fetchConversations();
+      fetchConversations();
+    }, 1000); // Fetch every 3 seconds
   }, []);
 
   const checkAndCreateConversation = async () => {
@@ -141,6 +144,7 @@ const Chat = () => {
   }, [selectedConversation]);
 
   const sendChat = async () => {
+    setNewMessage("");
     try {
       const currentTimestamp = new Date();
       const newChat = {
@@ -278,80 +282,87 @@ const Chat = () => {
         ) : null}
         {selectedConversation &&
           selectedVendor &&
-          chats.map((chat) => (
-            <div
-              key={chat.chatId}
-              className={`${
-                chat?.account?.accountId ===
-                chat?.conversation?.vendor?.accountId
-                  ? "self-start"
-                  : "self-end"
-              } mb-3 flex`}
-            >
-              {chat?.account?.accountId ===
-              chat?.conversation?.vendor?.accountId ? (
-                <span className="flex items-center gap-2">
-                  <Avatar
-                    src={`data:image/jpeg;base64,${selectedVendor?.image}`}
-                    style={{
-                      height: "42px",
-                      width: "42px",
-                      display: "inline-block",
-                    }}
-                  />
-                  <Tooltip title={`${convertToTime(chat?.timestamp)}`}>
-                    <span className="bg-[#E3F1F3] p-3 text-left rounded-r-lg rounded-b-lg">
-                      {chat?.messageContent}
-                    </span>
-                  </Tooltip>
-                </span>
-              ) : (
-                <Tooltip title={`${convertToTime(chat?.timestamp)}`}>
-                  <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg relative">
-                    {chat?.messageContent}
-                    <span className="absolute left-[-50px] top-2">
-                      <Button
-                        id={`button-${chat.chatId}`} // use a unique id for each button
-                        aria-controls={`menu-${chat.chatId}`} // use a unique id for each menu
-                        aria-haspopup="true"
-                        aria-expanded={open ? "true" : undefined}
-                        onClick={() => handleMenuClick(chat.chatId)} // pass the chat id as a parameter
-                      >
-                        <MoreVertIcon />
-                      </Button>
-                      <Menu
-                        id={`menu-${chat.chatId}`} // use a unique id for each menu
-                        anchorEl={anchorEl}
-                        open={open && chatId === chat.chatId} // only open the menu if the chat id matches
-                        onClose={handleClose}
-                        MenuListProps={{
-                          "aria-labelledby": `button-${chat.chatId}`, // use the corresponding button id
+          chats.map(
+            (chat) => (
+              console.log(chat),
+              (
+                <div
+                  key={chat.chatId}
+                  className={`${
+                    chat?.account?.accountId ===
+                    chat?.conversation?.vendor?.accountId
+                      ? "self-start"
+                      : "self-end"
+                  } mb-3 flex`}
+                >
+                  {chat?.account?.accountId ===
+                  chat?.conversation?.vendor?.accountId ? (
+                    <span className="flex items-center gap-2">
+                      <Avatar
+                        src={`data:image/jpeg;base64,${selectedVendor?.image}`}
+                        style={{
+                          height: "42px",
+                          width: "42px",
+                          display: "inline-block",
                         }}
-                      >
-                        <MenuItem
-                          id={chat.chatId}
-                          onClick={(event) =>
-                            handleDeleteConfirmation(event.currentTarget.id)
-                          }
-                        >
-                          Delete
-                        </MenuItem>
-                        {openDeleteConfirmation && (
-                          <AlertDialog
-                            open={true}
-                            handleClose={() => setOpenDeleteConfirmation(false)}
-                            handleConfirm={handleDeleteChat}
-                            title="Delete Confirmation"
-                            content="Are you sure you want to delete this message?"
-                          />
-                        )}
-                      </Menu>
+                      />
+                      <Tooltip title={`${convertToTime(chat?.timestamp)}`}>
+                        <span className="bg-[#E3F1F3] p-3 text-left rounded-r-lg rounded-b-lg">
+                          {chat?.messageContent}
+                        </span>
+                      </Tooltip>
                     </span>
-                  </span>
-                </Tooltip>
-              )}
-            </div>
-          ))}
+                  ) : (
+                    <Tooltip title={`${convertToTime(chat?.timestamp)}`}>
+                      <span className="bg-[#AAD5DD] p-3 text-left rounded-l-lg rounded-t-lg relative">
+                        {chat?.messageContent}
+                        <span className="absolute left-[-50px] top-2">
+                          <Button
+                            id={`button-${chat.chatId}`} // use a unique id for each button
+                            aria-controls={`menu-${chat.chatId}`} // use a unique id for each menu
+                            aria-haspopup="true"
+                            aria-expanded={open ? "true" : undefined}
+                            onClick={() => handleMenuClick(chat.chatId)} // pass the chat id as a parameter
+                          >
+                            <MoreVertIcon />
+                          </Button>
+                          <Menu
+                            id={`menu-${chat.chatId}`} // use a unique id for each menu
+                            anchorEl={anchorEl}
+                            open={open && chatId === chat.chatId} // only open the menu if the chat id matches
+                            onClose={handleClose}
+                            MenuListProps={{
+                              "aria-labelledby": `button-${chat.chatId}`, // use the corresponding button id
+                            }}
+                          >
+                            <MenuItem
+                              id={chat.chatId}
+                              onClick={(event) =>
+                                handleDeleteConfirmation(event.currentTarget.id)
+                              }
+                            >
+                              Delete
+                            </MenuItem>
+                            {openDeleteConfirmation && (
+                              <AlertDialog
+                                open={true}
+                                handleClose={() =>
+                                  setOpenDeleteConfirmation(false)
+                                }
+                                handleConfirm={handleDeleteChat}
+                                title="Delete Confirmation"
+                                content="Are you sure you want to delete this message?"
+                              />
+                            )}
+                          </Menu>
+                        </span>
+                      </span>
+                    </Tooltip>
+                  )}
+                </div>
+              )
+            )
+          )}
 
         {selectedConversation &&
           selectedCustomer &&
@@ -438,7 +449,6 @@ const Chat = () => {
             if (event.key === "Enter") {
               sendChat();
               event.preventDefault();
-              setNewMessage("");
             }
           }}
           onChange={(e) => setNewMessage(e.target.value)}

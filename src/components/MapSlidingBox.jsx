@@ -50,7 +50,7 @@ const MapSlidingBox = ({
               <button
                 type="button"
                 onClick={handleStoreButton}
-                className="w-full bg-primary p-3 text-white rounded-[20px] flex items-center justify-center mt-7 h-[50px]"
+                className="bg-primary p-3 text-white rounded-[20px] flex items-center mt-4 absolute bottom-8 w-[360px] justify-center h-[50px]"
               >
                 <FaStore size={30} className="mr-2" />
                 <span className="text-lg">My Store</span>

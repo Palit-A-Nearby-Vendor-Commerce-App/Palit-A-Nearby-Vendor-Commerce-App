@@ -91,6 +91,7 @@ function Home() {
           }
         )
         .then((response) => {
+          user.account.location = response.data;
           setCurrentPosition({
             lat: response.data.latitude,
             lng: response.data.longitude,
@@ -100,7 +101,7 @@ function Home() {
             .then(({ data }) => {
               let nearbyUsers = data.filter((otherUser) => {
                 return (
-                  user.account.isVendor !== otherUser.account.isVendor &&
+                  (user.account.isVendor !== otherUser.account.isVendor) &&
                   otherUser.account.location.isActive &&
                   getDistance(
                     user.account.location.latitude,
@@ -162,6 +163,8 @@ function Home() {
                 });
 
                 markers.push(userMarker);
+
+
                 if (userMarker.owner.account.isVendor) {
                   userMarker.addListener("click", () => {
                     handleMarkerClick(userMarker.owner);

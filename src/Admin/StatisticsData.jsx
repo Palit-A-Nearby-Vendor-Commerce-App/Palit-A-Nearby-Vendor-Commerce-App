@@ -12,7 +12,7 @@ const StatisticsData = () => {
   
 
   const ageDistributionData = {
-    labels: ['10-20', '20-30', '30-40', '40-50', '50+'],
+    labels: ['18-20', '20-30', '30-40', '40-50', '50+'],
     datasets: [
       {
         label: 'Number of Users',
@@ -67,7 +67,7 @@ const StatisticsData = () => {
             const age = moment().diff(birthDate, 'years');
   
             let ageRange;
-            if (age < 20) ageRange = '10-20';
+            if (age < 20) ageRange = '18-20';
             else if (age < 30) ageRange = '20-30';
             else if (age < 40) ageRange = '30-40';
             else if (age < 50) ageRange = '40-50';

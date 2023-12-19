@@ -7,7 +7,13 @@ import {
   DialogTitle,
 } from "@mui/material";
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useLayoutEffect,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import { UserContext } from "../UserContext";
 
 const Store = ({ vendor }) => {
@@ -148,6 +154,30 @@ const Store = ({ vendor }) => {
   const OrderDetails = (activeTransaction) => {
     const orderStatus = activeTransaction.activeTransaction.status;
     const statusColor = orderStatus === "In Queue" ? "#0071b3" : "#e8594f";
+    const scrollRef = useRef();
+    const scrollPosition = useRef(0);
+
+    useLayoutEffect(() => {
+      const savedScrollPosition = sessionStorage.getItem("scrollPosition");
+      if (savedScrollPosition && scrollRef.current) {
+        scrollRef.current.scrollTop = parseInt(savedScrollPosition, 10);
+      }
+
+      const handleScroll = () => {
+        scrollPosition.current = scrollRef.current?.scrollTop || 0;
+      };
+
+      if (scrollRef.current) {
+        scrollRef.current.addEventListener("scroll", handleScroll);
+      }
+
+      return () => {
+        if (scrollRef.current) {
+          scrollRef.current.removeEventListener("scroll", handleScroll);
+          sessionStorage.setItem("scrollPosition", scrollPosition.current);
+        }
+      };
+    }, []);
 
     return (
       <>
@@ -159,7 +189,10 @@ const Store = ({ vendor }) => {
           }}
         >
           {activeTransaction && (
-            <div className="noscrollbar bg-white shadow-md rounded-lg p-6 max-w-md mx-auto h-[190px] overflow-auto">
+            <div
+              className="noscrollbar bg-white shadow-md rounded-lg p-6 max-w-md mx-auto h-[190px] overflow-auto"
+              ref={scrollRef}
+            >
               <div className="text-gray-800 text-m">
                 Active Order:{" "}
                 <span style={{ fontWeight: "bold", color: statusColor }}>

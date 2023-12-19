@@ -282,7 +282,7 @@ const AccountData = () => {
                       onChange={(e) => handleChange(e, index)}
                     />
                   ) : (
-                    account.password
+                    "***********"// account.password
                   )}
                 </td>
                 <td className="py-2">

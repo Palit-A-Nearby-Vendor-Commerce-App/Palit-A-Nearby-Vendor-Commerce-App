@@ -200,7 +200,10 @@ function Signup() {
       <div className="w-[500px] m-auto">
         <form onSubmit={handleSubmit} className="mt-8">
           <div className="mt-4 text-center">
-            <label className="w-[90px] h-[90px] flex justify-center items-center bg-primary rounded-[20px] cursor-pointer mx-auto">
+            <label
+              className="w-[90px] h-[90px] flex justify-center items-center bg-primary rounded-[20px] cursor-pointer mx-auto hover:bg-[#338dc2] hover:border-4 hover:border-primary transition-all duration-300
+             ease-in"
+            >
               <input
                 name="image"
                 type="file"
@@ -215,7 +218,9 @@ function Signup() {
                   className="w-[90px] h-[90px] rounded-[20px]"
                 />
               ) : (
-                <span className="text-5xl font-semibold` text-white">+</span>
+                <span className="text-5xl font-semibold` text-white animate-pulse">
+                  +
+                </span>
               )}
             </label>
             {isImageEmpty && <p className="text-red-500">Image is required</p>}

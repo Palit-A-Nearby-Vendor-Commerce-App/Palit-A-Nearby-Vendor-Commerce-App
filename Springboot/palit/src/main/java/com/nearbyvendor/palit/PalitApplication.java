@@ -10,5 +10,4 @@ public class PalitApplication {
         SpringApplication.run(PalitApplication.class, args);
         System.out.println("Ok");
     }
-
 }

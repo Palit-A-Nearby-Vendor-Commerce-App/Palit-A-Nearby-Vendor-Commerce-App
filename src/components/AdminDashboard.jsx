@@ -166,11 +166,11 @@ export default function NavigationBarAdmin() {
               <p className="text-sm text-slate-400">{formattedDate}</p>
             </div>
             <div className="w-[250px]">
-              <CustomInput
+              {/* <CustomInput
                 type="text"
                 placeholder="Search"
                 onChange={(e) => setSearchInput(e.target.value)}
-              />
+              /> */}
             </div>
           </div>
           {location === "/admindashboard/dashboard" && <Dashboard />}

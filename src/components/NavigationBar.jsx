@@ -8,7 +8,7 @@ import axios from "axios";
 import React, { useContext, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min.js";
-import { UserContext } from "../UserContext"; 
+import { UserContext } from "../UserContext";
 import logo from "../assets/images/logo-white.png";
 import { NAV_ACTIVE_STYLE, NAV_HOVER_STYLE } from "../assets/styles/styles.js";
 
@@ -37,10 +37,11 @@ const NavigationBar = () => {
         .catch((error) => {
           console.error(error);
         });
-  } else {
-    setUser(null);
-    history.push("/landing");
-  }
+    } else {
+      setUser(null);
+      history.push("/landing");
+    }
+  };
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);

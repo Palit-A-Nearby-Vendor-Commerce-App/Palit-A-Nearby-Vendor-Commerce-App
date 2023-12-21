@@ -21,10 +21,10 @@ const NavigationBar = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
 
   const handleLogout = () => {
-    if (user.account.location) {
+    if (user?.account?.location) {
       axios
         .put(
-          `http://localhost:8080/api/updateLocationById/${user.account.location.locationId}`,
+          `http://localhost:8080/api/updateLocationById/${user?.account?.location?.locationId}`,
           {
             ...user.account.location,
             isActive: false,
@@ -32,14 +32,15 @@ const NavigationBar = () => {
         )
         .then((response) => {
           setUser(null);
+          history.push("/landing");
         })
         .catch((error) => {
           console.error(error);
         });
-    }
-
+  } else {
+    setUser(null);
     history.push("/landing");
-  };
+  }
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);

@@ -21,6 +21,8 @@ const Profile = () => {
   const [open, setOpen] = useState(false);
   const history = useHistory();
 
+  if(!user) history.push("/landing");
+
   const userId = user.userId;
 
   const fetchData = async () => {
